@@ -18,8 +18,12 @@ def extract(cursor):
     elif cursor.kind == clang.cindex.CursorKind.OBJC_PROPERTY_DECL:
         data["Type"] = "Property"
     else:
-        return None
-    children = [extract(c) for c in cursor.get_children()]
+        data["Type"] = "Other"  # Add this line
+    try:
+        children = [extract(c) for c in cursor.get_children()]
+    except ValueError as e:
+        print(f"Encountered error with cursor {cursor.spelling}: {e}")
+        children = []
     children = [c for c in children if c is not None]
     if children:
         data["Children"] = children

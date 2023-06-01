@@ -160,4 +160,4 @@ cython_debug/
 .idea/
 
 # Metadata
-metadata.json
+*_metadata.json

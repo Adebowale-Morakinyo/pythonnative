@@ -32,8 +32,10 @@ def extract(cursor):
 
 def main():
     args = [
-        "-x", "objective-c",
-        "-arch", "arm64",
+        "-x",
+        "objective-c",
+        "-arch",
+        "arm64",
         "-fno-objc-arc",
         # "-fmodules",
         # "-fmodule-maps",
@@ -45,19 +47,19 @@ def main():
         "-I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.3/include",
         "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include",
         "-I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
-        "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
+        "-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks",
     ]
     tu = index.parse(
         "/Applications/Xcode.app/Contents/Developer/Platforms/"
         "iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/"
         "Library/Frameworks/UIKit.framework/Headers/UIKit.h",
-        args
+        args,
     )
     print(f"Translation unit: {tu.spelling}")
     for diag in tu.diagnostics:
         print(diag)
     metadata = extract(tu.cursor)
-    with open("metadata.json", "w") as f:
+    with open("ios_metadata.json", "w") as f:
         json.dump(metadata, f, indent=2)
 
 

@@ -17,7 +17,7 @@ def generate_layout():
                 },
                 "eventHandlers": {
                     "onClick": "on_button_click",
-                }
+                },
             },
         ]
     }

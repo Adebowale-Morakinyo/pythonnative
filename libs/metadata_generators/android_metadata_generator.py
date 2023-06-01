@@ -1,8 +1,16 @@
 import os
 
+# Set the classpath to include the android.jar file
+# This approach will allow Pyjnius to find the necessary Java classes when
+# interacting with the Android SDK from within your Python script
+os.environ[
+    "CLASSPATH"
+] = "/Users/owencarey/Library/Android/sdk/platforms/android-33/android.jar"
+
+# Use OpenJDK 8
 os.environ[
     "JAVA_HOME"
-] = "/Library/Java/JavaVirtualMachines/jdk-12.0.2.jdk/Contents/Home"
+] = "/usr/local/opt/openjdk@8/libexec/openjdk.jdk/Contents/Home"
 
 from jnius import autoclass
 import json

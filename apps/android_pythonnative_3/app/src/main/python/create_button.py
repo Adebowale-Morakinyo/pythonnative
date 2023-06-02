@@ -1,10 +1,8 @@
-from rubicon.java import JavaClass
-
-Button = JavaClass("android/widget/Button")
+from java import cast, chaquopy, dynamic_proxy, jarray, jclass
 
 
 def create_button(context):
+    Button = jclass("android.widget.Button")
     button = Button(context)
-    button.setId(hash(button))
     button.setText("Button created in Python")
-    return button.getId()
+    return button

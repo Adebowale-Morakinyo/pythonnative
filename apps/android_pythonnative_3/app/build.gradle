@@ -22,7 +22,6 @@ android {
         python {
             pip {
                 install "matplotlib"
-                install "rubicon-java"
             }
         }
     }

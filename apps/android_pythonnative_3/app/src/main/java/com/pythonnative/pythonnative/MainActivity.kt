@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.graphics.Color
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.chaquo.python.PyException
@@ -35,9 +36,13 @@ class MainActivity : AppCompatActivity() {
 //        val pyButton = createButtonModule.callAttr("create_button", this).toJava(Button::class.java)
 //        layoutMain.addView(pyButton)
 
-        val createRecyclerViewModule = py.getModule("create_recycler_view")
-        val pyRecyclerView = createRecyclerViewModule.callAttr("create_recycler_view", this).toJava(RecyclerView::class.java)
-        layoutMain.addView(pyRecyclerView)
+        val createWidgetsModule = py.getModule("create_widgets")
+        val pyLayout = createWidgetsModule.callAttr("create_widgets", this).toJava(LinearLayout::class.java)
+        layoutMain.addView(pyLayout)
+
+//        val createRecyclerViewModule = py.getModule("create_recycler_view")
+//        val pyRecyclerView = createRecyclerViewModule.callAttr("create_recycler_view", this).toJava(RecyclerView::class.java)
+//        layoutMain.addView(pyRecyclerView)
 
         // Existing code for displaying plot
 //        val imageView = findViewById<ImageView>(R.id.image_home)

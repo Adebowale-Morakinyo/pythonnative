@@ -23,7 +23,9 @@ class MyAdapter(static_proxy("androidx.recyclerview.widget.RecyclerView$Adapter"
         return len(self.items)
 
 
-class MyViewHolder(dynamic_proxy("androidx.recyclerview.widget.RecyclerView$ViewHolder")):
+class MyViewHolder(
+    dynamic_proxy("androidx.recyclerview.widget.RecyclerView$ViewHolder")
+):
     def __init__(self, itemView):
         super().__init__(itemView)
         self.textView = cast(TextView, itemView.findViewById(android.R.id.text1))

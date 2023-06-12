@@ -8,9 +8,7 @@ os.environ[
 ] = "/Users/owencarey/Library/Android/sdk/platforms/android-33/android.jar"
 
 # Use OpenJDK 8
-os.environ[
-    "JAVA_HOME"
-] = "/usr/local/opt/openjdk@8/libexec/openjdk.jdk/Contents/Home"
+os.environ["JAVA_HOME"] = "/usr/local/opt/openjdk@8/libexec/openjdk.jdk/Contents/Home"
 
 from jnius import autoclass
 import json

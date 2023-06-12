@@ -37,32 +37,32 @@ def create_widgets(context):
     layout.addView(button)
 
     # Create TextView
-    textView = TextView(context)
-    textView.setText('TextView created in Python')
-    layout.addView(textView)
+    text_view = TextView(context)
+    text_view.setText('TextView created in Python')
+    layout.addView(text_view)
 
     # Create EditText
-    editText = EditText(context)
-    editText.setHint('EditText created in Python')
-    layout.addView(editText)
+    edit_text = EditText(context)
+    edit_text.setHint('EditText created in Python')
+    layout.addView(edit_text)
 
     # Create CheckBox
-    checkBox = CheckBox(context)
-    checkBox.setText('CheckBox created in Python')
-    layout.addView(checkBox)
+    check_box = CheckBox(context)
+    check_box.setText('CheckBox created in Python')
+    layout.addView(check_box)
 
     # Create RadioButton
-    radioButton = RadioButton(context)
-    radioButton.setText('RadioButton created in Python')
-    layout.addView(radioButton)
+    radio_button = RadioButton(context)
+    radio_button.setText('RadioButton created in Python')
+    layout.addView(radio_button)
 
     # Create ImageView
-    imageView = ImageView(context)
-    layout.addView(imageView)
+    image_view = ImageView(context)
+    layout.addView(image_view)
 
     # Create ProgressBar
-    progressBar = ProgressBar(context)
-    layout.addView(progressBar)
+    progress_bar = ProgressBar(context)
+    layout.addView(progress_bar)
 
     # Create Switch
     switch = Switch(context)
@@ -70,42 +70,42 @@ def create_widgets(context):
     layout.addView(switch)
 
     # Create ToggleButton
-    toggleButton = ToggleButton(context)
-    toggleButton.setTextOn('On')
-    toggleButton.setTextOff('Off')
-    layout.addView(toggleButton)
+    toggle_button = ToggleButton(context)
+    toggle_button.setTextOn('On')
+    toggle_button.setTextOff('Off')
+    layout.addView(toggle_button)
 
     # Create SeekBar
-    seekBar = SeekBar(context)
-    layout.addView(seekBar)
+    seek_bar = SeekBar(context)
+    layout.addView(seek_bar)
 
     # Create CardView
-    cardView = CardView(context)
-    layout.addView(cardView)
+    card_view = CardView(context)
+    layout.addView(card_view)
 
     # Create ViewPager
-    viewPager = ViewPager(context)
-    layout.addView(viewPager)
+    view_pager = ViewPager(context)
+    layout.addView(view_pager)
 
     # Create DatePicker
-    datePicker = DatePicker(context)
-    layout.addView(datePicker)
+    date_picker = DatePicker(context)
+    layout.addView(date_picker)
 
     # Create TimePicker
-    timePicker = TimePicker(context)
-    layout.addView(timePicker)
+    time_picker = TimePicker(context)
+    layout.addView(time_picker)
 
     # Create Spinner
     spinner = Spinner(context)
     layout.addView(spinner)
 
     # Create AutoCompleteTextView
-    autoCompleteTextView = AutoCompleteTextView(context)
-    layout.addView(autoCompleteTextView)
+    auto_complete_text_view = AutoCompleteTextView(context)
+    layout.addView(auto_complete_text_view)
 
     # Create RatingBar
-    ratingBar = RatingBar(context)
-    layout.addView(ratingBar)
+    rating_bar = RatingBar(context)
+    layout.addView(rating_bar)
 
     # Return layout
     return layout

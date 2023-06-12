@@ -1,40 +1,42 @@
-from java import jclass, static_proxy
+from java import jclass, static_proxy, Override
 
-RecyclerView = jclass('androidx.recyclerview.widget.RecyclerView')
-LinearLayoutManager = jclass('androidx.recyclerview.widget.LinearLayoutManager')
-Context = jclass('android.content.Context')
+LinearLayoutManager = jclass("androidx.recyclerview.widget.LinearLayoutManager")
+RecyclerView = jclass("androidx.recyclerview.widget.RecyclerView")
+TextView = jclass("android.widget.TextView")
 
-# Create a ViewHolder
+
+# RecyclerView ViewHolder
 class MyViewHolder(static_proxy(RecyclerView.ViewHolder)):
-    def __init__(self, itemView):
-        super(MyViewHolder, self).__init__(itemView)
-        # You can add your views here
-        # self.myTextView = itemView.findViewById(R.id.myTextView)
+    def __init__(self, item_view):
+        super(MyViewHolder, self).__init__(item_view)
+        self.my_text_view = TextView(item_view.getContext())
 
-# Create a RecyclerView Adapter
+
+# RecyclerView Adapter
 class MyAdapter(static_proxy(RecyclerView.Adapter)):
-    def __init__(self, myDataset):
-        self.mDataset = myDataset
+    def __init__(self, my_dataset):
+        self.my_dataset = my_dataset
 
+    @Override(RecyclerView.Adapter)
     def onCreateViewHolder(self, parent, viewType):
-        # Inflate your layout here and create the view holder
-        pass
+        text_view = TextView(parent.getContext())
+        return MyViewHolder(text_view)
 
+    @Override(RecyclerView.Adapter)
     def onBindViewHolder(self, holder, position):
-        # Set the data for your views here
-        pass
+        holder.my_text_view.setText(self.my_dataset[position])
 
+    @Override(RecyclerView.Adapter)
     def getItemCount(self):
-        return len(self.mDataset)
+        return len(self.my_dataset)
+
 
 # Create the RecyclerView
 def create_recycler_view(context):
-    myRecyclerView = RecyclerView(context)
-    myLayoutManager = LinearLayoutManager(context)
-    myRecyclerView.setLayoutManager(myLayoutManager)
-
-    myDataset = ['Data 1', 'Data 2', 'Data 3']
-    myAdapter = MyAdapter(myDataset)
-    myRecyclerView.setAdapter(myAdapter)
-
-    return myRecyclerView
+    my_recycler_view = RecyclerView(context)
+    my_layout_manager = LinearLayoutManager(context)
+    my_recycler_view.setLayoutManager(my_layout_manager)
+    my_dataset = ["Data 1", "Data 2", "Data 3"]
+    my_adapter = MyAdapter(my_dataset)
+    my_recycler_view.setAdapter(my_adapter)
+    return my_recycler_view

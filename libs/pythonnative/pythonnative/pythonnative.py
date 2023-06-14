@@ -5,6 +5,7 @@
 
 # Detect the platform
 import platform
+
 system = platform.system()
 
 
@@ -13,7 +14,7 @@ class PlatformNotDetectedError(Exception):
 
 
 # Depending on the system, import appropriate classes
-if system == 'iOS':
+if system == "iOS":
     from rubicon.objc import ObjCClass
 
     # Map native iOS classes to PythonNative classes
@@ -25,7 +26,7 @@ if system == 'iOS':
 
     # Add more mappings here as required...
 
-elif system == 'Android':
+elif system == "Android":
     from java import jclass
 
     # Map native Android classes to PythonNative classes

@@ -21,7 +21,7 @@ if system == "iOS":
             self.set_title(title)
 
         def set_title(self, title):
-            self.native_instance.setTitle_forState_(title, 0)  # 0 is the state for 'normal'
+            self.native_instance.setTitle_forState_(title, 0)
 
         def get_title(self):
             return self.native_instance.titleForState_(0)
@@ -47,7 +47,7 @@ elif system == "Android":
         native_class = jclass("android.widget.Button")
 
         def __init__(self, title=""):
-            self.native_instance = self.native_class()  # Instantiate the Java class
+            self.native_instance = self.native_class()
             self.set_title(title)
 
         def set_title(self, title):
@@ -60,7 +60,7 @@ elif system == "Android":
         native_class = jclass("android.widget.TextView")
 
         def __init__(self, text=""):
-            self.native_instance = self.native_class()  # Instantiate the Java class
+            self.native_instance = self.native_class()
             self.set_text(text)
 
         def set_text(self, text):

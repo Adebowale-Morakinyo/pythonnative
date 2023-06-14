@@ -1,6 +1,6 @@
 # PythonNative
 
-PythonNative is a cross-platform UI toolkit for Python. It allows you to create native UI elements such as buttons and labels in a Pythonic way, regardless of whether you're running on iOS or Android.
+PythonNative is a cross-platform Python tool kit for Android and iOS. It allows you to create native UI elements such as buttons and labels in a Pythonic way, regardless of whether you're running on iOS or Android.
 
 ## Installation
 

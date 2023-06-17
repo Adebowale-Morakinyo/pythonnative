@@ -20,4 +20,9 @@ setup(
         "rubicon-objc>=0.4.6,<0.5.0",
         # Add more requirements here as necessary
     ],
+    entry_points={
+        "console_scripts": [
+            "pn=cli.pn:main",
+        ],
+    },
 )

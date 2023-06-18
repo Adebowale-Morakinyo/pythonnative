@@ -26,6 +26,7 @@ if system == "iOS":
         def get_title(self) -> str:
             return self.native_instance.titleForState_(0)
 
+
     class Label:
         native_class = ObjCClass("UILabel")
 
@@ -38,6 +39,21 @@ if system == "iOS":
 
         def get_text(self) -> str:
             return self.native_instance.text()
+
+
+    class LinearLayout:
+        native_class = ObjCClass("UIStackView")
+
+        def __init__(self) -> None:
+            self.native_instance = self.native_class.alloc().initWithFrame_(
+                ((0, 0), (0, 0)))
+            self.native_instance.setAxis_(0)  # Set axis to vertical
+            self.views = []
+
+        def add_view(self, view):
+            self.views.append(view)
+            self.native_instance.addArrangedSubview_(view.native_instance)
+
 
 elif system == "Android":
     from java import jclass
@@ -56,6 +72,7 @@ elif system == "Android":
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
 
+
     class Label:
         native_class = jclass("android.widget.TextView")
 
@@ -68,6 +85,21 @@ elif system == "Android":
 
         def get_text(self) -> str:
             return self.native_instance.getText().toString()
+
+
+    class LinearLayout:
+        native_class = jclass("android.widget.LinearLayout")
+
+        def __init__(self) -> None:
+            self.native_instance = self.native_class()
+            self.native_instance.setOrientation(
+                1)  # Set orientation to vertical
+            self.views = []
+
+        def add_view(self, view):
+            self.views.append(view)
+            self.native_instance.addView(view.native_instance)
+
 
 else:
     raise PlatformNotDetectedError("Platform could not be detected or is unsupported.")

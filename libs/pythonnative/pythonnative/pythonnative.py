@@ -12,7 +12,26 @@ class PlatformNotDetectedError(Exception):
 if system == "iOS":
     from rubicon.objc import ObjCClass
 
-    # Map native iOS classes to PythonNative classes
+    class Screen:
+        native_class = ObjCClass("UIViewController")
+
+        def __init__(self):
+            self.native_instance = self.native_class.alloc().init()
+            self.layout = None
+
+        def add_view(self, view):
+            if self.layout is None:
+                raise ValueError("You must set a layout before adding views.")
+            self.layout.add_view(view)
+
+        def set_layout(self, layout):
+            self.layout = layout
+            self.native_instance.view().addSubview_(layout.native_instance)
+
+        def show(self):
+            # This method should contain code to present the ViewController
+            pass
+
     class Button:
         native_class = ObjCClass("UIButton")
 
@@ -25,7 +44,6 @@ if system == "iOS":
 
         def get_title(self) -> str:
             return self.native_instance.titleForState_(0)
-
 
     class Label:
         native_class = ObjCClass("UILabel")
@@ -40,13 +58,13 @@ if system == "iOS":
         def get_text(self) -> str:
             return self.native_instance.text()
 
-
     class LinearLayout:
         native_class = ObjCClass("UIStackView")
 
         def __init__(self) -> None:
             self.native_instance = self.native_class.alloc().initWithFrame_(
-                ((0, 0), (0, 0)))
+                ((0, 0), (0, 0))
+            )
             self.native_instance.setAxis_(0)  # Set axis to vertical
             self.views = []
 
@@ -54,11 +72,29 @@ if system == "iOS":
             self.views.append(view)
             self.native_instance.addArrangedSubview_(view.native_instance)
 
-
 elif system == "Android":
     from java import jclass
 
-    # Map native Android classes to PythonNative classes
+    class Screen:
+        native_class = jclass("android.app.Activity")
+
+        def __init__(self):
+            self.native_instance = self.native_class()
+            self.layout = None
+
+        def add_view(self, view):
+            if self.layout is None:
+                raise ValueError("You must set a layout before adding views.")
+            self.layout.add_view(view)
+
+        def set_layout(self, layout):
+            self.layout = layout
+            self.native_instance.setContentView(layout.native_instance)
+
+        def show(self):
+            # This method should contain code to start the Activity
+            pass
+
     class Button:
         native_class = jclass("android.widget.Button")
 
@@ -71,7 +107,6 @@ elif system == "Android":
 
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
-
 
     class Label:
         native_class = jclass("android.widget.TextView")
@@ -86,20 +121,17 @@ elif system == "Android":
         def get_text(self) -> str:
             return self.native_instance.getText().toString()
 
-
     class LinearLayout:
         native_class = jclass("android.widget.LinearLayout")
 
         def __init__(self) -> None:
             self.native_instance = self.native_class()
-            self.native_instance.setOrientation(
-                1)  # Set orientation to vertical
+            self.native_instance.setOrientation(1)  # Set orientation to vertical
             self.views = []
 
         def add_view(self, view):
             self.views.append(view)
             self.native_instance.addView(view.native_instance)
-
 
 else:
     raise PlatformNotDetectedError("Platform could not be detected or is unsupported.")

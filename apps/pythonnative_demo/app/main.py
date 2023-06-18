@@ -2,8 +2,8 @@ import pythonnative as pn
 
 
 def main():
-    # Create a main view
-    main_view = pn.View()
+    # Create a screen
+    screen = pn.Screen()
 
     # Create a layout
     layout = pn.LinearLayout()
@@ -16,11 +16,11 @@ def main():
     label = pn.Label("Hello, World!")
     layout.add_view(label)
 
-    # Add layout to main view
-    main_view.add_view(layout)
+    # Set layout to screen
+    screen.set_layout(layout)
 
-    # Display the main view
-    main_view.show()
+    # Display the screen
+    screen.show()
 
 
 if __name__ == "__main__":

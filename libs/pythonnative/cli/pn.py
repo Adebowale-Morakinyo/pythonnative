@@ -66,7 +66,9 @@ def run_project(args: argparse.Namespace) -> None:
 
     # Copy the user's Python code into the project
     src_dir = os.path.join(os.getcwd(), "app")
-    dest_dir = os.path.join(build_dir, "app")  # You might need to adjust this depending on the project structure
+    dest_dir = os.path.join(
+        build_dir, "app"
+    )  # You might need to adjust this depending on the project structure
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
     # Install any necessary Python packages into the project environment

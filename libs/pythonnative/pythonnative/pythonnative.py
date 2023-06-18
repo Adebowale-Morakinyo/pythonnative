@@ -8,14 +8,33 @@ class PlatformNotDetectedError(Exception):
     pass
 
 
+class View:
+    def __init__(self) -> None:
+        self.native_instance = None
+        self.native_class = None
+
+    def add_view(self, view):
+        raise NotImplementedError(
+            "This method should be implemented in a subclass.")
+
+    def set_layout(self, layout):
+        raise NotImplementedError(
+            "This method should be implemented in a subclass.")
+
+    def show(self):
+        raise NotImplementedError(
+            "This method should be implemented in a subclass.")
+
+
 # Depending on the system, import appropriate classes
 if system == "iOS":
     from rubicon.objc import ObjCClass
 
-    class Screen:
+    class Screen(View):
         native_class = ObjCClass("UIViewController")
 
         def __init__(self):
+            super().__init__()
             self.native_instance = self.native_class.alloc().init()
             self.layout = None
 
@@ -32,10 +51,11 @@ if system == "iOS":
             # This method should contain code to present the ViewController
             pass
 
-    class Button:
+    class Button(View):
         native_class = ObjCClass("UIButton")
 
         def __init__(self, title: str = "") -> None:
+            super().__init__()
             self.native_instance = self.native_class.alloc().init()
             self.set_title(title)
 
@@ -45,10 +65,11 @@ if system == "iOS":
         def get_title(self) -> str:
             return self.native_instance.titleForState_(0)
 
-    class Label:
+    class Label(View):
         native_class = ObjCClass("UILabel")
 
         def __init__(self, text: str = "") -> None:
+            super().__init__()
             self.native_instance = self.native_class.alloc().init()
             self.set_text(text)
 
@@ -58,10 +79,11 @@ if system == "iOS":
         def get_text(self) -> str:
             return self.native_instance.text()
 
-    class LinearLayout:
+    class LinearLayout(View):
         native_class = ObjCClass("UIStackView")
 
         def __init__(self) -> None:
+            super().__init__()
             self.native_instance = self.native_class.alloc().initWithFrame_(
                 ((0, 0), (0, 0))
             )
@@ -75,10 +97,11 @@ if system == "iOS":
 elif system == "Android":
     from java import jclass
 
-    class Screen:
+    class Screen(View):
         native_class = jclass("android.app.Activity")
 
         def __init__(self):
+            super().__init__()
             self.native_instance = self.native_class()
             self.layout = None
 
@@ -95,10 +118,11 @@ elif system == "Android":
             # This method should contain code to start the Activity
             pass
 
-    class Button:
+    class Button(View):
         native_class = jclass("android.widget.Button")
 
         def __init__(self, title: str = "") -> None:
+            super().__init__()
             self.native_instance = self.native_class()
             self.set_title(title)
 
@@ -108,10 +132,11 @@ elif system == "Android":
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
 
-    class Label:
+    class Label(View):
         native_class = jclass("android.widget.TextView")
 
         def __init__(self, text: str = "") -> None:
+            super().__init__()
             self.native_instance = self.native_class()
             self.set_text(text)
 
@@ -121,10 +146,11 @@ elif system == "Android":
         def get_text(self) -> str:
             return self.native_instance.getText().toString()
 
-    class LinearLayout:
+    class LinearLayout(View):
         native_class = jclass("android.widget.LinearLayout")
 
         def __init__(self) -> None:
+            super().__init__()
             self.native_instance = self.native_class()
             self.native_instance.setOrientation(1)  # Set orientation to vertical
             self.views = []

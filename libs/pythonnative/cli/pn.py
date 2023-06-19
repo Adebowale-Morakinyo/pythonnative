@@ -36,7 +36,7 @@ def create_android_project(project_name: str, destination: str) -> bool:
     :param destination: The directory where the project will be created.
     :return: True if the project was created successfully, False otherwise.
     """
-    android_template_url = "https://github.com/username/android_template/archive/main.zip"  # replace with actual URL
+    android_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/apps/templates/android_template.zip?raw=true"
 
     # Download and extract the Android template project
     download_template_project(android_template_url, destination)
@@ -52,7 +52,7 @@ def create_ios_project(project_name: str, destination: str) -> bool:
     :param destination: The directory where the project will be created.
     :return: True if the project was created successfully, False otherwise.
     """
-    ios_template_url = "https://github.com/username/ios_template/archive/main.zip"  # replace with actual URL
+    ios_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/apps/templates/ios_template.zip?raw=true"
 
     # Download and extract the iOS template project
     download_template_project(ios_template_url, destination)

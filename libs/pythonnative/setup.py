@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="pythonnative",
-    version="0.0.1",
+    version="0.1.0",
     author="Owen Carey",
     author_email="pythonnative@gmail.com",
     description="A cross-platform Python tool kit for Android and iOS",

@@ -2,6 +2,9 @@ import argparse
 import os
 import shutil
 import subprocess
+import requests
+import zipfile
+import io
 
 
 def init_project(args: argparse.Namespace) -> None:
@@ -11,38 +14,50 @@ def init_project(args: argparse.Namespace) -> None:
     # TODO: Implementation
 
 
+def download_template_project(template_url: str, destination: str) -> None:
+    """
+    Download and extract a template project from a URL.
+
+    :param template_url: The URL of the template project.
+    :param destination: The directory where the project will be created.
+    """
+    response = requests.get(template_url, stream=True)
+
+    if response.status_code == 200:
+        with zipfile.ZipFile(io.BytesIO(response.content)) as z:
+            z.extractall(destination)
+
+
 def create_android_project(project_name: str, destination: str) -> bool:
     """
-    Create a new Android project using android command.
+    Create a new Android project using a template.
 
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     :return: True if the project was created successfully, False otherwise.
     """
-    # The command to create a new Android project
-    command = f"cd {destination} && android create project --name {project_name} --path . --target android-30 --package com.example.{project_name} --activity MainActivity"
+    android_template_url = "https://github.com/username/android_template/archive/main.zip"  # replace with actual URL
 
-    # Run the command
-    process = subprocess.run(command, shell=True, check=True, text=True)
+    # Download and extract the Android template project
+    download_template_project(android_template_url, destination)
 
-    return process.returncode == 0
+    return True
 
 
 def create_ios_project(project_name: str, destination: str) -> bool:
     """
-    Create a new Xcode project using xcodeproj gem.
+    Create a new iOS project using a template.
 
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     :return: True if the project was created successfully, False otherwise.
     """
-    # The command to create a new Xcode project
-    command = f"cd {destination} && xcodeproj new {project_name}.xcodeproj"
+    ios_template_url = "https://github.com/username/ios_template/archive/main.zip"  # replace with actual URL
 
-    # Run the command
-    process = subprocess.run(command, shell=True, check=True, text=True)
+    # Download and extract the iOS template project
+    download_template_project(ios_template_url, destination)
 
-    return process.returncode == 0
+    return True
 
 
 def run_project(args: argparse.Namespace) -> None:

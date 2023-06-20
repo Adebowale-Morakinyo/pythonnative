@@ -1,7 +1,7 @@
-import platform
+from .utils import IS_ANDROID
 from .view import View
 
-if platform.system() == "Android":
+if IS_ANDROID:
     from java import jclass
 
     class Button(View):
@@ -18,7 +18,7 @@ if platform.system() == "Android":
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
 
-elif platform.system() == "iOS":
+else:
     from rubicon.objc import ObjCClass
 
     class Button(View):

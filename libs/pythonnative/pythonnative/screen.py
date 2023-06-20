@@ -1,7 +1,7 @@
-import platform
+from .utils import IS_ANDROID
 from .view import View
 
-if platform.system() == "Android":
+if IS_ANDROID:
     from java import jclass
 
     class Screen(View):
@@ -25,7 +25,7 @@ if platform.system() == "Android":
             # This method should contain code to start the Activity
             pass
 
-elif platform.system() == "iOS":
+else:
     from rubicon.objc import ObjCClass
 
     class Screen(View):

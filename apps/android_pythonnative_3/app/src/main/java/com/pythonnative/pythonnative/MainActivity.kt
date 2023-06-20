@@ -40,6 +40,10 @@ class MainActivity : AppCompatActivity() {
         val pyLayout = createWidgetsModule.callAttr("create_widgets", this).toJava(LinearLayout::class.java)
         layoutMain.addView(pyLayout)
 
+//        val createLayoutModule = py.getModule("create_pn_layout")
+//        val pyLayout = createLayoutModule.callAttr("create_pn_layout").toJava(LinearLayout::class.java)
+//        layoutMain.addView(pyLayout)
+
 //        val createConstraintLayoutModule = py.getModule("create_constraint_layout")
 //        val pyLayout = createConstraintLayoutModule.callAttr("create_constraint_layout", this).toJava(ConstraintLayout::class.java)
 //        layoutMain.addView(pyLayout)

@@ -1,7 +1,7 @@
-import platform
+from .utils import IS_ANDROID
 from .view import View
 
-if platform.system() == "Android":
+if IS_ANDROID:
     from java import jclass
 
     class LinearLayout(View):
@@ -17,7 +17,7 @@ if platform.system() == "Android":
             self.views.append(view)
             self.native_instance.addView(view.native_instance)
 
-elif platform.system() == "iOS":
+else:
     from rubicon.objc import ObjCClass
 
     class LinearLayout(View):

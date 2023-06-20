@@ -5,10 +5,9 @@ if IS_ANDROID:
     from java import jclass
 
     class Label(View):
-        native_class = jclass("android.widget.TextView")
-
         def __init__(self, context, text: str = "") -> None:
             super().__init__()
+            self.native_class = jclass("android.widget.TextView")
             self.native_instance = self.native_class(context)
             self.set_text(text)
 
@@ -22,10 +21,9 @@ else:
     from rubicon.objc import ObjCClass
 
     class Label(View):
-        native_class = ObjCClass("UILabel")
-
         def __init__(self, text: str = "") -> None:
             super().__init__()
+            self.native_class = ObjCClass("UILabel")
             self.native_instance = self.native_class.alloc().init()
             self.set_text(text)
 

@@ -5,10 +5,9 @@ if IS_ANDROID:
     from java import jclass
 
     class Screen(View):
-        native_class = jclass("android.app.Activity")
-
         def __init__(self):
             super().__init__()
+            self.native_class = jclass("android.app.Activity")
             self.native_instance = self.native_class()
             self.layout = None
 
@@ -29,10 +28,9 @@ else:
     from rubicon.objc import ObjCClass
 
     class Screen(View):
-        native_class = ObjCClass("UIViewController")
-
         def __init__(self):
             super().__init__()
+            self.native_class = ObjCClass("UIViewController")
             self.native_instance = self.native_class.alloc().init()
             self.layout = None
 

@@ -19,7 +19,9 @@ def create_constraint_layout(context):
 
     # Create BottomNavigationView
     bottom_nav = BottomNavigationView(context)
-    bottom_nav.setId(View.generateViewId()) # Add this line to generate unique id for the view
+    bottom_nav.setId(
+        View.generateViewId()
+    )  # Add this line to generate unique id for the view
 
     # Create Menu for BottomNavigationView
     menu = bottom_nav.getMenu()
@@ -34,7 +36,7 @@ def create_constraint_layout(context):
     # Add BottomNavigationView to ConstraintLayout
     nav_layout_params = ConstraintLayout.LayoutParams(
         ConstraintLayout.LayoutParams.MATCH_PARENT,
-        ConstraintLayout.LayoutParams.WRAP_CONTENT
+        ConstraintLayout.LayoutParams.WRAP_CONTENT,
     )
     # Set the constraints here
     nav_layout_params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID

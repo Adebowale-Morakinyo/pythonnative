@@ -5,12 +5,11 @@ if IS_ANDROID:
     from java import jclass
 
     class LinearLayout(View):
-        native_class = jclass("android.widget.LinearLayout")
-
         def __init__(self, context) -> None:
             super().__init__()
+            self.native_class = jclass("android.widget.LinearLayout")
             self.native_instance = self.native_class(context)
-            self.native_instance.setOrientation(self.native_class.VERTICAL)  # Set orientation to vertical
+            self.native_instance.setOrientation(self.native_class.VERTICAL)
             self.views = []
 
         def add_view(self, view):
@@ -21,10 +20,9 @@ else:
     from rubicon.objc import ObjCClass
 
     class LinearLayout(View):
-        native_class = ObjCClass("UIStackView")
-
         def __init__(self) -> None:
             super().__init__()
+            self.native_class = ObjCClass("UIStackView")
             self.native_instance = self.native_class.alloc().initWithFrame_(
                 ((0, 0), (0, 0))
             )

@@ -5,10 +5,9 @@ if IS_ANDROID:
     from java import jclass
 
     class Button(View):
-        native_class = jclass("android.widget.Button")
-
         def __init__(self, context, title: str = "") -> None:
             super().__init__()
+            self.native_class = jclass("android.widget.Button")
             self.native_instance = self.native_class(context)
             self.set_title(title)
 
@@ -22,10 +21,9 @@ else:
     from rubicon.objc import ObjCClass
 
     class Button(View):
-        native_class = ObjCClass("UIButton")
-
         def __init__(self, title: str = "") -> None:
             super().__init__()
+            self.native_class = ObjCClass("UIButton")
             self.native_instance = self.native_class.alloc().init()
             self.set_title(title)
 

@@ -21,8 +21,13 @@ android {
         }
         python {
             pip {
+                // https://chaquo.com/chaquopy/doc/current/android.html#android-requirements
 //                install "matplotlib"
-                install "pythonnative"
+//                install "pythonnative"
+
+                // A directory containing a setup.py, relative to the project
+                // directory (must contain at least one slash):
+                install "/Users/owenthcarey/Documents/pythonnative-workspace/libs/pythonnative"
             }
         }
     }

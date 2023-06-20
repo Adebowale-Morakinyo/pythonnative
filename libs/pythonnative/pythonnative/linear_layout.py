@@ -7,10 +7,10 @@ if IS_ANDROID:
     class LinearLayout(View):
         native_class = jclass("android.widget.LinearLayout")
 
-        def __init__(self) -> None:
+        def __init__(self, context) -> None:
             super().__init__()
-            self.native_instance = self.native_class()
-            self.native_instance.setOrientation(1)  # Set orientation to vertical
+            self.native_instance = self.native_class(context)
+            self.native_instance.setOrientation(self.native_class.VERTICAL)  # Set orientation to vertical
             self.views = []
 
         def add_view(self, view):

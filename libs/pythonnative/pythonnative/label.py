@@ -7,9 +7,9 @@ if IS_ANDROID:
     class Label(View):
         native_class = jclass("android.widget.TextView")
 
-        def __init__(self, text: str = "") -> None:
+        def __init__(self, context, text: str = "") -> None:
             super().__init__()
-            self.native_instance = self.native_class()
+            self.native_instance = self.native_class(context)
             self.set_text(text)
 
         def set_text(self, text: str) -> None:

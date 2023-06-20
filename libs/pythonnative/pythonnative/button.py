@@ -7,9 +7,9 @@ if IS_ANDROID:
     class Button(View):
         native_class = jclass("android.widget.Button")
 
-        def __init__(self, title: str = "") -> None:
+        def __init__(self, context, title: str = "") -> None:
             super().__init__()
-            self.native_instance = self.native_class()
+            self.native_instance = self.native_class(context)
             self.set_title(title)
 
         def set_title(self, title: str) -> None:

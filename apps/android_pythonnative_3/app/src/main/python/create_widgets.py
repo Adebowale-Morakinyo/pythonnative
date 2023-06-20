@@ -1,4 +1,26 @@
-from java import jclass
+from java import dynamic_proxy, jclass, static_proxy
+import random
+
+# Import View class which contains OnClickListener
+View = jclass('android.view.View')
+Color = jclass('android.graphics.Color')
+
+
+class ButtonClickListener(dynamic_proxy(View.OnClickListener)):
+    def __init__(self, button):
+        super().__init__()
+        self.button = button
+
+    def onClick(self, view):
+        # Generate a random hex color.
+        color = "#" + "".join(
+            [random.choice("0123456789ABCDEF") for _ in range(6)])
+
+        # Set the button's background color.
+        self.button.setBackgroundColor(Color.parseColor(color))
+
+        # Print something to the console.
+        print("Button clicked! New color is " + color)
 
 
 def create_widgets(context):
@@ -62,6 +84,7 @@ def create_widgets(context):
     # Create Button
     button = Button(context)
     button.setText("Button created in Python")
+    button.setOnClickListener(ButtonClickListener(button))
     layout.addView(button)
 
     # Create TextView

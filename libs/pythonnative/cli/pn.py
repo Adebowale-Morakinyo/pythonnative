@@ -81,9 +81,15 @@ def run_project(args: argparse.Namespace) -> None:
 
     # Copy the user's Python code into the project
     src_dir = os.path.join(os.getcwd(), "app")
-    dest_dir = os.path.join(
-        build_dir, "app"
-    )  # You might need to adjust this depending on the project structure
+
+    # Adjust the destination directory for Android project
+    if platform == "android":
+        dest_dir = os.path.join(build_dir, "android_template", "app", "src", "main", "python", "app")
+    elif platform == "ios":
+        dest_dir = os.path.join(build_dir, "app")  # Adjust this based on your iOS project structure
+
+    # Create the destination directory if it doesn't exist
+    os.makedirs(dest_dir, exist_ok=True)
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
     # Install any necessary Python packages into the project environment
@@ -91,7 +97,29 @@ def run_project(args: argparse.Namespace) -> None:
     # TODO: Fill in with actual commands for installing Python packages
 
     # Run the project
-    # TODO: Fill in with actual commands for running the project
+    if platform == "android":
+        # Change to the Android project directory
+        android_project_dir = os.path.join(build_dir, "android_template")
+        os.chdir(android_project_dir)
+
+        # Add executable permissions to the gradlew script
+        gradlew_path = os.path.join(android_project_dir, "gradlew")
+        os.chmod(gradlew_path,
+                 0o755)  # this makes the file executable for the user
+
+        # Build the Android project and install it on the device
+        jdk_path = subprocess.check_output(
+            ["brew", "--prefix", "openjdk@17"]).decode().strip()
+        env = os.environ.copy()
+        env["JAVA_HOME"] = jdk_path
+        subprocess.run(["./gradlew", "installDebug"], check=True, env=env)
+
+        # Run the Android app
+        # Assumes that the package name of your app is "com.example.myapp" and the main activity is "MainActivity"
+        # Replace "com.example.myapp" and ".MainActivity" with your actual package name and main activity
+        subprocess.run(["adb", "shell", "am", "start", "-n",
+                        "com.pythonnative.android_template/.MainActivity"],
+                       check=True)
 
 
 def clean_project(args: argparse.Namespace) -> None:

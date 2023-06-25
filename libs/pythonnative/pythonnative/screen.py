@@ -1,15 +1,43 @@
+from abc import ABC, abstractmethod
 from .utils import IS_ANDROID
-from .view import View
+from .view import ViewBase
+
+# ========================================
+# Base class
+# ========================================
+
+
+class ScreenBase(ABC):
+    @abstractmethod
+    def __init__(self) -> None:
+        super().__init__()
+        self.layout = None
+
+    @abstractmethod
+    def add_view(self, view) -> None:
+        pass
+
+    @abstractmethod
+    def set_layout(self, layout) -> None:
+        pass
+
+    @abstractmethod
+    def show(self) -> None:
+        pass
+
 
 if IS_ANDROID:
+    # ========================================
+    # Android class
+    # ========================================
+
     from java import jclass
 
-    class Screen(View):
+    class Screen(ScreenBase, ViewBase):
         def __init__(self):
             super().__init__()
             self.native_class = jclass("android.app.Activity")
             self.native_instance = self.native_class()
-            self.layout = None
 
         def add_view(self, view):
             if self.layout is None:
@@ -25,14 +53,17 @@ if IS_ANDROID:
             pass
 
 else:
+    # ========================================
+    # iOS class
+    # ========================================
+
     from rubicon.objc import ObjCClass
 
-    class Screen(View):
+    class Screen(ScreenBase, ViewBase):
         def __init__(self):
             super().__init__()
             self.native_class = ObjCClass("UIViewController")
             self.native_instance = self.native_class.alloc().init()
-            self.layout = None
 
         def add_view(self, view):
             if self.layout is None:

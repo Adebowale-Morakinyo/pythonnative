@@ -1,10 +1,34 @@
+from abc import ABC, abstractmethod
 from .utils import IS_ANDROID
-from .view import View
+from .view import ViewBase
+
+# ========================================
+# Base class
+# ========================================
+
+
+class ButtonBase(ABC):
+    @abstractmethod
+    def __init__(self) -> None:
+        super().__init__()
+
+    @abstractmethod
+    def set_title(self, title: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_title(self) -> str:
+        pass
+
 
 if IS_ANDROID:
+    # ========================================
+    # Android class
+    # ========================================
+
     from java import jclass
 
-    class Button(View):
+    class Button(ButtonBase, ViewBase):
         def __init__(self, context, title: str = "") -> None:
             super().__init__()
             self.native_class = jclass("android.widget.Button")
@@ -18,9 +42,13 @@ if IS_ANDROID:
             return self.native_instance.getText().toString()
 
 else:
+    # ========================================
+    # iOS class
+    # ========================================
+
     from rubicon.objc import ObjCClass
 
-    class Button(View):
+    class Button(ButtonBase, ViewBase):
         def __init__(self, title: str = "") -> None:
             super().__init__()
             self.native_class = ObjCClass("UIButton")

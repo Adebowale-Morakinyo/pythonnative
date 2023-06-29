@@ -7,8 +7,8 @@ def main(context):
     label = pn.Label(context, "This is a PythonNative label")
     layout.add_view(label)
 
-    button = pn.Button(context, "Click me")
-    layout.add_view(button)
+    switch = pn.Switch(context)
+    layout.add_view(switch)
 
     for i in range(100):
         button = pn.Button(context, "Click me")

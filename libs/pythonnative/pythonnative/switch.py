@@ -6,6 +6,7 @@ from .view import ViewBase
 # Base class
 # ========================================
 
+
 class SwitchBase(ABC):
     @abstractmethod
     def __init__(self) -> None:

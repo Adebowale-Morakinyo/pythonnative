@@ -10,6 +10,16 @@ def main(context):
     switch = pn.Switch(context)
     layout.add_view(switch)
 
+    text_field = pn.TextField(context)
+    layout.add_view(text_field)
+
+    text_view = pn.TextView(context)
+    layout.add_view(text_view)
+
+    web_view = pn.WebView(context)
+    web_view.load_url("https://www.djangoproject.com/")
+    layout.add_view(web_view)
+
     for i in range(100):
         button = pn.Button(context, "Click me")
         layout.add_view(button)

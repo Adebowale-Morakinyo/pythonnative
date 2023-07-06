@@ -2,7 +2,7 @@ import pythonnative as pn
 
 
 def create_pn_layout(context):
-    layout = pn.LinearLayout(context)
+    layout = pn.StackView(context)
 
     label = pn.Label(context, "This is a PythonNative label")
     layout.add_view(label)

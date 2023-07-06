@@ -41,7 +41,6 @@ if IS_ANDROID:
         def get_query(self) -> str:
             return self.native_instance.getQuery().toString()
 
-
 else:
     # ========================================
     # iOS class
@@ -61,4 +60,3 @@ else:
 
         def get_query(self) -> str:
             return self.native_instance.searchText()
-

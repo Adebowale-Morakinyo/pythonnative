@@ -33,8 +33,9 @@ if IS_ANDROID:
             super().__init__()
             self.native_class = jclass("android.widget.ProgressBar")
             # self.native_instance = self.native_class(context, None, android.R.attr.progressBarStyleHorizontal)
-            self.native_instance = self.native_class(context, None,
-                                                     jclass("android.R$attr").progressBarStyleHorizontal)
+            self.native_instance = self.native_class(
+                context, None, jclass("android.R$attr").progressBarStyleHorizontal
+            )
             self.native_instance.setIndeterminate(False)
 
         def set_progress(self, progress: float) -> None:
@@ -54,7 +55,9 @@ else:
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIProgressView")
-            self.native_instance = self.native_class.alloc().initWithProgressViewStyle_(0)  # 0: UIProgressViewStyleDefault
+            self.native_instance = self.native_class.alloc().initWithProgressViewStyle_(
+                0
+            )  # 0: UIProgressViewStyleDefault
 
         def set_progress(self, progress: float) -> None:
             self.native_instance.setProgress_animated_(progress, False)

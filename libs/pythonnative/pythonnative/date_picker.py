@@ -29,7 +29,9 @@ if IS_ANDROID:
     from java import jclass
 
     class DatePicker(DatePickerBase, ViewBase):
-        def __init__(self, context, year: int = 0, month: int = 0, day: int = 0) -> None:
+        def __init__(
+            self, context, year: int = 0, month: int = 0, day: int = 0
+        ) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.DatePicker")
             self.native_instance = self.native_class(context)

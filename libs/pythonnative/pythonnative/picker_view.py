@@ -41,7 +41,6 @@ if IS_ANDROID:
         def get_selected(self) -> int:
             return self.native_instance.getSelectedItemPosition()
 
-
 else:
     # ========================================
     # iOS class

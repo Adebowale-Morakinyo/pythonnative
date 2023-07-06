@@ -34,7 +34,6 @@ if IS_ANDROID:
         def load_url(self, url: str) -> None:
             self.native_instance.loadUrl(url)
 
-
 else:
     # ========================================
     # iOS class

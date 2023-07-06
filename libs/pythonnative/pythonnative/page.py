@@ -7,7 +7,7 @@ from .view import ViewBase
 # ========================================
 
 
-class ScreenBase(ABC):
+class PageBase(ABC):
     @abstractmethod
     def __init__(self) -> None:
         super().__init__()
@@ -33,7 +33,7 @@ if IS_ANDROID:
 
     from java import jclass
 
-    class Screen(ScreenBase, ViewBase):
+    class Page(PageBase, ViewBase):
         def __init__(self):
             super().__init__()
             self.native_class = jclass("android.app.Activity")
@@ -59,7 +59,7 @@ else:
 
     from rubicon.objc import ObjCClass
 
-    class Screen(ScreenBase, ViewBase):
+    class Page(PageBase, ViewBase):
         def __init__(self):
             super().__init__()
             self.native_class = ObjCClass("UIViewController")

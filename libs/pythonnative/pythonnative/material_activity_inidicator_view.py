@@ -6,6 +6,7 @@ from .view import ViewBase
 # Base class
 # ========================================
 
+
 class MaterialActivityIndicatorViewBase(ABC):
     @abstractmethod
     def __init__(self) -> None:
@@ -30,7 +31,9 @@ if IS_ANDROID:
     class MaterialActivityIndicatorView(MaterialActivityIndicatorViewBase, ViewBase):
         def __init__(self, context) -> None:
             super().__init__()
-            self.native_class = jclass("com.google.android.material.progressindicator.CircularProgressIndicator")
+            self.native_class = jclass(
+                "com.google.android.material.progressindicator.CircularProgressIndicator"
+            )
             self.native_instance = self.native_class(context)
             self.native_instance.setIndeterminate(True)
 
@@ -53,7 +56,9 @@ else:
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIActivityIndicatorView")
-            self.native_instance = self.native_class.alloc().initWithActivityIndicatorStyle_(0)  # 0: UIActivityIndicatorViewStyleLarge
+            self.native_instance = (
+                self.native_class.alloc().initWithActivityIndicatorStyle_(0)
+            )  # 0: UIActivityIndicatorViewStyleLarge
             self.native_instance.hidesWhenStopped = True
 
         def start_animating(self) -> None:

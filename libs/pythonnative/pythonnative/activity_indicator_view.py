@@ -55,7 +55,9 @@ else:
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIActivityIndicatorView")
-            self.native_instance = self.native_class.alloc().initWithActivityIndicatorStyle_(0)  # 0: UIActivityIndicatorViewStyleLarge
+            self.native_instance = (
+                self.native_class.alloc().initWithActivityIndicatorStyle_(0)
+            )  # 0: UIActivityIndicatorViewStyleLarge
             self.native_instance.hidesWhenStopped = True
 
         def start_animating(self) -> None:

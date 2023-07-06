@@ -31,7 +31,9 @@ if IS_ANDROID:
     class MaterialProgressView(MaterialProgressViewBase, ViewBase):
         def __init__(self, context) -> None:
             super().__init__()
-            self.native_class = jclass("com.google.android.material.progressindicator.LinearProgressIndicator")
+            self.native_class = jclass(
+                "com.google.android.material.progressindicator.LinearProgressIndicator"
+            )
             self.native_instance = self.native_class(context)
             self.native_instance.setIndeterminate(False)
 
@@ -52,7 +54,9 @@ else:
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIProgressView")
-            self.native_instance = self.native_class.alloc().initWithProgressViewStyle_(0)  # 0: UIProgressViewStyleDefault
+            self.native_instance = self.native_class.alloc().initWithProgressViewStyle_(
+                0
+            )  # 0: UIProgressViewStyleDefault
 
         def set_progress(self, progress: float) -> None:
             self.native_instance.setProgress_animated_(progress, False)

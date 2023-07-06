@@ -31,7 +31,9 @@ if IS_ANDROID:
     class MaterialDatePicker(MaterialDatePickerBase, ViewBase):
         def __init__(self, year: int = 0, month: int = 0, day: int = 0) -> None:
             super().__init__()
-            self.native_class = jclass("com.google.android.material.datepicker.MaterialDatePicker")
+            self.native_class = jclass(
+                "com.google.android.material.datepicker.MaterialDatePicker"
+            )
             self.builder = self.native_class.Builder.datePicker()
             self.set_date(year, month, day)
             self.native_instance = self.builder.build()
@@ -39,6 +41,7 @@ if IS_ANDROID:
         def set_date(self, year: int, month: int, day: int) -> None:
             # MaterialDatePicker uses milliseconds since epoch to set date
             from java.util import Calendar
+
             cal = Calendar.getInstance()
             cal.set(year, month, day)
             milliseconds = cal.getTimeInMillis()
@@ -47,9 +50,14 @@ if IS_ANDROID:
         def get_date(self) -> tuple:
             # Convert selection (milliseconds since epoch) back to a date
             from java.util import Calendar
+
             cal = Calendar.getInstance()
             cal.setTimeInMillis(self.native_instance.getSelection())
-            return cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
+            return (
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH),
+            )
 
 else:
     # ========================================

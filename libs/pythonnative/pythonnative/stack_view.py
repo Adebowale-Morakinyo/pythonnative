@@ -7,7 +7,7 @@ from .view import ViewBase
 # ========================================
 
 
-class LinearLayoutBase(ABC):
+class StackViewBase(ABC):
     @abstractmethod
     def __init__(self) -> None:
         super().__init__()
@@ -25,7 +25,7 @@ if IS_ANDROID:
 
     from java import jclass
 
-    class LinearLayout(LinearLayoutBase, ViewBase):
+    class StackView(StackViewBase, ViewBase):
         def __init__(self, context) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.LinearLayout")
@@ -43,7 +43,7 @@ else:
 
     from rubicon.objc import ObjCClass
 
-    class LinearLayout(LinearLayoutBase, ViewBase):
+    class StackView(StackViewBase, ViewBase):
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIStackView")

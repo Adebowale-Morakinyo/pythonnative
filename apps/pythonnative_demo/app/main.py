@@ -2,25 +2,25 @@ import pythonnative as pn
 
 
 def main():
-    # Create a screen
-    screen = pn.Screen()
+    # Create a full-screen page
+    page = pn.Page()
 
     # Create a layout
-    layout = pn.LinearLayout()
+    stack_view = pn.StackView()
 
-    # Create a button and add it to layout
+    # Create a button and add it to the layout
     button = pn.Button("Click Me")
-    layout.add_view(button)
+    stack_view.add_view(button)
 
-    # Create a label and add it to layout
+    # Create a label and add it to the layout
     label = pn.Label("Hello, World!")
-    layout.add_view(label)
+    stack_view.add_view(label)
 
-    # Set layout to screen
-    screen.set_layout(layout)
+    # Set the layout
+    page.set_layout(stack_view)
 
-    # Display the screen
-    screen.show()
+    # Display the page
+    page.show()
 
 
 if __name__ == "__main__":

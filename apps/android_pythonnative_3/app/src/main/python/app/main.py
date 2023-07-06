@@ -28,6 +28,44 @@ def main(context):
     progress_view.set_progress(0.5)
     layout.add_view(progress_view)
 
+    material_progress_view = pn.MaterialProgressView(context)
+    material_progress_view.set_progress(0.5)
+    layout.add_view(material_progress_view)
+
+    material_button = pn.MaterialButton(context, "MaterialButton")
+    layout.add_view(material_button)
+
+    search_bar = pn.SearchBar(context)
+    layout.add_view(search_bar)
+
+    image_view = pn.ImageView(context)
+    layout.add_view(image_view)
+
+    picker_view = pn.PickerView(context)
+    layout.add_view(picker_view)
+
+    # date_picker = pn.DatePicker(context)
+    # layout.add_view(date_picker)
+
+    # time_picker = pn.TimePicker(context)
+    # layout.add_view(time_picker)
+
+    # TODO: fix
+    # material_time_picker = pn.MaterialTimePicker(context)
+    # layout.add_view(material_time_picker)
+
+    # TODO: fix
+    # material_date_picker = pn.MaterialDatePicker(context)
+    # layout.add_view(material_date_picker)
+
+    # TODO: fix
+    # material_switch = pn.MaterialSwitch(context)
+    # layout.add_view(material_switch)
+
+    # TODO: fix
+    # material_search_bar = pn.MaterialSearchBar(context)
+    # layout.add_view(material_search_bar)
+
     # web_view = pn.WebView(context)
     # web_view.load_url("https://www.djangoproject.com/")
     # layout.add_view(web_view)

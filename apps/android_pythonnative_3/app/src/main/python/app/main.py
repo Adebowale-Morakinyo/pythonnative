@@ -1,7 +1,7 @@
 import pythonnative as pn
 
 
-def main(context):
+def on_create(context):
     stack_view = pn.StackView(context)
 
     # label = pn.Label(context, "This is a PythonNative label")
@@ -75,3 +75,35 @@ def main(context):
     #     stack_view.add_view(button)
 
     return stack_view.native_instance
+
+
+def on_start():
+    print("on_start() called")
+
+
+def on_resume():
+    print("on_resume() called")
+
+
+def on_pause():
+    print("on_pause() called")
+
+
+def on_stop():
+    print("on_stop() called")
+
+
+def on_destroy():
+    print("on_destroy() called")
+
+
+def on_restart():
+    print("on_restart() called")
+
+
+def on_save_instance_state():
+    print("on_save_instance_state() called")
+
+
+def on_restore_instance_state():
+    print("on_restore_instance_state() called")

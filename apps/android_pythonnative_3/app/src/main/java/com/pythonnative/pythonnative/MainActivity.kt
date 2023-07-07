@@ -40,11 +40,15 @@ class MainActivity : AppCompatActivity() {
         val py = Python.getInstance()
 
         // Create an instance of the Page class
-        val pyModule = py.getModule("app/main_2")
-        page = pyModule.callAttr("Page", this)
+//        val pyModule = py.getModule("app/main_2")
+//        page = pyModule.callAttr("Page", this)
+//        val pyLayout = page.callAttr("on_create").toJava(View::class.java)
+//        setContentView(pyLayout)
 
-        val pyLayout = page.callAttr("on_create").toJava(View::class.java)
-        setContentView(pyLayout)
+        // Create an instance of the Page class
+        val pyModule = py.getModule("app/main_3")
+        page = pyModule.callAttr("MainPage", this)
+        page.callAttr("on_create")
 
 //        val pyModule = py.getModule("app/main")
 //        val pyLayout = pyModule.callAttr("on_create", this).toJava(View::class.java)

@@ -2,12 +2,17 @@ import pythonnative as pn
 
 
 class MainPage(pn.Page):
-    def __init__(self, context):
-        super().__init__()
-        self.context = context
+    def __init__(self, native_instance):
+        super().__init__(native_instance)
 
     def on_create(self):
         super().on_create()
+        stack_view = pn.StackView(self.native_instance)
+        button = pn.Button(self.native_instance, "Button")
+        label = pn.Label(self.native_instance, "Label")
+        stack_view.add_view(button)
+        stack_view.add_view(label)
+        self.set_root_view(stack_view)
 
     def on_start(self):
         super().on_start()

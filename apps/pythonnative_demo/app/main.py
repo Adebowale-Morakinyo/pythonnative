@@ -17,7 +17,7 @@ def main():
     stack_view.add_view(label)
 
     # Set the layout
-    page.set_layout(stack_view)
+    page.set_root_view(stack_view)
 
     # Display the page
     page.show()

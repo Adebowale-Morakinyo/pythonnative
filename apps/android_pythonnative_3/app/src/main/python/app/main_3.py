@@ -8,10 +8,9 @@ class MainPage(pn.Page):
     def on_create(self):
         super().on_create()
         stack_view = pn.StackView(self.native_instance)
-        button = pn.Button(self.native_instance, "Button")
-        label = pn.Label(self.native_instance, "Label")
-        stack_view.add_view(button)
-        stack_view.add_view(label)
+        list_data = ["item_{}".format(i) for i in range(100)]
+        list_view = pn.ListView(self.native_instance, list_data)
+        stack_view.add_view(list_view)
         self.set_root_view(stack_view)
 
     def on_start(self):

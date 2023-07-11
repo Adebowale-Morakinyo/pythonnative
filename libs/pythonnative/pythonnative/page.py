@@ -83,6 +83,10 @@ class PageBase(ABC):
     def on_restore_instance_state(self) -> None:
         pass
 
+    @abstractmethod
+    def navigate_to(self, page) -> None:
+        pass
+
 
 if IS_ANDROID:
     # ========================================
@@ -128,6 +132,11 @@ if IS_ANDROID:
         def on_restore_instance_state(self) -> None:
             print("Android on_restore_instance_state() called")
 
+        def navigate_to(self, page) -> None:
+            IntentClass = jclass("android.content.Intent")
+            intent = IntentClass(self.native_instance, page.native_class)
+            self.native_instance.startActivity(intent)
+
 else:
     # ========================================
     # iOS class
@@ -171,3 +180,7 @@ else:
 
         def on_restore_instance_state(self) -> None:
             print("iOS on_restore_instance_state() called")
+
+        def navigate_to(self, page) -> None:
+            self.native_instance.navigationController().pushViewControllerAnimated_(
+                page.native_instance, True)

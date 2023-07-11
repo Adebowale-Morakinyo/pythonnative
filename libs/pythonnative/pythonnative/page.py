@@ -183,4 +183,5 @@ else:
 
         def navigate_to(self, page) -> None:
             self.native_instance.navigationController().pushViewControllerAnimated_(
-                page.native_instance, True)
+                page.native_instance, True
+            )

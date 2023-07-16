@@ -12,7 +12,8 @@ class MainPage(pn.Page):
         # list_view = pn.ListView(self.native_instance, list_data)
         # stack_view.add_view(list_view)
         button = pn.Button(self.native_instance, "Button")
-        button.set_on_click(lambda: print("Button was clicked!"))
+        button.set_on_click(lambda: self.navigate_to(""))
+        # button.set_on_click(lambda: print("Button was clicked!"))
         stack_view.add_view(button)
         self.set_root_view(stack_view)
 

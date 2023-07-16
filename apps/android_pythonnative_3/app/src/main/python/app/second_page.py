@@ -8,9 +8,8 @@ class SecondPage(pn.Page):
     def on_create(self):
         super().on_create()
         stack_view = pn.StackView(self.native_instance)
-        button = pn.Button(self.native_instance, "Button")
-        button.set_on_click(lambda: print("Button was clicked!"))
-        stack_view.add_view(button)
+        label = pn.Label(self.native_instance, "Second page!")
+        stack_view.add_view(label)
         self.set_root_view(stack_view)
 
     def on_start(self):

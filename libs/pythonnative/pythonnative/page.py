@@ -134,8 +134,10 @@ if IS_ANDROID:
 
         def navigate_to(self, page) -> None:
             # intent = jclass("android.content.Intent")(self.native_instance, page.native_class)
-            intent = jclass("android.content.Intent")(self.native_instance,
-                                                      jclass("com.pythonnative.pythonnative.SecondActivity"))
+            intent = jclass("android.content.Intent")(
+                self.native_instance,
+                jclass("com.pythonnative.pythonnative.SecondActivity"),
+            )
             self.native_instance.startActivity(intent)
 
 else:

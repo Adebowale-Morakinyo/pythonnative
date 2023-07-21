@@ -14,6 +14,7 @@ from .material_time_picker import MaterialTimePicker
 from .page import Page
 from .picker_view import PickerView
 from .progress_view import ProgressView
+from .scroll_view import ScrollView
 from .search_bar import SearchBar
 from .stack_view import StackView
 from .switch import Switch
@@ -39,6 +40,7 @@ __all__ = [
     "Page",
     "PickerView",
     "ProgressView",
+    "ScrollView",
     "SearchBar",
     "StackView",
     "Switch",

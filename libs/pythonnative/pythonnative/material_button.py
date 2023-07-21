@@ -24,6 +24,7 @@ class MaterialButtonBase(ABC):
 if IS_ANDROID:
     # ========================================
     # Android class
+    # https://developer.android.com/reference/com/google/android/material/button/MaterialButton
     # ========================================
 
     from java import jclass
@@ -46,6 +47,7 @@ if IS_ANDROID:
 else:
     # ========================================
     # iOS class
+    # https://developer.apple.com/documentation/uikit/uibutton
     # ========================================
 
     from rubicon.objc import ObjCClass

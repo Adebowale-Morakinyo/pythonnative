@@ -24,6 +24,7 @@ class ActivityIndicatorViewBase(ABC):
 if IS_ANDROID:
     # ========================================
     # Android class
+    # https://developer.android.com/reference/android/widget/ProgressBar
     # ========================================
 
     from java import jclass
@@ -47,6 +48,7 @@ if IS_ANDROID:
 else:
     # ========================================
     # iOS class
+    # https://developer.apple.com/documentation/uikit/uiactivityindicatorview
     # ========================================
 
     from rubicon.objc import ObjCClass

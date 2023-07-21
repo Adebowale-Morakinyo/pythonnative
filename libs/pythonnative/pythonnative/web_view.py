@@ -20,6 +20,7 @@ class WebViewBase(ABC):
 if IS_ANDROID:
     # ========================================
     # Android class
+    # https://developer.android.com/reference/android/webkit/WebView
     # ========================================
 
     from java import jclass
@@ -37,6 +38,7 @@ if IS_ANDROID:
 else:
     # ========================================
     # iOS class
+    # https://developer.apple.com/documentation/webkit/wkwebview
     # ========================================
 
     from rubicon.objc import ObjCClass

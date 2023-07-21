@@ -21,6 +21,7 @@ class ScrollViewBase(ABC):
 if IS_ANDROID:
     # ========================================
     # Android class
+    # https://developer.android.com/reference/android/widget/ScrollView
     # ========================================
 
     from java import jclass
@@ -42,6 +43,7 @@ if IS_ANDROID:
 else:
     # ========================================
     # iOS class
+    # https://developer.apple.com/documentation/uikit/uiscrollview
     # ========================================
 
     from rubicon.objc import ObjCClass

@@ -29,6 +29,7 @@ class ButtonBase(ABC):
 if IS_ANDROID:
     # ========================================
     # Android class
+    # https://developer.android.com/reference/android/widget/Button
     # ========================================
 
     from java import dynamic_proxy, jclass
@@ -63,6 +64,7 @@ if IS_ANDROID:
 else:
     # ========================================
     # iOS class
+    # https://developer.apple.com/documentation/uikit/uibutton
     # ========================================
 
     from rubicon.objc import ObjCClass, SEL

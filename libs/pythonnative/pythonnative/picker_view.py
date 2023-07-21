@@ -24,6 +24,7 @@ class PickerViewBase(ABC):
 if IS_ANDROID:
     # ========================================
     # Android class
+    # https://developer.android.com/reference/android/widget/Spinner
     # ========================================
 
     from java import jclass
@@ -44,6 +45,7 @@ if IS_ANDROID:
 else:
     # ========================================
     # iOS class
+    # https://developer.apple.com/documentation/uikit/uipickerview
     # ========================================
 
     from rubicon.objc import ObjCClass

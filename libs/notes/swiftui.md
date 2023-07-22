@@ -112,7 +112,7 @@ screen.
 
 ---
 
-Could you show me how to place a UIViewController (instead of just a UIView)
+Could you show me how to place a `UIViewController` (instead of just a `UIView`)
 inside SwiftUI views?
 
 ---
@@ -216,3 +216,45 @@ This means, for instance, that a SwiftUI `Button` does not become a `UIButton`
 on iOS or a `NSButton` on macOS. It remains a SwiftUI `Button`, but it is drawn
 and behaves appropriately for the platform it's running on, thanks to the
 rendering done by SwiftUI using the native technologies.
+
+---
+
+A vanilla SwiftUI `Button` (rendered on iOS) and a vanilla `UIButton` won't look
+the same, will they (without additional styling)?
+
+---
+
+Without additional styling, a SwiftUI `Button` and a UIKit `UIButton` will look
+different. By default, SwiftUI `Button` on iOS has a plain text look, without
+the rounded-rect border that a UIButton has in its default state.
+
+Here's an example:
+
+SwiftUI `Button`:
+
+```swift
+Button("Hello SwiftUI") {
+    print("Button tapped!")
+}
+```
+
+UIKit `UIButton`:
+
+```swift
+let button = UIButton(type: .system)
+button.setTitle("Hello UIKit", for: .normal)
+button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+```
+
+The SwiftUI `Button` will show just the text "Hello SwiftUI", whereas the UIKit
+`UIButton` will show the text "Hello UIKit" inside a rounded-rect border.
+
+This difference is part of SwiftUI's design. In SwiftUI, a `Button` is a role,
+not a specific look or behavior. The look and behavior of a SwiftUI `Button` are
+determined by the context in which the button is used, and you can easily
+customize the button's appearance using modifiers.
+
+That said, it's also worth noting that the look of UI elements can be affected
+by many factors, including iOS version, device settings, and app-specific
+settings. The details I've provided are typical, but there might be cases where
+SwiftUI `Button` and UIKit `UIButton` look similar or even identical.

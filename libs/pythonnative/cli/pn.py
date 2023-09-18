@@ -21,43 +21,37 @@ def download_template_project(template_url: str, destination: str) -> None:
     :param template_url: The URL of the template project.
     :param destination: The directory where the project will be created.
     """
-    response = requests.get(template_url, stream=True)
+    response: requests.Response = requests.get(template_url, stream=True)
 
     if response.status_code == 200:
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
             z.extractall(destination)
 
 
-def create_android_project(project_name: str, destination: str) -> bool:
+def create_android_project(project_name: str, destination: str) -> None:
     """
     Create a new Android project using a template.
 
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
-    :return: True if the project was created successfully, False otherwise.
     """
-    android_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/apps/templates/android_template.zip?raw=true"
+    android_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/android_template.zip?raw=true"
 
     # Download and extract the Android template project
     download_template_project(android_template_url, destination)
 
-    return True
 
-
-def create_ios_project(project_name: str, destination: str) -> bool:
+def create_ios_project(project_name: str, destination: str) -> None:
     """
     Create a new iOS project using a template.
 
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
-    :return: True if the project was created successfully, False otherwise.
     """
-    ios_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/apps/templates/ios_template.zip?raw=true"
+    ios_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/ios_template.zip?raw=true"
 
     # Download and extract the iOS template project
     download_template_project(ios_template_url, destination)
-
-    return True
 
 
 def run_project(args: argparse.Namespace) -> None:
@@ -65,10 +59,10 @@ def run_project(args: argparse.Namespace) -> None:
     Run the specified project.
     """
     # Determine the platform
-    platform = args.platform
+    platform: str = args.platform
 
     # Define the build directory
-    build_dir = os.path.join(os.getcwd(), "build", platform)
+    build_dir: str = os.path.join(os.getcwd(), "build", platform)
 
     # Create the build directory if it doesn't exist
     os.makedirs(build_dir, exist_ok=True)
@@ -80,46 +74,58 @@ def run_project(args: argparse.Namespace) -> None:
         create_ios_project("MyApp", build_dir)
 
     # Copy the user's Python code into the project
-    src_dir = os.path.join(os.getcwd(), "app")
+    src_dir: str = os.path.join(os.getcwd(), "app")
 
     # Adjust the destination directory for Android project
     if platform == "android":
-        dest_dir = os.path.join(build_dir, "android_template", "app", "src", "main", "python", "app")
+        dest_dir: str = os.path.join(
+            build_dir, "android_template", "app", "src", "main", "python", "app"
+        )
     elif platform == "ios":
-        dest_dir = os.path.join(build_dir, "app")  # Adjust this based on your iOS project structure
+        dest_dir: str = os.path.join(
+            build_dir, "app"
+        )  # Adjust this based on your iOS project structure
 
     # Create the destination directory if it doesn't exist
     os.makedirs(dest_dir, exist_ok=True)
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
     # Install any necessary Python packages into the project environment
-    requirements_file = os.path.join(os.getcwd(), "requirements.txt")
+    requirements_file: str = os.path.join(os.getcwd(), "requirements.txt")
     # TODO: Fill in with actual commands for installing Python packages
 
     # Run the project
     if platform == "android":
         # Change to the Android project directory
-        android_project_dir = os.path.join(build_dir, "android_template")
+        android_project_dir: str = os.path.join(build_dir, "android_template")
         os.chdir(android_project_dir)
 
         # Add executable permissions to the gradlew script
-        gradlew_path = os.path.join(android_project_dir, "gradlew")
-        os.chmod(gradlew_path,
-                 0o755)  # this makes the file executable for the user
+        gradlew_path: str = os.path.join(android_project_dir, "gradlew")
+        os.chmod(gradlew_path, 0o755)  # this makes the file executable for the user
 
         # Build the Android project and install it on the device
-        jdk_path = subprocess.check_output(
-            ["brew", "--prefix", "openjdk@17"]).decode().strip()
-        env = os.environ.copy()
+        jdk_path: str = (
+            subprocess.check_output(["brew", "--prefix", "openjdk@17"]).decode().strip()
+        )
+        env: dict[str, str] = os.environ.copy()
         env["JAVA_HOME"] = jdk_path
         subprocess.run(["./gradlew", "installDebug"], check=True, env=env)
 
         # Run the Android app
         # Assumes that the package name of your app is "com.example.myapp" and the main activity is "MainActivity"
         # Replace "com.example.myapp" and ".MainActivity" with your actual package name and main activity
-        subprocess.run(["adb", "shell", "am", "start", "-n",
-                        "com.pythonnative.android_template/.MainActivity"],
-                       check=True)
+        subprocess.run(
+            [
+                "adb",
+                "shell",
+                "am",
+                "start",
+                "-n",
+                "com.pythonnative.android_template/.MainActivity",
+            ],
+            check=True,
+        )
 
 
 def clean_project(args: argparse.Namespace) -> None:
@@ -127,7 +133,7 @@ def clean_project(args: argparse.Namespace) -> None:
     Clean the specified project.
     """
     # Define the build directory
-    build_dir = os.path.join(os.getcwd(), "build")
+    build_dir: str = os.path.join(os.getcwd(), "build")
 
     # Check if the build directory exists
     if os.path.exists(build_dir):

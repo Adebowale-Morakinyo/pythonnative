@@ -1,0 +1,43 @@
+site_name: PythonNative
+site_description: Cross-platform native UI toolkit for Android and iOS
+site_url: https://docs.pythonnative.com/
+repo_url: https://github.com/pythonnative/pythonnative
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+extra:
+  generator: false
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Concepts:
+    - Components: concepts/components.md
+  - Examples:
+    - Overview: examples.md
+    - Hello World: examples/hello-world.md
+  - Guides:
+    - Android: guides/android.md
+    - iOS: guides/ios.md
+  - API Reference:
+    - Package: api/pythonnative.md
+  - Meta:
+    - Contributing: meta/contributing.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            docstring_style: google
+extra_css:
+  - styles/brand.css
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true

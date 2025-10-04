@@ -10,17 +10,17 @@ Development uses Python ≥ 3.9.
 # create and activate a venv (recommended)
 python3 -m venv .venv && source .venv/bin/activate
 
-# install root tooling (lint/format/test)
-pip install -r requirements.txt
+# install dev tools (lint/format/test)
+pip install -e ".[dev]"
 
 # install library (editable) and CLI
-pip install -e libs/pythonnative
+pip install -e .
 
 # run tests
 pytest -q
 
 # format and lint
-black libs apps tests || true
+black src apps tests || true
 ruff check .
 ```
 
@@ -39,30 +39,30 @@ cd apps/pythonnative_demo && pn run android
 
 ## Project layout (high‑level)
 
-- `libs/pythonnative/` – installable library and CLI
+- `src/pythonnative/` – installable library and CLI
   - `pythonnative/` – core cross‑platform UI components and utilities
   - `cli/` – `pn` command
-  - `tests/` – unit tests for the library
-- `libs/templates/` – Android/iOS project templates and zips
+- `tests/` – unit tests for the library
+- `templates/` – Android/iOS project templates and zips
 - `apps/` – application projects
   - `django_pythonnative/` – Django project for docs/demo hosting and E2E
-  - `experiments/` – platform experiments (Android/iOS/Briefcase)
   - `pythonnative_demo/` – minimal demo app using the library
-- `README.md`, `requirements.txt` – repo docs and dev tooling
+- `experiments/` – platform experiments (Android/iOS/Briefcase)
+- `README.md`, `pyproject.toml` – repo docs and packaging
 
 ## Coding guidelines
 
 - Style: Black; lint: Ruff; typing where useful. Keep APIs stable.
 - Prefer explicit, descriptive names; keep platform abstractions clean.
-- Add/extend tests under `libs/pythonnative/tests/` for new behavior.
-- Do not commit generated artifacts or large binaries; templates live under `libs/templates/`.
+- Add/extend tests under `tests/` for new behavior.
+- Do not commit generated artifacts or large binaries; templates live under `templates/`.
 
 Common commands:
 
 ```bash
 pytest -q                     # run tests
 ruff check .                  # lint
-black libs apps               # format
+black src apps tests          # format
 ```
 
 ## Conventional Commits
@@ -99,16 +99,16 @@ Accepted types (standard):
 Recommended scopes (match the smallest accurate directory/module):
 
 - Library/CLI scopes:
-  - `cli` – `libs/pythonnative/cli/` (the `pn` command)
-  - `core` – `libs/pythonnative/pythonnative/` package internals
-  - `components` – UI view modules under `libs/pythonnative/pythonnative/` (e.g., `button.py`, `label.py`)
+  - `cli` – `src/pythonnative/cli/` (the `pn` command)
+  - `core` – `src/pythonnative/pythonnative/` package internals
+  - `components` – UI view modules under `src/pythonnative/pythonnative/` (e.g., `button.py`, `label.py`)
   - `utils` – utilities like `utils.py`
-  - `tests` – `libs/pythonnative/tests/`
+  - `tests` – `tests/`
 
 - Templates and examples:
-  - `templates` – `libs/templates/` (Android/iOS templates, zips)
+  - `templates` – `templates/` (Android/iOS templates, zips)
   - `demo` – `apps/pythonnative_demo/`
-  - `experiments` – `apps/experiments/`
+  - `experiments` – `experiments/`
 
 - Django app and site:
   - `django` – `apps/django_pythonnative/` (site, docs pages, E2E harness)
@@ -117,6 +117,7 @@ Recommended scopes (match the smallest accurate directory/module):
   - `deps` – dependency updates and version pins
   - `docker` – containerization files (e.g., `Dockerfile`)
   - `repo` – top‑level files (`README.md`, `CONTRIBUTING.md`, `.gitignore`, licenses)
+  - `mkdocs` – documentation site (MkDocs/Material) configuration and content under `docs/`
   - `workflows` – CI pipelines (e.g., `.github/workflows/`)
 
 Note: Avoid redundant type==scope pairs (e.g., `docs(docs)`). Prefer a module scope (e.g., `docs(core)`) or `docs(repo)` for top‑level updates.
@@ -205,12 +206,12 @@ Co-authored-by: Name <email>
 - Tests: added/updated; `pytest` passes.
 - Lint/format: `ruff check .`, `black` pass.
 - Docs: update `README.md` and any Django docs pages if behavior changes.
-- Templates: update `libs/templates/` if generator output changes.
+- Templates: update `templates/` if generator output changes.
 - No generated artifacts committed.
 
 ## Versioning and releases
 
-- The library version is tracked in `libs/pythonnative/setup.py`. Use SemVer.
+- The library version is tracked in `pyproject.toml` (`project.version`). Use SemVer.
 - Workflow:
   - Contributors: branch off `main` (or `dev` if used) and open PRs.
   - Maintainer (release): bump version, tag, and publish to PyPI.

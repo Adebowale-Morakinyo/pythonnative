@@ -71,4 +71,4 @@ pn run ios
 
 ## Documentation
 
-For detailed guides and API references, visit the [PythonNative documentation](https://pythonnative.com/docs/introduction).
+For detailed guides and API references, visit the [PythonNative documentation](https://docs.pythonnative.com/).

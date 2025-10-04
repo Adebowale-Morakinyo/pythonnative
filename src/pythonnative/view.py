@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from typing import Any
 
 # ========================================
 # Base class
@@ -7,8 +8,9 @@ from abc import ABC, abstractmethod
 
 class ViewBase(ABC):
     def __init__(self) -> None:
-        self.native_instance = None
-        self.native_class = None
+        # Native bridge handles return types dynamically; these attributes are set at runtime.
+        self.native_instance: Any = None
+        self.native_class: Any = None
 
     # @abstractmethod
     # def add_view(self, view):

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -67,5 +68,6 @@ else:
             self.native_instance.reloadData()
 
         def get_data(self) -> list:
-            # Note: This is a simplified representation. Normally, you would need to get data from the UITableViewDataSource.
+            # Note: This is a simplified representation.
+            # Normally, you would need to get data from the UITableViewDataSource.
             return []

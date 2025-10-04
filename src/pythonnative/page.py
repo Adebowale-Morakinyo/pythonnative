@@ -30,6 +30,7 @@ differences and handles them appropriately.
 """
 
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -187,6 +188,4 @@ else:
             print("iOS on_restore_instance_state() called")
 
         def navigate_to(self, page) -> None:
-            self.native_instance.navigationController().pushViewControllerAnimated_(
-                page.native_instance, True
-            )
+            self.native_instance.navigationController().pushViewControllerAnimated_(page.native_instance, True)

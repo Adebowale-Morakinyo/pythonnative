@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -32,9 +33,7 @@ if IS_ANDROID:
     class MaterialButton(MaterialButtonBase, ViewBase):
         def __init__(self, context, title: str = "") -> None:
             super().__init__()
-            self.native_class = jclass(
-                "com.google.android.material.button.MaterialButton"
-            )
+            self.native_class = jclass("com.google.android.material.button.MaterialButton")
             self.native_instance = self.native_class(context)
             self.set_title(title)
 
@@ -55,9 +54,7 @@ else:
     class MaterialButton(MaterialButtonBase, ViewBase):
         def __init__(self, title: str = "") -> None:
             super().__init__()
-            self.native_class = ObjCClass(
-                "UIButton"
-            )  # Apple does not have a direct equivalent for MaterialButton
+            self.native_class = ObjCClass("UIButton")  # Apple does not have a direct equivalent for MaterialButton
             self.native_instance = self.native_class.alloc().init()
             self.set_title(title)
 

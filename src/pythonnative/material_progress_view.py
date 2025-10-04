@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -32,9 +33,7 @@ if IS_ANDROID:
     class MaterialProgressView(MaterialProgressViewBase, ViewBase):
         def __init__(self, context) -> None:
             super().__init__()
-            self.native_class = jclass(
-                "com.google.android.material.progressindicator.LinearProgressIndicator"
-            )
+            self.native_class = jclass("com.google.android.material.progressindicator.LinearProgressIndicator")
             self.native_instance = self.native_class(context)
             self.native_instance.setIndeterminate(False)
 

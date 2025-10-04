@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import Any, List
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -11,7 +13,7 @@ class ScrollViewBase(ABC):
     @abstractmethod
     def __init__(self) -> None:
         super().__init__()
-        self.views = []
+        self.views: List[Any] = []
 
     @abstractmethod
     def add_view(self, view) -> None:
@@ -52,9 +54,7 @@ else:
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIScrollView")
-            self.native_instance = self.native_class.alloc().initWithFrame_(
-                ((0, 0), (0, 0))
-            )
+            self.native_instance = self.native_class.alloc().initWithFrame_(((0, 0), (0, 0)))
 
         def add_view(self, view):
             self.views.append(view)

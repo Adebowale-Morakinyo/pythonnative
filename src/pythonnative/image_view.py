@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -27,10 +28,8 @@ if IS_ANDROID:
     # https://developer.android.com/reference/android/widget/ImageView
     # ========================================
 
-    from java import jclass
-    from java.io import File
-    from android.graphics.drawable import Drawable
     from android.graphics import BitmapFactory
+    from java import jclass
 
     class ImageView(ImageViewBase, ViewBase):
         def __init__(self, context, image: str = "") -> None:

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -51,8 +52,9 @@ else:
     # https://developer.apple.com/documentation/uikit/uidatepicker
     # ========================================
 
-    from rubicon.objc import ObjCClass
     from datetime import time
+
+    from rubicon.objc import ObjCClass
 
     class TimePicker(TimePickerBase, ViewBase):
         def __init__(self, hour: int = 0, minute: int = 0) -> None:

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -57,8 +58,8 @@ else:
         def __init__(self) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIActivityIndicatorView")
-            self.native_instance = (
-                self.native_class.alloc().initWithActivityIndicatorStyle_(0)
+            self.native_instance = self.native_class.alloc().initWithActivityIndicatorStyle_(
+                0
             )  # 0: UIActivityIndicatorViewStyleLarge
             self.native_instance.hidesWhenStopped = True
 

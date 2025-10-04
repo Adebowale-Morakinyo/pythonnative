@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Callable
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -48,9 +49,7 @@ if IS_ANDROID:
             return self.native_instance.getText().toString()
 
         def set_on_click(self, callback: Callable[[], None]) -> None:
-            class OnClickListener(
-                dynamic_proxy(jclass("android.view.View").OnClickListener)
-            ):
+            class OnClickListener(dynamic_proxy(jclass("android.view.View").OnClickListener)):
                 def __init__(self, callback):
                     super().__init__()
                     self.callback = callback
@@ -67,7 +66,7 @@ else:
     # https://developer.apple.com/documentation/uikit/uibutton
     # ========================================
 
-    from rubicon.objc import ObjCClass, SEL
+    from rubicon.objc import SEL, ObjCClass
 
     class Button(ButtonBase, ViewBase):
         def __init__(self, title: str = "") -> None:
@@ -87,6 +86,4 @@ else:
                 callback()
 
             action = SEL(objc_callback)
-            self.native_instance.addTarget_action_forControlEvents_(
-                self.native_instance, action, 1
-            )
+            self.native_instance.addTarget_action_forControlEvents_(self.native_instance, action, 1)

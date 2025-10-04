@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -34,9 +35,7 @@ if IS_ANDROID:
             super().__init__()
             self.native_class = jclass("android.widget.ProgressBar")
             # self.native_instance = self.native_class(context, None, android.R.attr.progressBarStyleHorizontal)
-            self.native_instance = self.native_class(
-                context, None, jclass("android.R$attr").progressBarStyleHorizontal
-            )
+            self.native_instance = self.native_class(context, None, jclass("android.R$attr").progressBarStyleHorizontal)
             self.native_instance.setIndeterminate(False)
 
         def set_progress(self, progress: float) -> None:

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -32,9 +33,7 @@ if IS_ANDROID:
     class MaterialDatePicker(MaterialDatePickerBase, ViewBase):
         def __init__(self, year: int = 0, month: int = 0, day: int = 0) -> None:
             super().__init__()
-            self.native_class = jclass(
-                "com.google.android.material.datepicker.MaterialDatePicker"
-            )
+            self.native_class = jclass("com.google.android.material.datepicker.MaterialDatePicker")
             self.builder = self.native_class.Builder.datePicker()
             self.set_date(year, month, day)
             self.native_instance = self.builder.build()
@@ -66,8 +65,9 @@ else:
     # https://developer.apple.com/documentation/uikit/uidatepicker
     # ========================================
 
-    from rubicon.objc import ObjCClass
     from datetime import datetime
+
+    from rubicon.objc import ObjCClass
 
     class MaterialDatePicker(MaterialDatePickerBase, ViewBase):
         def __init__(self, year: int = 0, month: int = 0, day: int = 0) -> None:

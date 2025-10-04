@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -32,9 +33,7 @@ if IS_ANDROID:
     class MaterialSwitch(MaterialSwitchBase, ViewBase):
         def __init__(self, context, value: bool = False) -> None:
             super().__init__()
-            self.native_class = jclass(
-                "com.google.android.material.switch.MaterialSwitch"
-            )
+            self.native_class = jclass("com.google.android.material.switch.MaterialSwitch")
             self.native_instance = self.native_class(context)
             self.set_on(value)
 

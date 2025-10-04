@@ -1,10 +1,11 @@
 import argparse
+import io
 import os
 import shutil
 import subprocess
-import requests
 import zipfile
-import io
+
+import requests
 
 
 def init_project(args: argparse.Namespace) -> None:
@@ -35,7 +36,9 @@ def create_android_project(project_name: str, destination: str) -> None:
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     """
-    android_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/android_template.zip?raw=true"
+    android_template_url = (
+        "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/android_template.zip?raw=true"
+    )
 
     # Download and extract the Android template project
     download_template_project(android_template_url, destination)
@@ -48,7 +51,9 @@ def create_ios_project(project_name: str, destination: str) -> None:
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     """
-    ios_template_url = "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/ios_template.zip?raw=true"
+    ios_template_url = (
+        "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/ios_template.zip?raw=true"
+    )
 
     # Download and extract the iOS template project
     download_template_project(ios_template_url, destination)
@@ -78,21 +83,18 @@ def run_project(args: argparse.Namespace) -> None:
 
     # Adjust the destination directory for Android project
     if platform == "android":
-        dest_dir: str = os.path.join(
-            build_dir, "android_template", "app", "src", "main", "python", "app"
-        )
-    elif platform == "ios":
-        dest_dir: str = os.path.join(
-            build_dir, "app"
-        )  # Adjust this based on your iOS project structure
+        dest_dir: str = os.path.join(build_dir, "android_template", "app", "src", "main", "python", "app")
+    else:
+        dest_dir = os.path.join(build_dir, "app")  # Adjust this based on your iOS project structure
 
     # Create the destination directory if it doesn't exist
     os.makedirs(dest_dir, exist_ok=True)
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
     # Install any necessary Python packages into the project environment
-    requirements_file: str = os.path.join(os.getcwd(), "requirements.txt")
-    # TODO: Fill in with actual commands for installing Python packages
+    requirements_path = os.path.join(os.getcwd(), "requirements.txt")
+    if os.path.exists(requirements_path):
+        subprocess.run(["pip", "install", "-r", requirements_path], check=False)
 
     # Run the project
     if platform == "android":
@@ -105,9 +107,7 @@ def run_project(args: argparse.Namespace) -> None:
         os.chmod(gradlew_path, 0o755)  # this makes the file executable for the user
 
         # Build the Android project and install it on the device
-        jdk_path: str = (
-            subprocess.check_output(["brew", "--prefix", "openjdk@17"]).decode().strip()
-        )
+        jdk_path: str = subprocess.check_output(["brew", "--prefix", "openjdk@17"]).decode().strip()
         env: dict[str, str] = os.environ.copy()
         env["JAVA_HOME"] = jdk_path
         subprocess.run(["./gradlew", "installDebug"], check=True, env=env)

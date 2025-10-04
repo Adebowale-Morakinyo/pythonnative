@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .utils import IS_ANDROID
 from .view import ViewBase
 
@@ -41,8 +42,7 @@ else:
     # https://developer.apple.com/documentation/webkit/wkwebview
     # ========================================
 
-    from rubicon.objc import ObjCClass
-    from rubicon.objc import NSURL, NSURLRequest
+    from rubicon.objc import NSURL, NSURLRequest, ObjCClass
 
     class WebView(WebViewBase, ViewBase):
         def __init__(self, url: str = "") -> None:

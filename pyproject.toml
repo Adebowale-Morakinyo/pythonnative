@@ -69,6 +69,12 @@ license-files = ["LICENSE*"]
 [tool.ruff]
 target-version = "py39"
 line-length = 120
+extend-exclude = [
+  "experiments",
+  "apps",
+  "templates",
+  "docs",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

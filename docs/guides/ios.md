@@ -21,3 +21,15 @@ pn run ios --prepare-only
 ```
 
 You can then open `build/ios/ios_template/ios_template.xcodeproj` in Xcode.
+
+## Clean
+
+Remove the build directory safely:
+
+```bash
+pn clean
+```
+
+## Notes
+
+- Building and running for Simulator via the CLI is best-effort. Opening the generated project in Xcode is recommended for iterative development.

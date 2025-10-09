@@ -29,3 +29,23 @@ class MainPage(pn.Page):
 Notes:
 - `pn.Page` stores the Android `Activity` so components like `pn.Button()` and `pn.Label()` can construct their native counterparts.
 - If you construct views before the `Page` is created on Android, a runtime error will be raised because no `Context` is available.
+
+## Core components (0.2.0)
+
+Stabilized with contextless constructors on both platforms:
+
+- `Page`
+- `StackView`
+- `Label`, `Button`
+- `ImageView`
+- `TextField`, `TextView`
+- `Switch`
+- `ProgressView`, `ActivityIndicatorView`
+- `WebView`
+
+APIs are intentionally small and grow progressively in later releases. Properties and setters are kept consistent where supported by both platforms.
+
+## Platform detection and Android context
+
+- Use `pythonnative.utils.IS_ANDROID` for platform checks when needed.
+- On Android, `Page` records the current `Activity` so child views can acquire a `Context` implicitly. Constructing views before `Page` initialization will raise.

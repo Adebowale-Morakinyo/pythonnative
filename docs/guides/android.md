@@ -21,3 +21,16 @@ pn run android --prepare-only
 ```
 
 This will stage files under `build/android/android_template` so you can open it in Android Studio if you prefer.
+
+## Clean
+
+Remove the build directory safely:
+
+```bash
+pn clean
+```
+
+## Troubleshooting
+
+- If `gradlew` fails due to JDK path on macOS, ensure `JAVA_HOME` is set (the CLI attempts to detect Homebrew `openjdk@17`).
+- Ensure an Android emulator or device is available for `installDebug`.

@@ -747,7 +747,30 @@
 
 
 <h1 id="hello-world">Hello World<a class="headerlink" href="#hello-world" title="Permanent link">&para;</a></h1>
-<p>A minimal placeholder example. Replace with a real example later.</p>
+<p>Create a simple page with a label and a button.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_create</span><span class="p">()</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StackView</span><span class="p">()</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">)</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">set_on_click</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello tapped&quot;</span><span class="p">))</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Run it:</p>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>run<span class="w"> </span>android
+<span class="c1"># or</span>
+pn<span class="w"> </span>run<span class="w"> </span>ios
+</code></pre></div>
 
 
 

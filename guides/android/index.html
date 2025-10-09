@@ -551,6 +551,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clean
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -803,6 +821,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clean
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -836,6 +872,16 @@
 </code></pre></div>
 
 <p>This will stage files under <code>build/android/android_template</code> so you can open it in Android Studio if you prefer.</p>
+<h2 id="clean">Clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h2>
+<p>Remove the build directory safely:</p>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>clean
+</code></pre></div>
+
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<ul>
+<li>If <code>gradlew</code> fails due to JDK path on macOS, ensure <code>JAVA_HOME</code> is set (the CLI attempts to detect Homebrew <code>openjdk@17</code>).</li>
+<li>Ensure an Android emulator or device is available for <code>installDebug</code>.</li>
+</ul>
 
 
 

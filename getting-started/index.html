@@ -257,6 +257,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -268,6 +281,52 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a project
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-on-a-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run on a platform
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clean
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -727,6 +786,41 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-a-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create a project
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#run-on-a-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run on a platform
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clean
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -749,16 +843,55 @@
 pn<span class="w"> </span>--help
 </code></pre></div>
 
+<h2 id="create-a-project">Create a project<a class="headerlink" href="#create-a-project" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>init<span class="w"> </span>MyApp
+</code></pre></div>
+
+<p>This scaffolds:</p>
 <ul>
-<li>Install: <code>pip install pythonnative</code></li>
-<li>Create a project: <code>pn init my_app</code></li>
-<li>Scaffolds <code>app/</code>, <code>pythonnative.json</code>, <code>requirements.txt</code>, <code>.gitignore</code></li>
-<li>Run: <code>pn run android</code> or <code>pn run ios</code></li>
-<li>Uses bundled templates; copies your <code>app/</code> into the platform project</li>
-<li>On Android, <code>pn.Page</code> provides the Activity context so components can be created without passing a context</li>
-<li>Clean: <code>pn clean</code></li>
-<li>Removes the <code>build/</code> directory safely</li>
+<li><code>app/</code> with a minimal <code>main_page.py</code></li>
+<li><code>pythonnative.json</code> project config</li>
+<li><code>requirements.txt</code></li>
+<li><code>.gitignore</code></li>
 </ul>
+<p>A minimal <code>app/main_page.py</code> looks like:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_create</span><span class="p">()</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StackView</span><span class="p">()</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Hello from PythonNative!&quot;</span><span class="p">))</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">)</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">set_on_click</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Button clicked&quot;</span><span class="p">))</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="run-on-a-platform">Run on a platform<a class="headerlink" href="#run-on-a-platform" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>run<span class="w"> </span>android
+<span class="c1"># or</span>
+pn<span class="w"> </span>run<span class="w"> </span>ios
+</code></pre></div>
+
+<ul>
+<li>Uses bundled templates (no network required for scaffolding)</li>
+<li>Copies your <code>app/</code> into the generated project</li>
+</ul>
+<p>If you just want to scaffold the platform project without building, use:</p>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--prepare-only
+pn<span class="w"> </span>run<span class="w"> </span>ios<span class="w"> </span>--prepare-only
+</code></pre></div>
+
+<p>This stages files under <code>build/</code> so you can open them in Android Studio or Xcode.</p>
+<h2 id="clean">Clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h2>
+<p>Remove the build artifacts safely:</p>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>clean
+</code></pre></div>
 
 
 

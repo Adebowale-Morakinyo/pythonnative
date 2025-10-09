@@ -159,6 +159,12 @@ BREAKING CHANGE: API renamed; update app code and templates.
 - Comma‑separate scopes without spaces: `type(scope1,scope2): ...`
 - Prefer a single scope when possible; use multiple only when the change genuinely spans tightly related areas.
 
+Scope ordering (house style):
+
+- Put the most impacted scope first (e.g., `repo`), then any secondary scopes.
+- For extra consistency, alphabetize the remaining scopes after the primary.
+- Keep it to 1–3 scopes max.
+
 Example:
 
 ```text

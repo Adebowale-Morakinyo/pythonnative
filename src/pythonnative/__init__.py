@@ -1,27 +1,5 @@
-from .activity_indicator_view import ActivityIndicatorView
-from .button import Button
-from .date_picker import DatePicker
-from .image_view import ImageView
-from .label import Label
-from .list_view import ListView
-from .material_activity_inidicator_view import MaterialActivityIndicatorView
-from .material_button import MaterialButton
-from .material_date_picker import MaterialDatePicker
-from .material_progress_view import MaterialProgressView
-from .material_search_bar import MaterialSearchBar
-from .material_switch import MaterialSwitch
-from .material_time_picker import MaterialTimePicker
-from .page import Page
-from .picker_view import PickerView
-from .progress_view import ProgressView
-from .scroll_view import ScrollView
-from .search_bar import SearchBar
-from .stack_view import StackView
-from .switch import Switch
-from .text_field import TextField
-from .text_view import TextView
-from .time_picker import TimePicker
-from .web_view import WebView
+from importlib import import_module
+from typing import Any, Dict
 
 __all__ = [
     "ActivityIndicatorView",
@@ -49,3 +27,42 @@ __all__ = [
     "TimePicker",
     "WebView",
 ]
+
+_NAME_TO_MODULE: Dict[str, str] = {
+    "ActivityIndicatorView": ".activity_indicator_view",
+    "Button": ".button",
+    "DatePicker": ".date_picker",
+    "ImageView": ".image_view",
+    "Label": ".label",
+    "ListView": ".list_view",
+    "MaterialActivityIndicatorView": ".material_activity_inidicator_view",
+    "MaterialButton": ".material_button",
+    "MaterialDatePicker": ".material_date_picker",
+    "MaterialProgressView": ".material_progress_view",
+    "MaterialSearchBar": ".material_search_bar",
+    "MaterialSwitch": ".material_switch",
+    "MaterialTimePicker": ".material_time_picker",
+    "Page": ".page",
+    "PickerView": ".picker_view",
+    "ProgressView": ".progress_view",
+    "ScrollView": ".scroll_view",
+    "SearchBar": ".search_bar",
+    "StackView": ".stack_view",
+    "Switch": ".switch",
+    "TextField": ".text_field",
+    "TextView": ".text_view",
+    "TimePicker": ".time_picker",
+    "WebView": ".web_view",
+}
+
+
+def __getattr__(name: str) -> Any:
+    module_path = _NAME_TO_MODULE.get(name)
+    if not module_path:
+        raise AttributeError(f"module 'pythonnative' has no attribute {name!r}")
+    module = import_module(module_path, package=__name__)
+    return getattr(module, name)
+
+
+def __dir__() -> Any:
+    return sorted(list(globals().keys()) + __all__)

@@ -1,0 +1,7 @@
+{
+  "name": "PythonNative Demo",
+  "appId": "com.pythonnative.demo",
+  "entryPoint": "app/main_page.py",
+  "ios": {},
+  "android": {}
+}

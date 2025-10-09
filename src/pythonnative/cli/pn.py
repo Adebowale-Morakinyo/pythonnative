@@ -1,32 +1,118 @@
 import argparse
-import io
+import json
 import os
 import shutil
 import subprocess
+import sys
 import zipfile
-
-import requests
+from importlib import resources
 
 
 def init_project(args: argparse.Namespace) -> None:
     """
     Initialize a new PythonNative project.
+    Creates `app/`, `pythonnative.json`, `requirements.txt`, `.gitignore`.
     """
-    # TODO: Implementation
+    project_name: str = getattr(args, "name", None) or os.path.basename(os.getcwd())
+    cwd: str = os.getcwd()
+
+    app_dir = os.path.join(cwd, "app")
+    config_path = os.path.join(cwd, "pythonnative.json")
+    requirements_path = os.path.join(cwd, "requirements.txt")
+    gitignore_path = os.path.join(cwd, ".gitignore")
+
+    # Prevent accidental overwrite unless --force is provided
+    if not getattr(args, "force", False):
+        exists = []
+        if os.path.exists(app_dir):
+            exists.append("app/")
+        if os.path.exists(config_path):
+            exists.append("pythonnative.json")
+        if os.path.exists(requirements_path):
+            exists.append("requirements.txt")
+        if os.path.exists(gitignore_path):
+            exists.append(".gitignore")
+        if exists:
+            print(f"Refusing to overwrite existing: {', '.join(exists)}. Use --force to overwrite.")
+            sys.exit(1)
+
+    os.makedirs(app_dir, exist_ok=True)
+
+    # Minimal hello world app scaffold
+    main_page_py = os.path.join(app_dir, "main_page.py")
+    if not os.path.exists(main_page_py) or args.force:
+        with open(main_page_py, "w", encoding="utf-8") as f:
+            f.write(
+                """import pythonnative as pn
 
 
-def download_template_project(template_url: str, destination: str) -> None:
+class MainPage(pn.Page):
+    def __init__(self, native_instance):
+        super().__init__(native_instance)
+
+    def on_create(self):
+        super().on_create()
+        stack = pn.StackView(self.native_instance)
+        stack.add_view(pn.Label(self.native_instance, \"Hello from PythonNative!\"))
+        self.set_root_view(stack)
+"""
+            )
+
+    # Create config
+    config = {
+        "name": project_name,
+        "appId": "com.example." + project_name.replace(" ", "").lower(),
+        "entryPoint": "app/main_page.py",
+        "ios": {},
+        "android": {},
+    }
+    with open(config_path, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2)
+
+    # Requirements
+    if not os.path.exists(requirements_path) or args.force:
+        with open(requirements_path, "w", encoding="utf-8") as f:
+            f.write("pythonnative\n")
+
+    # .gitignore
+    default_gitignore = "# PythonNative\n" "__pycache__/\n" "*.pyc\n" ".venv/\n" "build/\n" ".DS_Store\n"
+    if not os.path.exists(gitignore_path) or args.force:
+        with open(gitignore_path, "w", encoding="utf-8") as f:
+            f.write(default_gitignore)
+
+    print("Initialized PythonNative project.")
+
+
+def _extract_zip_to_destination(zip_path: str, destination: str) -> None:
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        zf.extractall(destination)
+
+
+def _extract_bundled_template(zip_name: str, destination: str) -> None:
     """
-    Download and extract a template project from a URL.
-
-    :param template_url: The URL of the template project.
-    :param destination: The directory where the project will be created.
+    Extract a bundled template zip into the destination directory.
+    Tries package resources first; falls back to repo root `templates/` at dev time.
     """
-    response: requests.Response = requests.get(template_url, stream=True)
+    # Try to load from installed package resources first
+    try:
+        pkg_templates = resources.files("pythonnative").joinpath("templates")
+        resource_path = str(pkg_templates.joinpath(zip_name))
+        if os.path.exists(resource_path):
+            _extract_zip_to_destination(resource_path, destination)
+            return
+    except Exception:
+        # Fall back to repo layout
+        pass
 
-    if response.status_code == 200:
-        with zipfile.ZipFile(io.BytesIO(response.content)) as z:
-            z.extractall(destination)
+    # Fallback: use repository-level templates directory
+    repo_templates = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "..", "..", "templates")
+    repo_templates = os.path.abspath(repo_templates)
+    candidate = os.path.join(repo_templates, zip_name)
+    if os.path.exists(candidate):
+        _extract_zip_to_destination(candidate, destination)
+        return
+
+    raise FileNotFoundError(f"Could not find bundled template {zip_name}. Ensure templates are packaged.")
 
 
 def create_android_project(project_name: str, destination: str) -> None:
@@ -36,12 +122,8 @@ def create_android_project(project_name: str, destination: str) -> None:
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     """
-    android_template_url = (
-        "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/android_template.zip?raw=true"
-    )
-
-    # Download and extract the Android template project
-    download_template_project(android_template_url, destination)
+    # Extract the Android template project from bundled zip
+    _extract_bundled_template("android_template.zip", destination)
 
 
 def create_ios_project(project_name: str, destination: str) -> None:
@@ -51,12 +133,8 @@ def create_ios_project(project_name: str, destination: str) -> None:
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     """
-    ios_template_url = (
-        "https://github.com/owenthcarey/pythonnative-workspace/blob/main/libs/templates/ios_template.zip?raw=true"
-    )
-
-    # Download and extract the iOS template project
-    download_template_project(ios_template_url, destination)
+    # Extract the iOS template project from bundled zip
+    _extract_bundled_template("ios_template.zip", destination)
 
 
 def run_project(args: argparse.Namespace) -> None:
@@ -85,7 +163,8 @@ def run_project(args: argparse.Namespace) -> None:
     if platform == "android":
         dest_dir: str = os.path.join(build_dir, "android_template", "app", "src", "main", "python", "app")
     else:
-        dest_dir = os.path.join(build_dir, "app")  # Adjust this based on your iOS project structure
+        # For iOS, stage the Python app in a top-level folder for later integration scripts
+        dest_dir = os.path.join(build_dir, "app")
 
     # Create the destination directory if it doesn't exist
     os.makedirs(dest_dir, exist_ok=True)
@@ -94,7 +173,7 @@ def run_project(args: argparse.Namespace) -> None:
     # Install any necessary Python packages into the project environment
     requirements_path = os.path.join(os.getcwd(), "requirements.txt")
     if os.path.exists(requirements_path):
-        subprocess.run(["pip", "install", "-r", requirements_path], check=False)
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", requirements_path], check=False)
 
     # Run the project
     if platform == "android":
@@ -107,9 +186,14 @@ def run_project(args: argparse.Namespace) -> None:
         os.chmod(gradlew_path, 0o755)  # this makes the file executable for the user
 
         # Build the Android project and install it on the device
-        jdk_path: str = subprocess.check_output(["brew", "--prefix", "openjdk@17"]).decode().strip()
         env: dict[str, str] = os.environ.copy()
-        env["JAVA_HOME"] = jdk_path
+        # Respect JAVA_HOME if set; otherwise, attempt a best-effort on macOS via Homebrew
+        if sys.platform == "darwin" and not env.get("JAVA_HOME"):
+            try:
+                jdk_path: str = subprocess.check_output(["brew", "--prefix", "openjdk@17"]).decode().strip()
+                env["JAVA_HOME"] = jdk_path
+            except Exception:
+                pass
         subprocess.run(["./gradlew", "installDebug"], check=True, env=env)
 
         # Run the Android app
@@ -126,6 +210,27 @@ def run_project(args: argparse.Namespace) -> None:
             ],
             check=True,
         )
+    elif platform == "ios":
+        # Attempt to build the iOS project for Simulator (best-effort)
+        ios_project_dir: str = os.path.join(build_dir, "ios_template")
+        if os.path.isdir(ios_project_dir):
+            os.chdir(ios_project_dir)
+            try:
+                subprocess.run(
+                    [
+                        "xcodebuild",
+                        "-project",
+                        "ios_template.xcodeproj",
+                        "-scheme",
+                        "ios_template",
+                        "-destination",
+                        "platform=iOS Simulator,name=iPhone 15",
+                        "build",
+                    ],
+                    check=False,
+                )
+            except FileNotFoundError:
+                print("xcodebuild not found. Skipping iOS build step.")
 
 
 def clean_project(args: argparse.Namespace) -> None:
@@ -137,8 +242,10 @@ def clean_project(args: argparse.Namespace) -> None:
 
     # Check if the build directory exists
     if os.path.exists(build_dir):
-        # Delete the build directory
         shutil.rmtree(build_dir)
+        print("Removed build/ directory.")
+    else:
+        print("No build/ directory to remove.")
 
 
 def main() -> None:
@@ -147,6 +254,8 @@ def main() -> None:
 
     # Create a new command 'init' that calls init_project
     parser_init = subparsers.add_parser("init")
+    parser_init.add_argument("name", nargs="?", help="Project name (defaults to current directory name)")
+    parser_init.add_argument("--force", action="store_true", help="Overwrite existing files if present")
     parser_init.set_defaults(func=init_project)
 
     # Create a new command 'run' that calls run_project
@@ -160,3 +269,7 @@ def main() -> None:
 
     args = parser.parse_args()
     args.func(args)
+
+
+if __name__ == "__main__":
+    main()

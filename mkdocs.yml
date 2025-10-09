@@ -25,6 +25,7 @@ nav:
   - API Reference:
     - Package: api/pythonnative.md
   - Meta:
+    - Roadmap: meta/roadmap.md
     - Contributing: meta/contributing.md
 plugins:
   - search

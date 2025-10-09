@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
 
 # ========================================
@@ -32,9 +32,10 @@ if IS_ANDROID:
     from java import jclass
 
     class ImageView(ImageViewBase, ViewBase):
-        def __init__(self, context, image: str = "") -> None:
+        def __init__(self, image: str = "") -> None:
             super().__init__()
             self.native_class = jclass("android.widget.ImageView")
+            context = get_android_context()
             self.native_instance = self.native_class(context)
             if image:
                 self.set_image(image)

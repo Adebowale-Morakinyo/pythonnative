@@ -7,8 +7,8 @@ class SecondPage(pn.Page):
 
     def on_create(self):
         super().on_create()
-        stack_view = pn.StackView(self.native_instance)
-        label = pn.Label(self.native_instance, "Second page!")
+        stack_view = pn.StackView()
+        label = pn.Label("Second page!")
         stack_view.add_view(label)
         self.set_root_view(stack_view)
 

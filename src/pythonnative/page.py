@@ -31,7 +31,7 @@ differences and handles them appropriately.
 
 from abc import ABC, abstractmethod
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, set_android_context
 from .view import ViewBase
 
 # ========================================
@@ -103,6 +103,8 @@ if IS_ANDROID:
             self.native_class = jclass("android.app.Activity")
             self.native_instance = native_instance
             # self.native_instance = self.native_class()
+            # Stash the Activity so child views can implicitly acquire a Context
+            set_android_context(native_instance)
 
         def set_root_view(self, view) -> None:
             self.native_instance.setContentView(view.native_instance)

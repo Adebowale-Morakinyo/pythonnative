@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
 
 # ========================================
@@ -31,10 +31,11 @@ if IS_ANDROID:
     from java import jclass
 
     class ProgressView(ProgressViewBase, ViewBase):
-        def __init__(self, context) -> None:
+        def __init__(self) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.ProgressBar")
             # self.native_instance = self.native_class(context, None, android.R.attr.progressBarStyleHorizontal)
+            context = get_android_context()
             self.native_instance = self.native_class(context, None, jclass("android.R$attr").progressBarStyleHorizontal)
             self.native_instance.setIndeterminate(False)
 

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, List
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
 
 # ========================================
@@ -29,9 +29,10 @@ if IS_ANDROID:
     from java import jclass
 
     class StackView(StackViewBase, ViewBase):
-        def __init__(self, context) -> None:
+        def __init__(self) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.LinearLayout")
+            context = get_android_context()
             self.native_instance = self.native_class(context)
             self.native_instance.setOrientation(self.native_class.VERTICAL)
 

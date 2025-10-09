@@ -7,11 +7,11 @@ class MainPage(pn.Page):
 
     def on_create(self):
         super().on_create()
-        stack_view = pn.StackView(self.native_instance)
+        stack_view = pn.StackView()
         # list_data = ["item_{}".format(i) for i in range(100)]
         # list_view = pn.ListView(self.native_instance, list_data)
         # stack_view.add_view(list_view)
-        button = pn.Button(self.native_instance, "Button")
+        button = pn.Button("Button")
         button.set_on_click(lambda: self.navigate_to(""))
         # button.set_on_click(lambda: print("Button was clicked!"))
         stack_view.add_view(button)

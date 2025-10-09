@@ -53,8 +53,8 @@ class MainPage(pn.Page):
 
     def on_create(self):
         super().on_create()
-        stack = pn.StackView(self.native_instance)
-        stack.add_view(pn.Label(self.native_instance, \"Hello from PythonNative!\"))
+        stack = pn.StackView()
+        stack.add_view(pn.Label(\"Hello from PythonNative!\"))
         self.set_root_view(stack)
 """
             )

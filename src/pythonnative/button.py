@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Callable
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
 
 # ========================================
@@ -36,9 +36,10 @@ if IS_ANDROID:
     from java import dynamic_proxy, jclass
 
     class Button(ButtonBase, ViewBase):
-        def __init__(self, context, title: str = "") -> None:
+        def __init__(self, title: str = "") -> None:
             super().__init__()
             self.native_class = jclass("android.widget.Button")
+            context = get_android_context()
             self.native_instance = self.native_class(context)
             self.set_title(title)
 

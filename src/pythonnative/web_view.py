@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
 
 # ========================================
@@ -27,9 +27,10 @@ if IS_ANDROID:
     from java import jclass
 
     class WebView(WebViewBase, ViewBase):
-        def __init__(self, context, url: str = "") -> None:
+        def __init__(self, url: str = "") -> None:
             super().__init__()
             self.native_class = jclass("android.webkit.WebView")
+            context = get_android_context()
             self.native_instance = self.native_class(context)
             self.load_url(url)
 

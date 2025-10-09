@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import sys
+import sysconfig
 import zipfile
 from importlib import resources
 
@@ -93,15 +94,39 @@ def _extract_bundled_template(zip_name: str, destination: str) -> None:
     Extract a bundled template zip into the destination directory.
     Tries package resources first; falls back to repo root `templates/` at dev time.
     """
-    # Try to load from installed package resources first
+    # Try to load from installed package resources first (if templates are packaged inside the module)
     try:
-        pkg_templates = resources.files("pythonnative").joinpath("templates")
-        resource_path = str(pkg_templates.joinpath(zip_name))
-        if os.path.exists(resource_path):
-            _extract_zip_to_destination(resource_path, destination)
-            return
+        cand = resources.files("pythonnative").joinpath("templates").joinpath(zip_name)
+        with resources.as_file(cand) as p:
+            resource_path = str(p)
+            if os.path.exists(resource_path):
+                _extract_zip_to_destination(resource_path, destination)
+                return
     except Exception:
-        # Fall back to repo layout
+        # Not packaged inside the module; try data-files installation locations next
+        pass
+
+    # Try sysconfig data dir (where data-files are typically installed)
+    try:
+        data_dir = sysconfig.get_paths().get("data")
+        if data_dir:
+            candidate = os.path.join(data_dir, "pythonnative", "templates", zip_name)
+            if os.path.exists(candidate):
+                _extract_zip_to_destination(candidate, destination)
+                return
+    except Exception:
+        pass
+
+    # Try site-packages purelib/platlib (some environments place data files here)
+    try:
+        purelib = sysconfig.get_paths().get("purelib")
+        platlib = sysconfig.get_paths().get("platlib")
+        for base in filter(None, [purelib, platlib]):
+            candidate = os.path.join(base, "pythonnative", "templates", zip_name)
+            if os.path.exists(candidate):
+                _extract_zip_to_destination(candidate, destination)
+                return
+    except Exception:
         pass
 
     # Fallback: use repository-level templates directory
@@ -143,6 +168,7 @@ def run_project(args: argparse.Namespace) -> None:
     """
     # Determine the platform
     platform: str = args.platform
+    prepare_only: bool = getattr(args, "prepare_only", False)
 
     # Define the build directory
     build_dir: str = os.path.join(os.getcwd(), "build", platform)
@@ -171,11 +197,17 @@ def run_project(args: argparse.Namespace) -> None:
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
     # Install any necessary Python packages into the project environment
-    requirements_path = os.path.join(os.getcwd(), "requirements.txt")
-    if os.path.exists(requirements_path):
-        subprocess.run([sys.executable, "-m", "pip", "install", "-r", requirements_path], check=False)
+    # Skip installation during prepare-only to avoid network access and speed up scaffolding
+    if not prepare_only:
+        requirements_path = os.path.join(os.getcwd(), "requirements.txt")
+        if os.path.exists(requirements_path):
+            subprocess.run([sys.executable, "-m", "pip", "install", "-r", requirements_path], check=False)
 
     # Run the project
+    if prepare_only:
+        print("Prepared project in build/ without building (prepare-only).")
+        return
+
     if platform == "android":
         # Change to the Android project directory
         android_project_dir: str = os.path.join(build_dir, "android_template")
@@ -261,6 +293,11 @@ def main() -> None:
     # Create a new command 'run' that calls run_project
     parser_run = subparsers.add_parser("run")
     parser_run.add_argument("platform", choices=["android", "ios"])
+    parser_run.add_argument(
+        "--prepare-only",
+        action="store_true",
+        help="Extract templates and stage app without building",
+    )
     parser_run.set_defaults(func=run_project)
 
     # Create a new command 'clean' that calls clean_project

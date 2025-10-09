@@ -32,3 +32,23 @@ def test_cli_init_and_clean():
         assert not os.path.exists(os.path.join(tmpdir, "build"))
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_cli_run_prepare_only_android_and_ios():
+    tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
+    try:
+        # init to create app scaffold
+        result = run_pn(["init", "MyApp"], tmpdir)
+        assert result.returncode == 0, result.stderr
+
+        # prepare-only android
+        result = run_pn(["run", "android", "--prepare-only"], tmpdir)
+        assert result.returncode == 0, result.stderr
+        assert os.path.isdir(os.path.join(tmpdir, "build", "android", "android_template"))
+
+        # prepare-only ios
+        result = run_pn(["run", "ios", "--prepare-only"], tmpdir)
+        assert result.returncode == 0, result.stderr
+        assert os.path.isdir(os.path.join(tmpdir, "build", "ios", "ios_template"))
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)

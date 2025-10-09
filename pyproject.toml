@@ -66,6 +66,13 @@ where = ["src"]
 [tool.setuptools]
 license-files = ["LICENSE*"]
 
+# Ensure template zip files are bundled with the wheel so the CLI can run offline.
+[tool.setuptools.data-files]
+"pythonnative/templates" = [
+  "templates/android_template.zip",
+  "templates/ios_template.zip",
+]
+
 [tool.ruff]
 target-version = "py39"
 line-length = 120

@@ -324,6 +324,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -335,6 +348,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-pattern-020" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor pattern (0.2.0)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -729,6 +770,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructor-pattern-020" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor pattern (0.2.0)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -748,6 +806,31 @@
 
 <h1 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h1>
 <p>High-level overview of PythonNative components and how they map to native UI.</p>
+<h2 id="constructor-pattern-020">Constructor pattern (0.2.0)<a class="headerlink" href="#constructor-pattern-020" title="Permanent link">&para;</a></h2>
+<ul>
+<li>All core components share a consistent, contextless constructor on both platforms.</li>
+<li>On Android, a <code>Context</code> is acquired implicitly from the current <code>Activity</code> set by <code>pn.Page</code>.</li>
+<li>On iOS, UIKit classes are allocated/initialized directly.</li>
+</ul>
+<p>Examples:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_create</span><span class="p">()</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StackView</span><span class="p">()</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">))</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">))</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="s2">&quot;initial&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Notes:
+- <code>pn.Page</code> stores the Android <code>Activity</code> so components like <code>pn.Button()</code> and <code>pn.Label()</code> can construct their native counterparts.
+- If you construct views before the <code>Page</code> is created on Android, a runtime error will be raised because no <code>Context</code> is available.</p>
 
 
 

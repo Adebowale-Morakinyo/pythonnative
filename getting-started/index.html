@@ -870,6 +870,13 @@ pn<span class="w"> </span>--help
         <span class="n">button</span><span class="o">.</span><span class="n">set_on_click</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Button clicked&quot;</span><span class="p">))</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bootstrap</span><span class="p">(</span><span class="n">native_instance</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Entry point called by the host app (Activity or ViewController).&quot;&quot;&quot;</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">MainPage</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+    <span class="n">page</span><span class="o">.</span><span class="n">on_create</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">page</span>
 </code></pre></div>
 
 <h2 id="run-on-a-platform">Run on a platform<a class="headerlink" href="#run-on-a-platform" title="Permanent link">&para;</a></h2>

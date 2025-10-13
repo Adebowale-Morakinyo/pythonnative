@@ -283,6 +283,33 @@ def run_project(args: argparse.Namespace) -> None:
             os.chdir(ios_project_dir)
             derived_data = os.path.join(ios_project_dir, "build")
             try:
+                # Detect a simulator UDID to target: prefer Booted; else any iPhone
+                sim_udid: str | None = None
+                try:
+                    import json as _json
+
+                    devices_out = subprocess.run(
+                        ["xcrun", "simctl", "list", "devices", "available", "--json"],
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                    )
+                    devs = (_json.loads(devices_out.stdout or "{}").get("devices") or {})
+                    all_devs = [d for lst in devs.values() for d in (lst or [])]
+                    for d in all_devs:
+                        if d.get("state") == "Booted":
+                            sim_udid = d.get("udid")
+                            break
+                    if not sim_udid:
+                        for d in all_devs:
+                            if (d.get("isAvailable") or d.get("availability")) and (d.get("name") or "").lower().startswith("iphone"):
+                                sim_udid = d.get("udid")
+                                break
+                except Exception:
+                    pass
+
+                xcode_dest = ["-destination", f"id={sim_udid}"] if sim_udid else ["-destination", "platform=iOS Simulator"]
+
                 subprocess.run(
                     [
                         "xcodebuild",
@@ -292,8 +319,7 @@ def run_project(args: argparse.Namespace) -> None:
                         "ios_template",
                         "-configuration",
                         "Debug",
-                        "-destination",
-                        "platform=iOS Simulator,name=iPhone 15",
+                        *xcode_dest,
                         "-derivedDataPath",
                         derived_data,
                         "build",

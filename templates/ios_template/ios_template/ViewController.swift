@@ -6,12 +6,17 @@
 //
 
 import UIKit
+// PythonKit isn't available on iOS by default; guard its use so the
+// template builds out of the box and falls back to a native label.
+#if canImport(PythonKit)
 import PythonKit
+#endif
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        #if canImport(PythonKit)
         // Attempt Python bootstrap of app.main_page.bootstrap(self)
         let sys = Python.import("sys")
         if let resourcePath = Bundle.main.resourcePath {
@@ -26,6 +31,7 @@ class ViewController: UIViewController {
         } catch {
             print("Python bootstrap failed: \(error)")
         }
+        #endif
 
         // Fallback UI if Python import/bootstrap fails
         let label = UILabel(frame: view.bounds)

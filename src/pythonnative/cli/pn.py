@@ -1,10 +1,12 @@
 import argparse
+import hashlib
 import json
 import os
 import shutil
 import subprocess
 import sys
 import sysconfig
+import urllib.request
 import zipfile
 from importlib import resources
 from typing import Any, Dict, List, Optional
@@ -156,6 +158,40 @@ def _extract_bundled_template(zip_name: str, destination: str) -> None:
     raise FileNotFoundError(f"Could not find bundled template {zip_name}. Ensure templates are packaged.")
 
 
+def _github_json(url: str) -> Any:
+    req = urllib.request.Request(url, headers={"User-Agent": "pythonnative-cli"})
+    with urllib.request.urlopen(req) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def _resolve_python_apple_support_asset(
+    py_major_minor: str = "3.11", preferred_name: str = "Python-3.11-iOS-support.b7.tar.gz"
+) -> Optional[str]:
+    """
+    Find a browser_download_url for a Python-Apple-support asset on GitHub Releases.
+    Prefers an exact name match (preferred_name). Falls back to the newest
+    asset whose name contains "Python-{py_major_minor}-iOS-support" and endswith .tar.gz.
+    """
+    try:
+        releases = _github_json("https://api.github.com/repos/beeware/Python-Apple-support/releases?per_page=100")
+        # Search all releases for preferred_name first
+        for rel in releases:
+            for a in rel.get("assets", []) or []:
+                name = a.get("name") or ""
+                if name == preferred_name:
+                    return a.get("browser_download_url")
+        # Fallback: any matching Python-{version}-iOS-support*.tar.gz (take first encountered)
+        needle = f"Python-{py_major_minor}-iOS-support"
+        for rel in releases:
+            for a in rel.get("assets", []) or []:
+                name = a.get("name") or ""
+                if needle in name and name.endswith(".tar.gz"):
+                    return a.get("browser_download_url")
+    except Exception:
+        pass
+    return None
+
+
 def create_android_project(project_name: str, destination: str) -> None:
     """
     Create a new Android project using a template.
@@ -281,6 +317,55 @@ def run_project(args: argparse.Namespace) -> None:
         # Attempt to build and run on iOS Simulator (best-effort)
         ios_project_dir: str = os.path.join(build_dir, "ios_template")
         if os.path.isdir(ios_project_dir):
+            # Stage embedded Python runtime inputs by downloading pinned assets
+            try:
+                assets_dir = os.path.join(build_dir, "ios_runtime")
+                os.makedirs(assets_dir, exist_ok=True)
+                # Pinned preferred asset name and checksum (b7)
+                preferred_name = "Python-3.11-iOS-support.b7.tar.gz"
+                sha256 = "2b7d8589715b9890e8dd7e1bce91c210bb5287417e17b9af120fc577675ed28e"
+                # Resolve a working download URL from GitHub Releases
+                url = _resolve_python_apple_support_asset("3.11", preferred_name=preferred_name)
+                if not url:
+                    raise RuntimeError("Could not resolve Python-Apple-support asset URL from GitHub Releases.")
+                tar_path = os.path.join(assets_dir, os.path.basename(url))
+                if not os.path.exists(tar_path):
+                    print("Downloading Python-Apple-support (3.11 iOS)")
+                    req = urllib.request.Request(url, headers={"User-Agent": "pythonnative-cli"})
+                    with urllib.request.urlopen(req) as r, open(tar_path, "wb") as f:
+                        f.write(r.read())
+                # Verify checksum
+                h = hashlib.sha256()
+                with open(tar_path, "rb") as f:
+                    for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                        h.update(chunk)
+                if h.hexdigest() != sha256:
+                    raise RuntimeError("SHA256 mismatch for Python-Apple-support tarball")
+                # Extract only once
+                extract_root = os.path.join(assets_dir, "extracted")
+                if not os.path.isdir(extract_root):
+                    os.makedirs(extract_root, exist_ok=True)
+                    subprocess.run(["tar", "-xzf", tar_path, "-C", extract_root], check=True)
+                # Provide Python.xcframework to the Xcode project and stdlib for bundling
+                # Try both common layouts
+                cand_frameworks = [
+                    os.path.join(extract_root, "Python.xcframework"),
+                    os.path.join(extract_root, "support", "Python.xcframework"),
+                ]
+                xc_src = next((p for p in cand_frameworks if os.path.isdir(p)), None)
+                if xc_src:
+                    shutil.copytree(xc_src, os.path.join(ios_project_dir, "Python.xcframework"), dirs_exist_ok=True)
+                # Stdlib path
+                cand_stdlib = [
+                    os.path.join(extract_root, "Python.xcframework", "ios-arm64_x86_64-simulator", "lib", "python3.11"),
+                    os.path.join(
+                        extract_root, "support", "Python.xcframework", "ios-arm64_x86_64-simulator", "lib", "python3.11"
+                    ),
+                ]
+                stdlib_src = next((p for p in cand_stdlib if os.path.isdir(p)), None)
+            except Exception as e:
+                print(f"Warning: failed to prepare Python runtime: {e}")
+
             os.chdir(ios_project_dir)
             derived_data = os.path.join(ios_project_dir, "build")
             try:
@@ -315,6 +400,32 @@ def run_project(args: argparse.Namespace) -> None:
                     ["-destination", f"id={sim_udid}"] if sim_udid else ["-destination", "platform=iOS Simulator"]
                 )
 
+                # Provide header and lib paths for CPython (Simulator slice) ONLY if the
+                # XCFramework is not already added to the Xcode project. When the project
+                # contains `Python.xcframework`, Xcode manages headers and linking to avoid
+                # duplicate module.modulemap definitions.
+                extra_xcode_settings: list[str] = []
+                try:
+                    xc_present = os.path.isdir(os.path.join(ios_project_dir, "Python.xcframework"))
+                    if not xc_present and "extract_root" in locals():
+                        sim_headers = os.path.join(
+                            extract_root, "Python.xcframework", "ios-arm64_x86_64-simulator", "Headers"
+                        )
+                        sim_lib = os.path.join(
+                            extract_root, "Python.xcframework", "ios-arm64_x86_64-simulator", "libPython3.11.a"
+                        )
+                        if os.path.isdir(sim_headers):
+                            extra_xcode_settings.extend(
+                                [
+                                    f"HEADER_SEARCH_PATHS={sim_headers}",
+                                    f"SWIFT_INCLUDE_PATHS={sim_headers}",
+                                ]
+                            )
+                        if os.path.exists(sim_lib):
+                            extra_xcode_settings.append(f"OTHER_LDFLAGS=-force_load {sim_lib}")
+                except Exception:
+                    pass
+
                 subprocess.run(
                     [
                         "xcodebuild",
@@ -328,6 +439,7 @@ def run_project(args: argparse.Namespace) -> None:
                         "-derivedDataPath",
                         derived_data,
                         "build",
+                        *extra_xcode_settings,
                     ],
                     check=False,
                 )
@@ -341,7 +453,7 @@ def run_project(args: argparse.Namespace) -> None:
                 print("Could not locate built .app; open the project in Xcode to run.")
                 return
 
-            # Copy staged Python app into the .app bundle so PythonKit can import it
+            # Copy staged Python app and optional embedded runtime into the .app bundle
             try:
                 staged_app_src = os.path.join(build_dir, "app")
                 if os.path.isdir(staged_app_src):
@@ -351,6 +463,67 @@ def run_project(args: argparse.Namespace) -> None:
                 local_lib = os.path.join(src_root, "pythonnative")
                 if os.path.isdir(local_lib):
                     shutil.copytree(local_lib, os.path.join(app_path, "pythonnative"), dirs_exist_ok=True)
+                # Copy stdlib from downloaded support if available
+                if "stdlib_src" in locals() and stdlib_src and os.path.isdir(stdlib_src):
+                    shutil.copytree(stdlib_src, os.path.join(app_path, "python-stdlib"), dirs_exist_ok=True)
+                # Embed Python.framework for Simulator so PythonKit can dlopen it (from downloaded XCFramework)
+                sim_fw = None
+                if "extract_root" in locals():
+                    cand_fw = [
+                        os.path.join(
+                            extract_root, "Python.xcframework", "ios-arm64_x86_64-simulator", "Python.framework"
+                        ),
+                        os.path.join(
+                            extract_root,
+                            "support",
+                            "Python.xcframework",
+                            "ios-arm64_x86_64-simulator",
+                            "Python.framework",
+                        ),
+                    ]
+                    sim_fw = next((p for p in cand_fw if os.path.isdir(p)), None)
+                fw_dest_dir = os.path.join(app_path, "Frameworks")
+                os.makedirs(fw_dest_dir, exist_ok=True)
+                if sim_fw and os.path.isdir(sim_fw):
+                    shutil.copytree(sim_fw, os.path.join(fw_dest_dir, "Python.framework"), dirs_exist_ok=True)
+                # Install rubicon-objc into platform-site
+
+                # Ensure importlib.metadata finds package metadata for rubicon-objc by
+                # installing it into a site-like dir that is on sys.path (platform-site).
+                try:
+                    tmp_site = os.path.join(build_dir, "ios_site")
+                    if os.path.isdir(tmp_site):
+                        shutil.rmtree(tmp_site)
+                    os.makedirs(tmp_site, exist_ok=True)
+                    # Install pure-Python rubicon-objc distribution metadata and package
+                    subprocess.run(
+                        [
+                            sys.executable,
+                            "-m",
+                            "pip",
+                            "install",
+                            "--no-deps",
+                            "--upgrade",
+                            "rubicon-objc",
+                            "-t",
+                            tmp_site,
+                        ],
+                        check=False,
+                    )
+                    platform_site_dir = os.path.join(app_path, "platform-site")
+                    os.makedirs(platform_site_dir, exist_ok=True)
+                    for entry in os.listdir(tmp_site):
+                        src_entry = os.path.join(tmp_site, entry)
+                        dst_entry = os.path.join(platform_site_dir, entry)
+                        if os.path.isdir(src_entry):
+                            shutil.copytree(src_entry, dst_entry, dirs_exist_ok=True)
+                        else:
+                            shutil.copy2(src_entry, dst_entry)
+                except Exception:
+                    # Non-fatal; if metadata isn't present, rubicon import may fail and fallback UI will appear
+                    pass
+                # Note: Python.xcframework provides a static library for Simulator; it must be linked at build time.
+                # We copy the XCFramework into the project directory above so Xcode can link it.
             except Exception:
                 # Non-fatal; fallback UI will appear if import fails
                 pass

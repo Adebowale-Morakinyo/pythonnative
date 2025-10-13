@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Optional
 
 from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
@@ -67,7 +67,24 @@ else:
     # https://developer.apple.com/documentation/uikit/uibutton
     # ========================================
 
-    from rubicon.objc import SEL, ObjCClass
+    from rubicon.objc import SEL, ObjCClass, objc_method
+
+    NSObject = ObjCClass("NSObject")
+
+    # Mypy cannot understand Rubicon's dynamic subclassing; ignore the base type here.
+    class _PNButtonHandler(NSObject):  # type: ignore[valid-type]
+        # Set by the Button when wiring up the target/action callback.
+        _callback: Optional[Callable[[], None]] = None
+
+        @objc_method
+        def onTap_(self, sender) -> None:
+            try:
+                callback = self._callback
+                if callback is not None:
+                    callback()
+            except Exception:
+                # Swallow exceptions to avoid crashing the app; logging is handled at higher levels
+                pass
 
     class Button(ButtonBase, ViewBase):
         def __init__(self, title: str = "") -> None:
@@ -83,8 +100,10 @@ else:
             return self.native_instance.titleForState_(0)
 
         def set_on_click(self, callback: Callable[[], None]) -> None:
-            def objc_callback(_cmd, sender):
-                callback()
-
-            action = SEL(objc_callback)
-            self.native_instance.addTarget_action_forControlEvents_(self.native_instance, action, 1)
+            # Create a handler object with an Objective-C method `onTap:` and attach the Python callback
+            handler = _PNButtonHandler.new()
+            # Keep strong references to the handler and callback
+            self._click_handler = handler
+            handler._callback = callback
+            # UIControlEventTouchUpInside = 1 << 6
+            self.native_instance.addTarget_action_forControlEvents_(handler, SEL("onTap:"), 1 << 6)

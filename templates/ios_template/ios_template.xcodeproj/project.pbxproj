@@ -15,7 +15,8 @@
 		146EBB8E2A40CCCE00E4A2B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 146EBB8C2A40CCCE00E4A2B3 /* LaunchScreen.storyboard */; };
 		146EBB992A40CCCE00E4A2B3 /* ios_templateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146EBB982A40CCCE00E4A2B3 /* ios_templateTests.swift */; };
 		146EBBA32A40CCCE00E4A2B3 /* ios_templateUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146EBBA22A40CCCE00E4A2B3 /* ios_templateUITests.swift */; };
-		146EBBA52A40CCCE00E4A2B3 /* ios_templateUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146EBBA42A40CCCE00E4A2B3 /* ios_templateUITestsLaunchTests.swift */; };
+        146EBBA52A40CCCE00E4A2B3 /* ios_templateUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146EBBA42A40CCCE00E4A2B3 /* ios_templateUITestsLaunchTests.swift */; };
+		A1B2C3D42B2F000000000012 /* PythonKit in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D42B2F000000000011 /* PythonKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,15 +49,16 @@
 		146EBB982A40CCCE00E4A2B3 /* ios_templateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ios_templateTests.swift; sourceTree = "<group>"; };
 		146EBB9E2A40CCCE00E4A2B3 /* ios_templateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ios_templateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		146EBBA22A40CCCE00E4A2B3 /* ios_templateUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ios_templateUITests.swift; sourceTree = "<group>"; };
-		146EBBA42A40CCCE00E4A2B3 /* ios_templateUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ios_templateUITestsLaunchTests.swift; sourceTree = "<group>"; };
+        146EBBA42A40CCCE00E4A2B3 /* ios_templateUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ios_templateUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		146EBB7B2A40CCC900E4A2B3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
-			files = (
-			);
+            files = (
+                A1B2C3D42B2F000000000012 /* PythonKit in Frameworks */,
+            );
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		146EBB912A40CCCE00E4A2B3 /* Frameworks */ = {
@@ -78,8 +80,8 @@
 /* Begin PBXGroup section */
 		146EBB752A40CCC900E4A2B3 = {
 			isa = PBXGroup;
-			children = (
-				146EBB802A40CCC900E4A2B3 /* ios_template */,
+            children = (
+                146EBB802A40CCC900E4A2B3 /* ios_template */,
 				146EBB972A40CCCE00E4A2B3 /* ios_templateTests */,
 				146EBBA12A40CCCE00E4A2B3 /* ios_templateUITests */,
 				146EBB7F2A40CCC900E4A2B3 /* Products */,
@@ -137,10 +139,14 @@
 				146EBB7A2A40CCC900E4A2B3 /* Sources */,
 				146EBB7B2A40CCC900E4A2B3 /* Frameworks */,
 				146EBB7C2A40CCC900E4A2B3 /* Resources */,
+				146EBC002A40CCCE00E4A2B3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+			);
+			packageProductDependencies = (
+				A1B2C3D42B2F000000000011 /* PythonKit */,
 			);
 			name = ios_template;
 			productName = ios_template;
@@ -215,6 +221,9 @@
 				Base,
 			);
 			mainGroup = 146EBB752A40CCC900E4A2B3;
+			packageReferences = (
+				A1B2C3D42B2F000000000010 /* XCRemoteSwiftPackageReference "PythonKit" */,
+			);
 			productRefGroup = 146EBB7F2A40CCC900E4A2B3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -225,6 +234,38 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		146EBC002A40CCCE00E4A2B3 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1B2C3D42B2F000000000010 /* XCRemoteSwiftPackageReference "PythonKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pvieito/PythonKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1B2C3D42B2F000000000011 /* PythonKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1B2C3D42B2F000000000010 /* XCRemoteSwiftPackageReference "PythonKit" */;
+			productName = PythonKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
 		146EBB7C2A40CCC900E4A2B3 /* Resources */ = {

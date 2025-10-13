@@ -1,5 +1,13 @@
 import pythonnative as pn
 
+try:
+    # Optional: used for styling below; safe if rubicon isn't available
+    from rubicon.objc import ObjCClass
+
+    UIColor = ObjCClass("UIColor")
+except Exception:  # pragma: no cover
+    UIColor = None
+
 
 class MainPage(pn.Page):
     def __init__(self, native_instance):
@@ -8,9 +16,21 @@ class MainPage(pn.Page):
     def on_create(self):
         super().on_create()
         stack = pn.StackView()
+        # Ensure vertical stacking
+        try:
+            stack.native_instance.setAxis_(1)  # 1 = vertical
+        except Exception:
+            pass
         stack.add_view(pn.Label("Hello from PythonNative Demo!"))
         button = pn.Button("Tap me")
         button.set_on_click(lambda: print("Demo button clicked"))
+        # Make the button visually obvious
+        try:
+            if UIColor is not None:
+                button.native_instance.setBackgroundColor_(UIColor.systemBlueColor())
+                button.native_instance.setTitleColor_forState_(UIColor.whiteColor(), 0)
+        except Exception:
+            pass
         stack.add_view(button)
         self.set_root_view(stack)
 

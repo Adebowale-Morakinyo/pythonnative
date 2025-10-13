@@ -150,20 +150,27 @@ else:
     # https://developer.apple.com/documentation/uikit/uiviewcontroller
     # ========================================
 
-    from rubicon.objc import ObjCClass
+    from rubicon.objc import ObjCClass, ObjCInstance
 
     class Page(PageBase, ViewBase):
         def __init__(self, native_instance) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIViewController")
+            # If Swift passed us an integer pointer, wrap it as an ObjCInstance.
+            if isinstance(native_instance, int):
+                try:
+                    native_instance = ObjCInstance(native_instance)
+                except Exception:
+                    native_instance = None
             self.native_instance = native_instance
             # self.native_instance = self.native_class.alloc().init()
 
         def set_root_view(self, view) -> None:
-            root_view = self.native_instance.view()
+            # UIViewController.view is a property; access without calling.
+            root_view = self.native_instance.view
             # Size the root child to fill the controller's view and enable autoresizing
             try:
-                bounds = root_view.bounds()
+                bounds = root_view.bounds
                 view.native_instance.setFrame_(bounds)
                 # UIViewAutoresizingFlexibleWidth (2) | UIViewAutoresizingFlexibleHeight (16)
                 view.native_instance.setAutoresizingMask_(2 | 16)

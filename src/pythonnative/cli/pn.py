@@ -7,6 +7,7 @@ import sys
 import sysconfig
 import zipfile
 from importlib import resources
+from typing import Any, Dict, List, Optional
 
 
 def init_project(args: argparse.Namespace) -> None:
@@ -284,7 +285,7 @@ def run_project(args: argparse.Namespace) -> None:
             derived_data = os.path.join(ios_project_dir, "build")
             try:
                 # Detect a simulator UDID to target: prefer Booted; else any iPhone
-                sim_udid: str | None = None
+                sim_udid: Optional[str] = None
                 try:
                     import json as _json
 
@@ -294,7 +295,7 @@ def run_project(args: argparse.Namespace) -> None:
                         capture_output=True,
                         text=True,
                     )
-                    devs = (_json.loads(devices_out.stdout or "{}").get("devices") or {})
+                    devs = _json.loads(devices_out.stdout or "{}").get("devices") or {}
                     all_devs = [d for lst in devs.values() for d in (lst or [])]
                     for d in all_devs:
                         if d.get("state") == "Booted":
@@ -302,13 +303,17 @@ def run_project(args: argparse.Namespace) -> None:
                             break
                     if not sim_udid:
                         for d in all_devs:
-                            if (d.get("isAvailable") or d.get("availability")) and (d.get("name") or "").lower().startswith("iphone"):
+                            if (d.get("isAvailable") or d.get("availability")) and (
+                                d.get("name") or ""
+                            ).lower().startswith("iphone"):
                                 sim_udid = d.get("udid")
                                 break
                 except Exception:
                     pass
 
-                xcode_dest = ["-destination", f"id={sim_udid}"] if sim_udid else ["-destination", "platform=iOS Simulator"]
+                xcode_dest = (
+                    ["-destination", f"id={sim_udid}"] if sim_udid else ["-destination", "platform=iOS Simulator"]
+                )
 
                 subprocess.run(
                     [
@@ -361,7 +366,7 @@ def run_project(args: argparse.Namespace) -> None:
                     text=True,
                 )
                 devices_json = _json.loads(result.stdout or "{}")
-                all_devices = []
+                all_devices: List[Dict[str, Any]] = []
                 for _runtime, devices in (devices_json.get("devices") or {}).items():
                     all_devices.extend(devices or [])
                 # Prefer iPhone 15/15 Pro names; else first available iPhone

@@ -17,6 +17,12 @@ def test_cli_init_and_clean():
         result = run_pn(["init", "MyApp"], tmpdir)
         assert result.returncode == 0, result.stderr
         assert os.path.isdir(os.path.join(tmpdir, "app"))
+        # scaffolded entrypoint
+        main_page_path = os.path.join(tmpdir, "app", "main_page.py")
+        assert os.path.isfile(main_page_path)
+        with open(main_page_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        assert "def bootstrap(" in content
         assert os.path.isfile(os.path.join(tmpdir, "pythonnative.json"))
         assert os.path.isfile(os.path.join(tmpdir, "requirements.txt"))
         assert os.path.isfile(os.path.join(tmpdir, ".gitignore"))

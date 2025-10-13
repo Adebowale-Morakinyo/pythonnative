@@ -7,15 +7,12 @@ class MainPage(pn.Page):
 
     def on_create(self):
         super().on_create()
-        stack_view = pn.StackView()
-        # list_data = ["item_{}".format(i) for i in range(100)]
-        # list_view = pn.ListView(self.native_instance, list_data)
-        # stack_view.add_view(list_view)
-        button = pn.Button("Button")
-        button.set_on_click(lambda: self.navigate_to(""))
-        # button.set_on_click(lambda: print("Button was clicked!"))
-        stack_view.add_view(button)
-        self.set_root_view(stack_view)
+        stack = pn.StackView()
+        stack.add_view(pn.Label("Hello from PythonNative Demo!"))
+        button = pn.Button("Tap me")
+        button.set_on_click(lambda: print("Demo button clicked"))
+        stack.add_view(button)
+        self.set_root_view(stack)
 
     def on_start(self):
         super().on_start()
@@ -40,3 +37,9 @@ class MainPage(pn.Page):
 
     def on_restore_instance_state(self):
         super().on_restore_instance_state()
+
+
+def bootstrap(native_instance):
+    page = MainPage(native_instance)
+    page.on_create()
+    return page

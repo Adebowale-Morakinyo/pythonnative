@@ -160,7 +160,16 @@ else:
             # self.native_instance = self.native_class.alloc().init()
 
         def set_root_view(self, view) -> None:
-            self.native_instance.view().addSubview_(view.native_instance)
+            root_view = self.native_instance.view()
+            # Size the root child to fill the controller's view and enable autoresizing
+            try:
+                bounds = root_view.bounds()
+                view.native_instance.setFrame_(bounds)
+                # UIViewAutoresizingFlexibleWidth (2) | UIViewAutoresizingFlexibleHeight (16)
+                view.native_instance.setAutoresizingMask_(2 | 16)
+            except Exception:
+                pass
+            root_view.addSubview_(view.native_instance)
 
         def on_create(self) -> None:
             print("iOS on_create() called")

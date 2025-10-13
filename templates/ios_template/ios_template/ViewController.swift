@@ -12,19 +12,27 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Minimal PythonKit bootstrap: print Python version and attempt to import Rubicon.
+        // Attempt Python bootstrap of app.main_page.bootstrap(self)
         let sys = Python.import("sys")
-        print("Python Version: \(sys.version_info.major).\(sys.version_info.minor)")
-        print("Python Path: \(sys.path)")
-
-        // Try to import Rubicon-ObjC if available. Safe no-op if not present.
-        do {
-            let rubiconObjC = try Python.attemptImport("rubicon.objc")
-            let ObjCClass = rubiconObjC.ObjCClass
-            print("Rubicon available: \(ObjCClass)")
-        } catch {
-            print("Rubicon not available; continuing without it.")
+        if let resourcePath = Bundle.main.resourcePath {
+            sys.path.append(resourcePath)
+            sys.path.append("\(resourcePath)/app")
         }
+        do {
+            let app = try Python.attemptImport("app.main_page")
+            let bootstrap = app.bootstrap
+            _ = bootstrap(self)
+            return
+        } catch {
+            print("Python bootstrap failed: \(error)")
+        }
+
+        // Fallback UI if Python import/bootstrap fails
+        let label = UILabel(frame: view.bounds)
+        label.text = "Hello from PythonNative (iOS template)"
+        label.textAlignment = .center
+        label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(label)
     }
 
 

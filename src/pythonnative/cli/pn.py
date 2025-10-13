@@ -54,8 +54,18 @@ class MainPage(pn.Page):
     def on_create(self):
         super().on_create()
         stack = pn.StackView()
-        stack.add_view(pn.Label(\"Hello from PythonNative!\"))
+        stack.add_view(pn.Label("Hello from PythonNative!"))
+        button = pn.Button("Tap me")
+        button.set_on_click(lambda: print("Button clicked"))
+        stack.add_view(button)
         self.set_root_view(stack)
+
+
+def bootstrap(native_instance):
+    '''Entry point called by the host app (Android Activity or iOS ViewController).'''
+    page = MainPage(native_instance)
+    page.on_create()
+    return page
 """
             )
 
@@ -243,10 +253,11 @@ def run_project(args: argparse.Namespace) -> None:
             check=True,
         )
     elif platform == "ios":
-        # Attempt to build the iOS project for Simulator (best-effort)
+        # Attempt to build and run on iOS Simulator (best-effort)
         ios_project_dir: str = os.path.join(build_dir, "ios_template")
         if os.path.isdir(ios_project_dir):
             os.chdir(ios_project_dir)
+            derived_data = os.path.join(ios_project_dir, "build")
             try:
                 subprocess.run(
                     [
@@ -255,14 +266,74 @@ def run_project(args: argparse.Namespace) -> None:
                         "ios_template.xcodeproj",
                         "-scheme",
                         "ios_template",
+                        "-configuration",
+                        "Debug",
                         "-destination",
                         "platform=iOS Simulator,name=iPhone 15",
+                        "-derivedDataPath",
+                        derived_data,
                         "build",
                     ],
                     check=False,
                 )
             except FileNotFoundError:
                 print("xcodebuild not found. Skipping iOS build step.")
+                return
+
+            # Locate built app
+            app_path = os.path.join(derived_data, "Build", "Products", "Debug-iphonesimulator", "ios_template.app")
+            if not os.path.isdir(app_path):
+                print("Could not locate built .app; open the project in Xcode to run.")
+                return
+
+            # Copy staged Python app into the .app bundle so PythonKit can import it
+            try:
+                staged_app_src = os.path.join(build_dir, "app")
+                if os.path.isdir(staged_app_src):
+                    shutil.copytree(staged_app_src, os.path.join(app_path, "app"), dirs_exist_ok=True)
+            except Exception:
+                # Non-fatal; fallback UI will appear if import fails
+                pass
+
+            # Find an available simulator and boot it
+            try:
+                import json as _json
+
+                result = subprocess.run(
+                    ["xcrun", "simctl", "list", "devices", "available", "--json"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                devices_json = _json.loads(result.stdout or "{}")
+                all_devices = []
+                for _runtime, devices in (devices_json.get("devices") or {}).items():
+                    all_devices.extend(devices or [])
+                # Prefer iPhone 15/15 Pro names; else first available iPhone
+                preferred = None
+                for d in all_devices:
+                    name = (d.get("name") or "").lower()
+                    if "iphone 15" in name and d.get("isAvailable"):
+                        preferred = d
+                        break
+                if not preferred:
+                    for d in all_devices:
+                        if d.get("isAvailable") and (d.get("name") or "").lower().startswith("iphone"):
+                            preferred = d
+                            break
+                if not preferred:
+                    print("No available iOS Simulators found; open the project in Xcode to run.")
+                    return
+
+                udid = preferred.get("udid")
+                # Boot (no-op if already booted)
+                subprocess.run(["xcrun", "simctl", "boot", udid], check=False)
+                # Install and launch
+                subprocess.run(["xcrun", "simctl", "install", udid, app_path], check=False)
+                subprocess.run(["xcrun", "simctl", "launch", udid, "com.pythonnative.ios-template"], check=False)
+                print("Launched iOS app on Simulator (best-effort).")
+            except Exception:
+                print("Failed to auto-run on Simulator; open the project in Xcode to run.")
 
 
 def clean_project(args: argparse.Namespace) -> None:

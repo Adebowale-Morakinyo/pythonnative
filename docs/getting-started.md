@@ -36,6 +36,13 @@ class MainPage(pn.Page):
         button.set_on_click(lambda: print("Button clicked"))
         stack.add_view(button)
         self.set_root_view(stack)
+
+
+def bootstrap(native_instance):
+    """Entry point called by the host app (Activity or ViewController)."""
+    page = MainPage(native_instance)
+    page.on_create()
+    return page
 ```
 
 ## Run on a platform

@@ -104,7 +104,20 @@ def _extract_bundled_template(zip_name: str, destination: str) -> None:
     Extract a bundled template zip into the destination directory.
     Tries package resources first; falls back to repo root `templates/` at dev time.
     """
-    # Try to load from installed package resources first (if templates are packaged inside the module)
+    # Dev-first: prefer repository templates if running from a checkout (avoid stale packaged zips)
+    try:
+        # __file__ -> src/pythonnative/cli/pn.py, so go up to src/, then to repo root
+        src_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        repo_root = os.path.abspath(os.path.join(src_dir, ".."))
+        repo_templates = os.path.join(repo_root, "templates")
+        candidate = os.path.join(repo_templates, zip_name)
+        if os.path.exists(candidate):
+            _extract_zip_to_destination(candidate, destination)
+            return
+    except Exception:
+        pass
+
+    # Try to load from installed package resources next (if templates are packaged inside the module)
     try:
         cand = resources.files("pythonnative").joinpath("templates").joinpath(zip_name)
         with resources.as_file(cand) as p:
@@ -138,14 +151,6 @@ def _extract_bundled_template(zip_name: str, destination: str) -> None:
                 return
     except Exception:
         pass
-
-    # Fallback: use repository-level templates directory
-    repo_templates = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "..", "..", "templates")
-    repo_templates = os.path.abspath(repo_templates)
-    candidate = os.path.join(repo_templates, zip_name)
-    if os.path.exists(candidate):
-        _extract_zip_to_destination(candidate, destination)
-        return
 
     raise FileNotFoundError(f"Could not find bundled template {zip_name}. Ensure templates are packaged.")
 
@@ -205,6 +210,25 @@ def run_project(args: argparse.Namespace) -> None:
     # Create the destination directory if it doesn't exist
     os.makedirs(dest_dir, exist_ok=True)
     shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
+
+    # During local development (running from repository), also bundle the
+    # local library sources so the app uses the in-repo version instead of
+    # the PyPI package. This provides faster inner-loop iteration and avoids
+    # version skew during development.
+    try:
+        # __file__ -> src/pythonnative/cli/pn.py, so repo root is one up from src/
+        src_root = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".."))
+        local_lib = os.path.join(src_root, "pythonnative")
+        if os.path.isdir(local_lib):
+            if platform == "android":
+                python_root = os.path.join(build_dir, "android_template", "app", "src", "main", "python")
+            else:
+                python_root = os.path.join(build_dir)  # staged at build/ios/app for iOS below
+            os.makedirs(python_root, exist_ok=True)
+            shutil.copytree(local_lib, os.path.join(python_root, "pythonnative"), dirs_exist_ok=True)
+    except Exception:
+        # Non-fatal; fallback to the packaged PyPI dependency if present
+        pass
 
     # Install any necessary Python packages into the project environment
     # Skip installation during prepare-only to avoid network access and speed up scaffolding
@@ -291,6 +315,11 @@ def run_project(args: argparse.Namespace) -> None:
                 staged_app_src = os.path.join(build_dir, "app")
                 if os.path.isdir(staged_app_src):
                     shutil.copytree(staged_app_src, os.path.join(app_path, "app"), dirs_exist_ok=True)
+                # Also copy local library sources if present for dev flow
+                src_root = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".."))
+                local_lib = os.path.join(src_root, "pythonnative")
+                if os.path.isdir(local_lib):
+                    shutil.copytree(local_lib, os.path.join(app_path, "pythonnative"), dirs_exist_ok=True)
             except Exception:
                 # Non-fatal; fallback UI will appear if import fails
                 pass

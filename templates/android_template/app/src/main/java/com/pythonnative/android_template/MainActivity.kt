@@ -2,6 +2,7 @@ package com.pythonnative.android_template
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
             pyModule.callAttr("bootstrap", this)
             // Python Page will set the content view via set_root_view
         } catch (e: Exception) {
+            Log.e("PythonNative", "Python bootstrap failed", e)
             // Fallback: show a simple native label if Python bootstrap fails
             val tv = TextView(this)
             tv.text = "Hello from PythonNative (Android template)"

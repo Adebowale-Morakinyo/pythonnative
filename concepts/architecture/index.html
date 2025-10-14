@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.pythonnative.com/guides/android/">
+        <link rel="canonical" href="https://docs.pythonnative.com/concepts/architecture/">
       
       
-        <link rel="prev" href="../../examples/hello-world/">
+        <link rel="prev" href="../../getting-started/">
       
       
-        <link rel="next" href="../ios/">
+        <link rel="next" href="../components/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Android - PythonNative</title>
+        <title>Architecture - PythonNative</title>
       
     
     
@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#android-guide" class="md-skip">
+        <a href="#architecture" class="md-skip">
           Skip to content
         </a>
       
@@ -106,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Android
+              Architecture
             
           </span>
         </div>
@@ -267,8 +267,10 @@
       
   
   
+    
   
   
+  
     
     
     
@@ -279,11 +281,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
@@ -299,7 +301,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Concepts
@@ -310,10 +312,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../concepts/architecture/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -324,6 +348,80 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#high-level-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      High-level model
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparison
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ios-flow-rubicon-objc" class="md-nav__link">
+    <span class="md-ellipsis">
+      iOS flow (Rubicon-ObjC)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#android-flow-chaquopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Android flow (Chaquopy)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key implications
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related docs
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -336,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/components/" class="md-nav__link">
+      <a href="../components/" class="md-nav__link">
         
   
   
@@ -459,8 +557,6 @@
       
   
   
-    
-  
   
   
     
@@ -473,11 +569,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
@@ -493,7 +589,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -504,32 +600,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Android
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../guides/android/" class="md-nav__link">
         
   
   
@@ -540,62 +614,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-gets-generated" class="md-nav__link">
-    <span class="md-ellipsis">
-      What gets generated
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#run" class="md-nav__link">
-    <span class="md-ellipsis">
-      Run
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#clean" class="md-nav__link">
-    <span class="md-ellipsis">
-      Clean
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
-    <span class="md-ellipsis">
-      Troubleshooting
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -608,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ios/" class="md-nav__link">
+      <a href="../../guides/ios/" class="md-nav__link">
         
   
   
@@ -827,36 +845,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-gets-generated" class="md-nav__link">
+  <a href="#high-level-model" class="md-nav__link">
     <span class="md-ellipsis">
-      What gets generated
+      High-level model
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#run" class="md-nav__link">
+  <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
-      Run
+      Comparison
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#clean" class="md-nav__link">
+  <a href="#ios-flow-rubicon-objc" class="md-nav__link">
     <span class="md-ellipsis">
-      Clean
+      iOS flow (Rubicon-ObjC)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#troubleshooting" class="md-nav__link">
+  <a href="#android-flow-chaquopy" class="md-nav__link">
     <span class="md-ellipsis">
-      Troubleshooting
+      Android flow (Chaquopy)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key implications
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related docs
     </span>
   </a>
   
@@ -881,29 +917,59 @@
   
 
 
-<h1 id="android-guide">Android Guide<a class="headerlink" href="#android-guide" title="Permanent link">&para;</a></h1>
-<p>Basic steps to build and run an Android project generated by <code>pn</code>.</p>
-<h2 id="what-gets-generated">What gets generated<a class="headerlink" href="#what-gets-generated" title="Permanent link">&para;</a></h2>
-<p><code>pn run android</code> unpacks the bundled Android template (Kotlin + Chaquopy) into <code>build/android/android_template</code> and copies your <code>app/</code> into the template's <code>app/src/main/python/app/</code>.</p>
-<p>No network is required for the template itself; the template zip is bundled with the package.</p>
-<h2 id="run">Run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>run<span class="w"> </span>android
-</code></pre></div>
-
-<p>Or to only prepare the project without building:</p>
-<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--prepare-only
-</code></pre></div>
-
-<p>This will stage files under <code>build/android/android_template</code> so you can open it in Android Studio if you prefer.</p>
-<h2 id="clean">Clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h2>
-<p>Remove the build directory safely:</p>
-<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>clean
-</code></pre></div>
-
-<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
+<p>PythonNative maps Python directly to native platform APIs. Conceptually, it is closer to NativeScript's dynamic bindings than to React Native's bridge-and-module approach.</p>
+<h2 id="high-level-model">High-level model<a class="headerlink" href="#high-level-model" title="Permanent link">&para;</a></h2>
 <ul>
-<li>If <code>gradlew</code> fails due to JDK path on macOS, ensure <code>JAVA_HOME</code> is set (the CLI attempts to detect Homebrew <code>openjdk@17</code>).</li>
-<li>Ensure an Android emulator or device is available for <code>installDebug</code>.</li>
+<li>Direct bindings: call native APIs synchronously from Python.</li>
+<li>iOS: rubicon-objc exposes Objective-C/Swift classes (e.g., UIViewController, UIButton, WKWebView) and lets you create dynamic Objective-C subclasses and selectors.</li>
+<li>Android: Chaquopy exposes Java classes (e.g., android.widget.Button, android.webkit.WebView) via the java bridge so you can construct and call methods directly.</li>
+<li>Shared Python API: components like Page, StackView, Label, Button, and WebView have a small, consistent surface. Platform-specific behavior is chosen at import time using pythonnative.utils.IS_ANDROID.</li>
+<li>Thin native bootstrap: the host app remains native (Android Activity or iOS UIViewController). It passes a live instance/pointer into Python, and Python drives the UI from there.</li>
+</ul>
+<h2 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Versus React Native: RN typically exposes capabilities via native modules/TurboModules and a bridge. PythonNative does not require authoring such modules for most APIs; you can access platform classes directly from Python.</li>
+<li>Versus NativeScript: similar philosophy—dynamic, synchronous access to Obj-C/Java from the scripting runtime.</li>
+</ul>
+<h2 id="ios-flow-rubicon-objc">iOS flow (Rubicon-ObjC)<a class="headerlink" href="#ios-flow-rubicon-objc" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The iOS template (Swift + PythonKit) boots Python and calls your bootstrap(native_instance) with the UIViewController pointer.</li>
+<li>In Python, Rubicon wraps the pointer; you then interact with UIKit classes directly.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">rubicon.objc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjCClass</span><span class="p">,</span> <span class="n">ObjCInstance</span>
+
+<span class="n">UIButton</span> <span class="o">=</span> <span class="n">ObjCClass</span><span class="p">(</span><span class="s2">&quot;UIButton&quot;</span><span class="p">)</span>
+<span class="n">vc</span> <span class="o">=</span> <span class="n">ObjCInstance</span><span class="p">(</span><span class="n">native_ptr</span><span class="p">)</span>  <span class="c1"># passed from Swift template</span>
+<span class="n">button</span> <span class="o">=</span> <span class="n">UIButton</span><span class="o">.</span><span class="n">alloc</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="c1"># Configure target/action via a dynamic Objective-C subclass (see Button implementation)</span>
+</code></pre></div>
+
+<h2 id="android-flow-chaquopy">Android flow (Chaquopy)<a class="headerlink" href="#android-flow-chaquopy" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The Android template (Kotlin + Chaquopy) initializes Python in MainActivity and provides the current Activity/Context to Python.</li>
+<li>Components acquire the Context implicitly and construct real Android views.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">java</span><span class="w"> </span><span class="kn">import</span> <span class="n">jclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_android_context</span>
+
+<span class="n">WebViewClass</span> <span class="o">=</span> <span class="n">jclass</span><span class="p">(</span><span class="s2">&quot;android.webkit.WebView&quot;</span><span class="p">)</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">get_android_context</span><span class="p">()</span>
+<span class="n">webview</span> <span class="o">=</span> <span class="n">WebViewClass</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<span class="n">webview</span><span class="o">.</span><span class="n">loadUrl</span><span class="p">(</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="key-implications">Key implications<a class="headerlink" href="#key-implications" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Synchronous native calls: no JS bridge; Python calls are direct.</li>
+<li>Lifecycle rules remain native: Activities/ViewControllers are created by the OS. Python receives and controls them; it does not instantiate Android Activities directly.</li>
+<li>Small, growing surface: the shared Python API favors clarity and consistency, expanding progressively.</li>
+</ul>
+<h2 id="related-docs">Related docs<a class="headerlink" href="#related-docs" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Guides / Android: guides/android.md</li>
+<li>Guides / iOS: guides/ios.md</li>
+<li>Concepts / Components: concepts/components.md</li>
 </ul>
 
 

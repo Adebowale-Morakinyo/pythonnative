@@ -7,7 +7,6 @@ title: Roadmap
 This roadmap focuses on transforming PythonNative into a workable, React Native / Expo-like framework from a developer-experience and simplicity standpoint. Releases are incremental and designed to be shippable, with DX-first improvements balanced with platform capability.
 
 Assumptions
-- Current version: 0.1.0
 - Scope: Android (Chaquopy/Java bridge) and iOS (Rubicon-ObjC), Python 3.9–3.12
 - Goals: Zero-config templates, one CLI, fast iteration loop, portable component API, and a curated subset of native capabilities with room to expand.
 

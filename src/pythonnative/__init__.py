@@ -1,6 +1,8 @@
 from importlib import import_module
 from typing import Any, Dict
 
+__version__ = "0.2.0"
+
 __all__ = [
     "ActivityIndicatorView",
     "Button",

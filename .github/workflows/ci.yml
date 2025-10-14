@@ -33,7 +33,7 @@ jobs:
 
       - name: Format check (Black)
         run: |
-          black --check src apps tests
+          black --check src examples tests
 
       - name: Type check (MyPy)
         run: |

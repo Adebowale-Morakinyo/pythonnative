@@ -20,7 +20,7 @@ pip install -e .
 pytest -q
 
 # format and lint
-black src apps tests || true
+black src examples tests || true
 ruff check .
 ```
 
@@ -33,8 +33,8 @@ pn --help
 # create a new sample app (template fetch is remote)
 pn init my_app
 
-# run a local demo app skeleton
-cd apps/pythonnative_demo && pn run android
+# run the Hello World example
+cd examples/hello-world && pn run android
 ```
 
 ## Project layout (high‑level)
@@ -44,9 +44,8 @@ cd apps/pythonnative_demo && pn run android
   - `cli/` – `pn` command
 - `tests/` – unit tests for the library
 - `templates/` – Android/iOS project templates and zips
-- `apps/` – application projects
-  - `django_pythonnative/` – Django project for docs/demo hosting and E2E
-  - `pythonnative_demo/` – minimal demo app using the library
+- `examples/` – runnable example apps
+  - `hello-world/` – minimal demo app using the library
 - `experiments/` – platform experiments (Android/iOS/Briefcase)
 - `README.md`, `pyproject.toml` – repo docs and packaging
 
@@ -62,7 +61,7 @@ Common commands:
 ```bash
 pytest -q                     # run tests
 ruff check .                  # lint
-black src apps tests          # format
+black src examples tests      # format
 ```
 
 ## Conventional Commits
@@ -107,11 +106,10 @@ Recommended scopes (match the smallest accurate directory/module):
 
 - Templates and examples:
   - `templates` – `templates/` (Android/iOS templates, zips)
-  - `demo` – `apps/pythonnative_demo/`
+  - `examples` – `examples/` (e.g., `hello-world/`)
   - `experiments` – `experiments/`
 
-- Django app and site:
-  - `django` – `apps/django_pythonnative/` (site, docs pages, E2E harness)
+<!-- Django app and site removed: the old Django project has been retired -->
 
 - Repo‑level and ops:
   - `deps` – dependency updates and version pins

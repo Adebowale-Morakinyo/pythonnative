@@ -66,11 +66,10 @@ where = ["src"]
 [tool.setuptools]
 license-files = ["LICENSE*"]
 
-# Ensure template zip files are bundled with the wheel so the CLI can run offline.
-[tool.setuptools.data-files]
-"pythonnative/templates" = [
-  "templates/android_template.zip",
-  "templates/ios_template.zip",
+# Include template directories inside the package so importlib.resources can find them
+[tool.setuptools.package-data]
+pythonnative = [
+  "templates/**",
 ]
 
 [tool.ruff]

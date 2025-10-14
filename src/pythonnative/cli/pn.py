@@ -7,7 +7,6 @@ import subprocess
 import sys
 import sysconfig
 import urllib.request
-import zipfile
 from importlib import resources
 from typing import Any, Dict, List, Optional
 
@@ -97,65 +96,66 @@ def bootstrap(native_instance):
     print("Initialized PythonNative project.")
 
 
-def _extract_zip_to_destination(zip_path: str, destination: str) -> None:
-    with zipfile.ZipFile(zip_path, "r") as zf:
-        zf.extractall(destination)
+def _copy_dir(src: str, dst: str) -> None:
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    shutil.copytree(src, dst, dirs_exist_ok=True)
 
 
-def _extract_bundled_template(zip_name: str, destination: str) -> None:
+def _copy_bundled_template_dir(template_dir: str, destination: str) -> None:
     """
-    Extract a bundled template zip into the destination directory.
-    Tries package resources first; falls back to repo root `templates/` at dev time.
+    Copy a bundled template directory into the destination directory.
+    Tries the repository `templates/` first during development, then
+    package resources when installed from a wheel.
+    The result should be `${destination}/{template_dir}`.
     """
-    # Dev-first: prefer repository templates if running from a checkout (avoid stale packaged zips)
+    dest_path = os.path.join(destination, template_dir)
+
+    # Dev-first: prefer local source templates if running from a checkout (avoid stale packaged data)
     try:
         # __file__ -> src/pythonnative/cli/pn.py, so go up to src/, then to repo root
         src_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        # Check templates located inside the source package tree
+        local_pkg_templates = os.path.join(src_dir, "pythonnative", "templates", template_dir)
+        if os.path.isdir(local_pkg_templates):
+            _copy_dir(local_pkg_templates, dest_path)
+            return
         repo_root = os.path.abspath(os.path.join(src_dir, ".."))
         repo_templates = os.path.join(repo_root, "templates")
-        candidate = os.path.join(repo_templates, zip_name)
-        if os.path.exists(candidate):
-            _extract_zip_to_destination(candidate, destination)
+        candidate_dir = os.path.join(repo_templates, template_dir)
+        if os.path.isdir(candidate_dir):
+            _copy_dir(candidate_dir, dest_path)
             return
     except Exception:
         pass
 
-    # Try to load from installed package resources next (if templates are packaged inside the module)
+    # Try to load from installed package resources (templates packaged inside the module)
     try:
-        cand = resources.files("pythonnative").joinpath("templates").joinpath(zip_name)
+        cand = resources.files("pythonnative").joinpath("templates").joinpath(template_dir)
         with resources.as_file(cand) as p:
             resource_path = str(p)
-            if os.path.exists(resource_path):
-                _extract_zip_to_destination(resource_path, destination)
+            if os.path.isdir(resource_path):
+                _copy_dir(resource_path, dest_path)
                 return
     except Exception:
-        # Not packaged inside the module; try data-files installation locations next
         pass
 
-    # Try sysconfig data dir (where data-files are typically installed)
+    # Last resort: check typical data-file locations
     try:
-        data_dir = sysconfig.get_paths().get("data")
-        if data_dir:
-            candidate = os.path.join(data_dir, "pythonnative", "templates", zip_name)
-            if os.path.exists(candidate):
-                _extract_zip_to_destination(candidate, destination)
+        data_paths = sysconfig.get_paths()
+        search_bases = [
+            data_paths.get("data"),
+            data_paths.get("purelib"),
+            data_paths.get("platlib"),
+        ]
+        for base in filter(None, search_bases):
+            candidate_dir = os.path.join(base, "pythonnative", "templates", template_dir)
+            if os.path.isdir(candidate_dir):
+                _copy_dir(candidate_dir, dest_path)
                 return
     except Exception:
         pass
 
-    # Try site-packages purelib/platlib (some environments place data files here)
-    try:
-        purelib = sysconfig.get_paths().get("purelib")
-        platlib = sysconfig.get_paths().get("platlib")
-        for base in filter(None, [purelib, platlib]):
-            candidate = os.path.join(base, "pythonnative", "templates", zip_name)
-            if os.path.exists(candidate):
-                _extract_zip_to_destination(candidate, destination)
-                return
-    except Exception:
-        pass
-
-    raise FileNotFoundError(f"Could not find bundled template {zip_name}. Ensure templates are packaged.")
+    raise FileNotFoundError(f"Could not find bundled template directory {template_dir}. Ensure templates are packaged.")
 
 
 def _github_json(url: str) -> Any:
@@ -199,8 +199,8 @@ def create_android_project(project_name: str, destination: str) -> None:
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     """
-    # Extract the Android template project from bundled zip
-    _extract_bundled_template("android_template.zip", destination)
+    # Copy the Android template project directory
+    _copy_bundled_template_dir("android_template", destination)
 
 
 def create_ios_project(project_name: str, destination: str) -> None:
@@ -210,8 +210,8 @@ def create_ios_project(project_name: str, destination: str) -> None:
     :param project_name: The name of the project.
     :param destination: The directory where the project will be created.
     """
-    # Extract the iOS template project from bundled zip
-    _extract_bundled_template("ios_template.zip", destination)
+    # Copy the iOS template project directory
+    _copy_bundled_template_dir("ios_template", destination)
 
 
 def run_project(args: argparse.Namespace) -> None:

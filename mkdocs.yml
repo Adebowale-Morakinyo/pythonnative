@@ -15,6 +15,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Concepts:
+    - Architecture: concepts/architecture.md
     - Components: concepts/components.md
   - Examples:
     - Overview: examples.md

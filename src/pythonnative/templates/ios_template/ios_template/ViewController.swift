@@ -16,9 +16,17 @@ import Python
 #endif
 
 class ViewController: UIViewController {
+    // Ensure Python.framework is configured only once per process
+    private static var hasInitializedPython: Bool = false
+    // Optional keys for dynamic page navigation
+    @objc dynamic var requestedPagePath: String? = nil
+    @objc dynamic var requestedPageArgsJSON: String? = nil
+    private var pythonReady: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Ensure a visible background when created programmatically (storyboards set this automatically)
+        view.backgroundColor = .systemBackground
         NSLog("[PN][ViewController] viewDidLoad")
         if let bundleId = Bundle.main.bundleIdentifier {
             NSLog("[PN] Bundle Identifier: \(bundleId)")
@@ -45,14 +53,19 @@ class ViewController: UIViewController {
             let frameworkLib = "\(bundlePath)/Frameworks/Python.framework/Python"
             setenv("PYTHON_LIBRARY", frameworkLib, 1)
             if FileManager.default.fileExists(atPath: frameworkLib) {
-                NSLog("[PN] Using embedded Python lib at: \(frameworkLib)")
-                PythonLibrary.useLibrary(at: frameworkLib)
+                if !ViewController.hasInitializedPython {
+                    NSLog("[PN] Using embedded Python lib at: \(frameworkLib)")
+                    PythonLibrary.useLibrary(at: frameworkLib)
+                    ViewController.hasInitializedPython = true
+                } else {
+                    NSLog("[PN] Python library already initialized; skipping useLibrary")
+                }
+                pythonReady = true
             } else {
                 NSLog("[PN] Embedded Python library not found at: \(frameworkLib)")
             }
         }
-        NSLog("[PN] PythonKit available; attempting Python bootstrap of app.main_page.bootstrap(self)")
-        // Attempt Python bootstrap of app.main_page.bootstrap(self)
+        NSLog("[PN] PythonKit available; attempting Python bootstrap")
         let sys = Python.import("sys")
         NSLog("[PN] Python version: \(sys.version)")
         NSLog("[PN] Initial sys.path: \(sys.path)")
@@ -69,38 +82,35 @@ class ViewController: UIViewController {
                 NSLog("[PN] Could not list contents of \(appDir).")
             }
         }
+        // Determine which Python page to load
+        let pagePath: String = requestedPagePath ?? "app.main_page.MainPage"
         do {
-            let app = try Python.attemptImport("app.main_page")
-            let pyNone = Python.None
+            let moduleName = String(pagePath.split(separator: ".").dropLast().joined(separator: "."))
+            let className = String(pagePath.split(separator: ".").last ?? "MainPage")
+            let pyModule = try Python.attemptImport(moduleName)
+            // Resolve class by name via builtins.getattr to avoid subscripting issues
             let builtins = Python.import("builtins")
             let getattrFn = builtins.getattr
-            let bootstrap = try getattrFn.throwing.dynamicallyCall(withArguments: [app, "bootstrap", pyNone])
-            if bootstrap != Python.None {
+            let pageClass = try getattrFn.throwing.dynamicallyCall(withArguments: [pyModule, className])
+            // Pass native pointer so Python Page can wrap via rubicon.objc
+            let ptr = Unmanaged.passUnretained(self).toOpaque()
+            let addr = UInt(bitPattern: ptr)
+            let page = try pageClass.throwing.dynamicallyCall(withArguments: [addr])
+            // If args provided, pass into Page via set_args(dict)
+            if let jsonStr = requestedPageArgsJSON {
+                let json = Python.import("json")
                 do {
-                    let isCallable = try Python.callable.throwing.dynamicallyCall(withArguments: [bootstrap])
-                    if Bool(isCallable) == true {
-                        // Pass the native UIViewController pointer into Python so it can be wrapped by rubicon.objc
-                        let ptr = Unmanaged.passUnretained(self).toOpaque()
-                        let addr = UInt(bitPattern: ptr)
-                        NSLog("[PN] Passing native UIViewController pointer to Python: 0x%llx", addr)
-                        _ = try bootstrap.throwing.dynamicallyCall(withArguments: [addr])
-                        NSLog("[PN] Python bootstrap succeeded; returning early from viewDidLoad")
-                        return
-                    } else {
-                        NSLog("[PN] 'bootstrap' exists but is not callable")
-                    }
+                    let args = try json.loads.throwing.dynamicallyCall(withArguments: [jsonStr])
+                    _ = try page.set_args.throwing.dynamicallyCall(withArguments: [args])
                 } catch {
-                    NSLog("[PN] Python callable/bootstrap raised error: \(error)")
-                    let sys = Python.import("sys")
-                    NSLog("[PN] sys.path at call error: \(sys.path)")
+                    NSLog("[PN] Failed to decode requestedPageArgsJSON: \(error)")
                 }
-            } else {
-                NSLog("[PN] Python bootstrap function not found on app.main_page")
             }
+            // Call on_create immediately so Python can insert its root view
+            _ = try page.on_create.throwing.dynamicallyCall(withArguments: [])
+            return
         } catch {
-            NSLog("[PN] Python bootstrap failed during import/getattr: \(error)")
-            let sys = Python.import("sys")
-            NSLog("[PN] sys.path at failure: \(sys.path)")
+            NSLog("[PN] Python bootstrap failed: \(error)")
         }
         #endif
 
@@ -111,6 +121,96 @@ class ViewController: UIViewController {
         label.textAlignment = .center
         label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(label)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_start"])
+            } catch {}
+        }
+        #endif
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_resume"])
+            } catch {}
+        }
+        #endif
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_pause"])
+            } catch {}
+        }
+        #endif
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_stop"])
+            } catch {}
+        }
+        #endif
+    }
+
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_save_instance_state"])
+            } catch {}
+        }
+        #endif
+    }
+
+    override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_restore_instance_state"])
+            } catch {}
+        }
+        #endif
+    }
+
+    deinit {
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_destroy"])
+            } catch {}
+        }
+        #endif
     }
 
 

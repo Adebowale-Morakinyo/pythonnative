@@ -41,7 +41,7 @@ def init_project(args: argparse.Namespace) -> None:
 
     os.makedirs(app_dir, exist_ok=True)
 
-    # Minimal hello world app scaffold
+    # Minimal hello world app scaffold (no bootstrap function; host instantiates Page directly)
     main_page_py = os.path.join(app_dir, "main_page.py")
     if not os.path.exists(main_page_py) or args.force:
         with open(main_page_py, "w", encoding="utf-8") as f:
@@ -61,13 +61,6 @@ class MainPage(pn.Page):
         button.set_on_click(lambda: print("Button clicked"))
         stack.add_view(button)
         self.set_root_view(stack)
-
-
-def bootstrap(native_instance):
-    '''Entry point called by the host app (Android Activity or iOS ViewController).'''
-    page = MainPage(native_instance)
-    page.on_create()
-    return page
 """
             )
 

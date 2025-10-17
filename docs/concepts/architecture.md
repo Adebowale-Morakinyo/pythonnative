@@ -17,7 +17,7 @@ PythonNative maps Python directly to native platform APIs. Conceptually, it is c
 
 ## iOS flow (Rubicon-ObjC)
 
-- The iOS template (Swift + PythonKit) boots Python and calls your bootstrap(native_instance) with the UIViewController pointer.
+- The iOS template (Swift + PythonKit) boots Python and instantiates your `MainPage` with the current `UIViewController` pointer.
 - In Python, Rubicon wraps the pointer; you then interact with UIKit classes directly.
 
 ```python

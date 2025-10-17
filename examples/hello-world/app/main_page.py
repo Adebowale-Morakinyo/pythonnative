@@ -22,8 +22,20 @@ class MainPage(pn.Page):
         except Exception:
             pass
         stack.add_view(pn.Label("Hello from PythonNative Demo!"))
-        button = pn.Button("Tap me")
-        button.set_on_click(lambda: print("Demo button clicked"))
+        button = pn.Button("Go to Second Page")
+
+        def on_next():
+            # Visual confirmation that tap worked (iOS only)
+            try:
+                if UIColor is not None:
+                    button.native_instance.setBackgroundColor_(UIColor.systemGreenColor())
+                    button.native_instance.setTitleColor_forState_(UIColor.whiteColor(), 0)
+            except Exception:
+                pass
+            # Demonstrate passing args
+            self.push("app.second_page.SecondPage", args={"message": "Greetings from MainPage"})
+
+        button.set_on_click(on_next)
         # Make the button visually obvious
         try:
             if UIColor is not None:
@@ -57,9 +69,3 @@ class MainPage(pn.Page):
 
     def on_restore_instance_state(self):
         super().on_restore_instance_state()
-
-
-def bootstrap(native_instance):
-    page = MainPage(native_instance)
-    page.on_create()
-    return page

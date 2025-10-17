@@ -18,7 +18,7 @@ This scaffolds:
 - `requirements.txt`
 - `.gitignore`
 
-A minimal `app/main_page.py` looks like:
+A minimal `app/main_page.py` looks like (no bootstrap needed):
 
 ```python
 import pythonnative as pn
@@ -36,13 +36,6 @@ class MainPage(pn.Page):
         button.set_on_click(lambda: print("Button clicked"))
         stack.add_view(button)
         self.set_root_view(stack)
-
-
-def bootstrap(native_instance):
-    """Entry point called by the host app (Activity or ViewController)."""
-    page = MainPage(native_instance)
-    page.on_create()
-    return page
 ```
 
 ## Run on a platform

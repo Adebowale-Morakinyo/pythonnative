@@ -22,7 +22,7 @@ def test_cli_init_and_clean():
         assert os.path.isfile(main_page_path)
         with open(main_page_path, "r", encoding="utf-8") as f:
             content = f.read()
-        assert "def bootstrap(" in content
+        assert "class MainPage(" in content
         assert os.path.isfile(os.path.join(tmpdir, "pythonnative.json"))
         assert os.path.isfile(os.path.join(tmpdir, "requirements.txt"))
         assert os.path.isfile(os.path.join(tmpdir, ".gitignore"))
@@ -50,7 +50,21 @@ def test_cli_run_prepare_only_android_and_ios():
         # prepare-only android
         result = run_pn(["run", "android", "--prepare-only"], tmpdir)
         assert result.returncode == 0, result.stderr
-        assert os.path.isdir(os.path.join(tmpdir, "build", "android", "android_template"))
+        android_root = os.path.join(tmpdir, "build", "android", "android_template")
+        assert os.path.isdir(android_root)
+        # Ensure new navigation activity exists
+        page_activity = os.path.join(
+            android_root,
+            "app",
+            "src",
+            "main",
+            "java",
+            "com",
+            "pythonnative",
+            "android_template",
+            "PageActivity.kt",
+        )
+        assert os.path.isfile(page_activity)
 
         # prepare-only ios
         result = run_pn(["run", "ios", "--prepare-only"], tmpdir)

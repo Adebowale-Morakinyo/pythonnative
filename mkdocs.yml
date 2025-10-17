@@ -23,6 +23,7 @@ nav:
   - Guides:
     - Android: guides/android.md
     - iOS: guides/ios.md
+    - Navigation: guides/navigation.md
   - API Reference:
     - Package: api/pythonnative.md
   - Meta:

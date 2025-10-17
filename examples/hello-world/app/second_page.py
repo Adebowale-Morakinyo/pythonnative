@@ -8,8 +8,13 @@ class SecondPage(pn.Page):
     def on_create(self):
         super().on_create()
         stack_view = pn.StackView()
-        label = pn.Label("Second page!")
-        stack_view.add_view(label)
+        # Read args passed from MainPage
+        args = self.get_args()
+        message = args.get("message", "Second page!")
+        stack_view.add_view(pn.Label(message))
+        back_btn = pn.Button("Back")
+        back_btn.set_on_click(lambda: self.pop())
+        stack_view.add_view(back_btn)
         self.set_root_view(stack_view)
 
     def on_start(self):

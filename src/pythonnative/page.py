@@ -128,7 +128,20 @@ if IS_ANDROID:
             self._args: dict = {}
 
         def set_root_view(self, view) -> None:
-            self.native_instance.setContentView(view.native_instance)
+            # In fragment-based navigation, attach child view to the current fragment container.
+            try:
+                from .utils import get_android_fragment_container
+
+                container = get_android_fragment_container()
+                # Remove previous children if any, then add the new root
+                try:
+                    container.removeAllViews()
+                except Exception:
+                    pass
+                container.addView(view.native_instance)
+            except Exception:
+                # Fallback to setting content view directly on the Activity
+                self.native_instance.setContentView(view.native_instance)
 
         def on_create(self) -> None:
             print("Android on_create() called")
@@ -184,18 +197,26 @@ if IS_ANDROID:
                 raise ValueError("Unsupported page reference; expected dotted string or class/instance")
 
         def push(self, page: Union[str, Any], args: Optional[dict] = None) -> None:
+            # Delegate to Navigator.push to navigate to PageFragment with arguments
             page_path = self._resolve_page_path(page)
-            package_name = self.native_instance.getPackageName()
-            intent_cls = jclass("android.content.Intent")
-            target_activity_cls = jclass(f"{package_name}.PageActivity")
-            intent = intent_cls(self.native_instance, target_activity_cls)
-            intent.putExtra("PY_PAGE_PATH", page_path)
-            if args:
-                intent.putExtra("PY_PAGE_ARGS_JSON", json.dumps(args))
-            self.native_instance.startActivity(intent)
+            try:
+                Navigator = jclass(f"{self.native_instance.getPackageName()}.Navigator")
+                args_json = json.dumps(args) if args else None
+                Navigator.push(self.native_instance, page_path, args_json)
+            except Exception:
+                # As a last resort, do nothing rather than crash
+                pass
 
         def pop(self) -> None:
-            self.native_instance.finish()
+            # Delegate to Navigator.pop for back-stack pop
+            try:
+                Navigator = jclass(f"{self.native_instance.getPackageName()}.Navigator")
+                Navigator.pop(self.native_instance)
+            except Exception:
+                try:
+                    self.native_instance.finish()
+                except Exception:
+                    pass
 
 else:
     # ========================================

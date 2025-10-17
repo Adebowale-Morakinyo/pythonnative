@@ -1,5 +1,13 @@
 import pythonnative as pn
 
+try:
+    # Optional: iOS styling support (safe if rubicon isn't available)
+    from rubicon.objc import ObjCClass
+
+    UIColor = ObjCClass("UIColor")
+except Exception:  # pragma: no cover
+    UIColor = None
+
 
 class SecondPage(pn.Page):
     def __init__(self, native_instance):
@@ -12,6 +20,28 @@ class SecondPage(pn.Page):
         args = self.get_args()
         message = args.get("message", "Second page!")
         stack_view.add_view(pn.Label(message))
+        # Navigate to Third Page
+        to_third_btn = pn.Button("Go to Third Page")
+        # Style button on iOS similar to MainPage
+        try:
+            if UIColor is not None:
+                to_third_btn.native_instance.setBackgroundColor_(UIColor.systemBlueColor())
+                to_third_btn.native_instance.setTitleColor_forState_(UIColor.whiteColor(), 0)
+        except Exception:
+            pass
+
+        def on_next():
+            # Visual confirmation that tap worked (iOS only)
+            try:
+                if UIColor is not None:
+                    to_third_btn.native_instance.setBackgroundColor_(UIColor.systemGreenColor())
+                    to_third_btn.native_instance.setTitleColor_forState_(UIColor.whiteColor(), 0)
+            except Exception:
+                pass
+            self.push("app.third_page.ThirdPage", args={"from": "Second"})
+
+        to_third_btn.set_on_click(on_next)
+        stack_view.add_view(to_third_btn)
         back_btn = pn.Button("Back")
         back_btn.set_on_click(lambda: self.pop())
         stack_view.add_view(back_btn)

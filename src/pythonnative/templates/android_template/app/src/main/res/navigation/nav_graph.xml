@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/pageFragment">
+
+    <fragment
+        android:id="@+id/pageFragment"
+        android:name="com.pythonnative.android_template.PageFragment"
+        android:label="PageFragment">
+        <argument
+            android:name="page_path"
+            app:argType="string"
+            android:defaultValue="app.main_page.MainPage" />
+        <argument
+            android:name="args_json"
+            app:argType="string"
+            android:nullable="true" />
+    </fragment>
+
+</navigation>

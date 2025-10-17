@@ -50,6 +50,12 @@ webview.loadUrl("https://example.com")
 - Lifecycle rules remain native: Activities/ViewControllers are created by the OS. Python receives and controls them; it does not instantiate Android Activities directly.
 - Small, growing surface: the shared Python API favors clarity and consistency, expanding progressively.
 
+## Navigation model overview
+
+- See the Navigation guide for full details and comparisons with other frameworks.
+  - iOS: one host `UIViewController` class, many instances pushed on a `UINavigationController`.
+  - Android: single host `Activity` with a `NavHostFragment` and a stack of generic `PageFragment`s driven by a navigation graph.
+
 ## Related docs
 
 - Guides / Android: guides/android.md

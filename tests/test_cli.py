@@ -52,8 +52,8 @@ def test_cli_run_prepare_only_android_and_ios():
         assert result.returncode == 0, result.stderr
         android_root = os.path.join(tmpdir, "build", "android", "android_template")
         assert os.path.isdir(android_root)
-        # Ensure new navigation activity exists
-        page_activity = os.path.join(
+        # Ensure new Fragment-based navigation exists
+        page_fragment = os.path.join(
             android_root,
             "app",
             "src",
@@ -62,9 +62,19 @@ def test_cli_run_prepare_only_android_and_ios():
             "com",
             "pythonnative",
             "android_template",
-            "PageActivity.kt",
+            "PageFragment.kt",
         )
-        assert os.path.isfile(page_activity)
+        assert os.path.isfile(page_fragment)
+        nav_graph = os.path.join(
+            android_root,
+            "app",
+            "src",
+            "main",
+            "res",
+            "navigation",
+            "nav_graph.xml",
+        )
+        assert os.path.isfile(nav_graph)
 
         # prepare-only ios
         result = run_pn(["run", "ios", "--prepare-only"], tmpdir)

@@ -39,8 +39,9 @@ def _get_is_android() -> bool:
 
 IS_ANDROID: bool = _get_is_android()
 
-# Global hook to access the current Android Activity/Context from Python code
+# Global hooks to access current Android Activity/Context and Fragment container from Python code
 _android_context: Any = None
+_android_fragment_container: Any = None
 
 
 def set_android_context(context: Any) -> None:
@@ -55,6 +56,15 @@ def set_android_context(context: Any) -> None:
     _android_context = context
 
 
+def set_android_fragment_container(container_view: Any) -> None:
+    """Record the current Fragment root container ViewGroup for rendering pages.
+
+    The current Page's `set_root_view` will attach its native view to this container.
+    """
+    global _android_fragment_container
+    _android_fragment_container = container_view
+
+
 def get_android_context() -> Any:
     """Return the previously set Android Activity/Context or raise if missing."""
 
@@ -65,3 +75,17 @@ def get_android_context() -> Any:
             "Android context is not set. Ensure Page is initialized from an Activity " "before constructing views."
         )
     return _android_context
+
+
+def get_android_fragment_container() -> Any:
+    """Return the previously set Fragment container ViewGroup or raise if missing.
+
+    This is set by the host `PageFragment` when its view is created.
+    """
+    if not IS_ANDROID:
+        raise RuntimeError("get_android_fragment_container() called on non-Android platform")
+    if _android_fragment_container is None:
+        raise RuntimeError(
+            "Android fragment container is not set. Ensure PageFragment has been created before set_root_view."
+        )
+    return _android_fragment_container

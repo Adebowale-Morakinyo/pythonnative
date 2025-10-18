@@ -46,7 +46,6 @@ cd examples/hello-world && pn run android
 - `templates/` – Android/iOS project templates and zips
 - `examples/` – runnable example apps
   - `hello-world/` – minimal demo app using the library
-- `experiments/` – platform experiments (Android/iOS/Briefcase)
 - `README.md`, `pyproject.toml` – repo docs and packaging
 
 ## Coding guidelines
@@ -107,7 +106,6 @@ Recommended scopes (match the smallest accurate directory/module):
 - Templates and examples:
   - `templates` – `templates/` (Android/iOS templates, zips)
   - `examples` – `examples/` (e.g., `hello-world/`)
-  - `experiments` – `experiments/`
 
 <!-- Django app and site removed: the old Django project has been retired -->
 

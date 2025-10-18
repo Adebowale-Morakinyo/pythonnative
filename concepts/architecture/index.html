@@ -410,6 +410,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#navigation-model-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navigation model overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#related-docs" class="md-nav__link">
     <span class="md-ellipsis">
       Related docs
@@ -913,6 +922,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#navigation-model-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navigation model overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#related-docs" class="md-nav__link">
     <span class="md-ellipsis">
       Related docs
@@ -987,6 +1005,12 @@
 <li>Synchronous native calls: no JS bridge; Python calls are direct.</li>
 <li>Lifecycle rules remain native: Activities/ViewControllers are created by the OS. Python receives and controls them; it does not instantiate Android Activities directly.</li>
 <li>Small, growing surface: the shared Python API favors clarity and consistency, expanding progressively.</li>
+</ul>
+<h2 id="navigation-model-overview">Navigation model overview<a class="headerlink" href="#navigation-model-overview" title="Permanent link">&para;</a></h2>
+<ul>
+<li>See the Navigation guide for full details and comparisons with other frameworks.</li>
+<li>iOS: one host <code>UIViewController</code> class, many instances pushed on a <code>UINavigationController</code>.</li>
+<li>Android: single host <code>Activity</code> with a <code>NavHostFragment</code> and a stack of generic <code>PageFragment</code>s driven by a navigation graph.</li>
 </ul>
 <h2 id="related-docs">Related docs<a class="headerlink" href="#related-docs" title="Permanent link">&para;</a></h2>
 <ul>

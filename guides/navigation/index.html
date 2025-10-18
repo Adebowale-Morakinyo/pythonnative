@@ -629,6 +629,48 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#platform-specifics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Platform specifics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Platform specifics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ios-uiviewcontroller-per-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      iOS (UIViewController per page)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#android-single-activity-fragment-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      Android (single Activity, Fragment stack)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-to-other-frameworks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparison to other frameworks
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -867,6 +909,48 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#platform-specifics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Platform specifics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Platform specifics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ios-uiviewcontroller-per-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      iOS (UIViewController per page)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#android-single-activity-fragment-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      Android (single Activity, Fragment stack)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-to-other-frameworks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Comparison to other frameworks
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -927,12 +1011,51 @@
 <li><code>on_save_instance_state</code></li>
 <li><code>on_restore_instance_state</code></li>
 </ul>
-<p>Android forwards Activity lifecycle via the template <code>MainActivity</code> and <code>PageActivity</code>. iOS forwards <code>viewWillAppear</code>/<code>viewWillDisappear</code> via an internal registry.</p>
+<p>Android uses a single <code>MainActivity</code> hosting a <code>NavHostFragment</code> and a generic <code>PageFragment</code> per page. iOS forwards <code>viewWillAppear</code>/<code>viewWillDisappear</code> via an internal registry.</p>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <ul>
-<li>On Android, <code>push</code> launches a template <code>PageActivity</code> and passes <code>PY_PAGE_PATH</code> and optional JSON args.</li>
+<li>On Android, <code>push</code> navigates via <code>NavController</code> to a <code>PageFragment</code> and passes <code>page_path</code> and optional JSON <code>args</code>.</li>
 <li>On iOS, <code>push</code> uses the root <code>UINavigationController</code> to push a new <code>ViewController</code> and passes page info via KVC.</li>
 </ul>
+<h2 id="platform-specifics">Platform specifics<a class="headerlink" href="#platform-specifics" title="Permanent link">&para;</a></h2>
+<h3 id="ios-uiviewcontroller-per-page">iOS (UIViewController per page)<a class="headerlink" href="#ios-uiviewcontroller-per-page" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Each PythonNative page is hosted by a Swift <code>ViewController</code> instance.</li>
+<li>Pages are pushed and popped on a root <code>UINavigationController</code>.</li>
+<li>Lifecycle is forwarded from Swift to the registered Python page instance.</li>
+<li>Root view wiring: <code>Page.set_root_view</code> sizes and inserts the Python-native view into the controller’s view.</li>
+</ul>
+<p>Why this matches iOS conventions
+- iOS apps commonly model screens as <code>UIViewController</code>s and use <code>UINavigationController</code> for hierarchical navigation.
+- The approach integrates cleanly with add-to-app and system behaviors (e.g., state restoration).</p>
+<h3 id="android-single-activity-fragment-stack">Android (single Activity, Fragment stack)<a class="headerlink" href="#android-single-activity-fragment-stack" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Single host <code>MainActivity</code> sets a <code>NavHostFragment</code> containing a navigation graph.</li>
+<li>Each PythonNative page is represented by a generic <code>PageFragment</code> which instantiates the Python page and attaches its root view.</li>
+<li><code>push</code>/<code>pop</code> delegate to <code>NavController</code> (via a small <code>Navigator</code> helper).</li>
+<li>Arguments (<code>page_path</code>, <code>args_json</code>) live in Fragment arguments and restore across configuration changes and process death.</li>
+</ul>
+<p>Why this matches Android conventions
+- Modern Android apps favor one Activity with many Fragments, using Jetpack Navigation for back stack, transitions, and deep links.
+- It simplifies lifecycle, back handling, and state compared to one-Activity-per-screen.</p>
+<h2 id="comparison-to-other-frameworks">Comparison to other frameworks<a class="headerlink" href="#comparison-to-other-frameworks" title="Permanent link">&para;</a></h2>
+<ul>
+<li>React Native</li>
+<li>Android: single <code>Activity</code>, screens managed via <code>Fragment</code>s (e.g., <code>react-native-screens</code>).</li>
+<li>iOS: screens map to <code>UIViewController</code>s pushed on <code>UINavigationController</code>.</li>
+<li>.NET MAUI / Xamarin.Forms</li>
+<li>Android: single <code>Activity</code>, pages via Fragments/Navigation.</li>
+<li>iOS: pages map to <code>UIViewController</code>s on a <code>UINavigationController</code>.</li>
+<li>NativeScript</li>
+<li>Android: single <code>Activity</code>, pages as <code>Fragment</code>s.</li>
+<li>iOS: pages as <code>UIViewController</code>s on <code>UINavigationController</code>.</li>
+<li>Flutter (special case)</li>
+<li>Android: single <code>Activity</code> (<code>FlutterActivity</code>/<code>FlutterFragmentActivity</code>).</li>
+<li>iOS: <code>FlutterViewController</code> hosts Flutter’s internal navigator; add-to-app can push multiple <code>FlutterViewController</code>s.</li>
+</ul>
+<p>Bottom line
+- iOS: one host VC class, many instances on a <code>UINavigationController</code>.
+- Android: one host <code>Activity</code>, many <code>Fragment</code>s with Jetpack Navigation.</p>
 
 
 

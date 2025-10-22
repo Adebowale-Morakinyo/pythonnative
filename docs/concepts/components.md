@@ -2,7 +2,7 @@
 
 High-level overview of PythonNative components and how they map to native UI.
 
-## Constructor pattern (0.2.0)
+## Constructor pattern
 
 - All core components share a consistent, contextless constructor on both platforms.
 - On Android, a `Context` is acquired implicitly from the current `Activity` set by `pn.Page`.
@@ -30,7 +30,7 @@ Notes:
 - `pn.Page` stores the Android `Activity` so components like `pn.Button()` and `pn.Label()` can construct their native counterparts.
 - If you construct views before the `Page` is created on Android, a runtime error will be raised because no `Context` is available.
 
-## Core components (0.2.0)
+## Core components
 
 Stabilized with contextless constructors on both platforms:
 

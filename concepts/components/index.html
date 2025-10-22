@@ -388,18 +388,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#constructor-pattern-020" class="md-nav__link">
+  <a href="#constructor-pattern" class="md-nav__link">
     <span class="md-ellipsis">
-      Constructor pattern (0.2.0)
+      Constructor pattern
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components-020" class="md-nav__link">
+  <a href="#core-components" class="md-nav__link">
     <span class="md-ellipsis">
-      Core components (0.2.0)
+      Core components
     </span>
   </a>
   
@@ -841,18 +841,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#constructor-pattern-020" class="md-nav__link">
+  <a href="#constructor-pattern" class="md-nav__link">
     <span class="md-ellipsis">
-      Constructor pattern (0.2.0)
+      Constructor pattern
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components-020" class="md-nav__link">
+  <a href="#core-components" class="md-nav__link">
     <span class="md-ellipsis">
-      Core components (0.2.0)
+      Core components
     </span>
   </a>
   
@@ -888,7 +888,7 @@
 
 <h1 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h1>
 <p>High-level overview of PythonNative components and how they map to native UI.</p>
-<h2 id="constructor-pattern-020">Constructor pattern (0.2.0)<a class="headerlink" href="#constructor-pattern-020" title="Permanent link">&para;</a></h2>
+<h2 id="constructor-pattern">Constructor pattern<a class="headerlink" href="#constructor-pattern" title="Permanent link">&para;</a></h2>
 <ul>
 <li>All core components share a consistent, contextless constructor on both platforms.</li>
 <li>On Android, a <code>Context</code> is acquired implicitly from the current <code>Activity</code> set by <code>pn.Page</code>.</li>
@@ -913,7 +913,7 @@
 <p>Notes:
 - <code>pn.Page</code> stores the Android <code>Activity</code> so components like <code>pn.Button()</code> and <code>pn.Label()</code> can construct their native counterparts.
 - If you construct views before the <code>Page</code> is created on Android, a runtime error will be raised because no <code>Context</code> is available.</p>
-<h2 id="core-components-020">Core components (0.2.0)<a class="headerlink" href="#core-components-020" title="Permanent link">&para;</a></h2>
+<h2 id="core-components">Core components<a class="headerlink" href="#core-components" title="Permanent link">&para;</a></h2>
 <p>Stabilized with contextless constructors on both platforms:</p>
 <ul>
 <li><code>Page</code></li>

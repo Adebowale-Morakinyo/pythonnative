@@ -16,19 +16,19 @@ class StackViewBase(ABC):
         self.views: List[Any] = []
 
     @abstractmethod
-    def add_view(self, view) -> None:
+    def add_view(self, view: Any) -> None:
         pass
 
     @abstractmethod
-    def set_axis(self, axis: str):
+    def set_axis(self, axis: str) -> "StackViewBase":
         pass
 
     @abstractmethod
-    def set_spacing(self, spacing):
+    def set_spacing(self, spacing: float) -> "StackViewBase":
         pass
 
     @abstractmethod
-    def set_alignment(self, alignment: str):
+    def set_alignment(self, alignment: str) -> "StackViewBase":
         pass
 
 
@@ -51,7 +51,7 @@ if IS_ANDROID:
             self._context = context
             self._axis = "vertical"
 
-        def add_view(self, view):
+        def add_view(self, view: Any) -> None:
             self.views.append(view)
             # Apply margins if the child has any recorded (supported for LinearLayout)
             try:
@@ -82,7 +82,7 @@ if IS_ANDROID:
                 pass
             self.native_instance.addView(view.native_instance)
 
-        def set_axis(self, axis: str):
+        def set_axis(self, axis: str) -> "StackView":
             """Set stacking axis: 'vertical' or 'horizontal'. Returns self."""
             axis_l = (axis or "").lower()
             if axis_l not in ("vertical", "horizontal"):
@@ -92,11 +92,11 @@ if IS_ANDROID:
             self._axis = axis_l
             return self
 
-        def set_spacing(self, spacing_dp: int):
+        def set_spacing(self, spacing: float) -> "StackView":
             """Set spacing between children in dp (Android: uses LinearLayout dividers). Returns self."""
             try:
                 density = self._context.getResources().getDisplayMetrics().density
-                px = max(0, int(spacing_dp * density))
+                px = max(0, int(spacing * density))
                 # Use a transparent GradientDrawable with specified size as divider
                 GradientDrawable = jclass("android.graphics.drawable.GradientDrawable")
                 drawable = GradientDrawable()
@@ -111,7 +111,7 @@ if IS_ANDROID:
                 pass
             return self
 
-        def set_alignment(self, alignment: str):
+        def set_alignment(self, alignment: str) -> "StackView":
             """Set cross-axis alignment: 'fill', 'center', 'leading'/'top', 'trailing'/'bottom'. Returns self."""
             try:
                 Gravity = jclass("android.view.Gravity")
@@ -156,11 +156,11 @@ else:
             # Default to vertical axis
             self.native_instance.setAxis_(1)
 
-        def add_view(self, view):
+        def add_view(self, view: Any) -> None:
             self.views.append(view)
             self.native_instance.addArrangedSubview_(view.native_instance)
 
-        def set_axis(self, axis: str):
+        def set_axis(self, axis: str) -> "StackView":
             """Set stacking axis: 'vertical' or 'horizontal'. Returns self."""
             axis_l = (axis or "").lower()
             value = 1 if axis_l == "vertical" else 0
@@ -170,7 +170,7 @@ else:
                 pass
             return self
 
-        def set_spacing(self, spacing: float):
+        def set_spacing(self, spacing: float) -> "StackView":
             """Set spacing between arranged subviews. Returns self."""
             try:
                 self.native_instance.setSpacing_(float(spacing))
@@ -178,7 +178,7 @@ else:
                 pass
             return self
 
-        def set_alignment(self, alignment: str):
+        def set_alignment(self, alignment: str) -> "StackView":
             """Set cross-axis alignment: 'fill', 'center', 'leading'/'top', 'trailing'/'bottom'. Returns self."""
             a = (alignment or "").lower()
             # UIStackViewAlignment: Fill=0, Leading/Top=1, Center=3, Trailing/Bottom=4

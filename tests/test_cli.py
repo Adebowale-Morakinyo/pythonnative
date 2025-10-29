@@ -3,14 +3,15 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from typing import List
 
 
-def run_pn(args, cwd):
+def run_pn(args: List[str], cwd: str) -> subprocess.CompletedProcess[str]:
     cmd = [sys.executable, "-m", "pythonnative.cli.pn"] + args
     return subprocess.run(cmd, cwd=cwd, check=False, capture_output=True, text=True)
 
 
-def test_cli_init_and_clean():
+def test_cli_init_and_clean() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
         # init
@@ -40,7 +41,7 @@ def test_cli_init_and_clean():
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
-def test_cli_run_prepare_only_android_and_ios():
+def test_cli_run_prepare_only_android_and_ios() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
         # init to create app scaffold

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from .utils import IS_ANDROID
 from .view import ViewBase
@@ -14,7 +15,7 @@ class ListViewBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_data(self, data: list) -> None:
+    def set_data(self, data: list) -> "ListViewBase":
         pass
 
     @abstractmethod
@@ -31,14 +32,14 @@ if IS_ANDROID:
     from java import jclass
 
     class ListView(ListViewBase, ViewBase):
-        def __init__(self, context, data: list = []) -> None:
+        def __init__(self, context: Any, data: list = []) -> None:
             super().__init__()
             self.context = context
             self.native_class = jclass("android.widget.ListView")
             self.native_instance = self.native_class(context)
             self.set_data(data)
 
-        def set_data(self, data: list):
+        def set_data(self, data: list) -> "ListView":
             adapter = jclass("android.widget.ArrayAdapter")(
                 self.context, jclass("android.R$layout").simple_list_item_1, data
             )
@@ -64,7 +65,7 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_data(data)
 
-        def set_data(self, data: list):
+        def set_data(self, data: list) -> "ListView":
             # Note: This is a simplified representation. Normally, you would need to create a UITableViewDataSource.
             self.native_instance.reloadData()
             return self

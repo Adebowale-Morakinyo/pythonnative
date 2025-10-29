@@ -18,7 +18,7 @@ class ViewBase(ABC):
     # Lightweight style helpers
     # ========================================
 
-    def set_background_color(self, color: Any):
+    def set_background_color(self, color: Any) -> "ViewBase":
         """Set background color. Accepts platform color int or CSS-like hex string. Returns self."""
         try:
             from .utils import IS_ANDROID
@@ -71,7 +71,7 @@ class ViewBase(ABC):
         all: Optional[int] = None,
         horizontal: Optional[int] = None,
         vertical: Optional[int] = None,
-    ):
+    ) -> "ViewBase":
         """Set padding (dp on Android; best-effort on iOS where supported). Returns self.
 
         When provided, 'all' applies to all sides; 'horizontal' applies to left and right;
@@ -121,7 +121,7 @@ class ViewBase(ABC):
         all: Optional[int] = None,
         horizontal: Optional[int] = None,
         vertical: Optional[int] = None,
-    ):
+    ) -> "ViewBase":
         """Record margins for this view (applied where supported). Returns self.
 
         Currently applied automatically when added to Android LinearLayout (StackView).
@@ -148,7 +148,7 @@ class ViewBase(ABC):
             pass
         return self
 
-    def wrap_in_scroll(self):
+    def wrap_in_scroll(self) -> Any:
         """Return a ScrollView containing this view as its only child. Returns the ScrollView."""
         try:
             # Local import to avoid circulars

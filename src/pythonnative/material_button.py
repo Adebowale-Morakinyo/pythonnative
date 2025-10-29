@@ -28,10 +28,12 @@ if IS_ANDROID:
     # https://developer.android.com/reference/com/google/android/material/button/MaterialButton
     # ========================================
 
+    from typing import Any
+
     from java import jclass
 
     class MaterialButton(MaterialButtonBase, ViewBase):
-        def __init__(self, context, title: str = "") -> None:
+        def __init__(self, context: Any, title: str = "") -> None:
             super().__init__()
             self.native_class = jclass("com.google.android.material.button.MaterialButton")
             self.native_instance = self.native_class(context)

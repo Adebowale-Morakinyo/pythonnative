@@ -47,7 +47,7 @@ class PageBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_root_view(self, view) -> None:
+    def set_root_view(self, view: Any) -> None:
         pass
 
     @abstractmethod
@@ -104,7 +104,7 @@ class PageBase(ABC):
         return getattr(self, "_args", {})
 
     # Back-compat: navigate_to delegates to push
-    def navigate_to(self, page) -> None:
+    def navigate_to(self, page: Any) -> None:
         self.push(page)
         pass
 
@@ -118,7 +118,7 @@ if IS_ANDROID:
     from java import jclass
 
     class Page(PageBase, ViewBase):
-        def __init__(self, native_instance) -> None:
+        def __init__(self, native_instance: Any) -> None:
             super().__init__()
             self.native_class = jclass("android.app.Activity")
             self.native_instance = native_instance
@@ -127,7 +127,7 @@ if IS_ANDROID:
             set_android_context(native_instance)
             self._args: dict = {}
 
-        def set_root_view(self, view) -> None:
+        def set_root_view(self, view: Any) -> None:
             # In fragment-based navigation, attach child view to the current fragment container.
             try:
                 from .utils import get_android_fragment_container
@@ -264,7 +264,7 @@ else:
             pass
 
     class Page(PageBase, ViewBase):
-        def __init__(self, native_instance) -> None:
+        def __init__(self, native_instance: Any) -> None:
             super().__init__()
             self.native_class = ObjCClass("UIViewController")
             # If Swift passed us an integer pointer, wrap it as an ObjCInstance.
@@ -280,7 +280,7 @@ else:
             if self.native_instance is not None:
                 _ios_register_page(self.native_instance, self)
 
-        def set_root_view(self, view) -> None:
+        def set_root_view(self, view: Any) -> None:
             # UIViewController.view is a property; access without calling.
             root_view = self.native_instance.view
             # Size the root child to fill the controller's view and enable autoresizing

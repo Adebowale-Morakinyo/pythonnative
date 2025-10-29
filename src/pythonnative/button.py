@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
@@ -15,7 +15,7 @@ class ButtonBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_title(self, title: str) -> None:
+    def set_title(self, title: str) -> "ButtonBase":
         pass
 
     @abstractmethod
@@ -23,7 +23,7 @@ class ButtonBase(ABC):
         pass
 
     @abstractmethod
-    def set_on_click(self, callback: Callable[[], None]) -> None:
+    def set_on_click(self, callback: Callable[[], None]) -> "ButtonBase":
         pass
 
 
@@ -43,20 +43,20 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_title(title)
 
-        def set_title(self, title: str):
+        def set_title(self, title: str) -> "Button":
             self.native_instance.setText(title)
             return self
 
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
 
-        def set_on_click(self, callback: Callable[[], None]):
+        def set_on_click(self, callback: Callable[[], None]) -> "Button":
             class OnClickListener(dynamic_proxy(jclass("android.view.View").OnClickListener)):
-                def __init__(self, callback):
+                def __init__(self, callback: Callable[[], None]) -> None:
                     super().__init__()
                     self.callback = callback
 
-                def onClick(self, view):
+                def onClick(self, view: Any) -> None:
                     self.callback()
 
             listener = OnClickListener(callback)
@@ -79,7 +79,7 @@ else:
         _callback: Optional[Callable[[], None]] = None
 
         @objc_method
-        def onTap_(self, sender) -> None:
+        def onTap_(self, sender: Any) -> None:
             try:
                 callback = self._callback
                 if callback is not None:
@@ -95,14 +95,14 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_title(title)
 
-        def set_title(self, title: str):
+        def set_title(self, title: str) -> "Button":
             self.native_instance.setTitle_forState_(title, 0)
             return self
 
         def get_title(self) -> str:
             return self.native_instance.titleForState_(0)
 
-        def set_on_click(self, callback: Callable[[], None]):
+        def set_on_click(self, callback: Callable[[], None]) -> "Button":
             # Create a handler object with an Objective-C method `onTap:` and attach the Python callback
             handler = _PNButtonHandler.new()
             # Keep strong references to the handler and callback

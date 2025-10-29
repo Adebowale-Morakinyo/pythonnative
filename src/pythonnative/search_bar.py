@@ -28,10 +28,12 @@ if IS_ANDROID:
     # https://developer.android.com/reference/android/widget/SearchView
     # ========================================
 
+    from typing import Any
+
     from java import jclass
 
     class SearchBar(SearchBarBase, ViewBase):
-        def __init__(self, context, query: str = "") -> None:
+        def __init__(self, context: Any, query: str = "") -> None:
             super().__init__()
             self.native_class = jclass("android.widget.SearchView")
             self.native_instance = self.native_class(context)

@@ -16,7 +16,7 @@ class ScrollViewBase(ABC):
         self.views: List[Any] = []
 
     @abstractmethod
-    def add_view(self, view) -> None:
+    def add_view(self, view: Any) -> None:
         pass
 
 
@@ -35,7 +35,7 @@ if IS_ANDROID:
             context = get_android_context()
             self.native_instance = self.native_class(context)
 
-        def add_view(self, view):
+        def add_view(self, view: Any) -> None:
             self.views.append(view)
             # In Android, ScrollView can host only one direct child
             if len(self.views) == 1:
@@ -44,7 +44,7 @@ if IS_ANDROID:
                 raise Exception("ScrollView can host only one direct child")
 
         @staticmethod
-        def wrap(view: Any):
+        def wrap(view: Any) -> "ScrollView":
             """Return a new ScrollView containing the provided view as its only child."""
             sv = ScrollView()
             sv.add_view(view)
@@ -64,14 +64,14 @@ else:
             self.native_class = ObjCClass("UIScrollView")
             self.native_instance = self.native_class.alloc().initWithFrame_(((0, 0), (0, 0)))
 
-        def add_view(self, view):
+        def add_view(self, view: Any) -> None:
             self.views.append(view)
             # Ensure view is a subview of scrollview
             if view.native_instance not in self.native_instance.subviews:
                 self.native_instance.addSubview_(view.native_instance)
 
         @staticmethod
-        def wrap(view: Any):
+        def wrap(view: Any) -> "ScrollView":
             """Return a new ScrollView containing the provided view as its only child."""
             sv = ScrollView()
             sv.add_view(view)

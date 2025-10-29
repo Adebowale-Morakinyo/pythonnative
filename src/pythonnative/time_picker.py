@@ -28,10 +28,12 @@ if IS_ANDROID:
     # https://developer.android.com/reference/android/widget/TimePicker
     # ========================================
 
+    from typing import Any
+
     from java import jclass
 
     class TimePicker(TimePickerBase, ViewBase):
-        def __init__(self, context, hour: int = 0, minute: int = 0) -> None:
+        def __init__(self, context: Any, hour: int = 0, minute: int = 0) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.TimePicker")
             self.native_instance = self.native_class(context)

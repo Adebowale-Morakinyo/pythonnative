@@ -15,7 +15,7 @@ class TextFieldBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_text(self, text: str) -> None:
+    def set_text(self, text: str) -> "TextFieldBase":
         pass
 
     @abstractmethod
@@ -23,11 +23,11 @@ class TextFieldBase(ABC):
         pass
 
     @abstractmethod
-    def set_text_color(self, color: Any) -> None:
+    def set_text_color(self, color: Any) -> "TextFieldBase":
         pass
 
     @abstractmethod
-    def set_text_size(self, size: float) -> None:
+    def set_text_size(self, size: float) -> "TextFieldBase":
         pass
 
 
@@ -48,14 +48,14 @@ if IS_ANDROID:
             self.native_instance.setSingleLine(True)
             self.set_text(text)
 
-        def set_text(self, text: str):
+        def set_text(self, text: str) -> "TextField":
             self.native_instance.setText(text)
             return self
 
         def get_text(self) -> str:
             return self.native_instance.getText().toString()
 
-        def set_text_color(self, color: Any):
+        def set_text_color(self, color: Any) -> "TextField":
             if isinstance(color, str):
                 c = color.strip()
                 if c.startswith("#"):
@@ -71,7 +71,7 @@ if IS_ANDROID:
                 pass
             return self
 
-        def set_text_size(self, size_sp: float):
+        def set_text_size(self, size_sp: float) -> "TextField":
             try:
                 self.native_instance.setTextSize(float(size_sp))
             except Exception:
@@ -93,14 +93,14 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_text(text)
 
-        def set_text(self, text: str):
+        def set_text(self, text: str) -> "TextField":
             self.native_instance.setText_(text)
             return self
 
         def get_text(self) -> str:
             return self.native_instance.text()
 
-        def set_text_color(self, color: Any):
+        def set_text_color(self, color: Any) -> "TextField":
             if isinstance(color, str):
                 c = color.strip()
                 if c.startswith("#"):
@@ -122,7 +122,7 @@ else:
                 pass
             return self
 
-        def set_text_size(self, size: float):
+        def set_text_size(self, size: float) -> "TextField":
             try:
                 UIFont = ObjCClass("UIFont")
                 font = UIFont.systemFontOfSize_(float(size))

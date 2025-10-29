@@ -28,10 +28,12 @@ if IS_ANDROID:
     # https://developer.android.com/reference/com/google/android/material/search/SearchBar
     # ========================================
 
+    from typing import Any
+
     from java import jclass
 
     class MaterialSearchBar(MaterialSearchBarBase, ViewBase):
-        def __init__(self, context, query: str = "") -> None:
+        def __init__(self, context: Any, query: str = "") -> None:
             super().__init__()
             self.native_class = jclass("com.google.android.material.search.SearchBar")
             self.native_instance = self.native_class(context)

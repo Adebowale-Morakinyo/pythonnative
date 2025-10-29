@@ -28,10 +28,12 @@ if IS_ANDROID:
     # https://developer.android.com/reference/com/google/android/material/progressindicator/LinearProgressIndicator
     # ========================================
 
+    from typing import Any
+
     from java import jclass
 
     class MaterialProgressView(MaterialProgressViewBase, ViewBase):
-        def __init__(self, context) -> None:
+        def __init__(self, context: Any) -> None:
             super().__init__()
             self.native_class = jclass("com.google.android.material.progressindicator.LinearProgressIndicator")
             self.native_instance = self.native_class(context)

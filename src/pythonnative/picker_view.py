@@ -28,10 +28,12 @@ if IS_ANDROID:
     # https://developer.android.com/reference/android/widget/Spinner
     # ========================================
 
+    from typing import Any
+
     from java import jclass
 
     class PickerView(PickerViewBase, ViewBase):
-        def __init__(self, context, index: int = 0) -> None:
+        def __init__(self, context: Any, index: int = 0) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.Spinner")
             self.native_instance = self.native_class(context)

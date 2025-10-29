@@ -1,3 +1,5 @@
+from typing import Any
+
 import pythonnative as pn
 
 try:
@@ -10,10 +12,10 @@ except Exception:  # pragma: no cover
 
 
 class SecondPage(pn.Page):
-    def __init__(self, native_instance):
+    def __init__(self, native_instance: Any) -> None:
         super().__init__(native_instance)
 
-    def on_create(self):
+    def on_create(self) -> None:
         super().on_create()
         stack_view = pn.StackView()
         # Read args passed from MainPage
@@ -30,7 +32,7 @@ class SecondPage(pn.Page):
         except Exception:
             pass
 
-        def on_next():
+        def on_next() -> None:
             # Visual confirmation that tap worked (iOS only)
             try:
                 if UIColor is not None:
@@ -47,26 +49,26 @@ class SecondPage(pn.Page):
         stack_view.add_view(back_btn)
         self.set_root_view(stack_view)
 
-    def on_start(self):
+    def on_start(self) -> None:
         super().on_start()
 
-    def on_resume(self):
+    def on_resume(self) -> None:
         super().on_resume()
 
-    def on_pause(self):
+    def on_pause(self) -> None:
         super().on_pause()
 
-    def on_stop(self):
+    def on_stop(self) -> None:
         super().on_stop()
 
-    def on_destroy(self):
+    def on_destroy(self) -> None:
         super().on_destroy()
 
-    def on_restart(self):
+    def on_restart(self) -> None:
         super().on_restart()
 
-    def on_save_instance_state(self):
+    def on_save_instance_state(self) -> None:
         super().on_save_instance_state()
 
-    def on_restore_instance_state(self):
+    def on_restore_instance_state(self) -> None:
         super().on_restore_instance_state()

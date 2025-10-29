@@ -1,3 +1,5 @@
+from typing import Any
+
 import pythonnative as pn
 
 try:
@@ -10,10 +12,10 @@ except Exception:  # pragma: no cover
 
 
 class ThirdPage(pn.Page):
-    def __init__(self, native_instance):
+    def __init__(self, native_instance: Any) -> None:
         super().__init__(native_instance)
 
-    def on_create(self):
+    def on_create(self) -> None:
         super().on_create()
         stack = pn.StackView()
         stack.add_view(pn.Label("This is the Third Page"))

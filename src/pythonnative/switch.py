@@ -14,7 +14,7 @@ class SwitchBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_on(self, value: bool) -> None:
+    def set_on(self, value: bool) -> "SwitchBase":
         pass
 
     @abstractmethod
@@ -38,8 +38,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_on(value)
 
-        def set_on(self, value: bool) -> None:
+        def set_on(self, value: bool) -> "Switch":
             self.native_instance.setChecked(value)
+            return self
 
         def is_on(self) -> bool:
             return self.native_instance.isChecked()
@@ -59,8 +60,9 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_on(value)
 
-        def set_on(self, value: bool) -> None:
+        def set_on(self, value: bool) -> "Switch":
             self.native_instance.setOn_animated_(value, False)
+            return self
 
         def is_on(self) -> bool:
             return self.native_instance.isOn()

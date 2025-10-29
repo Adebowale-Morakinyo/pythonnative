@@ -14,7 +14,7 @@ class DatePickerBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_date(self, year: int, month: int, day: int) -> None:
+    def set_date(self, year: int, month: int, day: int) -> "DatePickerBase":
         pass
 
     @abstractmethod
@@ -39,8 +39,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_date(year, month, day)
 
-        def set_date(self, year: int, month: int, day: int) -> None:
+        def set_date(self, year: int, month: int, day: int) -> "DatePicker":
             self.native_instance.updateDate(year, month, day)
+            return self
 
         def get_date(self) -> tuple:
             year = self.native_instance.getYear()
@@ -65,9 +66,10 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_date(year, month, day)
 
-        def set_date(self, year: int, month: int, day: int) -> None:
+        def set_date(self, year: int, month: int, day: int) -> "DatePicker":
             date = datetime(year, month, day)
             self.native_instance.setDate_(date)
+            return self
 
         def get_date(self) -> tuple:
             date = self.native_instance.date()

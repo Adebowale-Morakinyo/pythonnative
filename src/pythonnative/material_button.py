@@ -14,7 +14,7 @@ class MaterialButtonBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_title(self, title: str) -> None:
+    def set_title(self, title: str) -> "MaterialButtonBase":
         pass
 
     @abstractmethod
@@ -39,8 +39,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_title(title)
 
-        def set_title(self, title: str) -> None:
+        def set_title(self, title: str) -> "MaterialButton":
             self.native_instance.setText(title)
+            return self
 
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
@@ -60,8 +61,9 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_title(title)
 
-        def set_title(self, title: str) -> None:
+        def set_title(self, title: str) -> "MaterialButton":
             self.native_instance.setTitle_forState_(title, 0)
+            return self
 
         def get_title(self) -> str:
             return self.native_instance.titleForState_(0)

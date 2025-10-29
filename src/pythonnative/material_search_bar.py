@@ -14,7 +14,7 @@ class MaterialSearchBarBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_query(self, query: str) -> None:
+    def set_query(self, query: str) -> "MaterialSearchBarBase":
         pass
 
     @abstractmethod
@@ -39,8 +39,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_query(query)
 
-        def set_query(self, query: str) -> None:
+        def set_query(self, query: str) -> "MaterialSearchBar":
             self.native_instance.setQuery(query, False)
+            return self
 
         def get_query(self) -> str:
             return self.native_instance.getQuery().toString()
@@ -60,8 +61,9 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_query(query)
 
-        def set_query(self, query: str) -> None:
+        def set_query(self, query: str) -> "MaterialSearchBar":
             self.native_instance.set_searchText_(query)
+            return self
 
         def get_query(self) -> str:
             return self.native_instance.searchText()

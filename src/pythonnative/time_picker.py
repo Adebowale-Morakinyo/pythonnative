@@ -14,7 +14,7 @@ class TimePickerBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_time(self, hour: int, minute: int) -> None:
+    def set_time(self, hour: int, minute: int) -> "TimePickerBase":
         pass
 
     @abstractmethod
@@ -39,9 +39,10 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_time(hour, minute)
 
-        def set_time(self, hour: int, minute: int) -> None:
+        def set_time(self, hour: int, minute: int) -> "TimePicker":
             self.native_instance.setHour(hour)
             self.native_instance.setMinute(minute)
+            return self
 
         def get_time(self) -> tuple:
             hour = self.native_instance.getHour()
@@ -66,9 +67,10 @@ else:
             self.native_instance.setDatePickerMode_(1)  # Setting mode to Time
             self.set_time(hour, minute)
 
-        def set_time(self, hour: int, minute: int) -> None:
+        def set_time(self, hour: int, minute: int) -> "TimePicker":
             t = time(hour, minute)
             self.native_instance.setTime_(t)
+            return self
 
         def get_time(self) -> tuple:
             t = self.native_instance.time()

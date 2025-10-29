@@ -14,7 +14,7 @@ class PickerViewBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_selected(self, index: int) -> None:
+    def set_selected(self, index: int) -> "PickerViewBase":
         pass
 
     @abstractmethod
@@ -39,8 +39,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_selected(index)
 
-        def set_selected(self, index: int) -> None:
+        def set_selected(self, index: int) -> "PickerView":
             self.native_instance.setSelection(index)
+            return self
 
         def get_selected(self) -> int:
             return self.native_instance.getSelectedItemPosition()
@@ -60,8 +61,9 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_selected(index)
 
-        def set_selected(self, index: int) -> None:
+        def set_selected(self, index: int) -> "PickerView":
             self.native_instance.selectRow_inComponent_animated_(index, 0, False)
+            return self
 
         def get_selected(self) -> int:
             return self.native_instance.selectedRowInComponent_(0)

@@ -14,7 +14,7 @@ class MaterialDatePickerBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_date(self, year: int, month: int, day: int) -> None:
+    def set_date(self, year: int, month: int, day: int) -> "MaterialDatePickerBase":
         pass
 
     @abstractmethod
@@ -38,7 +38,7 @@ if IS_ANDROID:
             self.set_date(year, month, day)
             self.native_instance = self.builder.build()
 
-        def set_date(self, year: int, month: int, day: int) -> None:
+        def set_date(self, year: int, month: int, day: int) -> "MaterialDatePicker":
             # MaterialDatePicker uses milliseconds since epoch to set date
             from java.util import Calendar
 
@@ -46,6 +46,7 @@ if IS_ANDROID:
             cal.set(year, month, day)
             milliseconds = cal.getTimeInMillis()
             self.builder.setSelection(milliseconds)
+            return self
 
         def get_date(self) -> tuple:
             # Convert selection (milliseconds since epoch) back to a date
@@ -76,9 +77,10 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_date(year, month, day)
 
-        def set_date(self, year: int, month: int, day: int) -> None:
+        def set_date(self, year: int, month: int, day: int) -> "MaterialDatePicker":
             date = datetime(year, month, day)
             self.native_instance.setDate_(date)
+            return self
 
         def get_date(self) -> tuple:
             date = self.native_instance.date()

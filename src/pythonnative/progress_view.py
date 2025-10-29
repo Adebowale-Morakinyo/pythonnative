@@ -14,7 +14,7 @@ class ProgressViewBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_progress(self, progress: float) -> None:
+    def set_progress(self, progress: float) -> "ProgressViewBase":
         pass
 
     @abstractmethod
@@ -39,8 +39,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context, None, jclass("android.R$attr").progressBarStyleHorizontal)
             self.native_instance.setIndeterminate(False)
 
-        def set_progress(self, progress: float) -> None:
+        def set_progress(self, progress: float) -> "ProgressView":
             self.native_instance.setProgress(int(progress * 100))
+            return self
 
         def get_progress(self) -> float:
             return self.native_instance.getProgress() / 100.0
@@ -61,8 +62,9 @@ else:
                 0
             )  # 0: UIProgressViewStyleDefault
 
-        def set_progress(self, progress: float) -> None:
+        def set_progress(self, progress: float) -> "ProgressView":
             self.native_instance.setProgress_animated_(progress, False)
+            return self
 
         def get_progress(self) -> float:
             return self.native_instance.progress()

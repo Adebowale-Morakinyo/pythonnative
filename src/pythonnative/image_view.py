@@ -14,7 +14,7 @@ class ImageViewBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def set_image(self, image: str) -> None:
+    def set_image(self, image: str) -> "ImageViewBase":
         pass
 
     @abstractmethod
@@ -40,9 +40,10 @@ if IS_ANDROID:
             if image:
                 self.set_image(image)
 
-        def set_image(self, image: str) -> None:
+        def set_image(self, image: str) -> "ImageView":
             bitmap = BitmapFactory.decodeFile(image)
             self.native_instance.setImageBitmap(bitmap)
+            return self
 
         def get_image(self) -> str:
             # Please note that this is a simplistic representation, getting image from ImageView
@@ -66,10 +67,11 @@ else:
             if image:
                 self.set_image(image)
 
-        def set_image(self, image: str) -> None:
+        def set_image(self, image: str) -> "ImageView":
             ns_str = NSString.alloc().initWithUTF8String_(image)
             ui_image = UIImage.imageNamed_(ns_str)
             self.native_instance.setImage_(ui_image)
+            return self
 
         def get_image(self) -> str:
             # Similar to Android, getting the image from UIImageView isn't straightforward.

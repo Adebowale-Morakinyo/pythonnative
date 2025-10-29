@@ -14,7 +14,7 @@ class WebViewBase(ABC):
         super().__init__()
 
     @abstractmethod
-    def load_url(self, url: str) -> None:
+    def load_url(self, url: str) -> "WebViewBase":
         pass
 
 
@@ -34,8 +34,9 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.load_url(url)
 
-        def load_url(self, url: str) -> None:
+        def load_url(self, url: str) -> "WebView":
             self.native_instance.loadUrl(url)
+            return self
 
 else:
     # ========================================
@@ -52,7 +53,8 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.load_url(url)
 
-        def load_url(self, url: str) -> None:
+        def load_url(self, url: str) -> "WebView":
             ns_url = NSURL.URLWithString_(url)
             request = NSURLRequest.requestWithURL_(ns_url)
             self.native_instance.loadRequest_(request)
+            return self

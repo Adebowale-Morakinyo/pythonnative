@@ -43,13 +43,14 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_title(title)
 
-        def set_title(self, title: str) -> None:
+        def set_title(self, title: str):
             self.native_instance.setText(title)
+            return self
 
         def get_title(self) -> str:
             return self.native_instance.getText().toString()
 
-        def set_on_click(self, callback: Callable[[], None]) -> None:
+        def set_on_click(self, callback: Callable[[], None]):
             class OnClickListener(dynamic_proxy(jclass("android.view.View").OnClickListener)):
                 def __init__(self, callback):
                     super().__init__()
@@ -60,6 +61,7 @@ if IS_ANDROID:
 
             listener = OnClickListener(callback)
             self.native_instance.setOnClickListener(listener)
+            return self
 
 else:
     # ========================================
@@ -93,13 +95,14 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_title(title)
 
-        def set_title(self, title: str) -> None:
+        def set_title(self, title: str):
             self.native_instance.setTitle_forState_(title, 0)
+            return self
 
         def get_title(self) -> str:
             return self.native_instance.titleForState_(0)
 
-        def set_on_click(self, callback: Callable[[], None]) -> None:
+        def set_on_click(self, callback: Callable[[], None]):
             # Create a handler object with an Objective-C method `onTap:` and attach the Python callback
             handler = _PNButtonHandler.new()
             # Keep strong references to the handler and callback
@@ -107,3 +110,4 @@ else:
             handler._callback = callback
             # UIControlEventTouchUpInside = 1 << 6
             self.native_instance.addTarget_action_forControlEvents_(handler, SEL("onTap:"), 1 << 6)
+            return self

@@ -55,12 +55,17 @@ class MainPage(pn.Page):
 
     def on_create(self):
         super().on_create()
-        stack = pn.StackView()
-        stack.add_view(pn.Label("Hello from PythonNative!"))
-        button = pn.Button("Tap me")
-        button.set_on_click(lambda: print("Button clicked"))
+        stack = (
+            pn.StackView()
+            .set_axis("vertical")
+            .set_spacing(12)
+            .set_alignment("fill")
+            .set_padding(all=16)
+        )
+        stack.add_view(pn.Label("Hello from PythonNative!").set_text_size(18))
+        button = pn.Button("Tap me").set_on_click(lambda: print("Button clicked"))
         stack.add_view(button)
-        self.set_root_view(stack)
+        self.set_root_view(stack.wrap_in_scroll())
 """
             )
 

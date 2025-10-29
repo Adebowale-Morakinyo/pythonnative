@@ -38,11 +38,12 @@ if IS_ANDROID:
             self.native_instance = self.native_class(context)
             self.set_data(data)
 
-        def set_data(self, data: list) -> None:
+        def set_data(self, data: list):
             adapter = jclass("android.widget.ArrayAdapter")(
                 self.context, jclass("android.R$layout").simple_list_item_1, data
             )
             self.native_instance.setAdapter(adapter)
+            return self
 
         def get_data(self) -> list:
             adapter = self.native_instance.getAdapter()
@@ -63,9 +64,10 @@ else:
             self.native_instance = self.native_class.alloc().init()
             self.set_data(data)
 
-        def set_data(self, data: list) -> None:
+        def set_data(self, data: list):
             # Note: This is a simplified representation. Normally, you would need to create a UITableViewDataSource.
             self.native_instance.reloadData()
+            return self
 
         def get_data(self) -> list:
             # Note: This is a simplified representation.

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, List
 
-from .utils import IS_ANDROID
+from .utils import IS_ANDROID, get_android_context
 from .view import ViewBase
 
 # ========================================
@@ -29,9 +29,10 @@ if IS_ANDROID:
     from java import jclass
 
     class ScrollView(ScrollViewBase, ViewBase):
-        def __init__(self, context) -> None:
+        def __init__(self) -> None:
             super().__init__()
             self.native_class = jclass("android.widget.ScrollView")
+            context = get_android_context()
             self.native_instance = self.native_class(context)
 
         def add_view(self, view):
@@ -41,6 +42,13 @@ if IS_ANDROID:
                 self.native_instance.addView(view.native_instance)
             else:
                 raise Exception("ScrollView can host only one direct child")
+
+        @staticmethod
+        def wrap(view: Any):
+            """Return a new ScrollView containing the provided view as its only child."""
+            sv = ScrollView()
+            sv.add_view(view)
+            return sv
 
 else:
     # ========================================
@@ -61,3 +69,10 @@ else:
             # Ensure view is a subview of scrollview
             if view.native_instance not in self.native_instance.subviews:
                 self.native_instance.addSubview_(view.native_instance)
+
+        @staticmethod
+        def wrap(view: Any):
+            """Return a new ScrollView containing the provided view as its only child."""
+            sv = ScrollView()
+            sv.add_view(view)
+            return sv

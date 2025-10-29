@@ -19,6 +19,12 @@ class ScrollViewBase(ABC):
     def add_view(self, view: Any) -> None:
         pass
 
+    @staticmethod
+    @abstractmethod
+    def wrap(view: Any) -> "ScrollViewBase":
+        """Return a new ScrollView containing the provided view as its only child."""
+        pass
+
 
 if IS_ANDROID:
     # ========================================

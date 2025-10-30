@@ -72,9 +72,26 @@ else:
 
         def add_view(self, view: Any) -> None:
             self.views.append(view)
-            # Ensure view is a subview of scrollview
-            if view.native_instance not in self.native_instance.subviews:
+            # Add as subview and size child to fill scroll view by default so content is visible
+            try:
                 self.native_instance.addSubview_(view.native_instance)
+            except Exception:
+                pass
+            # Default layout: if the child has no size yet, size it to fill the scroll view
+            # and enable flexible width/height. If the child is already sized explicitly,
+            # leave it unchanged.
+            try:
+                frame = getattr(view.native_instance, "frame")
+                size = getattr(frame, "size", None)
+                width = getattr(size, "width", 0) if size is not None else 0
+                height = getattr(size, "height", 0) if size is not None else 0
+                if width <= 0 or height <= 0:
+                    bounds = self.native_instance.bounds
+                    view.native_instance.setFrame_(bounds)
+                    # UIViewAutoresizingFlexibleWidth (2) | UIViewAutoresizingFlexibleHeight (16)
+                    view.native_instance.setAutoresizingMask_(2 | 16)
+            except Exception:
+                pass
 
         @staticmethod
         def wrap(view: Any) -> "ScrollView":

@@ -79,7 +79,7 @@ else:
         _callback: Optional[Callable[[], None]] = None
 
         @objc_method
-        def onTap_(self, sender: Any) -> None:
+        def onTap_(self, sender: object) -> None:
             try:
                 callback = self._callback
                 if callback is not None:

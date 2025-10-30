@@ -16,7 +16,7 @@
         <argument
             android:name="args_json"
             app:argType="string"
-            android:nullable="true" />
+            app:nullable="true" />
     </fragment>
 
 </navigation>

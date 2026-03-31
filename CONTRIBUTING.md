@@ -4,7 +4,7 @@ Thanks for your interest in contributing. This repository contains the PythonNat
 
 ## Quick start
 
-Development uses Python ≥ 3.9.
+Development uses Python ≥ 3.10.
 
 ```bash
 # create and activate a venv (recommended)

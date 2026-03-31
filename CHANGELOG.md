@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.5.0 (2026-03-31)
+
+### Continuous Integration
+
+- **workflows**: Add Maestro E2E tests for Android and iOS
+  ([`cfe247e`](https://github.com/pythonnative/pythonnative/commit/cfe247edf99da8ff870e2d4118ef74b2df5521c1))
+
+### Features
+
+- **core**: Replace imperative widget API with declarative component model and reconciler
+  ([`b6b7721`](https://github.com/pythonnative/pythonnative/commit/b6b77216305202ea0c5197b29e725e14cbe99b5e))
+
+
 ## v0.4.0 (2026-03-18)
 
 ### Bug Fixes

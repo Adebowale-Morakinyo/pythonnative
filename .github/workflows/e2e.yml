@@ -40,12 +40,11 @@ jobs:
         with:
           api-level: 31
           arch: x86_64
-          script: |
-            export PATH="$HOME/.maestro/bin:$PATH"
-            cd examples/hello-world
-            pn run android
-            sleep 5
-            cd ../..
+          script: >-
+            cd examples/hello-world &&
+            pn run android &&
+            sleep 5 &&
+            cd ../.. &&
             maestro test tests/e2e/android.yaml
 
   e2e-ios:
@@ -73,6 +72,8 @@ jobs:
       - name: Build and launch iOS app
         working-directory: examples/hello-world
         run: pn run ios
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run E2E tests
         run: maestro --platform ios test tests/e2e/ios.yaml

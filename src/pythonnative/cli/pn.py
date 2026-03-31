@@ -156,7 +156,11 @@ def _copy_bundled_template_dir(template_dir: str, destination: str) -> None:
 
 
 def _github_json(url: str) -> Any:
-    req = urllib.request.Request(url, headers={"User-Agent": "pythonnative-cli"})
+    headers: dict[str, str] = {"User-Agent": "pythonnative-cli"}
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req) as r:
         return json.loads(r.read().decode("utf-8"))
 

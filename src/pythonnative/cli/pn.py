@@ -44,8 +44,7 @@ def init_project(args: argparse.Namespace) -> None:
     main_page_py = os.path.join(app_dir, "main_page.py")
     if not os.path.exists(main_page_py) or args.force:
         with open(main_page_py, "w", encoding="utf-8") as f:
-            f.write(
-                """import pythonnative as pn
+            f.write("""import pythonnative as pn
 
 
 class MainPage(pn.Page):
@@ -67,8 +66,7 @@ class MainPage(pn.Page):
                 alignment="fill",
             )
         )
-"""
-            )
+""")
 
     # Create config
     config = {

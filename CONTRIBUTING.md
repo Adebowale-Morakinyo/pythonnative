@@ -94,27 +94,27 @@ Accepted types (standard):
 - `style` – formatting/whitespace (no code behavior)
 - `test` – add/adjust tests only
 
-Recommended scopes (match the smallest accurate directory/module):
+Recommended scopes (choose the smallest, most accurate unit; prefer module/directory names):
 
-- Library/CLI scopes:
-  - `cli` – `src/pythonnative/cli/` (the `pn` command)
-  - `core` – `src/pythonnative/pythonnative/` package internals
-  - `components` – UI view modules under `src/pythonnative/pythonnative/` (e.g., `button.py`, `label.py`)
-  - `utils` – utilities like `utils.py`
-  - `tests` – `tests/`
+- Module/directory scopes:
+  - `cli` – CLI tool and `pn` command (`src/pythonnative/cli/`)
+  - `components` – declarative element-creating functions (`components.py`)
+  - `element` – Element descriptor class (`element.py`)
+  - `native_views` – platform-specific native view creation and updates (`native_views.py`)
+  - `package` – `src/pythonnative/__init__.py` exports and package boundary
+  - `page` – Page component, lifecycle, and reactive state (`page.py`)
+  - `reconciler` – virtual view tree diffing and reconciliation (`reconciler.py`)
+  - `utils` – shared utilities (`utils.py`)
 
-- Templates and examples:
-  - `templates` – `templates/` (Android/iOS templates, zips)
-  - `examples` – `examples/` (e.g., `hello-world/`)
-
-<!-- Django app and site removed: the old Django project has been retired -->
-
-- Repo‑level and ops:
+- Other scopes:
   - `deps` – dependency updates and version pins
-  - `docker` – containerization files (e.g., `Dockerfile`)
-  - `repo` – top‑level files (`README.md`, `CONTRIBUTING.md`, `.gitignore`, licenses)
+  - `examples` – example apps under `examples/`
   - `mkdocs` – documentation site (MkDocs/Material) configuration and content under `docs/`
-  - `workflows` – CI pipelines (e.g., `.github/workflows/`)
+  - `pyproject` – `pyproject.toml` packaging/build metadata
+  - `repo` – repository metadata and top‑level files (`README.md`, `CONTRIBUTING.md`, `.gitignore`, licenses)
+  - `templates` – Android/iOS project templates under `src/pythonnative/templates/`
+  - `tests` – unit/integration/E2E tests under `tests/`
+  - `workflows` – CI pipelines under `.github/workflows/`
 
 Note: Avoid redundant type==scope pairs (e.g., `docs(docs)`). Prefer a module scope (e.g., `docs(core)`) or `docs(repo)` for top‑level updates.
 
@@ -124,12 +124,12 @@ Examples:
 build(deps): refresh pinned versions
 chore(repo): add contributing guidelines
 ci(workflows): add publish job
-docs(core): clarify ListView data contract
-feat(components): add MaterialSearchBar
+docs(reconciler): clarify diffing algorithm
+feat(components): add Slider element
 fix(cli): handle missing Android SDK gracefully
-perf(core): reduce allocations in list diffing
+perf(reconciler): reduce allocations in list diffing
 refactor(utils): extract path helpers
-test(tests): cover ios template copy flow
+test: cover iOS template copy flow
 ```
 
 Examples (no scope):

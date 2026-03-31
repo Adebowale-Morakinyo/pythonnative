@@ -18,7 +18,7 @@ This scaffolds:
 - `requirements.txt`
 - `.gitignore`
 
-A minimal `app/main_page.py` looks like (no bootstrap needed):
+A minimal `app/main_page.py` looks like:
 
 ```python
 import pythonnative as pn
@@ -27,16 +27,25 @@ import pythonnative as pn
 class MainPage(pn.Page):
     def __init__(self, native_instance):
         super().__init__(native_instance)
+        self.state = {"count": 0}
 
-    def on_create(self):
-        super().on_create()
-        stack = pn.StackView()
-        stack.add_view(pn.Label("Hello from PythonNative!"))
-        button = pn.Button("Tap me")
-        button.set_on_click(lambda: print("Button clicked"))
-        stack.add_view(button)
-        self.set_root_view(stack)
+    def render(self):
+        return pn.Column(
+            pn.Text(f"Count: {self.state['count']}", font_size=24),
+            pn.Button(
+                "Tap me",
+                on_click=lambda: self.set_state(count=self.state["count"] + 1),
+            ),
+            spacing=12,
+            padding=16,
+        )
 ```
+
+Key ideas:
+
+- **`render()`** returns an element tree describing the UI. PythonNative creates and updates native views automatically.
+- **`self.state`** holds your page's data. Call **`self.set_state(key=value)`** to update it — the UI re-renders automatically.
+- Element functions like `pn.Text(...)`, `pn.Button(...)`, `pn.Column(...)` create lightweight descriptions, not native objects.
 
 ## Run on a platform
 

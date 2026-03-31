@@ -1,52 +1,100 @@
-## Component Property Reference (v0.4.0)
+# Component Property Reference
 
-This page summarizes common properties and fluent setters added in v0.4.0. Unless noted, methods return `self` for chaining.
+All style and behaviour properties are passed as keyword arguments to element functions.
 
-### View (base)
+## Text
 
-- `set_background_color(color)`
-  - Accepts ARGB int or `#RRGGBB` / `#AARRGGBB` string.
+```python
+pn.Text(text, font_size=None, color=None, bold=False, text_align=None,
+        background_color=None, max_lines=None)
+```
 
-- `set_padding(*, all=None, horizontal=None, vertical=None, left=None, top=None, right=None, bottom=None)`
-  - Android: applies padding in dp.
-  - iOS: currently a no-op for most views.
+- `text` — display string
+- `font_size` — size in sp (Android) / pt (iOS)
+- `color` — text colour (`#RRGGBB` or `#AARRGGBB`)
+- `bold` — bold weight
+- `text_align` — `"left"`, `"center"`, or `"right"`
+- `background_color` — view background
+- `max_lines` — limit visible lines
 
-- `set_margin(*, all=None, horizontal=None, vertical=None, left=None, top=None, right=None, bottom=None)`
-  - Android: applied when added to `StackView` (LinearLayout) as `LayoutParams` margins (dp).
-  - iOS: not currently applied.
+## Button
 
-- `wrap_in_scroll()` → `ScrollView`
-  - Returns a `ScrollView` containing this view.
+```python
+pn.Button(title, on_click=None, color=None, background_color=None,
+          font_size=None, enabled=True)
+```
 
-### ScrollView
+- `title` — button label
+- `on_click` — callback `() -> None`
+- `color` — title text colour
+- `background_color` — button background
+- `enabled` — interactive state
 
-- `ScrollView.wrap(view)` → `ScrollView`
-  - Class helper to wrap a single child.
+## Column / Row
 
-### StackView
+```python
+pn.Column(*children, spacing=0, padding=None, alignment=None, background_color=None)
+pn.Row(*children, spacing=0, padding=None, alignment=None, background_color=None)
+```
 
-- `set_axis('vertical'|'horizontal')`
-- `set_spacing(n)`
-  - Android: dp via divider drawable.
-  - iOS: `UIStackView.spacing` (points).
-- `set_alignment('fill'|'center'|'leading'|'trailing'|'top'|'bottom')`
-  - Cross-axis alignment; top/bottom map appropriately for horizontal stacks.
+- `spacing` — gap between children (dp / pt)
+- `padding` — inner padding (int for all sides, or dict with `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`)
+- `alignment` — cross-axis: `"fill"`, `"center"`, `"leading"`, `"trailing"`, `"start"`, `"end"`, `"top"`, `"bottom"`
+- `background_color` — container background
 
-### Text components
+## ScrollView
 
-Applies to `Label`, `TextField`, `TextView`:
+```python
+pn.ScrollView(child, background_color=None)
+```
 
-- `set_text(text)`
-- `set_text_color(color)`
-- `set_text_size(size)`
+## TextInput
 
-Platform notes:
-- Android: `setTextColor(int)`, `setTextSize(sp)`.
-- iOS: `setTextColor(UIColor)`, `UIFont.systemFont(ofSize:)`.
+```python
+pn.TextInput(value="", placeholder="", on_change=None, secure=False,
+             font_size=None, color=None, background_color=None)
+```
 
-### Button
+- `on_change` — callback `(str) -> None` receiving new text
 
-- `set_title(text)`
-- `set_on_click(callback)`
+## Image
 
+```python
+pn.Image(source="", width=None, height=None, scale_type=None, background_color=None)
+```
 
+## Switch
+
+```python
+pn.Switch(value=False, on_change=None)
+```
+
+- `on_change` — callback `(bool) -> None`
+
+## ProgressBar
+
+```python
+pn.ProgressBar(value=0.0, background_color=None)
+```
+
+- `value` — 0.0 to 1.0
+
+## ActivityIndicator
+
+```python
+pn.ActivityIndicator(animating=True)
+```
+
+## WebView
+
+```python
+pn.WebView(url="")
+```
+
+## Spacer
+
+```python
+pn.Spacer(size=None)
+```
+
+- `size` — fixed dimension in dp / pt

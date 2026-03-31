@@ -26,18 +26,17 @@
 
 ## Overview
 
-PythonNative is a cross-platform toolkit for building native Android and iOS apps in Python. It provides a Pythonic API for native UI components, lifecycle events, and device capabilities, powered by Chaquopy on Android and rubicon-objc on iOS. Write your app once in Python and run it on both platforms with genuinely native interfaces.
+PythonNative is a cross-platform toolkit for building native Android and iOS apps in Python. It provides a **declarative, React-like component model** with automatic reconciliation, powered by Chaquopy on Android and rubicon-objc on iOS. Describe your UI as a tree of elements, manage state with `set_state()`, and let PythonNative handle creating and updating native views.
 
 ## Features
 
-- **Cross-platform native UI:** Build Android and iOS apps from a single Python codebase with truly native rendering.
+- **Declarative UI:** Describe *what* your UI should look like with element functions (`Text`, `Button`, `Column`, `Row`, etc.). PythonNative creates and updates native views automatically.
+- **Reactive state:** Call `self.set_state(key=value)` and the framework re-renders only what changed — no manual view mutation.
+- **Virtual view tree + reconciler:** Element trees are diffed and patched with minimal native mutations, similar to React's reconciliation.
 - **Direct native bindings:** Python calls platform APIs directly through Chaquopy and rubicon-objc, with no JavaScript bridge.
-- **Unified component API:** Components like `Page`, `StackView`, `Label`, `Button`, and `WebView` share a consistent interface across platforms.
-- **CLI scaffolding:** `pn init` creates a ready-to-run project structure; `pn run android` and `pn run ios` build and launch your app.
-- **Page lifecycle:** Hooks for `on_create`, `on_start`, `on_resume`, `on_pause`, `on_stop`, and `on_destroy`, with state save and restore.
+- **CLI scaffolding:** `pn init` creates a ready-to-run project; `pn run android` and `pn run ios` build and launch your app.
 - **Navigation:** Push and pop screens with argument passing for multi-page apps.
-- **Rich component set:** Core views (Label, Button, TextField, ImageView, WebView, Switch, DatePicker, and more) plus Material Design variants.
-- **Bundled templates:** Android Gradle and iOS Xcode templates are included, so scaffolding requires no network access.
+- **Bundled templates:** Android Gradle and iOS Xcode templates are included — scaffolding requires no network access.
 
 ## Quick Start
 
@@ -56,16 +55,35 @@ import pythonnative as pn
 class MainPage(pn.Page):
     def __init__(self, native_instance):
         super().__init__(native_instance)
+        self.state = {"count": 0}
 
-    def on_create(self):
-        super().on_create()
-        stack = pn.StackView()
-        stack.add_view(pn.Label("Hello from PythonNative!"))
-        button = pn.Button("Tap me")
-        button.set_on_click(lambda: print("Button tapped"))
-        stack.add_view(button)
-        self.set_root_view(stack)
+    def render(self):
+        return pn.Column(
+            pn.Text(f"Count: {self.state['count']}", font_size=24),
+            pn.Button(
+                "Tap me",
+                on_click=lambda: self.set_state(count=self.state["count"] + 1),
+            ),
+            spacing=12,
+            padding=16,
+        )
 ```
+
+### Available Components
+
+| Component | Description |
+|---|---|
+| `Text` | Display text |
+| `Button` | Tappable button with `on_click` callback |
+| `Column` / `Row` | Vertical / horizontal layout containers |
+| `ScrollView` | Scrollable wrapper |
+| `TextInput` | Text entry field with `on_change` callback |
+| `Image` | Display images |
+| `Switch` | Toggle with `on_change` callback |
+| `ProgressBar` | Determinate progress (0.0–1.0) |
+| `ActivityIndicator` | Indeterminate loading spinner |
+| `WebView` | Embedded web content |
+| `Spacer` | Empty space |
 
 ## Documentation
 

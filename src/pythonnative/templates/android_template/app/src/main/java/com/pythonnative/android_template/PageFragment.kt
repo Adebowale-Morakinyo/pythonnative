@@ -65,7 +65,8 @@ class PageFragment : Fragment() {
             utils.callAttr("set_android_fragment_container", view)
             // Now that container exists, invoke on_create so Python can attach its root view
             page?.callAttr("on_create")
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "on_create failed", e)
         }
     }
 

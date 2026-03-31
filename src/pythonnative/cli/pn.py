@@ -41,7 +41,6 @@ def init_project(args: argparse.Namespace) -> None:
 
     os.makedirs(app_dir, exist_ok=True)
 
-    # Minimal hello world app scaffold (no bootstrap function; host instantiates Page directly)
     main_page_py = os.path.join(app_dir, "main_page.py")
     if not os.path.exists(main_page_py) or args.force:
         with open(main_page_py, "w", encoding="utf-8") as f:
@@ -52,20 +51,22 @@ def init_project(args: argparse.Namespace) -> None:
 class MainPage(pn.Page):
     def __init__(self, native_instance):
         super().__init__(native_instance)
+        self.state = {"count": 0}
 
-    def on_create(self):
-        super().on_create()
-        stack = (
-            pn.StackView()
-            .set_axis("vertical")
-            .set_spacing(12)
-            .set_alignment("fill")
-            .set_padding(all=16)
+    def increment(self):
+        self.set_state(count=self.state["count"] + 1)
+
+    def render(self):
+        return pn.ScrollView(
+            pn.Column(
+                pn.Text("Hello from PythonNative!", font_size=24, bold=True),
+                pn.Text(f"Tapped {self.state['count']} times"),
+                pn.Button("Tap me", on_click=self.increment),
+                spacing=12,
+                padding=16,
+                alignment="fill",
+            )
         )
-        stack.add_view(pn.Label("Hello from PythonNative!").set_text_size(18))
-        button = pn.Button("Tap me").set_on_click(lambda: print("Button clicked"))
-        stack.add_view(button)
-        self.set_root_view(stack.wrap_in_scroll())
 """
             )
 

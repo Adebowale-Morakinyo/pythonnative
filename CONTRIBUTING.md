@@ -229,8 +229,8 @@ Co-authored-by: Name <email>
 ### Branch naming (suggested)
 
 - Use lowercase kebab‑case; concise (≤ 40 chars).
-- Prefix conventions:
-  - `feature/<scope>-<short-desc>`
+- Branch prefixes match Conventional Commit types:
+  - `feat/<scope>-<short-desc>`
   - `fix/<issue-or-bug>-<short-desc>`
   - `chore/<short-desc>`
   - `docs/<short-desc>`
@@ -239,21 +239,18 @@ Co-authored-by: Name <email>
   - `test/<short-desc>`
   - `perf/<short-desc>`
   - `build/<short-desc>`
-  - `release/vX.Y.Z`
-  - `hotfix/<short-desc>`
 
 Examples:
 
 ```text
-feature/cli-init
+feat/cli-init
 fix/core-threading-deadlock-123
 docs/contributing
 ci/publish-pypi
 build/lock-versions
 refactor/utils-paths
 test/templates-android
-release/v0.2.0
-hotfix/cli-regression
+fix/cli-regression
 ```
 
 ### E2E tests (Maestro)

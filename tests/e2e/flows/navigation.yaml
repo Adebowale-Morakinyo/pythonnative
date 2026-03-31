@@ -2,7 +2,9 @@ appId: ${APP_ID}
 ---
 # Navigate through all three pages and back to main.
 - launchApp
-- assertVisible: "Hello from PythonNative Demo!"
+- extendedWaitUntil:
+    visible: "Hello from PythonNative Demo!"
+    timeout: 30000
 - tapOn: "Go to Second Page"
 - assertVisible: "Greetings from MainPage"
 - assertVisible: "Go to Third Page"

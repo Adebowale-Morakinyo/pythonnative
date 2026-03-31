@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -1168,37 +1168,50 @@
 
 
 <h1 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h1>
-<p>This guide shows how to navigate between pages and handle lifecycle events.</p>
+<p>This guide shows how to navigate between pages and pass data.</p>
 <h2 id="push-pop">Push / Pop<a class="headerlink" href="#push-pop" title="Permanent link">&para;</a></h2>
-<p>Use <code>push</code> and <code>pop</code> on your <code>Page</code> to change screens. You can pass a dotted path string or a class reference.</p>
+<p>Use <code>push</code> and <code>pop</code> on your <code>Page</code> to change screens. Pass a dotted path string or a class reference, with optional <code>args</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">on_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StackView</span><span class="p">()</span>
-        <span class="n">btn</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Go next&quot;</span><span class="p">)</span>
-        <span class="n">btn</span><span class="o">.</span><span class="n">set_on_click</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;app.second_page.SecondPage&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello&quot;</span><span class="p">}))</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">btn</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Main Page&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">),</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+                <span class="s2">&quot;Go next&quot;</span><span class="p">,</span>
+                <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span>
+                    <span class="s2">&quot;app.second_page.SecondPage&quot;</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello from Main&quot;</span><span class="p">},</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="p">)</span>
 </code></pre></div>
 
-<p>On the target page:</p>
+<p>On the target page, retrieve args with <code>self.get_args()</code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SecondPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">on_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;Second&quot;</span><span class="p">)</span>
-        <span class="n">stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StackView</span><span class="p">()</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
-        <span class="n">back</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">)</span>
-        <span class="n">back</span><span class="o">.</span><span class="n">set_on_click</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">back</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;Second Page&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">),</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="p">)</span>
 </code></pre></div>
 
 <h2 id="lifecycle">Lifecycle<a class="headerlink" href="#lifecycle" title="Permanent link">&para;</a></h2>
 <p>PythonNative forwards lifecycle events from the host:</p>
 <ul>
-<li><code>on_create</code></li>
+<li><code>on_create</code> — triggers the initial <code>render()</code></li>
 <li><code>on_start</code></li>
 <li><code>on_resume</code></li>
 <li><code>on_pause</code></li>
@@ -1208,7 +1221,7 @@
 <li><code>on_save_instance_state</code></li>
 <li><code>on_restore_instance_state</code></li>
 </ul>
-<p>Android uses a single <code>MainActivity</code> hosting a <code>NavHostFragment</code> and a generic <code>PageFragment</code> per page. iOS forwards <code>viewWillAppear</code>/<code>viewWillDisappear</code> via an internal registry.</p>
+<p>Override any of these on your <code>Page</code> subclass to respond to lifecycle changes.</p>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <ul>
 <li>On Android, <code>push</code> navigates via <code>NavController</code> to a <code>PageFragment</code> and passes <code>page_path</code> and optional JSON <code>args</code>.</li>
@@ -1220,39 +1233,20 @@
 <li>Each PythonNative page is hosted by a Swift <code>ViewController</code> instance.</li>
 <li>Pages are pushed and popped on a root <code>UINavigationController</code>.</li>
 <li>Lifecycle is forwarded from Swift to the registered Python page instance.</li>
-<li>Root view wiring: <code>Page.set_root_view</code> sizes and inserts the Python-native view into the controller’s view.</li>
 </ul>
-<p>Why this matches iOS conventions
-- iOS apps commonly model screens as <code>UIViewController</code>s and use <code>UINavigationController</code> for hierarchical navigation.
-- The approach integrates cleanly with add-to-app and system behaviors (e.g., state restoration).</p>
 <h3 id="android-single-activity-fragment-stack">Android (single Activity, Fragment stack)<a class="headerlink" href="#android-single-activity-fragment-stack" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Single host <code>MainActivity</code> sets a <code>NavHostFragment</code> containing a navigation graph.</li>
 <li>Each PythonNative page is represented by a generic <code>PageFragment</code> which instantiates the Python page and attaches its root view.</li>
 <li><code>push</code>/<code>pop</code> delegate to <code>NavController</code> (via a small <code>Navigator</code> helper).</li>
-<li>Arguments (<code>page_path</code>, <code>args_json</code>) live in Fragment arguments and restore across configuration changes and process death.</li>
+<li>Arguments live in Fragment arguments and restore across configuration changes.</li>
 </ul>
-<p>Why this matches Android conventions
-- Modern Android apps favor one Activity with many Fragments, using Jetpack Navigation for back stack, transitions, and deep links.
-- It simplifies lifecycle, back handling, and state compared to one-Activity-per-screen.</p>
 <h2 id="comparison-to-other-frameworks">Comparison to other frameworks<a class="headerlink" href="#comparison-to-other-frameworks" title="Permanent link">&para;</a></h2>
 <ul>
-<li>React Native</li>
-<li>Android: single <code>Activity</code>, screens managed via <code>Fragment</code>s (e.g., <code>react-native-screens</code>).</li>
-<li>iOS: screens map to <code>UIViewController</code>s pushed on <code>UINavigationController</code>.</li>
-<li>.NET MAUI / Xamarin.Forms</li>
-<li>Android: single <code>Activity</code>, pages via Fragments/Navigation.</li>
-<li>iOS: pages map to <code>UIViewController</code>s on a <code>UINavigationController</code>.</li>
-<li>NativeScript</li>
-<li>Android: single <code>Activity</code>, pages as <code>Fragment</code>s.</li>
-<li>iOS: pages as <code>UIViewController</code>s on <code>UINavigationController</code>.</li>
-<li>Flutter (special case)</li>
-<li>Android: single <code>Activity</code> (<code>FlutterActivity</code>/<code>FlutterFragmentActivity</code>).</li>
-<li>iOS: <code>FlutterViewController</code> hosts Flutter’s internal navigator; add-to-app can push multiple <code>FlutterViewController</code>s.</li>
+<li><strong>React Native:</strong> Android: single <code>Activity</code>, screens managed via <code>Fragment</code>s. iOS: screens map to <code>UIViewController</code>s pushed on <code>UINavigationController</code>.</li>
+<li><strong>NativeScript:</strong> Android: single <code>Activity</code>, pages as <code>Fragment</code>s. iOS: pages as <code>UIViewController</code>s on <code>UINavigationController</code>.</li>
+<li><strong>Flutter:</strong> Android: single <code>Activity</code>. iOS: <code>FlutterViewController</code> hosts Flutter's navigator.</li>
 </ul>
-<p>Bottom line
-- iOS: one host VC class, many instances on a <code>UINavigationController</code>.
-- Android: one host <code>Activity</code>, many <code>Fragment</code>s with Jetpack Navigation.</p>
 
 
 

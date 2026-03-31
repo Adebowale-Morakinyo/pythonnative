@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -746,6 +746,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Package
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -762,6 +780,108 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#public-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#element-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Element functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#element" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Element
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internal helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reconciler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconciler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-view-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native view registry
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -938,6 +1058,97 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#public-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#element-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Element functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#element" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Element
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Internal helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reconciler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconciler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-view-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native view registry
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -957,15 +1168,28 @@
 
 
 <h1 id="pythonnative-package">pythonnative package<a class="headerlink" href="#pythonnative-package" title="Permanent link">&para;</a></h1>
-<p>API reference will be generated here via mkdocstrings.</p>
-<p>Key flags and helpers:</p>
+<h2 id="public-api">Public API<a class="headerlink" href="#public-api" title="Permanent link">&para;</a></h2>
+<h3 id="page">Page<a class="headerlink" href="#page" title="Permanent link">&para;</a></h3>
+<p><code>pythonnative.Page</code> — base class for screens. Subclass it, implement <code>render()</code>, and use <code>set_state()</code> to trigger re-renders.</p>
+<h3 id="element-functions">Element functions<a class="headerlink" href="#element-functions" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>pythonnative.utils.IS_ANDROID</code>: platform flag with robust detection for Chaquopy/Android.</li>
-<li><code>pythonnative.utils.get_android_context()</code>: returns the current Android Activity/Context when running on Android.</li>
-<li><code>pythonnative.utils.set_android_context(ctx)</code>: set by <code>pythonnative.Page</code> on Android; you generally don’t call this directly.</li>
-<li><code>pythonnative.utils.get_android_fragment_container()</code>: returns the current Fragment container <code>ViewGroup</code> used for page rendering.</li>
-<li><code>pythonnative.utils.set_android_fragment_container(viewGroup)</code>: set by the host <code>PageFragment</code>; you generally don’t call this directly.</li>
+<li><code>pythonnative.Text</code>, <code>Button</code>, <code>Column</code>, <code>Row</code>, <code>ScrollView</code>, <code>TextInput</code>, <code>Image</code>, <code>Switch</code>, <code>ProgressBar</code>, <code>ActivityIndicator</code>, <code>WebView</code>, <code>Spacer</code></li>
 </ul>
+<p>Each returns an <code>Element</code> descriptor. See the Component Property Reference for full signatures.</p>
+<h3 id="element">Element<a class="headerlink" href="#element" title="Permanent link">&para;</a></h3>
+<p><code>pythonnative.Element</code> — the descriptor type returned by element functions. You generally don't create these directly.</p>
+<h2 id="internal-helpers">Internal helpers<a class="headerlink" href="#internal-helpers" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>pythonnative.utils.IS_ANDROID</code> — platform flag with robust detection for Chaquopy/Android.</li>
+<li><code>pythonnative.utils.get_android_context()</code> — returns the current Android <code>Activity</code>/<code>Context</code> when running on Android.</li>
+<li><code>pythonnative.utils.set_android_context(ctx)</code> — set by <code>Page</code> on Android; you generally don't call this directly.</li>
+<li><code>pythonnative.utils.get_android_fragment_container()</code> — returns the current Fragment container <code>ViewGroup</code> used for page rendering.</li>
+<li><code>pythonnative.utils.set_android_fragment_container(viewGroup)</code> — set by the host <code>PageFragment</code>; you generally don't call this directly.</li>
+</ul>
+<h2 id="reconciler">Reconciler<a class="headerlink" href="#reconciler" title="Permanent link">&para;</a></h2>
+<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Used internally by <code>Page</code>.</p>
+<h2 id="native-view-registry">Native view registry<a class="headerlink" href="#native-view-registry" title="Permanent link">&para;</a></h2>
+<p><code>pythonnative.native_views.NativeViewRegistry</code> — maps element type names to platform-specific handlers. Use <code>set_registry()</code> to inject a mock for testing.</p>
 
 
 

@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -407,6 +407,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -433,17 +444,6 @@
     <span class="md-ellipsis">
       
         Android flow (Chaquopy)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-implications" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key implications
       
     </span>
   </a>
@@ -1070,6 +1070,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1096,17 +1107,6 @@
     <span class="md-ellipsis">
       
         Android flow (Chaquopy)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-implications" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key implications
       
     </span>
   </a>
@@ -1156,56 +1156,44 @@
 
 
 <h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
-<p>PythonNative maps Python directly to native platform APIs. Conceptually, it is closer to NativeScript's dynamic bindings than to React Native's bridge-and-module approach.</p>
+<p>PythonNative combines <strong>direct native bindings</strong> with a <strong>declarative reconciler</strong>, giving you React-like ergonomics while calling native platform APIs synchronously from Python.</p>
 <h2 id="high-level-model">High-level model<a class="headerlink" href="#high-level-model" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Direct bindings: call native APIs synchronously from Python.</li>
-<li>iOS: rubicon-objc exposes Objective-C/Swift classes (e.g., UIViewController, UIButton, WKWebView) and lets you create dynamic Objective-C subclasses and selectors.</li>
-<li>Android: Chaquopy exposes Java classes (e.g., android.widget.Button, android.webkit.WebView) via the java bridge so you can construct and call methods directly.</li>
-<li>Shared Python API: components like Page, StackView, Label, Button, and WebView have a small, consistent surface. Platform-specific behavior is chosen at import time using pythonnative.utils.IS_ANDROID.</li>
-<li>Thin native bootstrap: the host app remains native (Android Activity or iOS UIViewController). It passes a live instance/pointer into Python, and Python drives the UI from there.</li>
-</ul>
+<ol>
+<li><strong>Declarative element tree:</strong> Your <code>Page.render()</code> method returns a tree of <code>Element</code> descriptors (similar to React elements / virtual DOM nodes).</li>
+<li><strong>Reconciler:</strong> On first render, the reconciler walks the tree and creates real native views via the platform backend. On subsequent renders (triggered by <code>set_state</code>), it diffs the new tree against the old one and applies the minimal set of native mutations.</li>
+<li><strong>Direct bindings:</strong> Under the hood, native views are created and updated through direct platform calls:</li>
+<li><strong>iOS:</strong> rubicon-objc exposes Objective-C/Swift classes (<code>UILabel</code>, <code>UIButton</code>, <code>UIStackView</code>, etc.).</li>
+<li><strong>Android:</strong> Chaquopy exposes Java classes (<code>android.widget.TextView</code>, <code>android.widget.Button</code>, etc.) via the JNI bridge.</li>
+<li><strong>Thin native bootstrap:</strong> The host app remains native (Android <code>Activity</code> or iOS <code>UIViewController</code>). It passes a live instance/pointer into Python, and Python drives the UI through the reconciler.</li>
+</ol>
+<h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code>Page.render()  →  Element tree  →  Reconciler  →  Native views
+                                       ↑
+Page.set_state()  →  re-render  →  diff  →  patch native views
+</code></pre></div>
+
+<p>The reconciler uses <strong>positional diffing</strong> (comparing children by index). When a child at a given position has the same element type, its props are updated in-place on the native view. When the type changes, the old native view is destroyed and a new one is created.</p>
 <h2 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Versus React Native: RN typically exposes capabilities via native modules/TurboModules and a bridge. PythonNative does not require authoring such modules for most APIs; you can access platform classes directly from Python.</li>
-<li>Versus NativeScript: similar philosophy—dynamic, synchronous access to Obj-C/Java from the scripting runtime.</li>
+<li><strong>Versus React Native:</strong> RN uses JSX + a JavaScript bridge + Yoga layout. PythonNative uses Python + direct native calls + platform layout managers. No JS bridge, no serialisation overhead.</li>
+<li><strong>Versus NativeScript:</strong> Similar philosophy (direct, synchronous native access), but PythonNative adds a declarative reconciler layer that NativeScript does not have by default.</li>
+<li><strong>Versus the old imperative API:</strong> The previous PythonNative API required manual <code>add_view()</code> calls and explicit setter methods. The new declarative model handles view lifecycle automatically.</li>
 </ul>
 <h2 id="ios-flow-rubicon-objc">iOS flow (Rubicon-ObjC)<a class="headerlink" href="#ios-flow-rubicon-objc" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The iOS template (Swift + PythonKit) boots Python and instantiates your <code>MainPage</code> with the current <code>UIViewController</code> pointer.</li>
-<li>In Python, Rubicon wraps the pointer; you then interact with UIKit classes directly.</li>
+<li><code>Page.on_create()</code> calls <code>render()</code>, the reconciler creates UIKit views, and attaches them to the controller's view.</li>
+<li>State changes trigger <code>render()</code> again; the reconciler patches UIKit views in-place.</li>
 </ul>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">rubicon.objc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjCClass</span><span class="p">,</span> <span class="n">ObjCInstance</span>
-
-<span class="n">UIButton</span> <span class="o">=</span> <span class="n">ObjCClass</span><span class="p">(</span><span class="s2">&quot;UIButton&quot;</span><span class="p">)</span>
-<span class="n">vc</span> <span class="o">=</span> <span class="n">ObjCInstance</span><span class="p">(</span><span class="n">native_ptr</span><span class="p">)</span>  <span class="c1"># passed from Swift template</span>
-<span class="n">button</span> <span class="o">=</span> <span class="n">UIButton</span><span class="o">.</span><span class="n">alloc</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-<span class="c1"># Configure target/action via a dynamic Objective-C subclass (see Button implementation)</span>
-</code></pre></div>
-
 <h2 id="android-flow-chaquopy">Android flow (Chaquopy)<a class="headerlink" href="#android-flow-chaquopy" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The Android template (Kotlin + Chaquopy) initializes Python in MainActivity and provides the current Activity/Context to Python.</li>
-<li>Components acquire the Context implicitly and construct real Android views.</li>
-</ul>
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">java</span><span class="w"> </span><span class="kn">import</span> <span class="n">jclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_android_context</span>
-
-<span class="n">WebViewClass</span> <span class="o">=</span> <span class="n">jclass</span><span class="p">(</span><span class="s2">&quot;android.webkit.WebView&quot;</span><span class="p">)</span>
-<span class="n">context</span> <span class="o">=</span> <span class="n">get_android_context</span><span class="p">()</span>
-<span class="n">webview</span> <span class="o">=</span> <span class="n">WebViewClass</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-<span class="n">webview</span><span class="o">.</span><span class="n">loadUrl</span><span class="p">(</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">)</span>
-</code></pre></div>
-
-<h2 id="key-implications">Key implications<a class="headerlink" href="#key-implications" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Synchronous native calls: no JS bridge; Python calls are direct.</li>
-<li>Lifecycle rules remain native: Activities/ViewControllers are created by the OS. Python receives and controls them; it does not instantiate Android Activities directly.</li>
-<li>Small, growing surface: the shared Python API favors clarity and consistency, expanding progressively.</li>
+<li>The Android template (Kotlin + Chaquopy) initializes Python in <code>MainActivity</code> and passes the <code>Activity</code> to Python.</li>
+<li><code>PageFragment</code> calls <code>on_create()</code> on the Python <code>Page</code>, which renders and attaches views to the fragment container.</li>
+<li>State changes trigger re-render; the reconciler patches Android views in-place.</li>
 </ul>
 <h2 id="navigation-model-overview">Navigation model overview<a class="headerlink" href="#navigation-model-overview" title="Permanent link">&para;</a></h2>
 <ul>
-<li>See the Navigation guide for full details and comparisons with other frameworks.</li>
+<li>See the Navigation guide for full details.</li>
 <li>iOS: one host <code>UIViewController</code> class, many instances pushed on a <code>UINavigationController</code>.</li>
 <li>Android: single host <code>Activity</code> with a <code>NavHostFragment</code> and a stack of generic <code>PageFragment</code>s driven by a navigation graph.</li>
 </ul>

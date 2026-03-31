@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -424,10 +424,38 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#constructor-pattern" class="md-nav__link">
+  <a href="#element-functions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Constructor pattern
+        Element functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Element functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#page-the-root-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page — the root component
       
     </span>
   </a>
@@ -435,10 +463,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components" class="md-nav__link">
+  <a href="#state-and-re-rendering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core components
+        State and re-rendering
       
     </span>
   </a>
@@ -446,10 +474,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#platform-detection-and-android-context" class="md-nav__link">
+  <a href="#reusable-components-as-functions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform detection and Android context
+        Reusable components as functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform detection
       
     </span>
   </a>
@@ -1015,10 +1054,38 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#constructor-pattern" class="md-nav__link">
+  <a href="#element-functions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Constructor pattern
+        Element functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Element functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#page-the-root-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page — the root component
       
     </span>
   </a>
@@ -1026,10 +1093,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components" class="md-nav__link">
+  <a href="#state-and-re-rendering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core components
+        State and re-rendering
       
     </span>
   </a>
@@ -1037,10 +1104,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#platform-detection-and-android-context" class="md-nav__link">
+  <a href="#reusable-components-as-functions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform detection and Android context
+        Reusable components as functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform detection
       
     </span>
   </a>
@@ -1068,50 +1146,105 @@
 
 
 <h1 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h1>
-<p>High-level overview of PythonNative components and how they map to native UI.</p>
-<h2 id="constructor-pattern">Constructor pattern<a class="headerlink" href="#constructor-pattern" title="Permanent link">&para;</a></h2>
-<ul>
-<li>All core components share a consistent, contextless constructor on both platforms.</li>
-<li>On Android, a <code>Context</code> is acquired implicitly from the current <code>Activity</code> set by <code>pn.Page</code>.</li>
-<li>On iOS, UIKit classes are allocated/initialized directly.</li>
-</ul>
-<p>Examples:</p>
+<p>PythonNative uses a <strong>declarative component model</strong> inspired by React. You describe <em>what</em> the UI should look like, and the framework handles creating and updating native views.</p>
+<h2 id="element-functions">Element functions<a class="headerlink" href="#element-functions" title="Permanent link">&para;</a></h2>
+<p>UI is built with element-creating functions. Each returns a lightweight <code>Element</code> descriptor — no native objects are created until the reconciler mounts the tree.</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+
+<span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333333&quot;</span><span class="p">)</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tapped&quot;</span><span class="p">))</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;First&quot;</span><span class="p">),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Second&quot;</span><span class="p">),</span>
+    <span class="n">spacing</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h3 id="available-components">Available components<a class="headerlink" href="#available-components" title="Permanent link">&para;</a></h3>
+<p><strong>Layout:</strong></p>
+<ul>
+<li><code>Column(*children, spacing, padding, alignment, background_color)</code> — vertical stack</li>
+<li><code>Row(*children, spacing, padding, alignment, background_color)</code> — horizontal stack</li>
+<li><code>ScrollView(child, background_color)</code> — scrollable container</li>
+<li><code>Spacer(size)</code> — empty space</li>
+</ul>
+<p><strong>Display:</strong></p>
+<ul>
+<li><code>Text(text, font_size, color, bold, text_align, background_color, max_lines)</code> — text display</li>
+<li><code>Image(source, width, height, scale_type)</code> — image display</li>
+<li><code>WebView(url)</code> — embedded web content</li>
+</ul>
+<p><strong>Input:</strong></p>
+<ul>
+<li><code>Button(title, on_click, color, background_color, font_size, enabled)</code> — tappable button</li>
+<li><code>TextInput(value, placeholder, on_change, secure, font_size, color)</code> — text entry</li>
+<li><code>Switch(value, on_change)</code> — toggle switch</li>
+</ul>
+<p><strong>Feedback:</strong></p>
+<ul>
+<li><code>ProgressBar(value)</code> — determinate progress (0.0–1.0)</li>
+<li><code>ActivityIndicator(animating)</code> — indeterminate spinner</li>
+</ul>
+<h2 id="page-the-root-component">Page — the root component<a class="headerlink" href="#page-the-root-component" title="Permanent link">&para;</a></h2>
+<p>Each screen is a <code>Page</code> subclass with a <code>render()</code> method that returns an element tree:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;World&quot;</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="state-and-re-rendering">State and re-rendering<a class="headerlink" href="#state-and-re-rendering" title="Permanent link">&para;</a></h2>
+<p>Call <code>self.set_state(key=value)</code> to update state. The framework automatically calls <code>render()</code> again and applies only the differences to the native views:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CounterPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">),</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Increment&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">increment</span><span class="p">),</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div>
+
+<h2 id="reusable-components-as-functions">Reusable components as functions<a class="headerlink" href="#reusable-components-as-functions" title="Permanent link">&para;</a></h2>
+<p>For reusable UI pieces, use regular Python functions that return elements:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">greeting_card</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">on_tap</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Say hi&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">on_tap</span><span class="p">),</span>
+        <span class="n">spacing</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">padding</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="p">)</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">on_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_create</span><span class="p">()</span>
-        <span class="n">stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StackView</span><span class="p">()</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">))</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">))</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="s2">&quot;initial&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_root_view</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="n">greeting_card</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi Alice&quot;</span><span class="p">)),</span>
+            <span class="n">greeting_card</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi Bob&quot;</span><span class="p">)),</span>
+            <span class="n">spacing</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="p">)</span>
 </code></pre></div>
 
-<p>Notes:
-- <code>pn.Page</code> stores the Android <code>Activity</code> so components like <code>pn.Button()</code> and <code>pn.Label()</code> can construct their native counterparts.
-- If you construct views before the <code>Page</code> is created on Android, a runtime error will be raised because no <code>Context</code> is available.</p>
-<h2 id="core-components">Core components<a class="headerlink" href="#core-components" title="Permanent link">&para;</a></h2>
-<p>Stabilized with contextless constructors on both platforms:</p>
-<ul>
-<li><code>Page</code></li>
-<li><code>StackView</code></li>
-<li><code>Label</code>, <code>Button</code></li>
-<li><code>ImageView</code></li>
-<li><code>TextField</code>, <code>TextView</code></li>
-<li><code>Switch</code></li>
-<li><code>ProgressView</code>, <code>ActivityIndicatorView</code></li>
-<li><code>WebView</code></li>
-</ul>
-<p>APIs are intentionally small and grow progressively in later releases. Properties and setters are kept consistent where supported by both platforms.</p>
-<h2 id="platform-detection-and-android-context">Platform detection and Android context<a class="headerlink" href="#platform-detection-and-android-context" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Use <code>pythonnative.utils.IS_ANDROID</code> for platform checks when needed.</li>
-<li>On Android, <code>Page</code> records the current <code>Activity</code> so child views can acquire a <code>Context</code> implicitly. Constructing views before <code>Page</code> initialization will raise.</li>
-</ul>
+<h2 id="platform-detection">Platform detection<a class="headerlink" href="#platform-detection" title="Permanent link">&para;</a></h2>
+<p>Use <code>pythonnative.utils.IS_ANDROID</code> when you need platform-specific logic:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">IS_ANDROID</span>
+
+<span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Android App&quot;</span> <span class="k">if</span> <span class="n">IS_ANDROID</span> <span class="k">else</span> <span class="s2">&quot;iOS App&quot;</span>
+</code></pre></div>
+
+<p>On Android, <code>Page</code> records the current <code>Activity</code> so component constructors can acquire a <code>Context</code> implicitly. Constructing views before <code>Page</code> initialisation will raise.</p>
 
 
 

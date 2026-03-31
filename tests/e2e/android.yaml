@@ -1,0 +1,6 @@
+appId: com.pythonnative.android_template
+env:
+  APP_ID: com.pythonnative.android_template
+---
+- runFlow: flows/main_page.yaml
+- runFlow: flows/navigation.yaml

@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+---
+# Verify main page renders correctly and the counter works.
+- launchApp
+- assertVisible: "Hello from PythonNative Demo!"
+- assertVisible: "Tapped 0 times"
+- assertVisible: "Tap me"
+- assertVisible: "Go to Second Page"
+- tapOn: "Tap me"
+- assertVisible: "Tapped 1 times"
+- tapOn: "Tap me"
+- assertVisible: "Tapped 2 times"

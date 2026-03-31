@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+---
+# Navigate through all three pages and back to main.
+- launchApp
+- assertVisible: "Hello from PythonNative Demo!"
+- tapOn: "Go to Second Page"
+- assertVisible: "Greetings from MainPage"
+- assertVisible: "Go to Third Page"
+- assertVisible: "Back"
+- tapOn: "Go to Third Page"
+- assertVisible: "Third Page"
+- assertVisible: "You navigated two levels deep."
+- assertVisible: "Back to Second"
+- tapOn: "Back to Second"
+- assertVisible: "Greetings from MainPage"
+- tapOn: "Back"
+- assertVisible: "Hello from PythonNative Demo!"

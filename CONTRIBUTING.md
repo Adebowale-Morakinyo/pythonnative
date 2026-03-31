@@ -256,9 +256,38 @@ release/v0.2.0
 hotfix/cli-regression
 ```
 
+### E2E tests (Maestro)
+
+End-to-end tests use [Maestro](https://maestro.dev/) to drive the hello-world example on real emulators and simulators.
+
+```bash
+# Install Maestro (one-time)
+curl -Ls "https://get.maestro.mobile.dev" | bash
+
+# For iOS, also install idb-companion
+brew tap facebook/fb && brew install idb-companion
+```
+
+Build and launch the app first, then run the tests:
+
+```bash
+cd examples/hello-world
+
+# Android (emulator must be running)
+pn run android
+maestro test ../../tests/e2e/android.yaml
+
+# iOS (simulator must be running; --platform ios needed when an Android emulator is also connected)
+pn run ios
+maestro --platform ios test ../../tests/e2e/ios.yaml
+```
+
+Test flows live in `tests/e2e/flows/` and cover main page rendering, counter interaction, and multi-page navigation. The `e2e.yml` workflow runs these automatically on pushes to `main` and PRs.
+
 ### CI
 
 - **CI** (`ci.yml`): runs formatter, linter, type checker, and tests on every push and PR.
+- **E2E** (`e2e.yml`): builds the hello-world example on Android (Linux emulator) and iOS (macOS simulator), then runs Maestro flows. Triggers on pushes to `main`, PRs, and manual dispatch.
 - **PR Lint** (`pr-lint.yml`): validates the PR title against Conventional Commits format (protects squash merges) and checks individual commit messages via commitlint (protects rebase merges). Recommended: add the **PR title** job as a required status check in branch-protection settings.
 - **Release** (`release.yml`): runs on merge to `main`; computes version, generates changelog, tags, creates GitHub Release, and (when `DRAFT_RELEASE` is `"false"`) publishes to PyPI.
 - **Docs** (`docs.yml`): deploys documentation to GitHub Pages on push to `main`.

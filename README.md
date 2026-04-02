@@ -69,22 +69,6 @@ class MainPage(pn.Page):
         )
 ```
 
-### Available Components
-
-| Component | Description |
-|---|---|
-| `Text` | Display text |
-| `Button` | Tappable button with `on_click` callback |
-| `Column` / `Row` | Vertical / horizontal layout containers |
-| `ScrollView` | Scrollable wrapper |
-| `TextInput` | Text entry field with `on_change` callback |
-| `Image` | Display images |
-| `Switch` | Toggle with `on_change` callback |
-| `ProgressBar` | Determinate progress (0.0–1.0) |
-| `ActivityIndicator` | Indeterminate loading spinner |
-| `WebView` | Embedded web content |
-| `Spacer` | Empty space |
-
 ## Documentation
 
 Visit [docs.pythonnative.com](https://docs.pythonnative.com/) for the full documentation, including getting started guides, platform-specific instructions for Android and iOS, API reference, and working examples.

@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.7.0 (2026-04-03)
+
+### Features
+
+- Replace class-based Page with function components, style prop, and use_navigation hook
+  ([`8103710`](https://github.com/pythonnative/pythonnative/commit/8103710aed5feb564583bb161cf81771669645fe))
+
+
 ## v0.6.0 (2026-04-03)
 
 ### Build System

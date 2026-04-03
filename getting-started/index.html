@@ -958,34 +958,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../meta/roadmap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Roadmap
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../meta/contributing/" class="md-nav__link">
         
   
@@ -1113,27 +1085,24 @@ pn<span class="w"> </span>--help
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-            <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">),</span>
-            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-                <span class="s2">&quot;Tap me&quot;</span><span class="p">,</span>
-                <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="p">),</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-            <span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-        <span class="p">)</span>
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="s2">&quot;Tap me&quot;</span><span class="p">,</span>
+            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_count</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+    <span class="p">)</span>
 </code></pre></div>
 
 <p>Key ideas:</p>
 <ul>
-<li><strong><code>render()</code></strong> returns an element tree describing the UI. PythonNative creates and updates native views automatically.</li>
-<li><strong><code>self.state</code></strong> holds your page's data. Call <strong><code>self.set_state(key=value)</code></strong> to update it — the UI re-renders automatically.</li>
+<li><strong><code>@pn.component</code></strong> marks a function as a PythonNative component. The function returns an element tree describing the UI. PythonNative creates and updates native views automatically.</li>
+<li><strong><code>pn.use_state(initial)</code></strong> creates local component state. Call the setter to update it — the UI re-renders automatically.</li>
+<li><strong><code>style={...}</code></strong> passes visual and layout properties as a dict (or list of dicts) to any component.</li>
 <li>Element functions like <code>pn.Text(...)</code>, <code>pn.Button(...)</code>, <code>pn.Column(...)</code> create lightweight descriptions, not native objects.</li>
 </ul>
 <h2 id="run-on-a-platform">Run on a platform<a class="headerlink" href="#run-on-a-platform" title="Permanent link">&para;</a></h2>

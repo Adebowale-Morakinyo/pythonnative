@@ -463,10 +463,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#page-the-root-component" class="md-nav__link">
+  <a href="#function-components-the-building-block" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Page — the root component
+        Function components — the building block
       
     </span>
   </a>
@@ -485,15 +485,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#function-components-with-hooks" class="md-nav__link">
+  <a href="#composing-components" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function components with hooks
+        Composing components
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Function components with hooks">
+    <nav class="md-nav" aria-label="Composing components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1049,34 +1049,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../meta/roadmap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Roadmap
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../meta/contributing/" class="md-nav__link">
         
   
@@ -1171,10 +1143,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#page-the-root-component" class="md-nav__link">
+  <a href="#function-components-the-building-block" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Page — the root component
+        Function components — the building block
       
     </span>
   </a>
@@ -1193,15 +1165,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#function-components-with-hooks" class="md-nav__link">
+  <a href="#composing-components" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function components with hooks
+        Composing components
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Function components with hooks">
+    <nav class="md-nav" aria-label="Composing components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1279,36 +1251,35 @@
 <p>UI is built with element-creating functions. Each returns a lightweight <code>Element</code> descriptor — no native objects are created until the reconciler mounts the tree.</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 
-<span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333333&quot;</span><span class="p">)</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#333333&quot;</span><span class="p">})</span>
 <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tapped&quot;</span><span class="p">))</span>
 <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;First&quot;</span><span class="p">),</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Second&quot;</span><span class="p">),</span>
-    <span class="n">spacing</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
 <span class="p">)</span>
 </code></pre></div>
 
 <h3 id="available-components">Available components<a class="headerlink" href="#available-components" title="Permanent link">&para;</a></h3>
 <p><strong>Layout:</strong></p>
 <ul>
-<li><code>Column(*children, spacing, padding, alignment, background_color)</code> — vertical stack</li>
-<li><code>Row(*children, spacing, padding, alignment, background_color)</code> — horizontal stack</li>
-<li><code>ScrollView(child, background_color)</code> — scrollable container</li>
-<li><code>View(*children, background_color, padding)</code> — generic container</li>
-<li><code>SafeAreaView(*children, background_color, padding)</code> — safe-area-aware container</li>
+<li><code>Column(*children, style=...)</code> — vertical stack</li>
+<li><code>Row(*children, style=...)</code> — horizontal stack</li>
+<li><code>ScrollView(child, style=...)</code> — scrollable container</li>
+<li><code>View(*children, style=...)</code> — generic container</li>
+<li><code>SafeAreaView(*children, style=...)</code> — safe-area-aware container</li>
 <li><code>Spacer(size, flex)</code> — empty space</li>
 </ul>
 <p><strong>Display:</strong></p>
 <ul>
-<li><code>Text(text, font_size, color, bold, text_align, background_color, max_lines)</code> — text display</li>
-<li><code>Image(source, width, height, scale_type)</code> — image display (supports URLs and resource names)</li>
+<li><code>Text(text, style=...)</code> — text display</li>
+<li><code>Image(source, style=...)</code> — image display (supports URLs and resource names)</li>
 <li><code>WebView(url)</code> — embedded web content</li>
 </ul>
 <p><strong>Input:</strong></p>
 <ul>
-<li><code>Button(title, on_click, color, background_color, font_size, enabled)</code> — tappable button</li>
-<li><code>TextInput(value, placeholder, on_change, secure, font_size, color)</code> — text entry</li>
+<li><code>Button(title, on_click, style=...)</code> — tappable button</li>
+<li><code>TextInput(value, placeholder, on_change, secure, style=...)</code> — text entry</li>
 <li><code>Switch(value, on_change)</code> — toggle switch</li>
 <li><code>Slider(value, min_value, max_value, on_change)</code> — continuous slider</li>
 <li><code>Pressable(child, on_press, on_long_press)</code> — tap handler wrapper</li>
@@ -1327,7 +1298,7 @@
 <li><code>FlatList(data, render_item, key_extractor, separator_height)</code> — scrollable data list</li>
 </ul>
 <h3 id="layout-properties">Layout properties<a class="headerlink" href="#layout-properties" title="Permanent link">&para;</a></h3>
-<p>All components support common layout properties:</p>
+<p>All components accept layout properties inside the <code>style</code> dict:</p>
 <ul>
 <li><code>width</code>, <code>height</code> — fixed dimensions (dp / pt)</li>
 <li><code>flex</code> — flex grow factor</li>
@@ -1335,65 +1306,55 @@
 <li><code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code> — size constraints</li>
 <li><code>align_self</code> — override parent alignment for this child</li>
 </ul>
-<h2 id="page-the-root-component">Page — the root component<a class="headerlink" href="#page-the-root-component" title="Permanent link">&para;</a></h2>
-<p>Each screen is a <code>Page</code> subclass with a <code>render()</code> method that returns an element tree:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;World&quot;</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
-</code></pre></div>
-
-<h2 id="state-and-re-rendering">State and re-rendering<a class="headerlink" href="#state-and-re-rendering" title="Permanent link">&para;</a></h2>
-<p>Call <code>self.set_state(key=value)</code> to update state. The framework automatically calls <code>render()</code> again and applies only the differences to the native views:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CounterPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-            <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">),</span>
-            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Increment&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">increment</span><span class="p">),</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-        <span class="p">)</span>
-</code></pre></div>
-
-<h2 id="function-components-with-hooks">Function components with hooks<a class="headerlink" href="#function-components-with-hooks" title="Permanent link">&para;</a></h2>
-<p>For reusable UI pieces <strong>with their own state</strong>, use the <code>@pn.component</code> decorator and hooks:</p>
+<h2 id="function-components-the-building-block">Function components — the building block<a class="headerlink" href="#function-components-the-building-block" title="Permanent link">&para;</a></h2>
+<p>All UI in PythonNative is built with <code>@pn.component</code> function components. Each screen is a function component that returns an element tree:</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">counter</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">MainPage</span><span class="p">():</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">set_name</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+</code></pre></div>
+
+<p>The entry point <code>create_page()</code> is called internally by native templates to bootstrap your root component. You don't call it directly — just export your component and configure the entry point in <code>pythonnative.json</code>.</p>
+<h2 id="state-and-re-rendering">State and re-rendering<a class="headerlink" href="#state-and-re-rendering" title="Permanent link">&para;</a></h2>
+<p>Use <code>pn.use_state(initial)</code> to create local component state. Call the setter to update — the framework automatically re-renders the component and applies only the differences to the native views:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">CounterPage</span><span class="p">():</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Increment&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_count</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<h2 id="composing-components">Composing components<a class="headerlink" href="#composing-components" title="Permanent link">&para;</a></h2>
+<p>Build complex UIs by composing smaller <code>@pn.component</code> functions. Each instance has <strong>independent state</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Counter</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">18</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">}),</span>
         <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
             <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_count</span><span class="p">(</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span>
             <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_count</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
         <span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
     <span class="p">)</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">MainPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">native_instance</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">native_instance</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-            <span class="n">counter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Apples&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-            <span class="n">counter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Oranges&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-            <span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-        <span class="p">)</span>
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">MainPage</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">Counter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Apples&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="n">Counter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Oranges&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+    <span class="p">)</span>
 </code></pre></div>
 
-<p>Each <code>counter</code> instance has <strong>independent state</strong> — changing one doesn't affect the other.</p>
+<p>Changing one <code>Counter</code> doesn't affect the other — each has its own hook state.</p>
 <h3 id="available-hooks">Available hooks<a class="headerlink" href="#available-hooks" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>use_state(initial)</code> — local component state; returns <code>(value, setter)</code></li>
@@ -1402,6 +1363,7 @@
 <li><code>use_callback(fn, deps)</code> — stable function references</li>
 <li><code>use_ref(initial)</code> — mutable ref that persists across renders</li>
 <li><code>use_context(context)</code> — read from a context provider</li>
+<li><code>use_navigation()</code> — navigation handle for push/pop between screens</li>
 </ul>
 <h3 id="custom-hooks">Custom hooks<a class="headerlink" href="#custom-hooks" title="Permanent link">&para;</a></h3>
 <p>Extract reusable stateful logic into plain functions:</p>
@@ -1416,16 +1378,16 @@
 <p>Share values across the tree without prop drilling:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">theme</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">create_context</span><span class="p">({</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#007AFF&quot;</span><span class="p">})</span>
 
-<span class="c1"># In a page&#39;s render():</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span><span class="n">theme</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#FF0000&quot;</span><span class="p">},</span>
-    <span class="n">my_component</span><span class="p">()</span>
-<span class="p">)</span>
-
-<span class="c1"># In my_component:</span>
 <span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">my_component</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span><span class="n">theme</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#FF0000&quot;</span><span class="p">},</span>
+        <span class="n">MyComponent</span><span class="p">()</span>
+    <span class="p">)</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">MyComponent</span><span class="p">():</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_context</span><span class="p">(</span><span class="n">theme</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Click&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Click&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]})</span>
 </code></pre></div>
 
 <h2 id="platform-detection">Platform detection<a class="headerlink" href="#platform-detection" title="Permanent link">&para;</a></h2>
@@ -1434,8 +1396,6 @@
 
 <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Android App&quot;</span> <span class="k">if</span> <span class="n">IS_ANDROID</span> <span class="k">else</span> <span class="s2">&quot;iOS App&quot;</span>
 </code></pre></div>
-
-<p>On Android, <code>Page</code> records the current <code>Activity</code> so component constructors can acquire a <code>Context</code> implicitly. Constructing views before <code>Page</code> initialisation will raise.</p>
 
 
 

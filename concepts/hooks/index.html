@@ -497,6 +497,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#use_navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use_memo" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1054,34 +1065,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../meta/roadmap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Roadmap
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../meta/contributing/" class="md-nav__link">
         
   
@@ -1175,6 +1158,17 @@
     <span class="md-ellipsis">
       
         use_effect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use_navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_navigation
       
     </span>
   </a>
@@ -1284,24 +1278,24 @@
 
 
 <h1 id="function-components-and-hooks">Function Components and Hooks<a class="headerlink" href="#function-components-and-hooks" title="Permanent link">&para;</a></h1>
-<p>PythonNative supports React-like function components with hooks for managing state, effects, memoisation, and context. This is the recommended way to build reusable UI pieces.</p>
+<p>PythonNative uses React-like function components with hooks for managing state, effects, navigation, memoisation, and context. Function components decorated with <code>@pn.component</code> are the only way to build UI in PythonNative.</p>
 <h2 id="creating-a-function-component">Creating a function component<a class="headerlink" href="#creating-a-function-component" title="Permanent link">&para;</a></h2>
 <p>Decorate a Python function with <code>@pn.component</code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 
 <span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">greeting</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;World&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Greeting</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;World&quot;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span>
 </code></pre></div>
 
 <p>Use it like any other component:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-            <span class="n">greeting</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">),</span>
-            <span class="n">greeting</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">),</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-        <span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">MyPage</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">Greeting</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">),</span>
+        <span class="n">Greeting</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bob&quot;</span><span class="p">),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">)</span>
 </code></pre></div>
 
 <h2 id="hooks">Hooks<a class="headerlink" href="#hooks" title="Permanent link">&para;</a></h2>
@@ -1309,7 +1303,7 @@
 <h3 id="use_state">use_state<a class="headerlink" href="#use_state" title="Permanent link">&para;</a></h3>
 <p>Local component state. Returns <code>(value, setter)</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">counter</span><span class="p">(</span><span class="n">initial</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Counter</span><span class="p">(</span><span class="n">initial</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
@@ -1330,7 +1324,7 @@
 <h3 id="use_effect">use_effect<a class="headerlink" href="#use_effect" title="Permanent link">&para;</a></h3>
 <p>Run side effects after render. The effect function may return a cleanup callable.</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Timer</span><span class="p">():</span>
     <span class="n">seconds</span><span class="p">,</span> <span class="n">set_seconds</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">tick</span><span class="p">():</span>
@@ -1350,6 +1344,34 @@
 <li><code>pn.use_effect(fn, [])</code> — run on mount only</li>
 <li><code>pn.use_effect(fn, [a, b])</code> — run when <code>a</code> or <code>b</code> change</li>
 </ul>
+<h3 id="use_navigation">use_navigation<a class="headerlink" href="#use_navigation" title="Permanent link">&para;</a></h3>
+<p>Access the navigation stack from any component. Returns a <code>NavigationHandle</code> with <code>.push()</code>, <code>.pop()</code>, and <code>.get_args()</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">HomeScreen</span><span class="p">():</span>
+    <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+            <span class="s2">&quot;Go to Details&quot;</span><span class="p">,</span>
+            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">DetailScreen</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}),</span>
+        <span class="p">),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+    <span class="p">)</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DetailScreen</span><span class="p">():</span>
+    <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
+    <span class="n">item_id</span> <span class="o">=</span> <span class="n">nav</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detail #</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">nav</span><span class="o">.</span><span class="n">pop</span><span class="p">),</span>
+        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p>See the <a href="../../guides/navigation/">Navigation guide</a> for full details.</p>
 <h3 id="use_memo">use_memo<a class="headerlink" href="#use_memo" title="Permanent link">&para;</a></h3>
 <p>Memoise an expensive computation:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">sorted_items</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_memo</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="p">[</span><span class="n">items</span><span class="p">])</span>
@@ -1374,17 +1396,16 @@
 
 <h2 id="context-and-provider">Context and Provider<a class="headerlink" href="#context-and-provider" title="Permanent link">&para;</a></h2>
 <p>Share values through the component tree without passing props manually:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Create a context with a default value</span>
-<span class="n">user_context</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">create_context</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Guest&quot;</span><span class="p">})</span>
+<div class="codehilite"><pre><span></span><code><span class="n">user_context</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">create_context</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Guest&quot;</span><span class="p">})</span>
 
-<span class="c1"># Provide a value to descendants</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span><span class="n">user_context</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">},</span>
-    <span class="n">user_profile</span><span class="p">()</span>
-<span class="p">)</span>
-
-<span class="c1"># Consume in any descendant</span>
 <span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">user_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span><span class="n">user_context</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">},</span>
+        <span class="n">UserProfile</span><span class="p">()</span>
+    <span class="p">)</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UserProfile</span><span class="p">():</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_context</span><span class="p">(</span><span class="n">user_context</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Welcome, </span><span class="si">{</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
@@ -1403,11 +1424,11 @@
 
 <p>Use them in any component:</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">settings</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Settings</span><span class="p">():</span>
     <span class="n">dark_mode</span><span class="p">,</span> <span class="n">toggle_dark</span> <span class="o">=</span> <span class="n">use_toggle</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Settings&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Settings&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
         <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
             <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Dark mode&quot;</span><span class="p">),</span>
             <span class="n">pn</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">dark_mode</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">toggle_dark</span><span class="p">()),</span>

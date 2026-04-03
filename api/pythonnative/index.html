@@ -837,10 +837,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#page" class="md-nav__link">
+  <a href="#create_page" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Page
+        create_page
       
     </span>
   </a>
@@ -1054,34 +1054,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../meta/roadmap/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Roadmap
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../meta/contributing/" class="md-nav__link">
         
   
@@ -1149,10 +1121,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#page" class="md-nav__link">
+  <a href="#create_page" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Page
+        create_page
       
     </span>
   </a>
@@ -1285,14 +1257,14 @@
 
 <h1 id="pythonnative-package">pythonnative package<a class="headerlink" href="#pythonnative-package" title="Permanent link">&para;</a></h1>
 <h2 id="public-api">Public API<a class="headerlink" href="#public-api" title="Permanent link">&para;</a></h2>
-<h3 id="page">Page<a class="headerlink" href="#page" title="Permanent link">&para;</a></h3>
-<p><code>pythonnative.Page</code> — base class for screens. Subclass it, implement <code>render()</code>, and use <code>set_state()</code> to trigger re-renders.</p>
+<h3 id="create_page">create_page<a class="headerlink" href="#create_page" title="Permanent link">&para;</a></h3>
+<p><code>pythonnative.create_page(...)</code> — called internally by native templates to bootstrap the root component. You don't call this directly.</p>
 <h3 id="element-functions">Element functions<a class="headerlink" href="#element-functions" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>pythonnative.Text</code>, <code>Button</code>, <code>Column</code>, <code>Row</code>, <code>ScrollView</code>, <code>TextInput</code>, <code>Image</code>, <code>Switch</code>, <code>ProgressBar</code>, <code>ActivityIndicator</code>, <code>WebView</code>, <code>Spacer</code></li>
 <li><code>pythonnative.View</code>, <code>SafeAreaView</code>, <code>Modal</code>, <code>Slider</code>, <code>Pressable</code>, <code>FlatList</code></li>
 </ul>
-<p>Each returns an <code>Element</code> descriptor. See the Component Property Reference for full signatures.</p>
+<p>Each returns an <code>Element</code> descriptor. Visual and layout properties are passed via <code>style={...}</code>. See the Component Property Reference for full details.</p>
 <h3 id="element">Element<a class="headerlink" href="#element" title="Permanent link">&para;</a></h3>
 <p><code>pythonnative.Element</code> — the descriptor type returned by element functions. You generally don't create these directly.</p>
 <h3 id="hooks">Hooks<a class="headerlink" href="#hooks" title="Permanent link">&para;</a></h3>
@@ -1301,6 +1273,7 @@
 <li><code>pythonnative.component</code> — decorator to create a function component</li>
 <li><code>pythonnative.use_state(initial)</code> — local component state</li>
 <li><code>pythonnative.use_effect(effect, deps)</code> — side effects</li>
+<li><code>pythonnative.use_navigation()</code> — navigation handle (push/pop/get_args)</li>
 <li><code>pythonnative.use_memo(factory, deps)</code> — memoised values</li>
 <li><code>pythonnative.use_callback(fn, deps)</code> — stable function references</li>
 <li><code>pythonnative.use_ref(initial)</code> — mutable ref object</li>
@@ -1324,11 +1297,11 @@
 <ul>
 <li><code>pythonnative.utils.IS_ANDROID</code> — platform flag with robust detection for Chaquopy/Android.</li>
 <li><code>pythonnative.utils.get_android_context()</code> — returns the current Android <code>Activity</code>/<code>Context</code> when running on Android.</li>
-<li><code>pythonnative.utils.set_android_context(ctx)</code> — set by <code>Page</code> on Android; you generally don't call this directly.</li>
+<li><code>pythonnative.utils.set_android_context(ctx)</code> — set internally during page bootstrapping; you generally don't call this directly.</li>
 <li><code>pythonnative.utils.get_android_fragment_container()</code> — returns the current Fragment container <code>ViewGroup</code> used for page rendering.</li>
 </ul>
 <h2 id="reconciler">Reconciler<a class="headerlink" href="#reconciler" title="Permanent link">&para;</a></h2>
-<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by <code>Page</code>.</p>
+<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by <code>create_page</code>.</p>
 <h2 id="hot-reload">Hot reload<a class="headerlink" href="#hot-reload" title="Permanent link">&para;</a></h2>
 <p><code>pythonnative.hot_reload.FileWatcher</code> — watches a directory for file changes and triggers a callback. Used by <code>pn run --hot-reload</code>.</p>
 <p><code>pythonnative.hot_reload.ModuleReloader</code> — reloads changed Python modules on the device and triggers page re-rendering.</p>

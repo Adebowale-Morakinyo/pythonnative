@@ -100,10 +100,14 @@ Recommended scopes (choose the smallest, most accurate unit; prefer module/direc
   - `cli` – CLI tool and `pn` command (`src/pythonnative/cli/`)
   - `components` – declarative element-creating functions (`components.py`)
   - `element` – Element descriptor class (`element.py`)
+  - `hooks` – function components and hooks (`hooks.py`)
+  - `hot_reload` – file watcher and module reloader (`hot_reload.py`)
+  - `native_modules` – native API modules for device capabilities (`native_modules/`)
   - `native_views` – platform-specific native view creation and updates (`native_views.py`)
   - `package` – `src/pythonnative/__init__.py` exports and package boundary
   - `page` – Page component, lifecycle, and reactive state (`page.py`)
   - `reconciler` – virtual view tree diffing and reconciliation (`reconciler.py`)
+  - `style` – StyleSheet and theming (`style.py`)
   - `utils` – shared utilities (`utils.py`)
 
 - Other scopes:

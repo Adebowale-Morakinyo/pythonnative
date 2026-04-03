@@ -122,6 +122,7 @@ def _on_create(page: Any) -> None:
     from .reconciler import Reconciler
 
     page._reconciler = Reconciler(get_registry())
+    page._reconciler._page_re_render = lambda: _re_render(page)
     element = page.render()
     page._root_native_view = page._reconciler.mount(element)
     page._attach_root(page._root_native_view)

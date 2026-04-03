@@ -123,6 +123,21 @@ def _resolve_padding(
     return (0, 0, 0, 0)
 
 
+_LAYOUT_KEYS = frozenset(
+    {
+        "width",
+        "height",
+        "flex",
+        "margin",
+        "min_width",
+        "max_width",
+        "min_height",
+        "max_height",
+        "align_self",
+    }
+)
+
+
 # ======================================================================
 # Platform handler registration (lazy imports inside functions)
 # ======================================================================
@@ -142,15 +157,52 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
     def _dp(value: float) -> int:
         return int(value * _density())
 
+    def _apply_layout(view: Any, props: Dict[str, Any]) -> None:
+        """Apply common layout properties to an Android view."""
+        lp = view.getLayoutParams()
+        LayoutParams = jclass("android.widget.LinearLayout$LayoutParams")
+        ViewGroupLP = jclass("android.view.ViewGroup$LayoutParams")
+        needs_set = False
+
+        if lp is None:
+            lp = LayoutParams(ViewGroupLP.WRAP_CONTENT, ViewGroupLP.WRAP_CONTENT)
+            needs_set = True
+
+        if "width" in props and props["width"] is not None:
+            lp.width = _dp(float(props["width"]))
+            needs_set = True
+        if "height" in props and props["height"] is not None:
+            lp.height = _dp(float(props["height"]))
+            needs_set = True
+        if "flex" in props and props["flex"] is not None:
+            try:
+                lp.weight = float(props["flex"])
+                needs_set = True
+            except Exception:
+                pass
+        if "margin" in props and props["margin"] is not None:
+            left, top, right, bottom = _resolve_padding(props["margin"])
+            try:
+                lp.setMargins(_dp(left), _dp(top), _dp(right), _dp(bottom))
+                needs_set = True
+            except Exception:
+                pass
+
+        if needs_set:
+            view.setLayoutParams(lp)
+
     # ---- Text -----------------------------------------------------------
     class AndroidTextHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             tv = jclass("android.widget.TextView")(_ctx())
             self._apply(tv, props)
+            _apply_layout(tv, props)
             return tv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def _apply(self, tv: Any, props: Dict[str, Any]) -> None:
             if "text" in props:
@@ -175,10 +227,13 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
         def create(self, props: Dict[str, Any]) -> Any:
             btn = jclass("android.widget.Button")(_ctx())
             self._apply(btn, props)
+            _apply_layout(btn, props)
             return btn
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def _apply(self, btn: Any, props: Dict[str, Any]) -> None:
             if "title" in props:
@@ -213,10 +268,13 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             ll = jclass("android.widget.LinearLayout")(_ctx())
             ll.setOrientation(jclass("android.widget.LinearLayout").VERTICAL)
             self._apply(ll, props)
+            _apply_layout(ll, props)
             return ll
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def _apply(self, ll: Any, props: Dict[str, Any]) -> None:
             if "spacing" in props and props["spacing"]:
@@ -259,10 +317,13 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             ll = jclass("android.widget.LinearLayout")(_ctx())
             ll.setOrientation(jclass("android.widget.LinearLayout").HORIZONTAL)
             self._apply(ll, props)
+            _apply_layout(ll, props)
             return ll
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def _apply(self, ll: Any, props: Dict[str, Any]) -> None:
             if "spacing" in props and props["spacing"]:
@@ -303,11 +364,14 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             sv = jclass("android.widget.ScrollView")(_ctx())
             if "background_color" in props and props["background_color"] is not None:
                 sv.setBackgroundColor(parse_color_int(props["background_color"]))
+            _apply_layout(sv, props)
             return sv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             if "background_color" in changed and changed["background_color"] is not None:
                 native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def add_child(self, parent: Any, child: Any) -> None:
             parent.addView(child)
@@ -315,15 +379,18 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
         def remove_child(self, parent: Any, child: Any) -> None:
             parent.removeView(child)
 
-    # ---- TextInput (EditText) -------------------------------------------
+    # ---- TextInput (EditText) with on_change ----------------------------
     class AndroidTextInputHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             et = jclass("android.widget.EditText")(_ctx())
             self._apply(et, props)
+            _apply_layout(et, props)
             return et
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def _apply(self, et: Any, props: Dict[str, Any]) -> None:
             if "value" in props:
@@ -339,26 +406,113 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             if "secure" in props and props["secure"]:
                 InputType = jclass("android.text.InputType")
                 et.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+            if "on_change" in props:
+                cb = props["on_change"]
+                if cb is not None:
+                    TextWatcher = jclass("android.text.TextWatcher")
 
-    # ---- Image ----------------------------------------------------------
+                    class ChangeProxy(dynamic_proxy(TextWatcher)):
+                        def __init__(self, callback: Callable[[str], None]) -> None:
+                            super().__init__()
+                            self.callback = callback
+
+                        def afterTextChanged(self, s: Any) -> None:
+                            self.callback(str(s))
+
+                        def beforeTextChanged(self, s: Any, start: int, count: int, after: int) -> None:
+                            pass
+
+                        def onTextChanged(self, s: Any, start: int, before: int, count: int) -> None:
+                            pass
+
+                    et.addTextChangedListener(ChangeProxy(cb))
+
+    # ---- Image (with URL loading) ---------------------------------------
     class AndroidImageHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             iv = jclass("android.widget.ImageView")(_ctx())
             self._apply(iv, props)
+            _apply_layout(iv, props)
             return iv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
 
         def _apply(self, iv: Any, props: Dict[str, Any]) -> None:
             if "background_color" in props and props["background_color"] is not None:
                 iv.setBackgroundColor(parse_color_int(props["background_color"]))
+            if "source" in props and props["source"]:
+                self._load_source(iv, props["source"])
+            if "scale_type" in props and props["scale_type"]:
+                ScaleType = jclass("android.widget.ImageView$ScaleType")
+                mapping = {
+                    "cover": ScaleType.CENTER_CROP,
+                    "contain": ScaleType.FIT_CENTER,
+                    "stretch": ScaleType.FIT_XY,
+                    "center": ScaleType.CENTER,
+                }
+                st = mapping.get(props["scale_type"])
+                if st:
+                    iv.setScaleType(st)
 
-    # ---- Switch ---------------------------------------------------------
+        def _load_source(self, iv: Any, source: str) -> None:
+            try:
+                if source.startswith(("http://", "https://")):
+                    Thread = jclass("java.lang.Thread")
+                    Runnable = jclass("java.lang.Runnable")
+                    URL = jclass("java.net.URL")
+                    BitmapFactory = jclass("android.graphics.BitmapFactory")
+                    Handler = jclass("android.os.Handler")
+                    Looper = jclass("android.os.Looper")
+                    handler = Handler(Looper.getMainLooper())
+
+                    class LoadTask(dynamic_proxy(Runnable)):
+                        def __init__(self, image_view: Any, url_str: str, main_handler: Any) -> None:
+                            super().__init__()
+                            self.image_view = image_view
+                            self.url_str = url_str
+                            self.main_handler = main_handler
+
+                        def run(self) -> None:
+                            try:
+                                url = URL(self.url_str)
+                                stream = url.openStream()
+                                bitmap = BitmapFactory.decodeStream(stream)
+                                stream.close()
+
+                                class SetImage(dynamic_proxy(Runnable)):
+                                    def __init__(self, view: Any, bmp: Any) -> None:
+                                        super().__init__()
+                                        self.view = view
+                                        self.bmp = bmp
+
+                                    def run(self) -> None:
+                                        self.view.setImageBitmap(self.bmp)
+
+                                self.main_handler.post(SetImage(self.image_view, bitmap))
+                            except Exception:
+                                pass
+
+                    Thread(LoadTask(iv, source, handler)).start()
+                else:
+                    ctx = _ctx()
+                    res = ctx.getResources()
+                    pkg = ctx.getPackageName()
+                    res_name = source.rsplit(".", 1)[0] if "." in source else source
+                    res_id = res.getIdentifier(res_name, "drawable", pkg)
+                    if res_id != 0:
+                        iv.setImageResource(res_id)
+            except Exception:
+                pass
+
+    # ---- Switch (with on_change) ----------------------------------------
     class AndroidSwitchHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             sw = jclass("android.widget.Switch")(_ctx())
             self._apply(sw, props)
+            _apply_layout(sw, props)
             return sw
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -387,6 +541,7 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             pb = jclass("android.widget.ProgressBar")(_ctx(), None, 0, style)
             pb.setMax(1000)
             self._apply(pb, props)
+            _apply_layout(pb, props)
             return pb
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -402,6 +557,7 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             pb = jclass("android.widget.ProgressBar")(_ctx())
             if not props.get("animating", True):
                 pb.setVisibility(jclass("android.view.View").GONE)
+            _apply_layout(pb, props)
             return pb
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -415,6 +571,7 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             wv = jclass("android.webkit.WebView")(_ctx())
             if "url" in props and props["url"]:
                 wv.loadUrl(str(props["url"]))
+            _apply_layout(wv, props)
             return wv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -429,6 +586,12 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
                 px = _dp(float(props["size"]))
                 lp = jclass("android.widget.LinearLayout$LayoutParams")(px, px)
                 v.setLayoutParams(lp)
+            if "flex" in props and props["flex"] is not None:
+                lp = v.getLayoutParams()
+                if lp is None:
+                    lp = jclass("android.widget.LinearLayout$LayoutParams")(0, 0)
+                lp.weight = float(props["flex"])
+                v.setLayoutParams(lp)
             return v
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -436,6 +599,156 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
                 px = _dp(float(changed["size"]))
                 lp = jclass("android.widget.LinearLayout$LayoutParams")(px, px)
                 native_view.setLayoutParams(lp)
+
+    # ---- View (generic container FrameLayout) ---------------------------
+    class AndroidViewHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            fl = jclass("android.widget.FrameLayout")(_ctx())
+            if "background_color" in props and props["background_color"] is not None:
+                fl.setBackgroundColor(parse_color_int(props["background_color"]))
+            if "padding" in props:
+                left, top, right, bottom = _resolve_padding(props["padding"])
+                fl.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
+            _apply_layout(fl, props)
+            return fl
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            if "background_color" in changed and changed["background_color"] is not None:
+                native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
+            if "padding" in changed:
+                left, top, right, bottom = _resolve_padding(changed["padding"])
+                native_view.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_layout(native_view, changed)
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            parent.addView(child)
+
+        def remove_child(self, parent: Any, child: Any) -> None:
+            parent.removeView(child)
+
+        def insert_child(self, parent: Any, child: Any, index: int) -> None:
+            parent.addView(child, index)
+
+    # ---- SafeAreaView (FrameLayout with fitsSystemWindows) ---------------
+    class AndroidSafeAreaViewHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            fl = jclass("android.widget.FrameLayout")(_ctx())
+            fl.setFitsSystemWindows(True)
+            if "background_color" in props and props["background_color"] is not None:
+                fl.setBackgroundColor(parse_color_int(props["background_color"]))
+            if "padding" in props:
+                left, top, right, bottom = _resolve_padding(props["padding"])
+                fl.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
+            return fl
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            if "background_color" in changed and changed["background_color"] is not None:
+                native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            parent.addView(child)
+
+        def remove_child(self, parent: Any, child: Any) -> None:
+            parent.removeView(child)
+
+    # ---- Modal (AlertDialog) -------------------------------------------
+    class AndroidModalHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            placeholder = jclass("android.view.View")(_ctx())
+            placeholder.setVisibility(jclass("android.view.View").GONE)
+            return placeholder
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            pass
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            pass
+
+    # ---- Slider (SeekBar) -----------------------------------------------
+    class AndroidSliderHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            sb = jclass("android.widget.SeekBar")(_ctx())
+            sb.setMax(1000)
+            self._apply(sb, props)
+            _apply_layout(sb, props)
+            return sb
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            self._apply(native_view, changed)
+
+        def _apply(self, sb: Any, props: Dict[str, Any]) -> None:
+            min_val = float(props.get("min_value", 0))
+            max_val = float(props.get("max_value", 1))
+            rng = max_val - min_val if max_val != min_val else 1
+            if "value" in props:
+                normalized = (float(props["value"]) - min_val) / rng
+                sb.setProgress(int(normalized * 1000))
+            if "on_change" in props and props["on_change"] is not None:
+                cb = props["on_change"]
+
+                class SeekProxy(dynamic_proxy(jclass("android.widget.SeekBar").OnSeekBarChangeListener)):
+                    def __init__(self, callback: Callable[[float], None], mn: float, rn: float) -> None:
+                        super().__init__()
+                        self.callback = callback
+                        self.mn = mn
+                        self.rn = rn
+
+                    def onProgressChanged(self, seekBar: Any, progress: int, fromUser: bool) -> None:
+                        if fromUser:
+                            self.callback(self.mn + (progress / 1000.0) * self.rn)
+
+                    def onStartTrackingTouch(self, seekBar: Any) -> None:
+                        pass
+
+                    def onStopTrackingTouch(self, seekBar: Any) -> None:
+                        pass
+
+                sb.setOnSeekBarChangeListener(SeekProxy(cb, min_val, rng))
+
+    # ---- Pressable (FrameLayout with click listener) --------------------
+    class AndroidPressableHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            fl = jclass("android.widget.FrameLayout")(_ctx())
+            fl.setClickable(True)
+            self._apply(fl, props)
+            return fl
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            self._apply(native_view, changed)
+
+        def _apply(self, fl: Any, props: Dict[str, Any]) -> None:
+            if "on_press" in props and props["on_press"] is not None:
+                cb = props["on_press"]
+
+                class PressProxy(dynamic_proxy(jclass("android.view.View").OnClickListener)):
+                    def __init__(self, callback: Callable[[], None]) -> None:
+                        super().__init__()
+                        self.callback = callback
+
+                    def onClick(self, view: Any) -> None:
+                        self.callback()
+
+                fl.setOnClickListener(PressProxy(cb))
+            if "on_long_press" in props and props["on_long_press"] is not None:
+                cb = props["on_long_press"]
+
+                class LongPressProxy(dynamic_proxy(jclass("android.view.View").OnLongClickListener)):
+                    def __init__(self, callback: Callable[[], None]) -> None:
+                        super().__init__()
+                        self.callback = callback
+
+                    def onLongClick(self, view: Any) -> bool:
+                        self.callback()
+                        return True
+
+                fl.setOnLongClickListener(LongPressProxy(cb))
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            parent.addView(child)
+
+        def remove_child(self, parent: Any, child: Any) -> None:
+            parent.removeView(child)
 
     registry.register("Text", AndroidTextHandler())
     registry.register("Button", AndroidButtonHandler())
@@ -449,6 +762,11 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
     registry.register("ActivityIndicator", AndroidActivityIndicatorHandler())
     registry.register("WebView", AndroidWebViewHandler())
     registry.register("Spacer", AndroidSpacerHandler())
+    registry.register("View", AndroidViewHandler())
+    registry.register("SafeAreaView", AndroidSafeAreaViewHandler())
+    registry.register("Modal", AndroidModalHandler())
+    registry.register("Slider", AndroidSliderHandler())
+    registry.register("Pressable", AndroidPressableHandler())
 
 
 def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
@@ -468,15 +786,37 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
         b = (argb & 0xFF) / 255.0
         return UIColor.colorWithRed_green_blue_alpha_(r, g, b, a)
 
+    def _apply_ios_layout(view: Any, props: Dict[str, Any]) -> None:
+        """Apply common layout constraints to an iOS view."""
+        if "width" in props and props["width"] is not None:
+            try:
+                for c in list(view.constraints or []):
+                    if c.firstAttribute == 7:  # NSLayoutAttributeWidth
+                        c.setActive_(False)
+                view.widthAnchor.constraintEqualToConstant_(float(props["width"])).setActive_(True)
+            except Exception:
+                pass
+        if "height" in props and props["height"] is not None:
+            try:
+                for c in list(view.constraints or []):
+                    if c.firstAttribute == 8:  # NSLayoutAttributeHeight
+                        c.setActive_(False)
+                view.heightAnchor.constraintEqualToConstant_(float(props["height"])).setActive_(True)
+            except Exception:
+                pass
+
     # ---- Text -----------------------------------------------------------
     class IOSTextHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             label = ObjCClass("UILabel").alloc().init()
             self._apply(label, props)
+            _apply_ios_layout(label, props)
             return label
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
 
         def _apply(self, label: Any, props: Dict[str, Any]) -> None:
             if "text" in props:
@@ -501,10 +841,6 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
 
     # ---- Button ---------------------------------------------------------
 
-    # btn id(ObjCInstance) -> _PNButtonTarget.  Keeps a strong ref to
-    # each handler (preventing GC) and lets us swap the callback on
-    # re-render without calling removeTarget/addTarget (which crashes
-    # due to rubicon-objc wrapper lifecycle issues).
     _pn_btn_handler_map: dict = {}
 
     class _PNButtonTarget(NSObject):  # type: ignore[valid-type]
@@ -515,9 +851,6 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
             if self._callback is not None:
                 self._callback()
 
-    # Strong refs to retained UIButton wrappers so the ObjCInstance
-    # (and its prevent-deallocation retain) stays alive for the
-    # lifetime of the app.
     _pn_retained_views: list = []
 
     class IOSButtonHandler(ViewHandler):
@@ -528,10 +861,13 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
             _ios_blue = UIColor.colorWithRed_green_blue_alpha_(0.0, 0.478, 1.0, 1.0)
             btn.setTitleColor_forState_(_ios_blue, 0)
             self._apply(btn, props)
+            _apply_ios_layout(btn, props)
             return btn
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
 
         def _apply(self, btn: Any, props: Dict[str, Any]) -> None:
             if "title" in props:
@@ -563,10 +899,13 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
             sv = ObjCClass("UIStackView").alloc().initWithFrame_(((0, 0), (0, 0)))
             sv.setAxis_(1)  # vertical
             self._apply(sv, props)
+            _apply_ios_layout(sv, props)
             return sv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
 
         def _apply(self, sv: Any, props: Dict[str, Any]) -> None:
             if "spacing" in props and props["spacing"]:
@@ -600,10 +939,13 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
             sv = ObjCClass("UIStackView").alloc().initWithFrame_(((0, 0), (0, 0)))
             sv.setAxis_(0)  # horizontal
             self._apply(sv, props)
+            _apply_ios_layout(sv, props)
             return sv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
 
         def _apply(self, sv: Any, props: Dict[str, Any]) -> None:
             if "spacing" in props and props["spacing"]:
@@ -630,6 +972,7 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
             sv = ObjCClass("UIScrollView").alloc().init()
             if "background_color" in props and props["background_color"] is not None:
                 sv.setBackgroundColor_(_uicolor(props["background_color"]))
+            _apply_ios_layout(sv, props)
             return sv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -650,16 +993,33 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
         def remove_child(self, parent: Any, child: Any) -> None:
             child.removeFromSuperview()
 
-    # ---- TextInput (UITextField) ----------------------------------------
+    # ---- TextInput (UITextField with on_change) -------------------------
+    _pn_tf_handler_map: dict = {}
+
+    class _PNTextFieldTarget(NSObject):  # type: ignore[valid-type]
+        _callback: Optional[Callable[[str], None]] = None
+
+        @objc_method
+        def onEdit_(self, sender: object) -> None:
+            if self._callback is not None:
+                try:
+                    text = str(sender.text) if sender and hasattr(sender, "text") else ""
+                    self._callback(text)
+                except Exception:
+                    pass
+
     class IOSTextInputHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             tf = ObjCClass("UITextField").alloc().init()
             tf.setBorderStyle_(2)  # RoundedRect
             self._apply(tf, props)
+            _apply_ios_layout(tf, props)
             return tf
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
             self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
 
         def _apply(self, tf: Any, props: Dict[str, Any]) -> None:
             if "value" in props:
@@ -674,20 +1034,72 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
                 tf.setBackgroundColor_(_uicolor(props["background_color"]))
             if "secure" in props and props["secure"]:
                 tf.setSecureTextEntry_(True)
+            if "on_change" in props:
+                existing = _pn_tf_handler_map.get(id(tf))
+                if existing is not None:
+                    existing._callback = props["on_change"]
+                else:
+                    handler = _PNTextFieldTarget.new()
+                    handler._callback = props["on_change"]
+                    _pn_tf_handler_map[id(tf)] = handler
+                    tf.addTarget_action_forControlEvents_(handler, SEL("onEdit:"), 1 << 17)
 
-    # ---- Image ----------------------------------------------------------
+    # ---- Image (with URL loading) ---------------------------------------
     class IOSImageHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             iv = ObjCClass("UIImageView").alloc().init()
-            if "background_color" in props and props["background_color"] is not None:
-                iv.setBackgroundColor_(_uicolor(props["background_color"]))
+            self._apply(iv, props)
+            _apply_ios_layout(iv, props)
             return iv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-            if "background_color" in changed and changed["background_color"] is not None:
-                native_view.setBackgroundColor_(_uicolor(changed["background_color"]))
+            self._apply(native_view, changed)
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
 
-    # ---- Switch ---------------------------------------------------------
+        def _apply(self, iv: Any, props: Dict[str, Any]) -> None:
+            if "background_color" in props and props["background_color"] is not None:
+                iv.setBackgroundColor_(_uicolor(props["background_color"]))
+            if "source" in props and props["source"]:
+                self._load_source(iv, props["source"])
+            if "scale_type" in props and props["scale_type"]:
+                mapping = {"cover": 2, "contain": 1, "stretch": 0, "center": 4}
+                iv.setContentMode_(mapping.get(props["scale_type"], 1))
+
+        def _load_source(self, iv: Any, source: str) -> None:
+            try:
+                if source.startswith(("http://", "https://")):
+                    NSURL = ObjCClass("NSURL")
+                    NSData = ObjCClass("NSData")
+                    UIImage = ObjCClass("UIImage")
+                    url = NSURL.URLWithString_(source)
+                    data = NSData.dataWithContentsOfURL_(url)
+                    if data:
+                        image = UIImage.imageWithData_(data)
+                        if image:
+                            iv.setImage_(image)
+                else:
+                    UIImage = ObjCClass("UIImage")
+                    image = UIImage.imageNamed_(source)
+                    if image:
+                        iv.setImage_(image)
+            except Exception:
+                pass
+
+    # ---- Switch (with on_change) ----------------------------------------
+    _pn_switch_handler_map: dict = {}
+
+    class _PNSwitchTarget(NSObject):  # type: ignore[valid-type]
+        _callback: Optional[Callable[[bool], None]] = None
+
+        @objc_method
+        def onToggle_(self, sender: object) -> None:
+            if self._callback is not None:
+                try:
+                    self._callback(bool(sender.isOn()))
+                except Exception:
+                    pass
+
     class IOSSwitchHandler(ViewHandler):
         def create(self, props: Dict[str, Any]) -> Any:
             sw = ObjCClass("UISwitch").alloc().init()
@@ -700,6 +1112,15 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
         def _apply(self, sw: Any, props: Dict[str, Any]) -> None:
             if "value" in props:
                 sw.setOn_animated_(bool(props["value"]), False)
+            if "on_change" in props:
+                existing = _pn_switch_handler_map.get(id(sw))
+                if existing is not None:
+                    existing._callback = props["on_change"]
+                else:
+                    handler = _PNSwitchTarget.new()
+                    handler._callback = props["on_change"]
+                    _pn_switch_handler_map[id(sw)] = handler
+                    sw.addTarget_action_forControlEvents_(handler, SEL("onToggle:"), 1 << 12)
 
     # ---- ProgressBar (UIProgressView) -----------------------------------
     class IOSProgressBarHandler(ViewHandler):
@@ -707,6 +1128,7 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
             pv = ObjCClass("UIProgressView").alloc().init()
             if "value" in props:
                 pv.setProgress_(float(props["value"]))
+            _apply_ios_layout(pv, props)
             return pv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -737,6 +1159,7 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
                 NSURLRequest = ObjCClass("NSURLRequest")
                 url_obj = NSURL.URLWithString_(str(props["url"]))
                 wv.loadRequest_(NSURLRequest.requestWithURL_(url_obj))
+            _apply_ios_layout(wv, props)
             return wv
 
         def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -760,6 +1183,112 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
                 size = float(changed["size"])
                 native_view.setFrame_(((0, 0), (size, size)))
 
+    # ---- View (generic UIView) -----------------------------------------
+    class IOSViewHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            v = ObjCClass("UIView").alloc().init()
+            if "background_color" in props and props["background_color"] is not None:
+                v.setBackgroundColor_(_uicolor(props["background_color"]))
+            _apply_ios_layout(v, props)
+            return v
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            if "background_color" in changed and changed["background_color"] is not None:
+                native_view.setBackgroundColor_(_uicolor(changed["background_color"]))
+            if changed.keys() & _LAYOUT_KEYS:
+                _apply_ios_layout(native_view, changed)
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            parent.addSubview_(child)
+
+        def remove_child(self, parent: Any, child: Any) -> None:
+            child.removeFromSuperview()
+
+    # ---- SafeAreaView ---------------------------------------------------
+    class IOSSafeAreaViewHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            v = ObjCClass("UIView").alloc().init()
+            if "background_color" in props and props["background_color"] is not None:
+                v.setBackgroundColor_(_uicolor(props["background_color"]))
+            return v
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            if "background_color" in changed and changed["background_color"] is not None:
+                native_view.setBackgroundColor_(_uicolor(changed["background_color"]))
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            parent.addSubview_(child)
+
+        def remove_child(self, parent: Any, child: Any) -> None:
+            child.removeFromSuperview()
+
+    # ---- Modal ----------------------------------------------------------
+    class IOSModalHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            v = ObjCClass("UIView").alloc().init()
+            v.setHidden_(True)
+            return v
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            pass
+
+    # ---- Slider (UISlider) ----------------------------------------------
+    _pn_slider_handler_map: dict = {}
+
+    class _PNSliderTarget(NSObject):  # type: ignore[valid-type]
+        _callback: Optional[Callable[[float], None]] = None
+
+        @objc_method
+        def onSlide_(self, sender: object) -> None:
+            if self._callback is not None:
+                try:
+                    self._callback(float(sender.value))
+                except Exception:
+                    pass
+
+    class IOSSliderHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            sl = ObjCClass("UISlider").alloc().init()
+            self._apply(sl, props)
+            _apply_ios_layout(sl, props)
+            return sl
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            self._apply(native_view, changed)
+
+        def _apply(self, sl: Any, props: Dict[str, Any]) -> None:
+            if "min_value" in props:
+                sl.setMinimumValue_(float(props["min_value"]))
+            if "max_value" in props:
+                sl.setMaximumValue_(float(props["max_value"]))
+            if "value" in props:
+                sl.setValue_(float(props["value"]))
+            if "on_change" in props:
+                existing = _pn_slider_handler_map.get(id(sl))
+                if existing is not None:
+                    existing._callback = props["on_change"]
+                else:
+                    handler = _PNSliderTarget.new()
+                    handler._callback = props["on_change"]
+                    _pn_slider_handler_map[id(sl)] = handler
+                    sl.addTarget_action_forControlEvents_(handler, SEL("onSlide:"), 1 << 12)
+
+    # ---- Pressable (UIView with tap gesture) ----------------------------
+    class IOSPressableHandler(ViewHandler):
+        def create(self, props: Dict[str, Any]) -> Any:
+            v = ObjCClass("UIView").alloc().init()
+            v.setUserInteractionEnabled_(True)
+            return v
+
+        def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+            pass
+
+        def add_child(self, parent: Any, child: Any) -> None:
+            parent.addSubview_(child)
+
+        def remove_child(self, parent: Any, child: Any) -> None:
+            child.removeFromSuperview()
+
     registry.register("Text", IOSTextHandler())
     registry.register("Button", IOSButtonHandler())
     registry.register("Column", IOSColumnHandler())
@@ -772,6 +1301,11 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
     registry.register("ActivityIndicator", IOSActivityIndicatorHandler())
     registry.register("WebView", IOSWebViewHandler())
     registry.register("Spacer", IOSSpacerHandler())
+    registry.register("View", IOSViewHandler())
+    registry.register("SafeAreaView", IOSSafeAreaViewHandler())
+    registry.register("Modal", IOSModalHandler())
+    registry.register("Slider", IOSSliderHandler())
+    registry.register("Pressable", IOSPressableHandler())
 
 
 # ======================================================================

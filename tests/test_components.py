@@ -4,14 +4,20 @@ from pythonnative.components import (
     ActivityIndicator,
     Button,
     Column,
+    FlatList,
     Image,
+    Modal,
+    Pressable,
     ProgressBar,
     Row,
+    SafeAreaView,
     ScrollView,
+    Slider,
     Spacer,
     Switch,
     Text,
     TextInput,
+    View,
     WebView,
 )
 
@@ -40,6 +46,15 @@ def test_text_none_props_excluded() -> None:
     el = Text("Hi")
     assert "font_size" not in el.props
     assert "color" not in el.props
+
+
+def test_text_layout_props() -> None:
+    el = Text("Hi", width=100, height=50, flex=1, margin=8, align_self="center")
+    assert el.props["width"] == 100
+    assert el.props["height"] == 50
+    assert el.props["flex"] == 1
+    assert el.props["margin"] == 8
+    assert el.props["align_self"] == "center"
 
 
 # ---------------------------------------------------------------------------
@@ -91,6 +106,12 @@ def test_row_with_children() -> None:
 def test_column_no_spacing_omitted() -> None:
     el = Column()
     assert "spacing" not in el.props
+
+
+def test_column_layout_props() -> None:
+    el = Column(flex=2, margin={"horizontal": 8})
+    assert el.props["flex"] == 2
+    assert el.props["margin"] == {"horizontal": 8}
 
 
 # ---------------------------------------------------------------------------
@@ -192,3 +213,88 @@ def test_key_propagation() -> None:
 def test_column_key() -> None:
     el = Column(key="col-1")
     assert el.key == "col-1"
+
+
+# ---------------------------------------------------------------------------
+# New components
+# ---------------------------------------------------------------------------
+
+
+def test_view_container() -> None:
+    child = Text("inside")
+    el = View(child, background_color="#FFF", padding=8, width=200)
+    assert el.type == "View"
+    assert len(el.children) == 1
+    assert el.props["background_color"] == "#FFF"
+    assert el.props["padding"] == 8
+    assert el.props["width"] == 200
+
+
+def test_safe_area_view() -> None:
+    el = SafeAreaView(Text("safe"), background_color="#000")
+    assert el.type == "SafeAreaView"
+    assert len(el.children) == 1
+
+
+def test_modal() -> None:
+    cb = lambda: None  # noqa: E731
+    el = Modal(Text("content"), visible=True, on_dismiss=cb, title="Alert")
+    assert el.type == "Modal"
+    assert el.props["visible"] is True
+    assert el.props["on_dismiss"] is cb
+    assert el.props["title"] == "Alert"
+    assert len(el.children) == 1
+
+
+def test_slider() -> None:
+    cb = lambda v: None  # noqa: E731
+    el = Slider(value=0.5, min_value=0, max_value=10, on_change=cb)
+    assert el.type == "Slider"
+    assert el.props["value"] == 0.5
+    assert el.props["min_value"] == 0
+    assert el.props["max_value"] == 10
+    assert el.props["on_change"] is cb
+
+
+def test_pressable() -> None:
+    cb = lambda: None  # noqa: E731
+    child = Text("tap me")
+    el = Pressable(child, on_press=cb)
+    assert el.type == "Pressable"
+    assert el.props["on_press"] is cb
+    assert len(el.children) == 1
+
+
+def test_flat_list_basic() -> None:
+    el = FlatList(
+        data=["a", "b", "c"],
+        render_item=lambda item, i: Text(item),
+    )
+    assert el.type == "ScrollView"
+    assert len(el.children) == 1
+    inner = el.children[0]
+    assert inner.type == "Column"
+    assert len(inner.children) == 3
+    assert inner.children[0].props["text"] == "a"
+
+
+def test_flat_list_with_keys() -> None:
+    el = FlatList(
+        data=[{"id": "x", "name": "X"}, {"id": "y", "name": "Y"}],
+        render_item=lambda item, i: Text(item["name"]),
+        key_extractor=lambda item, i: item["id"],
+    )
+    inner = el.children[0]
+    assert inner.children[0].key == "x"
+    assert inner.children[1].key == "y"
+
+
+def test_flat_list_empty() -> None:
+    el = FlatList(data=[], render_item=lambda item, i: Text(str(item)))
+    inner = el.children[0]
+    assert len(inner.children) == 0
+
+
+def test_spacer_flex() -> None:
+    el = Spacer(flex=1)
+    assert el.props["flex"] == 1

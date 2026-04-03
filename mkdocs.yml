@@ -17,6 +17,7 @@ nav:
   - Concepts:
     - Architecture: concepts/architecture.md
     - Components: concepts/components.md
+    - Hooks: concepts/hooks.md
   - Examples:
     - Overview: examples.md
     - Hello World: examples/hello-world.md

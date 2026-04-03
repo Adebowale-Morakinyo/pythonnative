@@ -261,6 +261,7 @@ def run_project(args: argparse.Namespace) -> None:
     # Determine the platform
     platform: str = args.platform
     prepare_only: bool = getattr(args, "prepare_only", False)
+    hot_reload: bool = getattr(args, "hot_reload", False)
 
     # Read project configuration and save project root before any chdir
     project_dir: str = os.getcwd()
@@ -656,6 +657,39 @@ def run_project(args: argparse.Namespace) -> None:
             except Exception:
                 print("Failed to auto-run on Simulator; open the project in Xcode to run.")
 
+    # Hot-reload file watcher
+    if hot_reload and not prepare_only:
+        _run_hot_reload(platform, project_dir, build_dir)
+
+
+def _run_hot_reload(platform: str, project_dir: str, build_dir: str) -> None:
+    """Watch ``app/`` for changes and push updated files to the device."""
+    from .hot_reload import FileWatcher
+
+    app_dir = os.path.join(project_dir, "app")
+
+    def on_change(changed_files: List[str]) -> None:
+        for fpath in changed_files:
+            rel = os.path.relpath(fpath, project_dir)
+            print(f"[hot-reload] Changed: {rel}")
+            if platform == "android":
+                dest = f"/data/data/com.pythonnative.android_template/files/{rel}"
+                subprocess.run(["adb", "push", fpath, dest], check=False, capture_output=True)
+            elif platform == "ios":
+                pass  # simctl file push would go here
+
+    print("[hot-reload] Watching app/ for changes. Press Ctrl+C to stop.")
+    watcher = FileWatcher(app_dir, on_change, interval=1.0)
+    watcher.start()
+    try:
+        import time
+
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        watcher.stop()
+        print("\n[hot-reload] Stopped.")
+
 
 def clean_project(args: argparse.Namespace) -> None:
     """
@@ -689,6 +723,11 @@ def main() -> None:
         "--prepare-only",
         action="store_true",
         help="Extract templates and stage app without building",
+    )
+    parser_run.add_argument(
+        "--hot-reload",
+        action="store_true",
+        help="Watch app/ for changes and push updates to the running app",
     )
     parser_run.set_defaults(func=run_project)
 

@@ -26,12 +26,14 @@ pn.Column(
 - `Column(*children, spacing, padding, alignment, background_color)` — vertical stack
 - `Row(*children, spacing, padding, alignment, background_color)` — horizontal stack
 - `ScrollView(child, background_color)` — scrollable container
-- `Spacer(size)` — empty space
+- `View(*children, background_color, padding)` — generic container
+- `SafeAreaView(*children, background_color, padding)` — safe-area-aware container
+- `Spacer(size, flex)` — empty space
 
 **Display:**
 
 - `Text(text, font_size, color, bold, text_align, background_color, max_lines)` — text display
-- `Image(source, width, height, scale_type)` — image display
+- `Image(source, width, height, scale_type)` — image display (supports URLs and resource names)
 - `WebView(url)` — embedded web content
 
 **Input:**
@@ -39,11 +41,31 @@ pn.Column(
 - `Button(title, on_click, color, background_color, font_size, enabled)` — tappable button
 - `TextInput(value, placeholder, on_change, secure, font_size, color)` — text entry
 - `Switch(value, on_change)` — toggle switch
+- `Slider(value, min_value, max_value, on_change)` — continuous slider
+- `Pressable(child, on_press, on_long_press)` — tap handler wrapper
 
 **Feedback:**
 
 - `ProgressBar(value)` — determinate progress (0.0–1.0)
 - `ActivityIndicator(animating)` — indeterminate spinner
+
+**Overlay:**
+
+- `Modal(*children, visible, on_dismiss, title)` — modal dialog
+
+**Lists:**
+
+- `FlatList(data, render_item, key_extractor, separator_height)` — scrollable data list
+
+### Layout properties
+
+All components support common layout properties:
+
+- `width`, `height` — fixed dimensions (dp / pt)
+- `flex` — flex grow factor
+- `margin` — outer margin (int, float, or dict like padding)
+- `min_width`, `max_width`, `min_height`, `max_height` — size constraints
+- `align_self` — override parent alignment for this child
 
 ## Page — the root component
 
@@ -80,17 +102,23 @@ class CounterPage(pn.Page):
         )
 ```
 
-## Reusable components as functions
+## Function components with hooks
 
-For reusable UI pieces, use regular Python functions that return elements:
+For reusable UI pieces **with their own state**, use the `@pn.component` decorator and hooks:
 
 ```python
-def greeting_card(name, on_tap):
+@pn.component
+def counter(label: str = "Count", initial: int = 0) -> pn.Element:
+    count, set_count = pn.use_state(initial)
+
     return pn.Column(
-        pn.Text(f"Hello, {name}!", font_size=20, bold=True),
-        pn.Button("Say hi", on_click=on_tap),
-        spacing=8,
-        padding=12,
+        pn.Text(f"{label}: {count}", font_size=18),
+        pn.Row(
+            pn.Button("-", on_click=lambda: set_count(count - 1)),
+            pn.Button("+", on_click=lambda: set_count(count + 1)),
+            spacing=8,
+        ),
+        spacing=4,
     )
 
 class MainPage(pn.Page):
@@ -99,10 +127,53 @@ class MainPage(pn.Page):
 
     def render(self):
         return pn.Column(
-            greeting_card("Alice", lambda: print("Hi Alice")),
-            greeting_card("Bob", lambda: print("Hi Bob")),
+            counter(label="Apples", initial=0),
+            counter(label="Oranges", initial=5),
             spacing=16,
+            padding=16,
         )
+```
+
+Each `counter` instance has **independent state** — changing one doesn't affect the other.
+
+### Available hooks
+
+- `use_state(initial)` — local component state; returns `(value, setter)`
+- `use_effect(effect, deps)` — side effects (timers, API calls, subscriptions)
+- `use_memo(factory, deps)` — memoised computed values
+- `use_callback(fn, deps)` — stable function references
+- `use_ref(initial)` — mutable ref that persists across renders
+- `use_context(context)` — read from a context provider
+
+### Custom hooks
+
+Extract reusable stateful logic into plain functions:
+
+```python
+def use_toggle(initial: bool = False):
+    value, set_value = pn.use_state(initial)
+    def toggle():
+        set_value(not value)
+    return value, toggle
+```
+
+### Context and Provider
+
+Share values across the tree without prop drilling:
+
+```python
+theme = pn.create_context({"primary": "#007AFF"})
+
+# In a page's render():
+pn.Provider(theme, {"primary": "#FF0000"},
+    my_component()
+)
+
+# In my_component:
+@pn.component
+def my_component() -> pn.Element:
+    t = pn.use_context(theme)
+    return pn.Button("Click", color=t["primary"])
 ```
 
 ## Platform detection

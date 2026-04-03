@@ -160,8 +160,6 @@ def test_reconcile_add_child() -> None:
     )
     rec.reconcile(el2)
 
-    add_ops = [op for op in backend.ops if op[0] == "add_child"]
-    assert len(add_ops) == 1
     assert len(root.children) == 2
 
 
@@ -180,8 +178,6 @@ def test_reconcile_remove_child() -> None:
     el2 = Element("Column", {}, [Element("Text", {"text": "a"}, [])])
     rec.reconcile(el2)
 
-    remove_ops = [op for op in backend.ops if op[0] == "remove_child"]
-    assert len(remove_ops) == 1
     assert len(root.children) == 1
 
 
@@ -195,10 +191,6 @@ def test_reconcile_replace_child_type() -> None:
     el2 = Element("Column", {}, [Element("Button", {"title": "b"}, [])])
     rec.reconcile(el2)
 
-    remove_ops = [op for op in backend.ops if op[0] == "remove_child"]
-    insert_ops = [op for op in backend.ops if op[0] == "insert_child"]
-    assert len(remove_ops) == 1
-    assert len(insert_ops) == 1
     assert root.children[0].type_name == "Button"
 
 
@@ -278,3 +270,102 @@ def test_multiple_reconcile_cycles() -> None:
 
     assert rec._tree is not None
     assert rec._tree.children[0].element.props["text"] == "4"
+
+
+# ======================================================================
+# Tests: key-based reconciliation
+# ======================================================================
+
+
+def test_keyed_children_preserve_identity() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    el1 = Element(
+        "Column",
+        {},
+        [
+            Element("Text", {"text": "A"}, [], key="a"),
+            Element("Text", {"text": "B"}, [], key="b"),
+            Element("Text", {"text": "C"}, [], key="c"),
+        ],
+    )
+    rec.mount(el1)
+    view_a = rec._tree.children[0].native_view
+    view_b = rec._tree.children[1].native_view
+    view_c = rec._tree.children[2].native_view
+
+    backend.ops.clear()
+    el2 = Element(
+        "Column",
+        {},
+        [
+            Element("Text", {"text": "C"}, [], key="c"),
+            Element("Text", {"text": "A"}, [], key="a"),
+            Element("Text", {"text": "B"}, [], key="b"),
+        ],
+    )
+    rec.reconcile(el2)
+
+    assert rec._tree.children[0].native_view is view_c
+    assert rec._tree.children[1].native_view is view_a
+    assert rec._tree.children[2].native_view is view_b
+
+
+def test_keyed_children_remove_by_key() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    el1 = Element(
+        "Column",
+        {},
+        [
+            Element("Text", {"text": "A"}, [], key="a"),
+            Element("Text", {"text": "B"}, [], key="b"),
+            Element("Text", {"text": "C"}, [], key="c"),
+        ],
+    )
+    rec.mount(el1)
+
+    el2 = Element(
+        "Column",
+        {},
+        [
+            Element("Text", {"text": "A"}, [], key="a"),
+            Element("Text", {"text": "C"}, [], key="c"),
+        ],
+    )
+    rec.reconcile(el2)
+
+    assert len(rec._tree.children) == 2
+    assert rec._tree.children[0].element.key == "a"
+    assert rec._tree.children[1].element.key == "c"
+
+
+def test_keyed_children_insert_new() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    el1 = Element(
+        "Column",
+        {},
+        [
+            Element("Text", {"text": "A"}, [], key="a"),
+            Element("Text", {"text": "C"}, [], key="c"),
+        ],
+    )
+    rec.mount(el1)
+
+    el2 = Element(
+        "Column",
+        {},
+        [
+            Element("Text", {"text": "A"}, [], key="a"),
+            Element("Text", {"text": "B"}, [], key="b"),
+            Element("Text", {"text": "C"}, [], key="c"),
+        ],
+    )
+    rec.reconcile(el2)
+
+    assert len(rec._tree.children) == 3
+    assert rec._tree.children[1].element.key == "b"

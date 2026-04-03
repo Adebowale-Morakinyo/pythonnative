@@ -2,6 +2,7 @@
   "name": "PythonNative Demo",
   "appId": "com.pythonnative.demo",
   "entryPoint": "app/main_page.py",
+  "pythonVersion": "3.11",
   "ios": {},
   "android": {}
 }

@@ -2,6 +2,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -73,16 +74,17 @@ class MainPage(pn.Page):
         "name": project_name,
         "appId": "com.example." + project_name.replace(" ", "").lower(),
         "entryPoint": "app/main_page.py",
+        "pythonVersion": "3.11",
         "ios": {},
         "android": {},
     }
     with open(config_path, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=2)
 
-    # Requirements
+    # Requirements (third-party packages only; pythonnative itself is bundled by the CLI)
     if not os.path.exists(requirements_path) or args.force:
         with open(requirements_path, "w", encoding="utf-8") as f:
-            f.write("pythonnative\n")
+            f.write("")
 
     # .gitignore
     default_gitignore = "# PythonNative\n" "__pycache__/\n" "*.pyc\n" ".venv/\n" "build/\n" ".DS_Store\n"
@@ -215,6 +217,43 @@ def create_ios_project(project_name: str, destination: str) -> None:
     _copy_bundled_template_dir("ios_template", destination)
 
 
+def _read_project_config() -> dict:
+    """Read pythonnative.json from the current working directory."""
+    config_path = os.path.join(os.getcwd(), "pythonnative.json")
+    if os.path.exists(config_path):
+        with open(config_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def _read_requirements(requirements_path: str) -> list[str]:
+    """Read a requirements file and return non-empty, non-comment lines.
+
+    Exits with an error if pythonnative is listed — the CLI bundles it
+    directly, so it must not be installed separately via pip/Chaquopy.
+    """
+    if not os.path.exists(requirements_path):
+        return []
+    with open(requirements_path, encoding="utf-8") as f:
+        lines = f.readlines()
+    result: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or stripped.startswith("-"):
+            continue
+        pkg_name = re.split(r"[\[><=!;]", stripped)[0].strip()
+        if pkg_name.lower().replace("-", "_") == "pythonnative":
+            print(
+                "Error: 'pythonnative' must not be in requirements.txt.\n"
+                "The pn CLI automatically bundles the installed pythonnative into your app.\n"
+                "requirements.txt is for third-party packages only (e.g. humanize, requests).\n"
+                "Remove the pythonnative line from requirements.txt and try again."
+            )
+            sys.exit(1)
+        result.append(stripped)
+    return result
+
+
 def run_project(args: argparse.Namespace) -> None:
     """
     Run the specified project.
@@ -223,8 +262,13 @@ def run_project(args: argparse.Namespace) -> None:
     platform: str = args.platform
     prepare_only: bool = getattr(args, "prepare_only", False)
 
+    # Read project configuration and save project root before any chdir
+    project_dir: str = os.getcwd()
+    config = _read_project_config()
+    python_version: str = config.get("pythonVersion", "3.11")
+
     # Define the build directory
-    build_dir: str = os.path.join(os.getcwd(), "build", platform)
+    build_dir: str = os.path.join(project_dir, "build", platform)
 
     # Create the build directory if it doesn't exist
     os.makedirs(build_dir, exist_ok=True)
@@ -268,10 +312,30 @@ def run_project(args: argparse.Namespace) -> None:
         # Non-fatal; fallback to the packaged PyPI dependency if present
         pass
 
-    # Install any necessary Python packages into the project environment
+    # Validate and read the user's requirements.txt
+    requirements_path = os.path.join(project_dir, "requirements.txt")
+    pip_reqs = _read_requirements(requirements_path)
+
+    if platform == "android":
+        # Patch the Android build.gradle with the configured Python version
+        app_build_gradle = os.path.join(build_dir, "android_template", "app", "build.gradle")
+        if os.path.exists(app_build_gradle):
+            with open(app_build_gradle, encoding="utf-8") as f:
+                content = f.read()
+            content = content.replace('version "3.11"', f'version "{python_version}"')
+            with open(app_build_gradle, "w", encoding="utf-8") as f:
+                f.write(content)
+        # Copy requirements.txt into the Android project for Chaquopy
+        android_reqs_path = os.path.join(build_dir, "android_template", "app", "requirements.txt")
+        if os.path.exists(requirements_path):
+            shutil.copy2(requirements_path, android_reqs_path)
+        else:
+            with open(android_reqs_path, "w", encoding="utf-8") as f:
+                f.write("")
+
+    # Install any necessary Python packages into the host environment
     # Skip installation during prepare-only to avoid network access and speed up scaffolding
     if not prepare_only:
-        requirements_path = os.path.join(os.getcwd(), "requirements.txt")
         if os.path.exists(requirements_path):
             subprocess.run([sys.executable, "-m", "pip", "install", "-r", requirements_path], check=False)
 
@@ -523,6 +587,29 @@ def run_project(args: argparse.Namespace) -> None:
                 except Exception:
                     # Non-fatal; if metadata isn't present, rubicon import may fail and fallback UI will appear
                     pass
+                # Install user's pip requirements (pure-Python packages) into the app bundle
+                if pip_reqs:
+                    try:
+                        reqs_tmp = os.path.join(build_dir, "ios_requirements.txt")
+                        with open(reqs_tmp, "w", encoding="utf-8") as f:
+                            f.write("\n".join(pip_reqs) + "\n")
+                        tmp_reqs_dir = os.path.join(build_dir, "ios_user_packages")
+                        if os.path.isdir(tmp_reqs_dir):
+                            shutil.rmtree(tmp_reqs_dir)
+                        os.makedirs(tmp_reqs_dir, exist_ok=True)
+                        subprocess.run(
+                            [sys.executable, "-m", "pip", "install", "-t", tmp_reqs_dir, "-r", reqs_tmp],
+                            check=False,
+                        )
+                        for entry in os.listdir(tmp_reqs_dir):
+                            src_entry = os.path.join(tmp_reqs_dir, entry)
+                            dst_entry = os.path.join(platform_site_dir, entry)
+                            if os.path.isdir(src_entry):
+                                shutil.copytree(src_entry, dst_entry, dirs_exist_ok=True)
+                            else:
+                                shutil.copy2(src_entry, dst_entry)
+                    except Exception:
+                        pass
                 # Note: Python.xcframework provides a static library for Simulator; it must be linked at build time.
                 # We copy the XCFramework into the project directory above so Xcode can link it.
             except Exception:

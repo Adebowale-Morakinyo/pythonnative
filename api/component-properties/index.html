@@ -383,6 +383,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -825,6 +853,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#common-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common layout properties
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#text" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -851,6 +890,28 @@
     <span class="md-ellipsis">
       
         Column / Row
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        View
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#safeareaview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SafeAreaView
       
     </span>
   </a>
@@ -902,6 +963,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#slider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#progressbar" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -939,6 +1011,39 @@
     <span class="md-ellipsis">
       
         Spacer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pressable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pressable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flatlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlatList
       
     </span>
   </a>
@@ -1103,6 +1208,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#common-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common layout properties
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#text" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1129,6 +1245,28 @@
     <span class="md-ellipsis">
       
         Column / Row
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        View
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#safeareaview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SafeAreaView
       
     </span>
   </a>
@@ -1180,6 +1318,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#slider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#progressbar" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1223,6 +1372,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#pressable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pressable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flatlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlatList
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1245,6 +1427,18 @@
 
 <h1 id="component-property-reference">Component Property Reference<a class="headerlink" href="#component-property-reference" title="Permanent link">&para;</a></h1>
 <p>All style and behaviour properties are passed as keyword arguments to element functions.</p>
+<h2 id="common-layout-properties">Common layout properties<a class="headerlink" href="#common-layout-properties" title="Permanent link">&para;</a></h2>
+<p>All components accept these layout properties:</p>
+<ul>
+<li><code>width</code> — fixed width in dp (Android) / pt (iOS)</li>
+<li><code>height</code> — fixed height</li>
+<li><code>flex</code> — flex grow factor within Column/Row</li>
+<li><code>margin</code> — outer spacing (int, float, or dict with <code>horizontal</code>, <code>vertical</code>, <code>left</code>, <code>top</code>, <code>right</code>, <code>bottom</code>)</li>
+<li><code>min_width</code>, <code>max_width</code> — width constraints</li>
+<li><code>min_height</code>, <code>max_height</code> — height constraints</li>
+<li><code>align_self</code> — override parent alignment (<code>"fill"</code>, <code>"center"</code>, etc.)</li>
+<li><code>key</code> — stable identity for reconciliation</li>
+</ul>
 <h2 id="text">Text<a class="headerlink" href="#text" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">text_align</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1282,6 +1476,16 @@
 <li><code>alignment</code> — cross-axis: <code>"fill"</code>, <code>"center"</code>, <code>"leading"</code>, <code>"trailing"</code>, <code>"start"</code>, <code>"end"</code>, <code>"top"</code>, <code>"bottom"</code></li>
 <li><code>background_color</code> — container background</li>
 </ul>
+<h2 id="view">View<a class="headerlink" href="#view" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="o">*</span><span class="n">children</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Generic container (UIView / FrameLayout). Supports all layout properties.</p>
+<h2 id="safeareaview">SafeAreaView<a class="headerlink" href="#safeareaview" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">SafeAreaView</span><span class="p">(</span><span class="o">*</span><span class="n">children</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Container that respects safe area insets (notch, status bar).</p>
 <h2 id="scrollview">ScrollView<a class="headerlink" href="#scrollview" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">ScrollView</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
@@ -1298,12 +1502,23 @@
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
+<ul>
+<li><code>source</code> — image URL (<code>http://...</code> / <code>https://...</code>) or local resource name</li>
+<li><code>scale_type</code> — <code>"cover"</code>, <code>"contain"</code>, <code>"stretch"</code>, <code>"center"</code></li>
+</ul>
 <h2 id="switch">Switch<a class="headerlink" href="#switch" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Switch</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
 <ul>
 <li><code>on_change</code> — callback <code>(bool) -&gt; None</code></li>
+</ul>
+<h2 id="slider">Slider<a class="headerlink" href="#slider" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Slider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li><code>on_change</code> — callback <code>(float) -&gt; None</code></li>
 </ul>
 <h2 id="progressbar">ProgressBar<a class="headerlink" href="#progressbar" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1321,11 +1536,33 @@
 </code></pre></div>
 
 <h2 id="spacer">Spacer<a class="headerlink" href="#spacer" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flex</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
 <ul>
 <li><code>size</code> — fixed dimension in dp / pt</li>
+<li><code>flex</code> — flex grow factor</li>
+</ul>
+<h2 id="pressable">Pressable<a class="headerlink" href="#pressable" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Pressable</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">on_long_press</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Wraps any child element with tap/long-press handling.</p>
+<h2 id="modal">Modal<a class="headerlink" href="#modal" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Modal</span><span class="p">(</span><span class="o">*</span><span class="n">children</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">on_dismiss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Overlay dialog shown when <code>visible=True</code>.</p>
+<h2 id="flatlist">FlatList<a class="headerlink" href="#flatlist" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">FlatList</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">render_item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key_extractor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">separator_height</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li><code>data</code> — list of items</li>
+<li><code>render_item</code> — <code>(item, index) -&gt; Element</code> function</li>
+<li><code>key_extractor</code> — <code>(item, index) -&gt; str</code> for stable keys</li>
+<li><code>separator_height</code> — spacing between items</li>
 </ul>
 
 

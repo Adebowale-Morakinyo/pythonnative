@@ -383,6 +383,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -710,6 +738,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#inline-styles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inline styles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stylesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        StyleSheet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="StyleSheet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-styles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composing styles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flattening-styles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flattening styles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#colors" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -725,6 +803,17 @@
     <span class="md-ellipsis">
       
         Text styling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout properties
       
     </span>
   </a>
@@ -770,6 +859,34 @@
     <span class="md-ellipsis">
       
         Alignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#theming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theming
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Theming">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theme-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theme properties
       
     </span>
   </a>
@@ -1065,6 +1182,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#inline-styles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inline styles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stylesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        StyleSheet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="StyleSheet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-styles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composing styles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flattening-styles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flattening styles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#colors" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1080,6 +1247,17 @@
     <span class="md-ellipsis">
       
         Text styling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout properties
       
     </span>
   </a>
@@ -1137,6 +1315,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#theming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theming
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Theming">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#theme-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Theme properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#scrollview" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1168,12 +1374,50 @@
 
 
 <h1 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h1>
-<p>Style properties are passed as keyword arguments to element functions. This replaces the old fluent setter pattern.</p>
+<p>Style properties are passed as keyword arguments to element functions. PythonNative also provides a <code>StyleSheet</code> utility for creating reusable styles and a theming system via context.</p>
+<h2 id="inline-styles">Inline styles<a class="headerlink" href="#inline-styles" title="Permanent link">&para;</a></h2>
+<p>Pass style props directly to components:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FF3366&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;#FF1E88E5&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">)</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Content&quot;</span><span class="p">),</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;#FFF5F5F5&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="stylesheet">StyleSheet<a class="headerlink" href="#stylesheet" title="Permanent link">&para;</a></h2>
+<p>Create reusable named styles with <code>StyleSheet.create()</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+
+<span class="n">styles</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StyleSheet</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#333&quot;</span><span class="p">},</span>
+    <span class="n">subtitle</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#666&quot;</span><span class="p">},</span>
+    <span class="n">container</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;alignment&quot;</span><span class="p">:</span> <span class="s2">&quot;fill&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="c1"># Apply with dict unpacking</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Welcome&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">])</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Subtitle&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;subtitle&quot;</span><span class="p">]),</span>
+    <span class="o">**</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;container&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h3 id="composing-styles">Composing styles<a class="headerlink" href="#composing-styles" title="Permanent link">&para;</a></h3>
+<p>Merge multiple style dicts with <code>StyleSheet.compose()</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#000&quot;</span><span class="p">}</span>
+<span class="n">highlight</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#FF0000&quot;</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<span class="n">merged</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StyleSheet</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">highlight</span><span class="p">)</span>
+<span class="c1"># Result: {&quot;font_size&quot;: 16, &quot;color&quot;: &quot;#FF0000&quot;, &quot;bold&quot;: True}</span>
+</code></pre></div>
+
+<h3 id="flattening-styles">Flattening styles<a class="headerlink" href="#flattening-styles" title="Permanent link">&para;</a></h3>
+<p>Flatten a style or list of styles into a single dict:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">StyleSheet</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="n">base</span><span class="p">,</span> <span class="n">highlight</span><span class="p">])</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">StyleSheet</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># returns {}</span>
+</code></pre></div>
+
 <h2 id="colors">Colors<a class="headerlink" href="#colors" title="Permanent link">&para;</a></h2>
 <p>Pass hex strings (<code>#RRGGBB</code> or <code>#AARRGGBB</code>) to color props:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FF3366&quot;</span><span class="p">)</span>
 <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;#FF1E88E5&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">)</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Content&quot;</span><span class="p">),</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;#FFF5F5F5&quot;</span><span class="p">)</span>
 </code></pre></div>
 
 <h2 id="text-styling">Text styling<a class="headerlink" href="#text-styling" title="Permanent link">&para;</a></h2>
@@ -1182,8 +1426,22 @@
 <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Subtitle&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#666666&quot;</span><span class="p">)</span>
 </code></pre></div>
 
+<h2 id="layout-properties">Layout properties<a class="headerlink" href="#layout-properties" title="Permanent link">&para;</a></h2>
+<p>All components support common layout properties:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Fixed size&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">flex</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;horizontal&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
+</code></pre></div>
+
+<ul>
+<li><code>width</code>, <code>height</code> — fixed dimensions in dp (Android) / pt (iOS)</li>
+<li><code>flex</code> — flex grow factor within Column/Row</li>
+<li><code>margin</code> — outer spacing (int for all sides, or dict)</li>
+<li><code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code> — size constraints</li>
+<li><code>align_self</code> — override parent alignment</li>
+</ul>
 <h2 id="layout-with-column-and-row">Layout with Column and Row<a class="headerlink" href="#layout-with-column-and-row" title="Permanent link">&para;</a></h2>
-<p><code>Column</code> (vertical) and <code>Row</code> (horizontal) replace the old <code>StackView</code>:</p>
+<p><code>Column</code> (vertical) and <code>Row</code> (horizontal):</p>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Username&quot;</span><span class="p">),</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Enter username&quot;</span><span class="p">),</span>
@@ -1206,9 +1464,39 @@
 <li><code>padding={"horizontal": 12, "vertical": 8}</code> — per axis</li>
 <li><code>padding={"left": 8, "top": 16, "right": 8, "bottom": 16}</code> — per side</li>
 </ul>
-<p>Android: applied via <code>setPadding</code> in dp. iOS: best-effort via layout margins.</p>
 <h3 id="alignment">Alignment<a class="headerlink" href="#alignment" title="Permanent link">&para;</a></h3>
 <p>Cross-axis alignment: <code>"fill"</code>, <code>"center"</code>, <code>"leading"</code> / <code>"start"</code>, <code>"trailing"</code> / <code>"end"</code>.</p>
+<h2 id="theming">Theming<a class="headerlink" href="#theming" title="Permanent link">&para;</a></h2>
+<p>PythonNative includes a built-in theme context with light and dark themes:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.style</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_DARK_THEME</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">themed_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="n">theme</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_context</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">ThemeContext</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">theme</span><span class="p">[</span><span class="s2">&quot;text_color&quot;</span><span class="p">],</span> <span class="n">font_size</span><span class="o">=</span><span class="n">theme</span><span class="p">[</span><span class="s2">&quot;font_size&quot;</span><span class="p">])</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyPage</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Page</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">ThemeContext</span><span class="p">,</span> <span class="n">DEFAULT_DARK_THEME</span><span class="p">,</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+                <span class="n">themed_text</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Dark mode!&quot;</span><span class="p">),</span>
+                <span class="n">spacing</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div>
+
+<h3 id="theme-properties">Theme properties<a class="headerlink" href="#theme-properties" title="Permanent link">&para;</a></h3>
+<p>Both light and dark themes include:</p>
+<ul>
+<li><code>primary_color</code>, <code>secondary_color</code> — accent colors</li>
+<li><code>background_color</code>, <code>surface_color</code> — background colors</li>
+<li><code>text_color</code>, <code>text_secondary_color</code> — text colors</li>
+<li><code>error_color</code>, <code>success_color</code>, <code>warning_color</code> — semantic colors</li>
+<li><code>font_size</code>, <code>font_size_small</code>, <code>font_size_large</code>, <code>font_size_title</code> — typography</li>
+<li><code>spacing</code>, <code>spacing_large</code> — layout spacing</li>
+<li><code>border_radius</code> — corner rounding</li>
+</ul>
 <h2 id="scrollview">ScrollView<a class="headerlink" href="#scrollview" title="Permanent link">&para;</a></h2>
 <p>Wrap content in a <code>ScrollView</code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">ScrollView</span><span class="p">(</span>

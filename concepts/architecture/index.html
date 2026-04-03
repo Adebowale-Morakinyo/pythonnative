@@ -418,6 +418,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Component model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#page-classes-screens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page classes (screens)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-components-reusable-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function components (reusable UI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Styling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -444,6 +505,28 @@
     <span class="md-ellipsis">
       
         Android flow (Chaquopy)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot reload
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-api-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native API modules
       
     </span>
   </a>
@@ -496,6 +579,34 @@
     
   
     Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hooks
   
 
     
@@ -1081,6 +1192,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Component model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#page-classes-screens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Page classes (screens)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-components-reusable-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function components (reusable UI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Styling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1107,6 +1279,28 @@
     <span class="md-ellipsis">
       
         Android flow (Chaquopy)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot reload
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-api-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native API modules
       
     </span>
   </a>
@@ -1160,7 +1354,9 @@
 <h2 id="high-level-model">High-level model<a class="headerlink" href="#high-level-model" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Declarative element tree:</strong> Your <code>Page.render()</code> method returns a tree of <code>Element</code> descriptors (similar to React elements / virtual DOM nodes).</li>
-<li><strong>Reconciler:</strong> On first render, the reconciler walks the tree and creates real native views via the platform backend. On subsequent renders (triggered by <code>set_state</code>), it diffs the new tree against the old one and applies the minimal set of native mutations.</li>
+<li><strong>Function components and hooks:</strong> Reusable components with independent state via <code>@pn.component</code>, <code>use_state</code>, <code>use_effect</code>, etc. — inspired by React hooks but designed for Python.</li>
+<li><strong>Reconciler:</strong> On first render, the reconciler walks the tree and creates real native views via the platform backend. On subsequent renders (triggered by <code>set_state</code> or hook state changes), it diffs the new tree against the old one and applies the minimal set of native mutations.</li>
+<li><strong>Key-based reconciliation:</strong> Children can be assigned stable <code>key</code> values to preserve identity across re-renders — critical for lists and dynamic content.</li>
 <li><strong>Direct bindings:</strong> Under the hood, native views are created and updated through direct platform calls:</li>
 <li><strong>iOS:</strong> rubicon-objc exposes Objective-C/Swift classes (<code>UILabel</code>, <code>UIButton</code>, <code>UIStackView</code>, etc.).</li>
 <li><strong>Android:</strong> Chaquopy exposes Java classes (<code>android.widget.TextView</code>, <code>android.widget.Button</code>, etc.) via the JNI bridge.</li>
@@ -1170,14 +1366,34 @@
 <div class="codehilite"><pre><span></span><code>Page.render()  →  Element tree  →  Reconciler  →  Native views
                                        ↑
 Page.set_state()  →  re-render  →  diff  →  patch native views
+Hook set_state()  →  re-render  →  diff  →  patch native views
 </code></pre></div>
 
-<p>The reconciler uses <strong>positional diffing</strong> (comparing children by index). When a child at a given position has the same element type, its props are updated in-place on the native view. When the type changes, the old native view is destroyed and a new one is created.</p>
+<p>The reconciler uses <strong>key-based diffing</strong> (matching children by key first, then by position). When a child with the same key/type is found, its props are updated in-place on the native view. When the type changes, the old native view is destroyed and a new one is created.</p>
+<h2 id="component-model">Component model<a class="headerlink" href="#component-model" title="Permanent link">&para;</a></h2>
+<p>PythonNative supports two kinds of components:</p>
+<h3 id="page-classes-screens">Page classes (screens)<a class="headerlink" href="#page-classes-screens" title="Permanent link">&para;</a></h3>
+<p>Each screen is a <code>Page</code> subclass that bridges native lifecycle events to Python. Pages have <code>render()</code>, <code>set_state()</code>, navigation (<code>push</code>/<code>pop</code>), and lifecycle hooks (<code>on_create</code>, <code>on_resume</code>, etc.).</p>
+<h3 id="function-components-reusable-ui">Function components (reusable UI)<a class="headerlink" href="#function-components-reusable-ui" title="Permanent link">&para;</a></h3>
+<p>Decorated with <code>@pn.component</code>, these are Python functions that return <code>Element</code> trees and can use hooks for state, effects, memoisation, and context. Each call site creates an independent instance with its own hook state.</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">counter</span><span class="p">(</span><span class="n">initial</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pn</span><span class="o">.</span><span class="n">Element</span><span class="p">:</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Inline styles:</strong> Pass props directly to components (<code>font_size=24</code>, <code>color="#333"</code>).</li>
+<li><strong>StyleSheet:</strong> Create reusable named style dictionaries with <code>pn.StyleSheet.create(...)</code>.</li>
+<li><strong>Theming:</strong> Use <code>pn.ThemeContext</code> with <code>pn.Provider</code> and <code>pn.use_context</code> to propagate theme values through the tree.</li>
+</ul>
+<h2 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h2>
+<p>All components support layout properties: <code>width</code>, <code>height</code>, <code>flex</code>, <code>margin</code>, <code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code>, <code>align_self</code>. Containers (<code>Column</code>, <code>Row</code>) support <code>spacing</code>, <code>padding</code>, and <code>alignment</code>.</p>
 <h2 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Versus React Native:</strong> RN uses JSX + a JavaScript bridge + Yoga layout. PythonNative uses Python + direct native calls + platform layout managers. No JS bridge, no serialisation overhead.</li>
-<li><strong>Versus NativeScript:</strong> Similar philosophy (direct, synchronous native access), but PythonNative adds a declarative reconciler layer that NativeScript does not have by default.</li>
-<li><strong>Versus the old imperative API:</strong> The previous PythonNative API required manual <code>add_view()</code> calls and explicit setter methods. The new declarative model handles view lifecycle automatically.</li>
+<li><strong>Versus NativeScript:</strong> Similar philosophy (direct, synchronous native access), but PythonNative adds a declarative reconciler layer and React-like hooks that NativeScript does not have by default.</li>
 </ul>
 <h2 id="ios-flow-rubicon-objc">iOS flow (Rubicon-ObjC)<a class="headerlink" href="#ios-flow-rubicon-objc" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1190,6 +1406,16 @@ Page.set_state()  →  re-render  →  diff  →  patch native views
 <li>The Android template (Kotlin + Chaquopy) initializes Python in <code>MainActivity</code> and passes the <code>Activity</code> to Python.</li>
 <li><code>PageFragment</code> calls <code>on_create()</code> on the Python <code>Page</code>, which renders and attaches views to the fragment container.</li>
 <li>State changes trigger re-render; the reconciler patches Android views in-place.</li>
+</ul>
+<h2 id="hot-reload">Hot reload<a class="headerlink" href="#hot-reload" title="Permanent link">&para;</a></h2>
+<p>During development, <code>pn run --hot-reload</code> watches <code>app/</code> for file changes and pushes updated Python files to the running app, enabling near-instant UI updates without full rebuilds.</p>
+<h2 id="native-api-modules">Native API modules<a class="headerlink" href="#native-api-modules" title="Permanent link">&para;</a></h2>
+<p>PythonNative provides cross-platform modules for common device APIs:</p>
+<ul>
+<li><code>pythonnative.native_modules.Camera</code> — photo capture and gallery</li>
+<li><code>pythonnative.native_modules.Location</code> — GPS / location services</li>
+<li><code>pythonnative.native_modules.FileSystem</code> — app-scoped file I/O</li>
+<li><code>pythonnative.native_modules.Notifications</code> — local push notifications</li>
 </ul>
 <h2 id="navigation-model-overview">Navigation model overview<a class="headerlink" href="#navigation-model-overview" title="Permanent link">&para;</a></h2>
 <ul>

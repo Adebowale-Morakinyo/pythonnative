@@ -383,6 +383,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -841,8 +869,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Styling
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-api-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native API modules
+      
+    </span>
+  </a>
   
 </li>
       
@@ -862,6 +923,17 @@
     <span class="md-ellipsis">
       
         Reconciler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot reload
       
     </span>
   </a>
@@ -1109,8 +1181,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Styling
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-api-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native API modules
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1130,6 +1235,17 @@
     <span class="md-ellipsis">
       
         Reconciler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hot reload
       
     </span>
   </a>
@@ -1174,20 +1290,48 @@
 <h3 id="element-functions">Element functions<a class="headerlink" href="#element-functions" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>pythonnative.Text</code>, <code>Button</code>, <code>Column</code>, <code>Row</code>, <code>ScrollView</code>, <code>TextInput</code>, <code>Image</code>, <code>Switch</code>, <code>ProgressBar</code>, <code>ActivityIndicator</code>, <code>WebView</code>, <code>Spacer</code></li>
+<li><code>pythonnative.View</code>, <code>SafeAreaView</code>, <code>Modal</code>, <code>Slider</code>, <code>Pressable</code>, <code>FlatList</code></li>
 </ul>
 <p>Each returns an <code>Element</code> descriptor. See the Component Property Reference for full signatures.</p>
 <h3 id="element">Element<a class="headerlink" href="#element" title="Permanent link">&para;</a></h3>
 <p><code>pythonnative.Element</code> — the descriptor type returned by element functions. You generally don't create these directly.</p>
+<h3 id="hooks">Hooks<a class="headerlink" href="#hooks" title="Permanent link">&para;</a></h3>
+<p>Function component primitives:</p>
+<ul>
+<li><code>pythonnative.component</code> — decorator to create a function component</li>
+<li><code>pythonnative.use_state(initial)</code> — local component state</li>
+<li><code>pythonnative.use_effect(effect, deps)</code> — side effects</li>
+<li><code>pythonnative.use_memo(factory, deps)</code> — memoised values</li>
+<li><code>pythonnative.use_callback(fn, deps)</code> — stable function references</li>
+<li><code>pythonnative.use_ref(initial)</code> — mutable ref object</li>
+<li><code>pythonnative.use_context(context)</code> — read from context</li>
+<li><code>pythonnative.create_context(default)</code> — create a new context</li>
+<li><code>pythonnative.Provider(context, value, child)</code> — provide a context value</li>
+</ul>
+<h3 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>pythonnative.StyleSheet</code> — utility for creating and composing style dicts</li>
+<li><code>pythonnative.ThemeContext</code> — built-in theme context (defaults to light theme)</li>
+</ul>
+<h2 id="native-api-modules">Native API modules<a class="headerlink" href="#native-api-modules" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>pythonnative.native_modules.Camera</code> — photo capture and gallery picking</li>
+<li><code>pythonnative.native_modules.Location</code> — GPS / location services</li>
+<li><code>pythonnative.native_modules.FileSystem</code> — app-scoped file I/O</li>
+<li><code>pythonnative.native_modules.Notifications</code> — local push notifications</li>
+</ul>
 <h2 id="internal-helpers">Internal helpers<a class="headerlink" href="#internal-helpers" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>pythonnative.utils.IS_ANDROID</code> — platform flag with robust detection for Chaquopy/Android.</li>
 <li><code>pythonnative.utils.get_android_context()</code> — returns the current Android <code>Activity</code>/<code>Context</code> when running on Android.</li>
 <li><code>pythonnative.utils.set_android_context(ctx)</code> — set by <code>Page</code> on Android; you generally don't call this directly.</li>
 <li><code>pythonnative.utils.get_android_fragment_container()</code> — returns the current Fragment container <code>ViewGroup</code> used for page rendering.</li>
-<li><code>pythonnative.utils.set_android_fragment_container(viewGroup)</code> — set by the host <code>PageFragment</code>; you generally don't call this directly.</li>
 </ul>
 <h2 id="reconciler">Reconciler<a class="headerlink" href="#reconciler" title="Permanent link">&para;</a></h2>
-<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Used internally by <code>Page</code>.</p>
+<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by <code>Page</code>.</p>
+<h2 id="hot-reload">Hot reload<a class="headerlink" href="#hot-reload" title="Permanent link">&para;</a></h2>
+<p><code>pythonnative.hot_reload.FileWatcher</code> — watches a directory for file changes and triggers a callback. Used by <code>pn run --hot-reload</code>.</p>
+<p><code>pythonnative.hot_reload.ModuleReloader</code> — reloads changed Python modules on the device and triggers page re-rendering.</p>
 <h2 id="native-view-registry">Native view registry<a class="headerlink" href="#native-view-registry" title="Permanent link">&para;</a></h2>
 <p><code>pythonnative.native_views.NativeViewRegistry</code> — maps element type names to platform-specific handlers. Use <code>set_registry()</code> to inject a mock for testing.</p>
 

@@ -33,8 +33,8 @@ def test_text_defaults() -> None:
     assert el.children == []
 
 
-def test_text_with_props() -> None:
-    el = Text("Hello", font_size=18, color="#FF0000", bold=True, text_align="center")
+def test_text_with_style() -> None:
+    el = Text("Hello", style={"font_size": 18, "color": "#FF0000", "bold": True, "text_align": "center"})
     assert el.props["text"] == "Hello"
     assert el.props["font_size"] == 18
     assert el.props["color"] == "#FF0000"
@@ -42,19 +42,28 @@ def test_text_with_props() -> None:
     assert el.props["text_align"] == "center"
 
 
-def test_text_none_props_excluded() -> None:
+def test_text_no_style_no_extra_props() -> None:
     el = Text("Hi")
     assert "font_size" not in el.props
     assert "color" not in el.props
 
 
-def test_text_layout_props() -> None:
-    el = Text("Hi", width=100, height=50, flex=1, margin=8, align_self="center")
+def test_text_layout_via_style() -> None:
+    el = Text("Hi", style={"width": 100, "height": 50, "flex": 1, "margin": 8, "align_self": "center"})
     assert el.props["width"] == 100
     assert el.props["height"] == 50
     assert el.props["flex"] == 1
     assert el.props["margin"] == 8
     assert el.props["align_self"] == "center"
+
+
+def test_text_style_list() -> None:
+    base = {"font_size": 16, "color": "#000"}
+    override = {"color": "#FFF", "bold": True}
+    el = Text("combo", style=[base, override])
+    assert el.props["font_size"] == 16
+    assert el.props["color"] == "#FFF"
+    assert el.props["bold"] is True
 
 
 # ---------------------------------------------------------------------------
@@ -71,7 +80,7 @@ def test_button_defaults() -> None:
 
 def test_button_with_callback() -> None:
     cb = lambda: None  # noqa: E731
-    el = Button("Tap", on_click=cb, background_color="#123456")
+    el = Button("Tap", on_click=cb, style={"background_color": "#123456"})
     assert el.props["title"] == "Tap"
     assert el.props["on_click"] is cb
     assert el.props["background_color"] == "#123456"
@@ -88,30 +97,41 @@ def test_button_disabled() -> None:
 
 
 def test_column_with_children() -> None:
-    el = Column(Text("a"), Text("b"), spacing=10, padding=16, alignment="fill")
+    el = Column(Text("a"), Text("b"), style={"spacing": 10, "padding": 16, "align_items": "stretch"})
     assert el.type == "Column"
     assert len(el.children) == 2
     assert el.props["spacing"] == 10
     assert el.props["padding"] == 16
-    assert el.props["alignment"] == "fill"
+    assert el.props["align_items"] == "stretch"
 
 
 def test_row_with_children() -> None:
-    el = Row(Text("x"), Text("y"), spacing=5)
+    el = Row(Text("x"), Text("y"), style={"spacing": 5})
     assert el.type == "Row"
     assert len(el.children) == 2
     assert el.props["spacing"] == 5
 
 
-def test_column_no_spacing_omitted() -> None:
+def test_column_no_style_empty_props() -> None:
     el = Column()
-    assert "spacing" not in el.props
+    assert el.props == {}
 
 
-def test_column_layout_props() -> None:
-    el = Column(flex=2, margin={"horizontal": 8})
+def test_column_layout_via_style() -> None:
+    el = Column(style={"flex": 2, "margin": {"horizontal": 8}})
     assert el.props["flex"] == 2
     assert el.props["margin"] == {"horizontal": 8}
+
+
+def test_column_justify_content() -> None:
+    el = Column(style={"justify_content": "center", "align_items": "center"})
+    assert el.props["justify_content"] == "center"
+    assert el.props["align_items"] == "center"
+
+
+def test_row_justify_content() -> None:
+    el = Row(style={"justify_content": "space_between"})
+    assert el.props["justify_content"] == "space_between"
 
 
 # ---------------------------------------------------------------------------
@@ -158,7 +178,7 @@ def test_textinput_with_props() -> None:
 
 
 def test_image() -> None:
-    el = Image("icon.png", width=48, height=48)
+    el = Image("icon.png", style={"width": 48, "height": 48})
     assert el.type == "Image"
     assert el.props["source"] == "icon.png"
     assert el.props["width"] == 48
@@ -222,7 +242,7 @@ def test_column_key() -> None:
 
 def test_view_container() -> None:
     child = Text("inside")
-    el = View(child, background_color="#FFF", padding=8, width=200)
+    el = View(child, style={"background_color": "#FFF", "padding": 8, "width": 200})
     assert el.type == "View"
     assert len(el.children) == 1
     assert el.props["background_color"] == "#FFF"
@@ -231,7 +251,7 @@ def test_view_container() -> None:
 
 
 def test_safe_area_view() -> None:
-    el = SafeAreaView(Text("safe"), background_color="#000")
+    el = SafeAreaView(Text("safe"), style={"background_color": "#000"})
     assert el.type == "SafeAreaView"
     assert len(el.children) == 1
 

@@ -8,16 +8,12 @@ PythonNative provides a Pythonic API for native UI components, a virtual view tr
 import pythonnative as pn
 
 
-class MainPage(pn.Page):
-    def __init__(self, native_instance):
-        super().__init__(native_instance)
-        self.state = {"count": 0}
-
-    def render(self):
-        return pn.Column(
-            pn.Text(f"Count: {self.state['count']}", font_size=24),
-            pn.Button("Increment", on_click=lambda: self.set_state(count=self.state["count"] + 1)),
-            spacing=12,
-            padding=16,
-        )
+@pn.component
+def App():
+    count, set_count = pn.use_state(0)
+    return pn.Column(
+        pn.Text(f"Count: {count}", style={"font_size": 24}),
+        pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
+        style={"spacing": 12, "padding": 16},
+    )
 ```

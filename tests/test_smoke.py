@@ -21,7 +21,6 @@ def test_public_api_names() -> None:
         "FlatList",
         "Image",
         "Modal",
-        "Page",
         "Pressable",
         "ProgressBar",
         "Row",
@@ -34,6 +33,8 @@ def test_public_api_names() -> None:
         "TextInput",
         "View",
         "WebView",
+        # Core
+        "create_page",
         # Hooks
         "component",
         "create_context",
@@ -41,6 +42,7 @@ def test_public_api_names() -> None:
         "use_context",
         "use_effect",
         "use_memo",
+        "use_navigation",
         "use_ref",
         "use_state",
         "Provider",

@@ -1,7 +1,8 @@
 """Hook primitives for function components.
 
 Provides React-like hooks for managing state, effects, memoisation,
-and context within function components decorated with :func:`component`.
+context, and navigation within function components decorated with
+:func:`component`.
 
 Usage::
 
@@ -18,7 +19,7 @@ Usage::
 
 import inspect
 import threading
-from typing import Any, Callable, List, Optional, Tuple, TypeVar
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar
 
 from .element import Element
 
@@ -244,6 +245,52 @@ def Provider(context: Context, value: Any, child: Element) -> Element:
     All descendants of *child* will read *value* via ``use_context(context)``.
     """
     return Element("__Provider__", {"__context__": context, "__value__": value}, [child])
+
+
+# ======================================================================
+# Navigation
+# ======================================================================
+
+_NavigationContext: Context = create_context(None)
+
+
+class NavigationHandle:
+    """Object returned by :func:`use_navigation` providing push/pop/get_args.
+
+    Navigates by component reference rather than string path, e.g.::
+
+        nav = pn.use_navigation()
+        nav.push(DetailScreen, args={"id": 42})
+    """
+
+    def __init__(self, host: Any) -> None:
+        self._host = host
+
+    def push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
+        """Navigate forward to *page* (a ``@component`` function or class)."""
+        self._host._push(page, args)
+
+    def pop(self) -> None:
+        """Navigate back to the previous screen."""
+        self._host._pop()
+
+    def get_args(self) -> Dict[str, Any]:
+        """Return arguments passed from the previous screen."""
+        return self._host._get_nav_args()
+
+
+def use_navigation() -> NavigationHandle:
+    """Return a :class:`NavigationHandle` for the current screen.
+
+    Must be called inside a ``@component`` function rendered by PythonNative.
+    """
+    handle = use_context(_NavigationContext)
+    if handle is None:
+        raise RuntimeError(
+            "use_navigation() called outside a PythonNative page. "
+            "Ensure your component is rendered via create_page()."
+        )
+    return handle
 
 
 # ======================================================================

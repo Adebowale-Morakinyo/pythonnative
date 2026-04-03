@@ -85,28 +85,15 @@ class ViewController: UIViewController {
         // Determine which Python page to load
         let pagePath: String = requestedPagePath ?? "app.main_page.MainPage"
         do {
-            let moduleName = String(pagePath.split(separator: ".").dropLast().joined(separator: "."))
-            let className = String(pagePath.split(separator: ".").last ?? "MainPage")
-            let pyModule = try Python.attemptImport(moduleName)
-            // Resolve class by name via builtins.getattr to avoid subscripting issues
-            let builtins = Python.import("builtins")
-            let getattrFn = builtins.getattr
-            let pageClass = try getattrFn.throwing.dynamicallyCall(withArguments: [pyModule, className])
-            // Pass native pointer so Python Page can wrap via rubicon.objc
+            let pnPage = try Python.attemptImport("pythonnative.page")
             let ptr = Unmanaged.passUnretained(self).toOpaque()
             let addr = UInt(bitPattern: ptr)
-            let page = try pageClass.throwing.dynamicallyCall(withArguments: [addr])
-            // If args provided, pass into Page via set_args(dict)
-            if let jsonStr = requestedPageArgsJSON {
-                let json = Python.import("json")
-                do {
-                    let args = try json.loads.throwing.dynamicallyCall(withArguments: [jsonStr])
-                    _ = try page.set_args.throwing.dynamicallyCall(withArguments: [args])
-                } catch {
-                    NSLog("[PN] Failed to decode requestedPageArgsJSON: \(error)")
-                }
-            }
-            // Call on_create immediately so Python can insert its root view
+            let argsJson: PythonObject = (requestedPageArgsJSON != nil)
+                ? PythonObject(requestedPageArgsJSON!)
+                : Python.None
+            let page = try pnPage.create_page.throwing.dynamicallyCall(
+                withArguments: [pagePath, addr, argsJson]
+            )
             _ = try page.on_create.throwing.dynamicallyCall(withArguments: [])
             return
         } catch {

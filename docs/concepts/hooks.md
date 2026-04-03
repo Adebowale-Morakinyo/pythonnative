@@ -1,6 +1,6 @@
 # Function Components and Hooks
 
-PythonNative supports React-like function components with hooks for managing state, effects, memoisation, and context. This is the recommended way to build reusable UI pieces.
+PythonNative uses React-like function components with hooks for managing state, effects, navigation, memoisation, and context. Function components decorated with `@pn.component` are the only way to build UI in PythonNative.
 
 ## Creating a function component
 
@@ -10,20 +10,20 @@ Decorate a Python function with `@pn.component`:
 import pythonnative as pn
 
 @pn.component
-def greeting(name: str = "World") -> pn.Element:
-    return pn.Text(f"Hello, {name}!", font_size=20)
+def Greeting(name: str = "World"):
+    return pn.Text(f"Hello, {name}!", style={"font_size": 20})
 ```
 
 Use it like any other component:
 
 ```python
-class MyPage(pn.Page):
-    def render(self):
-        return pn.Column(
-            greeting(name="Alice"),
-            greeting(name="Bob"),
-            spacing=12,
-        )
+@pn.component
+def MyPage():
+    return pn.Column(
+        Greeting(name="Alice"),
+        Greeting(name="Bob"),
+        style={"spacing": 12},
+    )
 ```
 
 ## Hooks
@@ -36,7 +36,7 @@ Local component state. Returns `(value, setter)`.
 
 ```python
 @pn.component
-def counter(initial: int = 0) -> pn.Element:
+def Counter(initial: int = 0):
     count, set_count = pn.use_state(initial)
 
     return pn.Column(
@@ -64,7 +64,7 @@ Run side effects after render. The effect function may return a cleanup callable
 
 ```python
 @pn.component
-def timer() -> pn.Element:
+def Timer():
     seconds, set_seconds = pn.use_state(0)
 
     def tick():
@@ -83,6 +83,38 @@ Dependency control:
 - `pn.use_effect(fn, None)` — run on every render
 - `pn.use_effect(fn, [])` — run on mount only
 - `pn.use_effect(fn, [a, b])` — run when `a` or `b` change
+
+### use_navigation
+
+Access the navigation stack from any component. Returns a `NavigationHandle` with `.push()`, `.pop()`, and `.get_args()`.
+
+```python
+@pn.component
+def HomeScreen():
+    nav = pn.use_navigation()
+
+    return pn.Column(
+        pn.Text("Home", style={"font_size": 24}),
+        pn.Button(
+            "Go to Details",
+            on_click=lambda: nav.push(DetailScreen, args={"id": 42}),
+        ),
+        style={"spacing": 12, "padding": 16},
+    )
+
+@pn.component
+def DetailScreen():
+    nav = pn.use_navigation()
+    item_id = nav.get_args().get("id", 0)
+
+    return pn.Column(
+        pn.Text(f"Detail #{item_id}", style={"font_size": 20}),
+        pn.Button("Back", on_click=nav.pop),
+        style={"spacing": 12, "padding": 16},
+    )
+```
+
+See the [Navigation guide](../guides/navigation.md) for full details.
 
 ### use_memo
 
@@ -123,17 +155,16 @@ color = theme["primary_color"]
 Share values through the component tree without passing props manually:
 
 ```python
-# Create a context with a default value
 user_context = pn.create_context({"name": "Guest"})
 
-# Provide a value to descendants
-pn.Provider(user_context, {"name": "Alice"},
-    user_profile()
-)
-
-# Consume in any descendant
 @pn.component
-def user_profile() -> pn.Element:
+def App():
+    return pn.Provider(user_context, {"name": "Alice"},
+        UserProfile()
+    )
+
+@pn.component
+def UserProfile():
     user = pn.use_context(user_context)
     return pn.Text(f"Welcome, {user['name']}")
 ```
@@ -157,11 +188,11 @@ Use them in any component:
 
 ```python
 @pn.component
-def settings() -> pn.Element:
+def Settings():
     dark_mode, toggle_dark = use_toggle(False)
 
     return pn.Column(
-        pn.Text("Settings", font_size=24, bold=True),
+        pn.Text("Settings", style={"font_size": 24, "bold": True}),
         pn.Row(
             pn.Text("Dark mode"),
             pn.Switch(value=dark_mode, on_change=lambda v: toggle_dark()),

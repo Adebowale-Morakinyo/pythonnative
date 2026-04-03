@@ -25,15 +25,8 @@ class PageFragment : Fragment() {
             val py = Python.getInstance()
             val pagePath = arguments?.getString("page_path") ?: "app.main_page.MainPage"
             val argsJson = arguments?.getString("args_json")
-            val moduleName = pagePath.substringBeforeLast('.')
-            val className = pagePath.substringAfterLast('.')
-            val pyModule = py.getModule(moduleName)
-            val pageClass = pyModule.get(className)
-            // Pass the hosting Activity as native_instance for context
-            page = pageClass?.call(requireActivity())
-            if (!argsJson.isNullOrEmpty()) {
-                page?.callAttr("set_args", argsJson)
-            }
+            val pnPage = py.getModule("pythonnative.page")
+            page = pnPage.callAttr("create_page", pagePath, requireActivity(), argsJson)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to instantiate page", e)
         }

@@ -30,7 +30,6 @@ nav:
     - Package: api/pythonnative.md
     - Component Properties: api/component-properties.md
   - Meta:
-    - Roadmap: meta/roadmap.md
     - Contributing: meta/contributing.md
 plugins:
   - search

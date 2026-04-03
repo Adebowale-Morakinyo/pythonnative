@@ -1,18 +1,12 @@
-from typing import Any
-
 import pythonnative as pn
 
 
-class ThirdPage(pn.Page):
-    def __init__(self, native_instance: Any) -> None:
-        super().__init__(native_instance)
-
-    def render(self) -> pn.Element:
-        return pn.Column(
-            pn.Text("Third Page", font_size=24, bold=True),
-            pn.Text("You navigated two levels deep."),
-            pn.Button("Back to Second", on_click=self.pop),
-            spacing=12,
-            padding=16,
-            alignment="fill",
-        )
+@pn.component
+def ThirdPage() -> pn.Element:
+    nav = pn.use_navigation()
+    return pn.Column(
+        pn.Text("Third Page", style={"font_size": 24, "bold": True}),
+        pn.Text("You navigated two levels deep."),
+        pn.Button("Back to Second", on_click=nav.pop),
+        style={"spacing": 12, "padding": 16, "align_items": "stretch"},
+    )

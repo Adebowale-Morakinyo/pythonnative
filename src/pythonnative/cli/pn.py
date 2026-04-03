@@ -48,25 +48,17 @@ def init_project(args: argparse.Namespace) -> None:
             f.write("""import pythonnative as pn
 
 
-class MainPage(pn.Page):
-    def __init__(self, native_instance):
-        super().__init__(native_instance)
-        self.state = {"count": 0}
-
-    def increment(self):
-        self.set_state(count=self.state["count"] + 1)
-
-    def render(self):
-        return pn.ScrollView(
-            pn.Column(
-                pn.Text("Hello from PythonNative!", font_size=24, bold=True),
-                pn.Text(f"Tapped {self.state['count']} times"),
-                pn.Button("Tap me", on_click=self.increment),
-                spacing=12,
-                padding=16,
-                alignment="fill",
-            )
+@pn.component
+def MainPage():
+    count, set_count = pn.use_state(0)
+    return pn.ScrollView(
+        pn.Column(
+            pn.Text("Hello from PythonNative!", style={"font_size": 24, "bold": True}),
+            pn.Text(f"Tapped {count} times"),
+            pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
+            style={"spacing": 12, "padding": 16, "align_items": "stretch"},
         )
+    )
 """)
 
     # Create config

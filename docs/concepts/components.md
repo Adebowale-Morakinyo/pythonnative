@@ -9,13 +9,12 @@ UI is built with element-creating functions. Each returns a lightweight `Element
 ```python
 import pythonnative as pn
 
-pn.Text("Hello", font_size=18, color="#333333")
+pn.Text("Hello", style={"font_size": 18, "color": "#333333"})
 pn.Button("Tap me", on_click=lambda: print("tapped"))
 pn.Column(
     pn.Text("First"),
     pn.Text("Second"),
-    spacing=8,
-    padding=16,
+    style={"spacing": 8, "padding": 16},
 )
 ```
 
@@ -23,23 +22,23 @@ pn.Column(
 
 **Layout:**
 
-- `Column(*children, spacing, padding, alignment, background_color)` — vertical stack
-- `Row(*children, spacing, padding, alignment, background_color)` — horizontal stack
-- `ScrollView(child, background_color)` — scrollable container
-- `View(*children, background_color, padding)` — generic container
-- `SafeAreaView(*children, background_color, padding)` — safe-area-aware container
+- `Column(*children, style=...)` — vertical stack
+- `Row(*children, style=...)` — horizontal stack
+- `ScrollView(child, style=...)` — scrollable container
+- `View(*children, style=...)` — generic container
+- `SafeAreaView(*children, style=...)` — safe-area-aware container
 - `Spacer(size, flex)` — empty space
 
 **Display:**
 
-- `Text(text, font_size, color, bold, text_align, background_color, max_lines)` — text display
-- `Image(source, width, height, scale_type)` — image display (supports URLs and resource names)
+- `Text(text, style=...)` — text display
+- `Image(source, style=...)` — image display (supports URLs and resource names)
 - `WebView(url)` — embedded web content
 
 **Input:**
 
-- `Button(title, on_click, color, background_color, font_size, enabled)` — tappable button
-- `TextInput(value, placeholder, on_change, secure, font_size, color)` — text entry
+- `Button(title, on_click, style=...)` — tappable button
+- `TextInput(value, placeholder, on_change, secure, style=...)` — text entry
 - `Switch(value, on_change)` — toggle switch
 - `Slider(value, min_value, max_value, on_change)` — continuous slider
 - `Pressable(child, on_press, on_long_press)` — tap handler wrapper
@@ -59,7 +58,7 @@ pn.Column(
 
 ### Layout properties
 
-All components support common layout properties:
+All components accept layout properties inside the `style` dict:
 
 - `width`, `height` — fixed dimensions (dp / pt)
 - `flex` — flex grow factor
@@ -67,74 +66,65 @@ All components support common layout properties:
 - `min_width`, `max_width`, `min_height`, `max_height` — size constraints
 - `align_self` — override parent alignment for this child
 
-## Page — the root component
+## Function components — the building block
 
-Each screen is a `Page` subclass with a `render()` method that returns an element tree:
-
-```python
-class MainPage(pn.Page):
-    def __init__(self, native_instance):
-        super().__init__(native_instance)
-        self.state = {"name": "World"}
-
-    def render(self):
-        return pn.Text(f"Hello, {self.state['name']}!", font_size=24)
-```
-
-## State and re-rendering
-
-Call `self.set_state(key=value)` to update state. The framework automatically calls `render()` again and applies only the differences to the native views:
-
-```python
-class CounterPage(pn.Page):
-    def __init__(self, native_instance):
-        super().__init__(native_instance)
-        self.state = {"count": 0}
-
-    def increment(self):
-        self.set_state(count=self.state["count"] + 1)
-
-    def render(self):
-        return pn.Column(
-            pn.Text(f"Count: {self.state['count']}", font_size=24),
-            pn.Button("Increment", on_click=self.increment),
-            spacing=12,
-        )
-```
-
-## Function components with hooks
-
-For reusable UI pieces **with their own state**, use the `@pn.component` decorator and hooks:
+All UI in PythonNative is built with `@pn.component` function components. Each screen is a function component that returns an element tree:
 
 ```python
 @pn.component
-def counter(label: str = "Count", initial: int = 0) -> pn.Element:
+def MainPage():
+    name, set_name = pn.use_state("World")
+    return pn.Text(f"Hello, {name}!", style={"font_size": 24})
+```
+
+The entry point `create_page()` is called internally by native templates to bootstrap your root component. You don't call it directly — just export your component and configure the entry point in `pythonnative.json`.
+
+## State and re-rendering
+
+Use `pn.use_state(initial)` to create local component state. Call the setter to update — the framework automatically re-renders the component and applies only the differences to the native views:
+
+```python
+@pn.component
+def CounterPage():
+    count, set_count = pn.use_state(0)
+
+    return pn.Column(
+        pn.Text(f"Count: {count}", style={"font_size": 24}),
+        pn.Button("Increment", on_click=lambda: set_count(count + 1)),
+        style={"spacing": 12},
+    )
+```
+
+## Composing components
+
+Build complex UIs by composing smaller `@pn.component` functions. Each instance has **independent state**:
+
+```python
+@pn.component
+def Counter(label: str = "Count", initial: int = 0):
     count, set_count = pn.use_state(initial)
 
     return pn.Column(
-        pn.Text(f"{label}: {count}", font_size=18),
+        pn.Text(f"{label}: {count}", style={"font_size": 18}),
         pn.Row(
             pn.Button("-", on_click=lambda: set_count(count - 1)),
             pn.Button("+", on_click=lambda: set_count(count + 1)),
-            spacing=8,
+            style={"spacing": 8},
         ),
-        spacing=4,
+        style={"spacing": 4},
     )
 
-class MainPage(pn.Page):
-    def __init__(self, native_instance):
-        super().__init__(native_instance)
 
-    def render(self):
-        return pn.Column(
-            counter(label="Apples", initial=0),
-            counter(label="Oranges", initial=5),
-            spacing=16,
-            padding=16,
-        )
+@pn.component
+def MainPage():
+    return pn.Column(
+        Counter(label="Apples", initial=0),
+        Counter(label="Oranges", initial=5),
+        style={"spacing": 16, "padding": 16},
+    )
 ```
 
-Each `counter` instance has **independent state** — changing one doesn't affect the other.
+Changing one `Counter` doesn't affect the other — each has its own hook state.
 
 ### Available hooks
 
@@ -144,6 +134,7 @@ Each `counter` instance has **independent state** — changing one doesn't affec
 - `use_callback(fn, deps)` — stable function references
 - `use_ref(initial)` — mutable ref that persists across renders
 - `use_context(context)` — read from a context provider
+- `use_navigation()` — navigation handle for push/pop between screens
 
 ### Custom hooks
 
@@ -164,16 +155,16 @@ Share values across the tree without prop drilling:
 ```python
 theme = pn.create_context({"primary": "#007AFF"})
 
-# In a page's render():
-pn.Provider(theme, {"primary": "#FF0000"},
-    my_component()
-)
-
-# In my_component:
 @pn.component
-def my_component() -> pn.Element:
+def App():
+    return pn.Provider(theme, {"primary": "#FF0000"},
+        MyComponent()
+    )
+
+@pn.component
+def MyComponent():
     t = pn.use_context(theme)
-    return pn.Button("Click", color=t["primary"])
+    return pn.Button("Click", style={"color": t["primary"]})
 ```
 
 ## Platform detection
@@ -185,5 +176,3 @@ from pythonnative.utils import IS_ANDROID
 
 title = "Android App" if IS_ANDROID else "iOS App"
 ```
-
-On Android, `Page` records the current `Activity` so component constructors can acquire a `Context` implicitly. Constructing views before `Page` initialisation will raise.

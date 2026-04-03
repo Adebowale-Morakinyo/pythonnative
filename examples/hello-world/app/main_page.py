@@ -1,5 +1,3 @@
-from typing import Any
-
 import emoji
 
 import pythonnative as pn
@@ -11,7 +9,7 @@ styles = pn.StyleSheet.create(
     title={"font_size": 24, "bold": True},
     subtitle={"font_size": 16, "color": "#666666"},
     medal={"font_size": 32},
-    section={"spacing": 12, "padding": 16, "alignment": "fill"},
+    section={"spacing": 12, "padding": 16, "align_items": "stretch"},
 )
 
 
@@ -22,29 +20,27 @@ def counter_badge(initial: int = 0) -> pn.Element:
     medal = emoji.emojize(MEDALS[count] if count < len(MEDALS) else ":star:")
 
     return pn.Column(
-        pn.Text(f"Tapped {count} times", **styles["subtitle"]),
-        pn.Text(medal, **styles["medal"]),
+        pn.Text(f"Tapped {count} times", style=styles["subtitle"]),
+        pn.Text(medal, style=styles["medal"]),
         pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
-        spacing=4,
+        style={"spacing": 4},
     )
 
 
-class MainPage(pn.Page):
-    def __init__(self, native_instance: Any) -> None:
-        super().__init__(native_instance)
-
-    def render(self) -> pn.Element:
-        return pn.ScrollView(
-            pn.Column(
-                pn.Text("Hello from PythonNative Demo!", **styles["title"]),
-                counter_badge(),
-                pn.Button(
-                    "Go to Second Page",
-                    on_click=lambda: self.push(
-                        "app.second_page.SecondPage",
-                        args={"message": "Greetings from MainPage"},
-                    ),
+@pn.component
+def MainPage() -> pn.Element:
+    nav = pn.use_navigation()
+    return pn.ScrollView(
+        pn.Column(
+            pn.Text("Hello from PythonNative Demo!", style=styles["title"]),
+            counter_badge(),
+            pn.Button(
+                "Go to Second Page",
+                on_click=lambda: nav.push(
+                    "app.second_page.SecondPage",
+                    args={"message": "Greetings from MainPage"},
                 ),
-                **styles["section"],
-            )
+            ),
+            style=styles["section"],
         )
+    )

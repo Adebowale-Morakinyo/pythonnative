@@ -1,10 +1,10 @@
 # Component Property Reference
 
-All style and behaviour properties are passed as keyword arguments to element functions.
+All visual and layout properties are passed via the `style` dict (or list of dicts) to element functions. Behavioural properties (callbacks, data, content) remain as keyword arguments.
 
-## Common layout properties
+## Common layout properties (inside `style`)
 
-All components accept these layout properties:
+All components accept these layout properties in their `style` dict:
 
 - `width` — fixed width in dp (Android) / pt (iOS)
 - `height` — fixed height
@@ -13,60 +13,56 @@ All components accept these layout properties:
 - `min_width`, `max_width` — width constraints
 - `min_height`, `max_height` — height constraints
 - `align_self` — override parent alignment (`"fill"`, `"center"`, etc.)
-- `key` — stable identity for reconciliation
+- `key` — stable identity for reconciliation (passed as a kwarg, not inside `style`)
 
 ## Text
 
 ```python
-pn.Text(text, font_size=None, color=None, bold=False, text_align=None,
-        background_color=None, max_lines=None)
+pn.Text(text, style={"font_size": 18, "color": "#333", "bold": True, "text_align": "center"})
 ```
 
-- `text` — display string
-- `font_size` — size in sp (Android) / pt (iOS)
-- `color` — text colour (`#RRGGBB` or `#AARRGGBB`)
-- `bold` — bold weight
-- `text_align` — `"left"`, `"center"`, or `"right"`
-- `background_color` — view background
-- `max_lines` — limit visible lines
+- `text` — display string (positional)
+- Style properties: `font_size`, `color`, `bold`, `text_align`, `background_color`, `max_lines`
 
 ## Button
 
 ```python
-pn.Button(title, on_click=None, color=None, background_color=None,
-          font_size=None, enabled=True)
+pn.Button(title, on_click=handler, style={"color": "#FFF", "background_color": "#007AFF", "font_size": 16})
 ```
 
-- `title` — button label
+- `title` — button label (positional)
 - `on_click` — callback `() -> None`
-- `color` — title text colour
-- `background_color` — button background
-- `enabled` — interactive state
+- `enabled` — interactive state (kwarg, default `True`)
+- Style properties: `color`, `background_color`, `font_size`
 
 ## Column / Row
 
 ```python
-pn.Column(*children, spacing=0, padding=None, alignment=None, background_color=None)
-pn.Row(*children, spacing=0, padding=None, alignment=None, background_color=None)
+pn.Column(*children, style={"spacing": 12, "padding": 16, "align_items": "center"})
+pn.Row(*children, style={"spacing": 8, "justify_content": "space_between"})
 ```
 
-- `spacing` — gap between children (dp / pt)
-- `padding` — inner padding (int for all sides, or dict with `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`)
-- `alignment` — cross-axis: `"fill"`, `"center"`, `"leading"`, `"trailing"`, `"start"`, `"end"`, `"top"`, `"bottom"`
-- `background_color` — container background
+- `*children` — child elements (positional)
+- Style properties:
+  - `spacing` — gap between children (dp / pt)
+  - `padding` — inner padding (int for all sides, or dict with `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`)
+  - `alignment` — cross-axis alignment shorthand
+  - `align_items` — cross-axis alignment: `"fill"`, `"center"`, `"leading"` / `"start"`, `"trailing"` / `"end"`, `"stretch"`
+  - `justify_content` — main-axis distribution: `"start"`, `"center"`, `"end"`, `"space_between"`, `"space_around"`
+  - `background_color` — container background
 
 ## View
 
 ```python
-pn.View(*children, background_color=None, padding=None)
+pn.View(*children, style={"background_color": "#F5F5F5", "padding": 16})
 ```
 
-Generic container (UIView / FrameLayout). Supports all layout properties.
+Generic container (UIView / FrameLayout). Supports all layout properties in `style`.
 
 ## SafeAreaView
 
 ```python
-pn.SafeAreaView(*children, background_color=None, padding=None)
+pn.SafeAreaView(*children, style={"background_color": "#FFF", "padding": 8})
 ```
 
 Container that respects safe area insets (notch, status bar).
@@ -74,14 +70,14 @@ Container that respects safe area insets (notch, status bar).
 ## ScrollView
 
 ```python
-pn.ScrollView(child, background_color=None)
+pn.ScrollView(child, style={"background_color": "#FFF"})
 ```
 
 ## TextInput
 
 ```python
-pn.TextInput(value="", placeholder="", on_change=None, secure=False,
-             font_size=None, color=None, background_color=None)
+pn.TextInput(value="", placeholder="Enter text", on_change=handler, secure=False,
+             style={"font_size": 16, "color": "#000", "background_color": "#FFF"})
 ```
 
 - `on_change` — callback `(str) -> None` receiving new text
@@ -89,16 +85,16 @@ pn.TextInput(value="", placeholder="", on_change=None, secure=False,
 ## Image
 
 ```python
-pn.Image(source="", width=None, height=None, scale_type=None, background_color=None)
+pn.Image(source="https://example.com/photo.jpg", style={"width": 200, "height": 150, "scale_type": "cover"})
 ```
 
 - `source` — image URL (`http://...` / `https://...`) or local resource name
-- `scale_type` — `"cover"`, `"contain"`, `"stretch"`, `"center"`
+- Style properties: `width`, `height`, `scale_type` (`"cover"`, `"contain"`, `"stretch"`, `"center"`), `background_color`
 
 ## Switch
 
 ```python
-pn.Switch(value=False, on_change=None)
+pn.Switch(value=False, on_change=handler)
 ```
 
 - `on_change` — callback `(bool) -> None`
@@ -106,7 +102,7 @@ pn.Switch(value=False, on_change=None)
 ## Slider
 
 ```python
-pn.Slider(value=0.0, min_value=0.0, max_value=1.0, on_change=None)
+pn.Slider(value=0.5, min_value=0.0, max_value=1.0, on_change=handler)
 ```
 
 - `on_change` — callback `(float) -> None`
@@ -114,7 +110,7 @@ pn.Slider(value=0.0, min_value=0.0, max_value=1.0, on_change=None)
 ## ProgressBar
 
 ```python
-pn.ProgressBar(value=0.0, background_color=None)
+pn.ProgressBar(value=0.5, style={"background_color": "#EEE"})
 ```
 
 - `value` — 0.0 to 1.0
@@ -128,13 +124,13 @@ pn.ActivityIndicator(animating=True)
 ## WebView
 
 ```python
-pn.WebView(url="")
+pn.WebView(url="https://example.com")
 ```
 
 ## Spacer
 
 ```python
-pn.Spacer(size=None, flex=None)
+pn.Spacer(size=16, flex=1)
 ```
 
 - `size` — fixed dimension in dp / pt
@@ -143,7 +139,7 @@ pn.Spacer(size=None, flex=None)
 ## Pressable
 
 ```python
-pn.Pressable(child, on_press=None, on_long_press=None)
+pn.Pressable(child, on_press=handler, on_long_press=handler)
 ```
 
 Wraps any child element with tap/long-press handling.
@@ -151,7 +147,8 @@ Wraps any child element with tap/long-press handling.
 ## Modal
 
 ```python
-pn.Modal(*children, visible=False, on_dismiss=None, title=None, background_color=None)
+pn.Modal(*children, visible=show_modal, on_dismiss=handler, title="Confirm",
+         style={"background_color": "#FFF"})
 ```
 
 Overlay dialog shown when `visible=True`.
@@ -159,8 +156,8 @@ Overlay dialog shown when `visible=True`.
 ## FlatList
 
 ```python
-pn.FlatList(data=None, render_item=None, key_extractor=None,
-            separator_height=0, background_color=None)
+pn.FlatList(data=items, render_item=render_fn, key_extractor=key_fn,
+            separator_height=1, style={"background_color": "#FFF"})
 ```
 
 - `data` — list of items

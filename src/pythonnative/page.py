@@ -1,161 +1,107 @@
-"""Page — the root component that bridges native lifecycle and declarative UI.
+"""Page host — the bridge between native lifecycle and function components.
 
-A ``Page`` subclass is the entry point for each screen.  It owns a
-:class:`~pythonnative.reconciler.Reconciler` and automatically mounts /
-re-renders the element tree returned by :meth:`render` whenever state
-changes.
+Users no longer subclass ``Page``.  Instead they write ``@component``
+functions and the native template calls :func:`create_page` to obtain
+an :class:`_AppHost` that manages the reconciler and lifecycle.
 
-Usage::
+Usage (user code)::
 
     import pythonnative as pn
 
-    class MainPage(pn.Page):
-        def __init__(self, native_instance):
-            super().__init__(native_instance)
-            self.state = {"count": 0}
+    @pn.component
+    def MainPage():
+        count, set_count = pn.use_state(0)
+        return pn.Column(
+            pn.Text(f"Count: {count}", style={"font_size": 24}),
+            pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
+            style={"spacing": 12, "padding": 16},
+        )
 
-        def increment(self):
-            self.set_state(count=self.state["count"] + 1)
+The native template calls::
 
-        def render(self):
-            return pn.Column(
-                pn.Text(f"Count: {self.state['count']}", font_size=24),
-                pn.Button("Increment", on_click=self.increment),
-                spacing=12,
-                padding=16,
-            )
+    host = pythonnative.page.create_page("app.main_page.MainPage", native_instance)
+    host.on_create()
 """
 
+import importlib
 import json
-from abc import ABC, abstractmethod
-from typing import Any, Optional, Union
+from typing import Any, Dict, Optional
 
 from .utils import IS_ANDROID, set_android_context
 
 # ======================================================================
-# Base class (platform-independent)
+# Component path resolution
 # ======================================================================
 
 
-class PageBase(ABC):
-    """Abstract base defining the Page interface."""
+def _resolve_component_path(page_ref: Any) -> str:
+    """Resolve a component function to a ``module.name`` path string."""
+    if isinstance(page_ref, str):
+        return page_ref
+    func = getattr(page_ref, "__wrapped__", page_ref)
+    module = getattr(func, "__module__", None)
+    name = getattr(func, "__name__", None)
+    if module and name:
+        return f"{module}.{name}"
+    raise ValueError(f"Cannot resolve component path for {page_ref!r}")
 
-    @abstractmethod
-    def __init__(self) -> None:
-        super().__init__()
 
-    @abstractmethod
-    def render(self) -> Any:
-        """Return an Element tree describing this page's UI."""
-
-    def set_state(self, **updates: Any) -> None:
-        """Merge *updates* into ``self.state`` and trigger a re-render."""
-
-    def on_create(self) -> None:
-        """Called when the page is first created. Triggers initial render."""
-
-    def on_start(self) -> None:
-        pass
-
-    def on_resume(self) -> None:
-        pass
-
-    def on_pause(self) -> None:
-        pass
-
-    def on_stop(self) -> None:
-        pass
-
-    def on_destroy(self) -> None:
-        pass
-
-    def on_restart(self) -> None:
-        pass
-
-    def on_save_instance_state(self) -> None:
-        pass
-
-    def on_restore_instance_state(self) -> None:
-        pass
-
-    @abstractmethod
-    def set_args(self, args: Optional[dict]) -> None:
-        pass
-
-    @abstractmethod
-    def push(self, page: Union[str, Any], args: Optional[dict] = None) -> None:
-        pass
-
-    @abstractmethod
-    def pop(self) -> None:
-        pass
-
-    def get_args(self) -> dict:
-        """Return navigation arguments (empty dict if none)."""
-        return getattr(self, "_args", {})
-
-    def navigate_to(self, page: Any) -> None:
-        self.push(page)
+def _import_component(component_path: str) -> Any:
+    """Import and return the component function from a dotted path."""
+    module_path, component_name = component_path.rsplit(".", 1)
+    module = importlib.import_module(module_path)
+    return getattr(module, component_name)
 
 
 # ======================================================================
-# Shared declarative rendering helpers
+# Shared helpers
 # ======================================================================
 
 
-def _init_page_common(page: Any) -> None:
-    """Common initialisation shared by both platform Page classes."""
-    page.state = {}
-    page._args = {}
-    page._reconciler = None
-    page._root_native_view = None
+def _init_host_common(host: Any) -> None:
+    host._args = {}
+    host._reconciler = None
+    host._root_native_view = None
 
 
-def _set_state(page: Any, **updates: Any) -> None:
-    page.state.update(updates)
-    if page._reconciler is not None:
-        _re_render(page)
-
-
-def _on_create(page: Any) -> None:
+def _on_create(host: Any) -> None:
+    from .hooks import NavigationHandle, Provider, _NavigationContext
     from .native_views import get_registry
     from .reconciler import Reconciler
 
-    page._reconciler = Reconciler(get_registry())
-    page._reconciler._page_re_render = lambda: _re_render(page)
-    element = page.render()
-    page._root_native_view = page._reconciler.mount(element)
-    page._attach_root(page._root_native_view)
+    host._reconciler = Reconciler(get_registry())
+    host._reconciler._page_re_render = lambda: _re_render(host)
+
+    nav_handle = NavigationHandle(host)
+    app_element = host._component()
+    provider_element = Provider(_NavigationContext, nav_handle, app_element)
+
+    host._root_native_view = host._reconciler.mount(provider_element)
+    host._attach_root(host._root_native_view)
 
 
-def _re_render(page: Any) -> None:
-    element = page.render()
-    new_root = page._reconciler.reconcile(element)
-    if new_root is not page._root_native_view:
-        page._detach_root(page._root_native_view)
-        page._root_native_view = new_root
-        page._attach_root(new_root)
+def _re_render(host: Any) -> None:
+    from .hooks import NavigationHandle, Provider, _NavigationContext
+
+    nav_handle = NavigationHandle(host)
+    app_element = host._component()
+    provider_element = Provider(_NavigationContext, nav_handle, app_element)
+
+    new_root = host._reconciler.reconcile(provider_element)
+    if new_root is not host._root_native_view:
+        host._detach_root(host._root_native_view)
+        host._root_native_view = new_root
+        host._attach_root(new_root)
 
 
-def _resolve_page_path(page_ref: Union[str, Any]) -> str:
-    if isinstance(page_ref, str):
-        return page_ref
-    module = getattr(page_ref, "__module__", None)
-    name = getattr(page_ref, "__name__", None)
-    if module and name:
-        return f"{module}.{name}"
-    cls = page_ref.__class__
-    return f"{cls.__module__}.{cls.__name__}"
-
-
-def _set_args(page: Any, args: Optional[dict]) -> None:
+def _set_args(host: Any, args: Any) -> None:
     if isinstance(args, str):
         try:
-            page._args = json.loads(args) or {}
+            host._args = json.loads(args) or {}
         except Exception:
-            page._args = {}
+            host._args = {}
         return
-    page._args = args or {}
+    host._args = args if isinstance(args, dict) else {}
 
 
 # ======================================================================
@@ -165,21 +111,14 @@ def _set_args(page: Any, args: Optional[dict]) -> None:
 if IS_ANDROID:
     from java import jclass
 
-    class Page(PageBase):
-        """Android Page backed by an Activity and Fragment navigation."""
+    class _AppHost:
+        """Android host backed by an Activity and Fragment navigation."""
 
-        def __init__(self, native_instance: Any) -> None:
-            super().__init__()
-            self.native_class = jclass("android.app.Activity")
+        def __init__(self, native_instance: Any, component_func: Any) -> None:
             self.native_instance = native_instance
+            self._component = component_func
             set_android_context(native_instance)
-            _init_page_common(self)
-
-        def render(self) -> Any:
-            raise NotImplementedError("Page subclass must implement render()")
-
-        def set_state(self, **updates: Any) -> None:
-            _set_state(self, **updates)
+            _init_host_common(self)
 
         def on_create(self) -> None:
             _on_create(self)
@@ -208,16 +147,19 @@ if IS_ANDROID:
         def on_restore_instance_state(self) -> None:
             pass
 
-        def set_args(self, args: Optional[dict]) -> None:
+        def set_args(self, args: Any) -> None:
             _set_args(self, args)
 
-        def push(self, page: Union[str, Any], args: Optional[dict] = None) -> None:
-            page_path = _resolve_page_path(page)
+        def _get_nav_args(self) -> Dict[str, Any]:
+            return self._args
+
+        def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
+            page_path = _resolve_component_path(page)
             Navigator = jclass(f"{self.native_instance.getPackageName()}.Navigator")
             args_json = json.dumps(args) if args else None
             Navigator.push(self.native_instance, page_path, args_json)
 
-        def pop(self) -> None:
+        def _pop(self) -> None:
             try:
                 Navigator = jclass(f"{self.native_instance.getPackageName()}.Navigator")
                 Navigator.pop(self.native_instance)
@@ -265,10 +207,10 @@ else:
 
     _IOS_PAGE_REGISTRY: _Dict[int, Any] = {}
 
-    def _ios_register_page(vc_instance: Any, page_obj: Any) -> None:
+    def _ios_register_page(vc_instance: Any, host_obj: Any) -> None:
         try:
             ptr = int(vc_instance.ptr)
-            _IOS_PAGE_REGISTRY[ptr] = page_obj
+            _IOS_PAGE_REGISTRY[ptr] = host_obj
         except Exception:
             pass
 
@@ -280,37 +222,30 @@ else:
             pass
 
     def forward_lifecycle(native_addr: int, event: str) -> None:
-        """Forward a lifecycle event from Swift ViewController to the registered Page."""
-        page = _IOS_PAGE_REGISTRY.get(int(native_addr))
-        if page is None:
+        """Forward a lifecycle event from Swift ViewController to the registered host."""
+        host = _IOS_PAGE_REGISTRY.get(int(native_addr))
+        if host is None:
             return
-        handler = getattr(page, event, None)
+        handler = getattr(host, event, None)
         if handler:
             handler()
 
     if _rubicon_available:
 
-        class Page(PageBase):
-            """iOS Page backed by a UIViewController."""
+        class _AppHost:
+            """iOS host backed by a UIViewController."""
 
-            def __init__(self, native_instance: Any) -> None:
-                super().__init__()
-                self.native_class = ObjCClass("UIViewController")
+            def __init__(self, native_instance: Any, component_func: Any) -> None:
                 if isinstance(native_instance, int):
                     try:
                         native_instance = ObjCInstance(native_instance)
                     except Exception:
                         native_instance = None
                 self.native_instance = native_instance
-                _init_page_common(self)
+                self._component = component_func
+                _init_host_common(self)
                 if self.native_instance is not None:
                     _ios_register_page(self.native_instance, self)
-
-            def render(self) -> Any:
-                raise NotImplementedError("Page subclass must implement render()")
-
-            def set_state(self, **updates: Any) -> None:
-                _set_state(self, **updates)
 
             def on_create(self) -> None:
                 _on_create(self)
@@ -340,11 +275,14 @@ else:
             def on_restore_instance_state(self) -> None:
                 pass
 
-            def set_args(self, args: Optional[dict]) -> None:
+            def set_args(self, args: Any) -> None:
                 _set_args(self, args)
 
-            def push(self, page: Union[str, Any], args: Optional[dict] = None) -> None:
-                page_path = _resolve_page_path(page)
+            def _get_nav_args(self) -> Dict[str, Any]:
+                return self._args
+
+            def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
+                page_path = _resolve_component_path(page)
                 ViewController = None
                 try:
                     ViewController = ObjCClass("ViewController")
@@ -373,11 +311,11 @@ else:
                 nav = getattr(self.native_instance, "navigationController", None)
                 if nav is None:
                     raise RuntimeError(
-                        "No UINavigationController available; ensure template embeds root in navigation controller"
+                        "No UINavigationController available; " "ensure template embeds root in navigation controller"
                     )
                 nav.pushViewController_animated_(next_vc, True)
 
-            def pop(self) -> None:
+            def _pop(self) -> None:
                 nav = getattr(self.native_instance, "navigationController", None)
                 if nav is not None:
                     nav.popViewControllerAnimated_(True)
@@ -408,23 +346,17 @@ else:
 
     else:
 
-        class Page(PageBase):
+        class _AppHost:
             """Desktop stub — no native runtime available.
 
             Fully functional for testing with a mock backend via
             ``native_views.set_registry()``.
             """
 
-            def __init__(self, native_instance: Any = None) -> None:
-                super().__init__()
+            def __init__(self, native_instance: Any = None, component_func: Any = None) -> None:
                 self.native_instance = native_instance
-                _init_page_common(self)
-
-            def render(self) -> Any:
-                raise NotImplementedError("Page subclass must implement render()")
-
-            def set_state(self, **updates: Any) -> None:
-                _set_state(self, **updates)
+                self._component = component_func
+                _init_host_common(self)
 
             def on_create(self) -> None:
                 _on_create(self)
@@ -453,13 +385,16 @@ else:
             def on_restore_instance_state(self) -> None:
                 pass
 
-            def set_args(self, args: Optional[dict]) -> None:
+            def set_args(self, args: Any) -> None:
                 _set_args(self, args)
 
-            def push(self, page: Union[str, Any], args: Optional[dict] = None) -> None:
+            def _get_nav_args(self) -> Dict[str, Any]:
+                return self._args
+
+            def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
                 raise RuntimeError("push() requires a native runtime (iOS or Android)")
 
-            def pop(self) -> None:
+            def _pop(self) -> None:
                 raise RuntimeError("pop() requires a native runtime (iOS or Android)")
 
             def _attach_root(self, native_view: Any) -> None:
@@ -467,3 +402,34 @@ else:
 
             def _detach_root(self, native_view: Any) -> None:
                 pass
+
+
+# ======================================================================
+# Public factory
+# ======================================================================
+
+
+def create_page(
+    component_path: str,
+    native_instance: Any = None,
+    args_json: Optional[str] = None,
+) -> _AppHost:
+    """Create a page host for a function component.
+
+    Called by native templates (PageFragment.kt / ViewController.swift)
+    to bridge the native lifecycle to a ``@component`` function.
+
+    Parameters
+    ----------
+    component_path:
+        Dotted Python path to the component, e.g. ``"app.main_page.MainPage"``.
+    native_instance:
+        The native Activity (Android) or ViewController pointer (iOS).
+    args_json:
+        Optional JSON string of navigation arguments.
+    """
+    component_func = _import_component(component_path)
+    host = _AppHost(native_instance, component_func)
+    if args_json:
+        _set_args(host, args_json)
+    return host

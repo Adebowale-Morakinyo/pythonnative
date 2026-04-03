@@ -26,17 +26,18 @@
 
 ## Overview
 
-PythonNative is a cross-platform toolkit for building native Android and iOS apps in Python. It provides a **declarative, React-like component model** with automatic reconciliation, powered by Chaquopy on Android and rubicon-objc on iOS. Describe your UI as a tree of elements, manage state with `set_state()`, and let PythonNative handle creating and updating native views.
+PythonNative is a cross-platform toolkit for building native Android and iOS apps in Python. It provides a **declarative, React-like component model** with hooks and automatic reconciliation, powered by Chaquopy on Android and rubicon-objc on iOS. Write function components with `use_state`, `use_effect`, and friends, just like React, and let PythonNative handle creating and updating native views.
 
 ## Features
 
 - **Declarative UI:** Describe *what* your UI should look like with element functions (`Text`, `Button`, `Column`, `Row`, etc.). PythonNative creates and updates native views automatically.
-- **Reactive state:** Call `self.set_state(key=value)` and the framework re-renders only what changed — no manual view mutation.
+- **Hooks and function components:** Manage state with `use_state`, side effects with `use_effect`, and navigation with `use_navigation`, all through one consistent pattern.
+- **`style` prop:** Pass all visual and layout properties through a single `style` dict, composable via `StyleSheet`.
 - **Virtual view tree + reconciler:** Element trees are diffed and patched with minimal native mutations, similar to React's reconciliation.
 - **Direct native bindings:** Python calls platform APIs directly through Chaquopy and rubicon-objc, with no JavaScript bridge.
 - **CLI scaffolding:** `pn init` creates a ready-to-run project; `pn run android` and `pn run ios` build and launch your app.
-- **Navigation:** Push and pop screens with argument passing for multi-page apps.
-- **Bundled templates:** Android Gradle and iOS Xcode templates are included — scaffolding requires no network access.
+- **Navigation:** Push and pop screens with argument passing via the `use_navigation()` hook.
+- **Bundled templates:** Android Gradle and iOS Xcode templates are included, so scaffolding requires no network access.
 
 ## Quick Start
 
@@ -52,21 +53,17 @@ pip install pythonnative
 import pythonnative as pn
 
 
-class MainPage(pn.Page):
-    def __init__(self, native_instance):
-        super().__init__(native_instance)
-        self.state = {"count": 0}
-
-    def render(self):
-        return pn.Column(
-            pn.Text(f"Count: {self.state['count']}", font_size=24),
-            pn.Button(
-                "Tap me",
-                on_click=lambda: self.set_state(count=self.state["count"] + 1),
-            ),
-            spacing=12,
-            padding=16,
-        )
+@pn.component
+def MainPage():
+    count, set_count = pn.use_state(0)
+    return pn.Column(
+        pn.Text(f"Count: {count}", style={"font_size": 24}),
+        pn.Button(
+            "Tap me",
+            on_click=lambda: set_count(count + 1),
+        ),
+        style={"spacing": 12, "padding": 16},
+    )
 ```
 
 ## Documentation

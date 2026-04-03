@@ -5,25 +5,13 @@ Public API::
     import pythonnative as pn
 
     @pn.component
-    def counter(initial=0):
-        count, set_count = pn.use_state(initial)
+    def App():
+        count, set_count = pn.use_state(0)
         return pn.Column(
-            pn.Text(f"Count: {count}", font_size=24),
+            pn.Text(f"Count: {count}", style={"font_size": 24}),
             pn.Button("+", on_click=lambda: set_count(count + 1)),
-            spacing=12,
+            style={"spacing": 12},
         )
-
-    class MainPage(pn.Page):
-        def __init__(self, native_instance):
-            super().__init__(native_instance)
-
-        def render(self):
-            return pn.Column(
-                counter(initial=0),
-                counter(initial=10),
-                spacing=16,
-                padding=16,
-            )
 """
 
 __version__ = "0.6.0"
@@ -57,10 +45,11 @@ from .hooks import (
     use_context,
     use_effect,
     use_memo,
+    use_navigation,
     use_ref,
     use_state,
 )
-from .page import Page
+from .page import create_page
 from .style import StyleSheet, ThemeContext
 
 __all__ = [
@@ -85,7 +74,7 @@ __all__ = [
     "WebView",
     # Core
     "Element",
-    "Page",
+    "create_page",
     # Hooks
     "component",
     "create_context",
@@ -93,6 +82,7 @@ __all__ = [
     "use_context",
     "use_effect",
     "use_memo",
+    "use_navigation",
     "use_ref",
     "use_state",
     "Provider",

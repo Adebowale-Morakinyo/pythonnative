@@ -277,6 +277,7 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
                 _apply_layout(native_view, changed)
 
         def _apply(self, ll: Any, props: Dict[str, Any]) -> None:
+            Gravity = jclass("android.view.Gravity")
             if "spacing" in props and props["spacing"]:
                 px = _dp(float(props["spacing"]))
                 GradientDrawable = jclass("android.graphics.drawable.GradientDrawable")
@@ -288,17 +289,31 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             if "padding" in props:
                 left, top, right, bottom = _resolve_padding(props["padding"])
                 ll.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
-            if "alignment" in props and props["alignment"]:
-                Gravity = jclass("android.view.Gravity")
-                mapping = {
+            gravity = 0
+            ai = props.get("align_items") or props.get("alignment")
+            if ai:
+                cross_map = {
+                    "stretch": Gravity.FILL_HORIZONTAL,
                     "fill": Gravity.FILL_HORIZONTAL,
-                    "center": Gravity.CENTER_HORIZONTAL,
+                    "flex_start": Gravity.START,
                     "leading": Gravity.START,
                     "start": Gravity.START,
+                    "center": Gravity.CENTER_HORIZONTAL,
+                    "flex_end": Gravity.END,
                     "trailing": Gravity.END,
                     "end": Gravity.END,
                 }
-                ll.setGravity(mapping.get(props["alignment"], Gravity.FILL_HORIZONTAL))
+                gravity |= cross_map.get(ai, 0)
+            jc = props.get("justify_content")
+            if jc:
+                main_map = {
+                    "flex_start": Gravity.TOP,
+                    "center": Gravity.CENTER_VERTICAL,
+                    "flex_end": Gravity.BOTTOM,
+                }
+                gravity |= main_map.get(jc, 0)
+            if gravity:
+                ll.setGravity(gravity)
             if "background_color" in props and props["background_color"] is not None:
                 ll.setBackgroundColor(parse_color_int(props["background_color"]))
 
@@ -326,6 +341,7 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
                 _apply_layout(native_view, changed)
 
         def _apply(self, ll: Any, props: Dict[str, Any]) -> None:
+            Gravity = jclass("android.view.Gravity")
             if "spacing" in props and props["spacing"]:
                 px = _dp(float(props["spacing"]))
                 GradientDrawable = jclass("android.graphics.drawable.GradientDrawable")
@@ -337,15 +353,29 @@ def _register_android_handlers(registry: NativeViewRegistry) -> None:  # noqa: C
             if "padding" in props:
                 left, top, right, bottom = _resolve_padding(props["padding"])
                 ll.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
-            if "alignment" in props and props["alignment"]:
-                Gravity = jclass("android.view.Gravity")
-                mapping = {
+            gravity = 0
+            ai = props.get("align_items") or props.get("alignment")
+            if ai:
+                cross_map = {
+                    "stretch": Gravity.FILL_VERTICAL,
                     "fill": Gravity.FILL_VERTICAL,
-                    "center": Gravity.CENTER_VERTICAL,
+                    "flex_start": Gravity.TOP,
                     "top": Gravity.TOP,
+                    "center": Gravity.CENTER_VERTICAL,
+                    "flex_end": Gravity.BOTTOM,
                     "bottom": Gravity.BOTTOM,
                 }
-                ll.setGravity(mapping.get(props["alignment"], Gravity.FILL_VERTICAL))
+                gravity |= cross_map.get(ai, 0)
+            jc = props.get("justify_content")
+            if jc:
+                main_map = {
+                    "flex_start": Gravity.START,
+                    "center": Gravity.CENTER_HORIZONTAL,
+                    "flex_end": Gravity.END,
+                }
+                gravity |= main_map.get(jc, 0)
+            if gravity:
+                ll.setGravity(gravity)
             if "background_color" in props and props["background_color"] is not None:
                 ll.setBackgroundColor(parse_color_int(props["background_color"]))
 
@@ -910,9 +940,29 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
         def _apply(self, sv: Any, props: Dict[str, Any]) -> None:
             if "spacing" in props and props["spacing"]:
                 sv.setSpacing_(float(props["spacing"]))
-            if "alignment" in props and props["alignment"]:
-                mapping = {"fill": 0, "leading": 1, "top": 1, "center": 3, "trailing": 4, "bottom": 4}
-                sv.setAlignment_(mapping.get(props["alignment"], 0))
+            ai = props.get("align_items") or props.get("alignment")
+            if ai:
+                alignment_map = {
+                    "stretch": 0,
+                    "fill": 0,
+                    "flex_start": 1,
+                    "leading": 1,
+                    "center": 3,
+                    "flex_end": 4,
+                    "trailing": 4,
+                }
+                sv.setAlignment_(alignment_map.get(ai, 0))
+            jc = props.get("justify_content")
+            if jc:
+                distribution_map = {
+                    "flex_start": 0,
+                    "center": 0,
+                    "flex_end": 0,
+                    "space_between": 3,
+                    "space_around": 4,
+                    "space_evenly": 4,
+                }
+                sv.setDistribution_(distribution_map.get(jc, 0))
             if "background_color" in props and props["background_color"] is not None:
                 sv.setBackgroundColor_(_uicolor(props["background_color"]))
             if "padding" in props:
@@ -950,9 +1000,29 @@ def _register_ios_handlers(registry: NativeViewRegistry) -> None:  # noqa: C901
         def _apply(self, sv: Any, props: Dict[str, Any]) -> None:
             if "spacing" in props and props["spacing"]:
                 sv.setSpacing_(float(props["spacing"]))
-            if "alignment" in props and props["alignment"]:
-                mapping = {"fill": 0, "leading": 1, "top": 1, "center": 3, "trailing": 4, "bottom": 4}
-                sv.setAlignment_(mapping.get(props["alignment"], 0))
+            ai = props.get("align_items") or props.get("alignment")
+            if ai:
+                alignment_map = {
+                    "stretch": 0,
+                    "fill": 0,
+                    "flex_start": 1,
+                    "top": 1,
+                    "center": 3,
+                    "flex_end": 4,
+                    "bottom": 4,
+                }
+                sv.setAlignment_(alignment_map.get(ai, 0))
+            jc = props.get("justify_content")
+            if jc:
+                distribution_map = {
+                    "flex_start": 0,
+                    "center": 0,
+                    "flex_end": 0,
+                    "space_between": 3,
+                    "space_around": 4,
+                    "space_evenly": 4,
+                }
+                sv.setDistribution_(distribution_map.get(jc, 0))
             if "background_color" in props and props["background_color"] is not None:
                 sv.setBackgroundColor_(_uicolor(props["background_color"]))
 

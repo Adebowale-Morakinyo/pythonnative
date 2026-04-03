@@ -1,7 +1,8 @@
-"""StyleSheet and theming support.
+"""StyleSheet, style resolution, and theming support.
 
 Provides a :class:`StyleSheet` helper for creating and composing
-reusable style dictionaries, plus a built-in theme context.
+reusable style dictionaries, a :func:`resolve_style` utility for
+flattening the ``style`` prop, and built-in theme contexts.
 
 Usage::
 
@@ -12,19 +13,38 @@ Usage::
         container={"padding": 16, "spacing": 12},
     )
 
-    pn.Text("Hello", **styles["title"])
-    pn.Column(..., **styles["container"])
+    pn.Text("Hello", style=styles["title"])
+    pn.Column(..., style=styles["container"])
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 from .hooks import Context, create_context
+
+_StyleDict = Dict[str, Any]
+StyleValue = Union[None, _StyleDict, List[Optional[_StyleDict]]]
+
+
+def resolve_style(style: StyleValue) -> _StyleDict:
+    """Flatten a ``style`` prop into a single dict.
+
+    Accepts ``None``, a single dict, or a list of dicts (later entries
+    override earlier ones, mirroring React Native's array style pattern).
+    """
+    if style is None:
+        return {}
+    if isinstance(style, dict):
+        return dict(style)
+    result: _StyleDict = {}
+    for entry in style:
+        if entry:
+            result.update(entry)
+    return result
+
 
 # ======================================================================
 # StyleSheet
 # ======================================================================
-
-_StyleDict = Dict[str, Any]
 
 
 class StyleSheet:

@@ -2,16 +2,16 @@
 
 ## Public API
 
-### Page
+### create_page
 
-`pythonnative.Page` — base class for screens. Subclass it, implement `render()`, and use `set_state()` to trigger re-renders.
+`pythonnative.create_page(...)` — called internally by native templates to bootstrap the root component. You don't call this directly.
 
 ### Element functions
 
 - `pythonnative.Text`, `Button`, `Column`, `Row`, `ScrollView`, `TextInput`, `Image`, `Switch`, `ProgressBar`, `ActivityIndicator`, `WebView`, `Spacer`
 - `pythonnative.View`, `SafeAreaView`, `Modal`, `Slider`, `Pressable`, `FlatList`
 
-Each returns an `Element` descriptor. See the Component Property Reference for full signatures.
+Each returns an `Element` descriptor. Visual and layout properties are passed via `style={...}`. See the Component Property Reference for full details.
 
 ### Element
 
@@ -24,6 +24,7 @@ Function component primitives:
 - `pythonnative.component` — decorator to create a function component
 - `pythonnative.use_state(initial)` — local component state
 - `pythonnative.use_effect(effect, deps)` — side effects
+- `pythonnative.use_navigation()` — navigation handle (push/pop/get_args)
 - `pythonnative.use_memo(factory, deps)` — memoised values
 - `pythonnative.use_callback(fn, deps)` — stable function references
 - `pythonnative.use_ref(initial)` — mutable ref object
@@ -47,12 +48,12 @@ Function component primitives:
 
 - `pythonnative.utils.IS_ANDROID` — platform flag with robust detection for Chaquopy/Android.
 - `pythonnative.utils.get_android_context()` — returns the current Android `Activity`/`Context` when running on Android.
-- `pythonnative.utils.set_android_context(ctx)` — set by `Page` on Android; you generally don't call this directly.
+- `pythonnative.utils.set_android_context(ctx)` — set internally during page bootstrapping; you generally don't call this directly.
 - `pythonnative.utils.get_android_fragment_container()` — returns the current Fragment container `ViewGroup` used for page rendering.
 
 ## Reconciler
 
-`pythonnative.reconciler.Reconciler` — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by `Page`.
+`pythonnative.reconciler.Reconciler` — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by `create_page`.
 
 ## Hot reload
 

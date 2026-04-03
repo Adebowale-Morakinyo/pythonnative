@@ -1,11 +1,33 @@
-"""Unit tests for StyleSheet and theming."""
+"""Unit tests for StyleSheet, resolve_style, and theming."""
 
 from pythonnative.style import (
     DEFAULT_DARK_THEME,
     DEFAULT_LIGHT_THEME,
     StyleSheet,
     ThemeContext,
+    resolve_style,
 )
+
+
+def test_resolve_style_none() -> None:
+    assert resolve_style(None) == {}
+
+
+def test_resolve_style_dict() -> None:
+    result = resolve_style({"font_size": 20, "color": "#000"})
+    assert result == {"font_size": 20, "color": "#000"}
+
+
+def test_resolve_style_list() -> None:
+    base = {"font_size": 16, "color": "#000"}
+    override = {"color": "#FFF", "bold": True}
+    result = resolve_style([base, override])
+    assert result == {"font_size": 16, "color": "#FFF", "bold": True}
+
+
+def test_resolve_style_list_with_none_entries() -> None:
+    result = resolve_style([None, {"a": 1}, None, {"b": 2}])
+    assert result == {"a": 1, "b": 2}
 
 
 def test_stylesheet_create() -> None:

@@ -23,7 +23,7 @@ def test_cli_init_and_clean() -> None:
         assert os.path.isfile(main_page_path)
         with open(main_page_path, "r", encoding="utf-8") as f:
             content = f.read()
-        assert "class MainPage(" in content
+        assert "def MainPage(" in content
         assert os.path.isfile(os.path.join(tmpdir, "pythonnative.json"))
         assert os.path.isfile(os.path.join(tmpdir, "requirements.txt"))
         assert os.path.isfile(os.path.join(tmpdir, ".gitignore"))

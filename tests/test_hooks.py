@@ -5,7 +5,9 @@ from typing import Any, Dict, List
 from pythonnative.element import Element
 from pythonnative.hooks import (
     HookState,
+    NavigationHandle,
     Provider,
+    _NavigationContext,
     _set_hook_state,
     component,
     create_context,
@@ -13,6 +15,7 @@ from pythonnative.hooks import (
     use_context,
     use_effect,
     use_memo,
+    use_navigation,
     use_ref,
     use_state,
 )
@@ -431,3 +434,32 @@ def test_provider_in_reconciler() -> None:
     el = Provider(theme, "dark", themed())
     root = rec.mount(el)
     assert root.props["text"] == "dark"
+
+
+# ======================================================================
+# use_navigation
+# ======================================================================
+
+
+def test_use_navigation_reads_context() -> None:
+    class FakeHost:
+        def _get_nav_args(self) -> dict:
+            return {"id": 42}
+
+        def _push(self, page: Any, args: Any = None) -> None:
+            pass
+
+        def _pop(self) -> None:
+            pass
+
+    handle = NavigationHandle(FakeHost())
+    _NavigationContext._stack.append(handle)
+    hook_state = HookState()
+    _set_hook_state(hook_state)
+    try:
+        nav = use_navigation()
+        assert nav is handle
+        assert nav.get_args() == {"id": 42}
+    finally:
+        _set_hook_state(None)
+        _NavigationContext._stack.pop()

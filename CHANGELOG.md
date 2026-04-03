@@ -1,6 +1,51 @@
 # CHANGELOG
 
 
+## v0.6.0 (2026-04-03)
+
+### Build System
+
+- **deps**: Drop Python 3.9 support (EOL October 2025)
+  ([`552cd99`](https://github.com/pythonnative/pythonnative/commit/552cd9958c463a51af9e33f0e254dab18135130f))
+
+### Code Style
+
+- **cli**: Reformat pn.py for Black 2026 stable style
+  ([`298f884`](https://github.com/pythonnative/pythonnative/commit/298f884ce3e1c58a17c92484c5832ebae6f1beaa))
+
+### Continuous Integration
+
+- **workflows**: Add package build step to verify sdist and wheel before release
+  ([`7fbf9c0`](https://github.com/pythonnative/pythonnative/commit/7fbf9c07988d4c543253dec8ba28da42c38cc3a9))
+
+- **workflows,cli**: Fix e2e workflow script chaining and GitHub API auth
+  ([`01d1968`](https://github.com/pythonnative/pythonnative/commit/01d19683f41a4b00048dfbce687e510bec2e2d31))
+
+### Documentation
+
+- Align branch prefixes with conventional commit types
+  ([`c6e0e08`](https://github.com/pythonnative/pythonnative/commit/c6e0e08cb0757dad6495c6fee36063699afba87a))
+
+- **repo**: Align conventional commit scopes with module structure
+  ([`ecc39af`](https://github.com/pythonnative/pythonnative/commit/ecc39af78708bc5a83ba81501c7b65d985890de9))
+
+- **repo**: Remove component table from README
+  ([`ab162c5`](https://github.com/pythonnative/pythonnative/commit/ab162c5b658b2367857ab998d3b3f750eca15b4a))
+
+### Features
+
+- Add function components, hooks, layout, styling, hot reload, native APIs, and new UI components
+  ([`3bd87de`](https://github.com/pythonnative/pythonnative/commit/3bd87de4a8775e23eb4f081a31b9125f9b20861c))
+
+- **cli,templates**: Add pythonVersion config, fix Android build, and wire pip requirements
+  ([`a529834`](https://github.com/pythonnative/pythonnative/commit/a529834a7bfe817a51ef2a5846c97c2f4deee321))
+
+### Testing
+
+- Increase app startup wait for slow CI emulators
+  ([`4ff6b94`](https://github.com/pythonnative/pythonnative/commit/4ff6b9453a7687eeaf7777bf4a2ab542b32a7e25))
+
+
 ## v0.5.0 (2026-03-31)
 
 ### Continuous Integration

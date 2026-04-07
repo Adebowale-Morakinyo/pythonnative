@@ -170,8 +170,9 @@ def test_declarative_handle_go_back_stops_at_root() -> None:
     handle = _DeclarativeNavHandle({}, lambda: stack, set_stack)
     handle.go_back()
 
-    assert len(captured[-1]) == 1
-    assert captured[-1][0].name == "Home"
+    assert captured == []
+    assert len(stack) == 1
+    assert stack[0].name == "Home"
 
 
 def test_declarative_handle_get_params() -> None:
@@ -473,7 +474,7 @@ def test_tab_navigator_renders_initial_screen() -> None:
     assert "home" in texts
 
 
-def test_tab_navigator_renders_tab_bar_buttons() -> None:
+def test_tab_navigator_renders_native_tab_bar() -> None:
     Tab = create_tab_navigator()
 
     @component
@@ -494,17 +495,23 @@ def test_tab_navigator_renders_tab_bar_buttons() -> None:
     )
     root = rec.mount(el)
 
-    def find_buttons(view: MockView) -> list:
-        result = []
-        if view.type_name == "Button":
-            result.append(view.props.get("title"))
+    def find_tab_bar(view: MockView) -> Any:
+        if view.type_name == "TabBar":
+            return view
         for c in view.children:
-            result.extend(find_buttons(c))
-        return result
+            r = find_tab_bar(c)
+            if r is not None:
+                return r
+        return None
 
-    buttons = find_buttons(root)
-    assert "Tab A" in buttons
-    assert "Tab B" in buttons
+    tab_bar = find_tab_bar(root)
+    assert tab_bar is not None
+    assert tab_bar.props["items"] == [
+        {"name": "TabA", "title": "Tab A"},
+        {"name": "TabB", "title": "Tab B"},
+    ]
+    assert tab_bar.props["active_tab"] == "TabA"
+    assert callable(tab_bar.props["on_tab_select"])
 
 
 def test_tab_navigator_empty_screens() -> None:
@@ -696,6 +703,131 @@ def test_stack_navigator_with_navigation_container() -> None:
     el = NavigationContainer(Stack.Navigator(Stack.Screen("Home", component=HomeScreen)))
     root = rec.mount(el)
     assert root.type_name == "View"
+
+
+# ======================================================================
+# Parent forwarding (nested navigators)
+# ======================================================================
+
+
+def test_declarative_handle_forwards_navigate_to_parent() -> None:
+    """Unknown routes in a child navigator forward to the parent."""
+    parent_calls: list = []
+
+    class _MockParent:
+        def navigate(self, route_name: str, params: Any = None) -> None:
+            parent_calls.append(("navigate", route_name, params))
+
+        def go_back(self) -> None:
+            parent_calls.append(("go_back",))
+
+    child_screens = {"A": _ScreenDef("A", lambda: None)}
+    handle = _DeclarativeNavHandle(child_screens, lambda: [_RouteEntry("A")], lambda _: None, parent=_MockParent())
+
+    handle.navigate("UnknownRoute", {"key": "value"})
+    assert parent_calls == [("navigate", "UnknownRoute", {"key": "value"})]
+
+
+def test_declarative_handle_forwards_go_back_at_root() -> None:
+    """go_back at the root of a child navigator forwards to the parent."""
+    parent_calls: list = []
+
+    class _MockParent:
+        def navigate(self, route_name: str, params: Any = None) -> None:
+            parent_calls.append(("navigate", route_name))
+
+        def go_back(self) -> None:
+            parent_calls.append(("go_back",))
+
+    child_screens = {"A": _ScreenDef("A", lambda: None)}
+    stack: List[_RouteEntry] = [_RouteEntry("A")]
+    handle = _DeclarativeNavHandle(child_screens, lambda: stack, lambda _: None, parent=_MockParent())
+
+    handle.go_back()
+    assert parent_calls == [("go_back",)]
+
+
+def test_declarative_handle_no_parent_raises_on_unknown() -> None:
+    """Without a parent, unknown routes still raise ValueError."""
+    handle = _DeclarativeNavHandle({"A": _ScreenDef("A", lambda: None)}, lambda: [], lambda _: None)
+    with pytest.raises(ValueError, match="Unknown route"):
+        handle.navigate("Missing")
+
+
+def test_tab_handle_forwards_unknown_to_parent() -> None:
+    parent_calls: list = []
+
+    class _MockParent:
+        def navigate(self, route_name: str, params: Any = None) -> None:
+            parent_calls.append(("navigate", route_name, params))
+
+        def go_back(self) -> None:
+            parent_calls.append(("go_back",))
+
+    screens = {"TabA": _ScreenDef("TabA", lambda: None)}
+
+    def noop_switch(name: str, params: Any = None) -> None:
+        pass
+
+    handle = _TabNavHandle(screens, lambda: [], lambda _: None, noop_switch, parent=_MockParent())
+    handle.navigate("ExternalRoute", {"x": 1})
+    assert parent_calls == [("navigate", "ExternalRoute", {"x": 1})]
+
+
+def test_drawer_handle_forwards_unknown_to_parent() -> None:
+    parent_calls: list = []
+
+    class _MockParent:
+        def navigate(self, route_name: str, params: Any = None) -> None:
+            parent_calls.append(("navigate", route_name, params))
+
+        def go_back(self) -> None:
+            parent_calls.append(("go_back",))
+
+    screens = {"DrawerA": _ScreenDef("DrawerA", lambda: None)}
+
+    def noop_switch(n: str, p: Any = None) -> None:
+        pass
+
+    handle = _DrawerNavHandle(
+        screens, lambda: [], lambda _: None, noop_switch, lambda _: None, lambda: False, parent=_MockParent()
+    )
+    handle.navigate("ExternalRoute")
+    assert parent_calls == [("navigate", "ExternalRoute", None)]
+
+
+def test_stack_inside_tab_forwards_to_parent() -> None:
+    """A Stack.Navigator nested inside a Tab.Navigator can forward."""
+    Stack = create_stack_navigator()
+    Tab = create_tab_navigator()
+
+    captured_nav: list = [None]
+
+    @component
+    def InnerScreen() -> Element:
+        nav = use_navigation()
+        captured_nav[0] = nav
+        return Element("Text", {"text": "inner"}, [])
+
+    @component
+    def InnerStack() -> Element:
+        return Stack.Navigator(Stack.Screen("Inner", component=InnerScreen))
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec._page_re_render = lambda: None
+
+    el = Tab.Navigator(
+        Tab.Screen("TabA", component=InnerStack),
+        Tab.Screen("TabB", component=lambda: Element("Text", {"text": "b"}, [])),
+    )
+    rec.mount(el)
+
+    nav = captured_nav[0]
+    assert nav is not None
+
+    nav.navigate("TabB")
+    assert True  # no error means forwarding worked
 
 
 # ======================================================================

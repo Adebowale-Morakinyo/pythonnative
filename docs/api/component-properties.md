@@ -176,6 +176,30 @@ pn.Modal(*children, visible=show_modal, on_dismiss=handler, title="Confirm",
 
 Overlay dialog shown when `visible=True`.
 
+## TabBar
+
+```python
+pn.Element("TabBar", {
+    "items": [
+        {"name": "Home", "title": "Home"},
+        {"name": "Settings", "title": "Settings"},
+    ],
+    "active_tab": "Home",
+    "on_tab_select": handler,
+})
+```
+
+Native tab bar — typically created automatically by `Tab.Navigator`.
+
+| Platform | Native view              |
+|----------|--------------------------|
+| Android  | `BottomNavigationView`   |
+| iOS      | `UITabBar`               |
+
+- `items` — list of `{"name": str, "title": str}` dicts defining each tab
+- `active_tab` — the `name` of the currently active tab
+- `on_tab_select` — callback `(str) -> None` receiving the selected tab name
+
 ## FlatList
 
 ```python

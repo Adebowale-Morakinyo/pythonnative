@@ -1,9 +1,11 @@
 import emoji
 
 import pythonnative as pn
+from pythonnative.navigation import NavigationContainer, create_tab_navigator
 
 MEDALS = [":1st_place_medal:", ":2nd_place_medal:", ":3rd_place_medal:"]
 
+Tab = create_tab_navigator()
 
 styles = pn.StyleSheet.create(
     title={"font_size": 24, "bold": True},
@@ -39,7 +41,8 @@ def counter_badge(initial: int = 0) -> pn.Element:
 
 
 @pn.component
-def MainPage() -> pn.Element:
+def HomeTab() -> pn.Element:
+    """Home tab — counter demo and push-navigation to other pages."""
     nav = pn.use_navigation()
     return pn.ScrollView(
         pn.Column(
@@ -53,5 +56,31 @@ def MainPage() -> pn.Element:
                 ),
             ),
             style=styles["section"],
+        )
+    )
+
+
+@pn.component
+def SettingsTab() -> pn.Element:
+    """Settings tab — simple placeholder content."""
+    return pn.ScrollView(
+        pn.Column(
+            pn.Text("Settings", style=styles["title"]),
+            pn.Text("App version: 0.7.0", style=styles["subtitle"]),
+            pn.Text(
+                "This tab uses a native UITabBar on iOS " "and BottomNavigationView on Android.",
+                style=styles["subtitle"],
+            ),
+            style=styles["section"],
+        )
+    )
+
+
+@pn.component
+def MainPage() -> pn.Element:
+    return NavigationContainer(
+        Tab.Navigator(
+            Tab.Screen("Home", component=HomeTab, options={"title": "Home"}),
+            Tab.Screen("Settings", component=SettingsTab, options={"title": "Settings"}),
         )
     )

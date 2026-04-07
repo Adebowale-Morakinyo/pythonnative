@@ -531,3 +531,34 @@ def test_effect_cleanup_runs_on_rerun() -> None:
 
     rec.reconcile(my_comp(dep=2))
     assert log == ["run-1", "cleanup-1", "run-2"]
+
+
+def test_provider_child_native_view_swap() -> None:
+    """When a Provider wraps different component types across renders,
+    the parent native container must swap the old native subview for the new one."""
+    from pythonnative.hooks import Provider, create_context
+
+    ctx = create_context(None)
+
+    @component
+    def CompA() -> Element:
+        return Element("Text", {"text": "A"}, [])
+
+    @component
+    def CompB() -> Element:
+        return Element("Text", {"text": "B"}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    tree1 = Element("View", {}, [Provider(ctx, "v1", CompA())])
+    root = rec.mount(tree1)
+    assert len(root.children) == 1
+    assert root.children[0].props["text"] == "A"
+    old_child_id = root.children[0].id
+
+    tree2 = Element("View", {}, [Provider(ctx, "v2", CompB())])
+    rec.reconcile(tree2)
+    assert len(root.children) == 1
+    assert root.children[0].props["text"] == "B"
+    assert root.children[0].id != old_child_id

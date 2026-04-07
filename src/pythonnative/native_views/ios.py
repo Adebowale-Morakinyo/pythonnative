@@ -7,6 +7,7 @@ This module is only imported on iOS at runtime; desktop tests inject
 a mock registry via :func:`~.set_registry` and never trigger this import.
 """
 
+import ctypes as _ct
 from typing import Any, Callable, Dict, Optional
 
 from rubicon.objc import SEL, ObjCClass, objc_method
@@ -563,6 +564,175 @@ class SliderHandler(ViewHandler):
                 sl.addTarget_action_forControlEvents_(handler, SEL("onSlide:"), 1 << 12)
 
 
+_pn_tabbar_state: dict = {"callback": None, "items": []}
+_pn_tabbar_delegate_installed: bool = False
+_pn_tabbar_delegate_ptr: Any = None
+
+# ---------------------------------------------------------------------------
+# UITabBar delegate via raw ctypes
+#
+# rubicon-objc's @objc_method crashes (SIGSEGV in PyObject_GetAttr) when
+# UIKit invokes the delegate through the FFI closure — the reconstructed
+# Python wrappers for ``self`` or ``item`` end up with ob_type == NULL.
+#
+# We sidestep rubicon-objc entirely: create a minimal ObjC class with
+# libobjc, register a CFUNCTYPE IMP for tabBar:didSelectItem:, and use
+# objc_msgSend to read ``item.tag`` from the raw pointer.
+# ---------------------------------------------------------------------------
+
+_libobjc = _ct.cdll.LoadLibrary("libobjc.A.dylib")
+
+_sel_reg = _libobjc.sel_registerName
+_sel_reg.restype = _ct.c_void_p
+_sel_reg.argtypes = [_ct.c_char_p]
+
+_get_cls = _libobjc.objc_getClass
+_get_cls.restype = _ct.c_void_p
+_get_cls.argtypes = [_ct.c_char_p]
+
+_alloc_cls = _libobjc.objc_allocateClassPair
+_alloc_cls.restype = _ct.c_void_p
+_alloc_cls.argtypes = [_ct.c_void_p, _ct.c_char_p, _ct.c_size_t]
+
+_reg_cls = _libobjc.objc_registerClassPair
+_reg_cls.argtypes = [_ct.c_void_p]
+
+_add_method = _libobjc.class_addMethod
+_add_method.restype = _ct.c_bool
+_add_method.argtypes = [_ct.c_void_p, _ct.c_void_p, _ct.c_void_p, _ct.c_char_p]
+
+_objc_msgSend = _libobjc.objc_msgSend
+
+# Pre-register selectors used in the raw delegate path
+_SEL_ALLOC = _sel_reg(b"alloc")
+_SEL_INIT = _sel_reg(b"init")
+_SEL_RETAIN = _sel_reg(b"retain")
+_SEL_SET_DELEGATE = _sel_reg(b"setDelegate:")
+_SEL_TAG = _sel_reg(b"tag")
+
+# IMP type: void (id self, SEL _cmd, id tabBar, id item)
+_DELEGATE_IMP_TYPE = _ct.CFUNCTYPE(None, _ct.c_void_p, _ct.c_void_p, _ct.c_void_p, _ct.c_void_p)
+
+
+def _tabbar_did_select_imp(self_ptr: int, cmd_ptr: int, tabbar_ptr: int, item_ptr: int) -> None:
+    """Raw C callback for ``tabBar:didSelectItem:``."""
+    try:
+        _objc_msgSend.restype = _ct.c_long
+        _objc_msgSend.argtypes = [_ct.c_void_p, _ct.c_void_p]
+        tag: int = _objc_msgSend(item_ptr, _SEL_TAG)
+
+        cb = _pn_tabbar_state["callback"]
+        tab_items = _pn_tabbar_state["items"]
+        if cb is not None and tab_items and 0 <= tag < len(tab_items):
+            cb(tab_items[tag].get("name", ""))
+    except Exception:
+        pass
+
+
+# prevent GC of the C callback
+_tabbar_imp_ref = _DELEGATE_IMP_TYPE(_tabbar_did_select_imp)
+
+# Create and register a minimal ObjC class for the delegate
+_NS_OBJECT_CLS = _get_cls(b"NSObject")
+_PN_DELEGATE_CLS = _alloc_cls(_NS_OBJECT_CLS, b"_PNTabBarDelegateCTypes", 0)
+if _PN_DELEGATE_CLS:
+    _add_method(
+        _PN_DELEGATE_CLS,
+        _sel_reg(b"tabBar:didSelectItem:"),
+        _ct.cast(_tabbar_imp_ref, _ct.c_void_p),
+        b"v@:@@",
+    )
+    _reg_cls(_PN_DELEGATE_CLS)
+
+
+def _ensure_tabbar_delegate(tab_bar: Any) -> None:
+    """Create the singleton delegate (if needed) and assign it to *tab_bar*."""
+    global _pn_tabbar_delegate_ptr
+    if _pn_tabbar_delegate_ptr is None and _PN_DELEGATE_CLS:
+        _objc_msgSend.restype = _ct.c_void_p
+        _objc_msgSend.argtypes = [_ct.c_void_p, _ct.c_void_p]
+        raw = _objc_msgSend(_PN_DELEGATE_CLS, _SEL_ALLOC)
+        raw = _objc_msgSend(raw, _SEL_INIT)
+        raw = _objc_msgSend(raw, _SEL_RETAIN)
+        _pn_tabbar_delegate_ptr = raw
+
+    if _pn_tabbar_delegate_ptr is not None:
+        _objc_msgSend.restype = None
+        _objc_msgSend.argtypes = [_ct.c_void_p, _ct.c_void_p, _ct.c_void_p]
+        tab_bar_ptr = tab_bar.ptr if hasattr(tab_bar, "ptr") else tab_bar
+        _objc_msgSend(tab_bar_ptr, _SEL_SET_DELEGATE, _pn_tabbar_delegate_ptr)
+
+
+class TabBarHandler(ViewHandler):
+    """Native tab bar using ``UITabBar``.
+
+    Each tab is a ``UITabBarItem`` with a ``tag`` matching its index
+    in the items list.  A raw ctypes delegate forwards selection
+    events back to the Python ``on_tab_select`` callback.
+    """
+
+    def create(self, props: Dict[str, Any]) -> Any:
+        tab_bar = ObjCClass("UITabBar").alloc().initWithFrame_(((0, 0), (0, 49)))
+        tab_bar.retain()
+        _pn_retained_views.append(tab_bar)
+        self._apply_full(tab_bar, props)
+        _apply_ios_layout(tab_bar, props)
+        return tab_bar
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        self._apply_partial(native_view, changed)
+        if changed.keys() & LAYOUT_KEYS:
+            _apply_ios_layout(native_view, changed)
+
+    def _apply_full(self, tab_bar: Any, props: Dict[str, Any]) -> None:
+        items = props.get("items", [])
+        self._set_bar_items(tab_bar, items)
+        self._set_active(tab_bar, props.get("active_tab"), items)
+        self._set_callback(tab_bar, props.get("on_tab_select"), items)
+
+    def _apply_partial(self, tab_bar: Any, changed: Dict[str, Any]) -> None:
+        prev_items = _pn_tabbar_state["items"]
+
+        if "items" in changed:
+            items = changed["items"]
+            self._set_bar_items(tab_bar, items)
+        else:
+            items = prev_items
+
+        if "active_tab" in changed:
+            self._set_active(tab_bar, changed["active_tab"], items)
+
+        if "on_tab_select" in changed:
+            self._set_callback(tab_bar, changed["on_tab_select"], items)
+
+    def _set_bar_items(self, tab_bar: Any, items: list) -> None:
+        UITabBarItem = ObjCClass("UITabBarItem")
+        bar_items = []
+        for i, item in enumerate(items):
+            title = item.get("title", item.get("name", ""))
+            bar_item = UITabBarItem.alloc().initWithTitle_image_tag_(str(title), None, i)
+            bar_items.append(bar_item)
+        tab_bar.setItems_animated_(bar_items, False)
+
+    def _set_active(self, tab_bar: Any, active: Any, items: list) -> None:
+        if not active or not items:
+            return
+        for i, item in enumerate(items):
+            if item.get("name") == active:
+                try:
+                    all_items = list(tab_bar.items or [])
+                    if i < len(all_items):
+                        tab_bar.setSelectedItem_(all_items[i])
+                except Exception:
+                    pass
+                break
+
+    def _set_callback(self, tab_bar: Any, cb: Any, items: list) -> None:
+        _pn_tabbar_state["callback"] = cb
+        _pn_tabbar_state["items"] = items
+        _ensure_tabbar_delegate(tab_bar)
+
+
 class PressableHandler(ViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         v = ObjCClass("UIView").alloc().init()
@@ -603,4 +773,5 @@ def register_handlers(registry: Any) -> None:
     registry.register("SafeAreaView", SafeAreaViewHandler())
     registry.register("Modal", ModalHandler())
     registry.register("Slider", SliderHandler())
+    registry.register("TabBar", TabBarHandler())
     registry.register("Pressable", PressableHandler())

@@ -287,7 +287,11 @@ class Reconciler:
                     self.backend.insert_child(parent.native_view, node.native_view, parent_type, i)
                 new_child_nodes.append(node)
             else:
+                old_native = matched.native_view
                 updated = self._reconcile_node(matched, new_el)
+                if is_native and updated.native_view is not old_native:
+                    self.backend.remove_child(parent.native_view, old_native, parent_type)
+                    self.backend.insert_child(parent.native_view, updated.native_view, parent_type, i)
                 new_child_nodes.append(updated)
 
         # Destroy unused old nodes

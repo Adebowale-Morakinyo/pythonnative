@@ -618,6 +618,148 @@ class SliderHandler(ViewHandler):
             sb.setOnSeekBarChangeListener(SeekProxy(cb, min_val, rng))
 
 
+_android_tabbar_state: dict = {"callback": None, "items": []}
+
+
+class TabBarHandler(ViewHandler):
+    """Native tab bar using ``BottomNavigationView`` from Material Components.
+
+    Falls back to a horizontal ``LinearLayout`` with ``Button`` children
+    when Material Components is unavailable.
+    """
+
+    _is_material: bool = True
+
+    def create(self, props: Dict[str, Any]) -> Any:
+        try:
+            bnv = jclass("com.google.android.material.bottomnavigation.BottomNavigationView")(_ctx())
+            bnv.setBackgroundColor(parse_color_int("#FFFFFF"))
+            ViewGroupLP = jclass("android.view.ViewGroup$LayoutParams")
+            LayoutParams = jclass("android.widget.LinearLayout$LayoutParams")
+            lp = LayoutParams(ViewGroupLP.MATCH_PARENT, ViewGroupLP.WRAP_CONTENT)
+            bnv.setLayoutParams(lp)
+            self._is_material = True
+            self._apply_full(bnv, props)
+            return bnv
+        except Exception:
+            self._is_material = False
+            return self._create_fallback(props)
+
+    def _create_fallback(self, props: Dict[str, Any]) -> Any:
+        """Horizontal LinearLayout with Button children as a tab-bar fallback."""
+        LinearLayout = jclass("android.widget.LinearLayout")
+        ll = LinearLayout(_ctx())
+        ll.setOrientation(LinearLayout.HORIZONTAL)
+        ll.setBackgroundColor(parse_color_int("#F8F8F8"))
+        self._apply_fallback(ll, props)
+        return ll
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        if self._is_material:
+            self._apply_partial(native_view, changed)
+        else:
+            self._apply_fallback(native_view, changed)
+
+    def _apply_full(self, bnv: Any, props: Dict[str, Any]) -> None:
+        """Initial creation — all props are present."""
+        items = props.get("items", [])
+        self._set_menu(bnv, items)
+        self._set_active(bnv, props.get("active_tab"), items)
+        cb = props.get("on_tab_select")
+        if cb is not None:
+            self._set_listener(bnv, cb, items)
+
+    def _apply_partial(self, bnv: Any, changed: Dict[str, Any]) -> None:
+        """Reconciler update — only changed props are present."""
+        prev_items = _android_tabbar_state["items"]
+
+        if "items" in changed:
+            items = changed["items"]
+            self._set_menu(bnv, items)
+        else:
+            items = prev_items
+
+        if "active_tab" in changed:
+            self._set_active(bnv, changed["active_tab"], items)
+
+        if "on_tab_select" in changed:
+            cb = changed["on_tab_select"]
+            if cb is not None:
+                self._set_listener(bnv, cb, items)
+
+    def _set_menu(self, bnv: Any, items: list) -> None:
+        _android_tabbar_state["items"] = items
+        try:
+            menu = bnv.getMenu()
+            menu.clear()
+            for i, item in enumerate(items):
+                title = item.get("title", item.get("name", ""))
+                menu.add(0, i, i, str(title))
+        except Exception:
+            pass
+
+    def _set_active(self, bnv: Any, active: Any, items: list) -> None:
+        if active and items:
+            for i, item in enumerate(items):
+                if item.get("name") == active:
+                    try:
+                        bnv.setSelectedItemId(i)
+                    except Exception:
+                        pass
+                    break
+
+    def _set_listener(self, bnv: Any, cb: Callable, items: list) -> None:
+        _android_tabbar_state["callback"] = cb
+        _android_tabbar_state["items"] = items
+        try:
+            listener_cls = jclass("com.google.android.material.navigation.NavigationBarView$OnItemSelectedListener")
+
+            class _TabSelectProxy(dynamic_proxy(listener_cls)):
+                def __init__(self, callback: Callable, tab_items: list) -> None:
+                    super().__init__()
+                    self.callback = callback
+                    self.tab_items = tab_items
+
+                def onNavigationItemSelected(self, menu_item: Any) -> bool:
+                    idx = menu_item.getItemId()
+                    if 0 <= idx < len(self.tab_items):
+                        self.callback(self.tab_items[idx].get("name", ""))
+                    return True
+
+            bnv.setOnItemSelectedListener(_TabSelectProxy(cb, items))
+        except Exception:
+            pass
+
+    def _apply_fallback(self, ll: Any, props: Dict[str, Any]) -> None:
+        items = props.get("items", [])
+        active = props.get("active_tab")
+        cb = props.get("on_tab_select")
+        if "items" in props:
+            ll.removeAllViews()
+            for item in items:
+                name = item.get("name", "")
+                title = item.get("title", name)
+                btn = jclass("android.widget.Button")(_ctx())
+                btn.setText(str(title))
+                btn.setEnabled(name != active)
+                if cb is not None:
+                    tab_name = name
+
+                    def _make_click(n: str) -> Callable[[], None]:
+                        return lambda: cb(n)
+
+                    class _ClickProxy(dynamic_proxy(jclass("android.view.View").OnClickListener)):
+                        def __init__(self, callback: Callable[[], None]) -> None:
+                            super().__init__()
+                            self.callback = callback
+
+                        def onClick(self, view: Any) -> None:
+                            self.callback()
+
+                    btn.setOnClickListener(_ClickProxy(_make_click(tab_name)))
+                ll.addView(btn)
+
+
 class PressableHandler(ViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         fl = jclass("android.widget.FrameLayout")(_ctx())
@@ -686,4 +828,5 @@ def register_handlers(registry: Any) -> None:
     registry.register("SafeAreaView", SafeAreaViewHandler())
     registry.register("Modal", ModalHandler())
     registry.register("Slider", SliderHandler())
+    registry.register("TabBar", TabBarHandler())
     registry.register("Pressable", PressableHandler())

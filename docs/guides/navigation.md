@@ -3,7 +3,7 @@
 PythonNative offers two approaches to navigation:
 
 1. **Declarative navigators** (recommended) — component-based, inspired by React Navigation
-2. **Legacy push/pop** — imperative navigation via `use_navigation()`
+2. **Page-level push/pop** — imperative navigation via `use_navigation()` (for native page transitions)
 
 ## Declarative Navigation
 
@@ -54,7 +54,9 @@ def DetailScreen():
 
 ### Tab Navigator
 
-A tab navigator renders a tab bar and switches between screens.
+A tab navigator renders a **native tab bar** and switches between screens.
+On Android the tab bar is a `BottomNavigationView` from Material Components;
+on iOS it is a `UITabBar`.
 
 ```python
 from pythonnative.navigation import create_tab_navigator
@@ -70,6 +72,13 @@ def App():
         )
     )
 ```
+
+The tab bar emits a `TabBar` element that maps to platform-native views:
+
+| Platform | Native view                  |
+|----------|------------------------------|
+| Android  | `BottomNavigationView`       |
+| iOS      | `UITabBar`                   |
 
 ### Drawer Navigator
 
@@ -100,7 +109,10 @@ def HomeScreen():
 
 ### Nesting Navigators
 
-Navigators can be nested — for example, tabs containing stacks:
+Navigators can be nested — for example, tabs containing stacks.
+When a child navigator receives a `navigate()` call for an unknown route,
+it automatically **forwards** the request to its parent navigator.
+Similarly, `go_back()` at the root of a child stack forwards to the parent.
 
 ```python
 Stack = create_stack_navigator()
@@ -122,6 +134,9 @@ def App():
         )
     )
 ```
+
+Inside `FeedScreen`, calling `nav.navigate("Settings")` will forward to the
+parent tab navigator and switch to the Settings tab.
 
 ## NavigationHandle API
 

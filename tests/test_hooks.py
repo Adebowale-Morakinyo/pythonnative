@@ -9,6 +9,7 @@ from pythonnative.hooks import (
     Provider,
     _NavigationContext,
     _set_hook_state,
+    batch_updates,
     component,
     create_context,
     use_callback,
@@ -16,6 +17,7 @@ from pythonnative.hooks import (
     use_effect,
     use_memo,
     use_navigation,
+    use_reducer,
     use_ref,
     use_state,
 )
@@ -115,37 +117,156 @@ def test_use_state_setter_functional_update() -> None:
 
 
 # ======================================================================
-# use_effect
+# use_reducer
 # ======================================================================
 
 
-def test_use_effect_runs_on_mount() -> None:
+def test_use_reducer_returns_initial_state() -> None:
+    def reducer(state: int, action: str) -> int:
+        return state
+
+    ctx = HookState()
+    _set_hook_state(ctx)
+    try:
+        state, dispatch = use_reducer(reducer, 42)
+        assert state == 42
+    finally:
+        _set_hook_state(None)
+
+
+def test_use_reducer_lazy_initial_state() -> None:
+    def reducer(state: int, action: str) -> int:
+        return state
+
+    ctx = HookState()
+    _set_hook_state(ctx)
+    try:
+        state, _ = use_reducer(reducer, lambda: 99)
+        assert state == 99
+    finally:
+        _set_hook_state(None)
+
+
+def test_use_reducer_dispatch_triggers_render() -> None:
+    renders: list = []
+
+    def reducer(state: int, action: str) -> int:
+        if action == "increment":
+            return state + 1
+        if action == "reset":
+            return 0
+        return state
+
+    ctx = HookState()
+    ctx._trigger_render = lambda: renders.append(1)
+    _set_hook_state(ctx)
+    try:
+        state, dispatch = use_reducer(reducer, 0)
+        dispatch("increment")
+        assert ctx.states[0] == 1
+        assert len(renders) == 1
+        dispatch("increment")
+        assert ctx.states[0] == 2
+        assert len(renders) == 2
+        dispatch("reset")
+        assert ctx.states[0] == 0
+        assert len(renders) == 3
+    finally:
+        _set_hook_state(None)
+
+
+def test_use_reducer_no_render_on_same_state() -> None:
+    renders: list = []
+
+    def reducer(state: int, action: str) -> int:
+        return state
+
+    ctx = HookState()
+    ctx._trigger_render = lambda: renders.append(1)
+    _set_hook_state(ctx)
+    try:
+        _, dispatch = use_reducer(reducer, 5)
+        dispatch("noop")
+        assert len(renders) == 0
+    finally:
+        _set_hook_state(None)
+
+
+def test_use_reducer_in_reconciler() -> None:
+    captured_dispatch: list = [None]
+
+    def reducer(state: int, action: str) -> int:
+        if action == "increment":
+            return state + 1
+        return state
+
+    @component
+    def counter() -> Element:
+        count, dispatch = use_reducer(reducer, 0)
+        captured_dispatch[0] = dispatch
+        return Element("Text", {"text": str(count)}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    re_rendered: list = []
+    rec._page_re_render = lambda: re_rendered.append(1)
+
+    root = rec.mount(counter())
+    assert root.props["text"] == "0"
+
+    dispatch_fn = captured_dispatch[0]
+    assert dispatch_fn is not None
+    dispatch_fn("increment")
+    assert len(re_rendered) == 1
+
+
+# ======================================================================
+# use_effect (deferred execution)
+# ======================================================================
+
+
+def test_use_effect_is_deferred() -> None:
+    """Effects are queued during render, not run immediately."""
     calls: list = []
     ctx = HookState()
     _set_hook_state(ctx)
     try:
         use_effect(lambda: calls.append("mounted"), [])
-        assert calls == ["mounted"]
+        assert calls == [], "Effect should NOT run during render"
     finally:
         _set_hook_state(None)
+
+    ctx.flush_pending_effects()
+    assert calls == ["mounted"], "Effect should run after flush"
 
 
 def test_use_effect_cleanup_on_rerun() -> None:
     cleanups: list = []
+
+    def make_effect(label: str):  # type: ignore[no-untyped-def]
+        def effect() -> Any:
+            return lambda: cleanups.append(label)
+
+        return effect
+
     ctx = HookState()
 
     _set_hook_state(ctx)
     try:
-        use_effect(lambda: cleanups.append, None)
+        use_effect(make_effect("first"), None)
     finally:
         _set_hook_state(None)
+    ctx.flush_pending_effects()
 
     ctx.reset_index()
     _set_hook_state(ctx)
     try:
-        use_effect(lambda: cleanups.append, None)
+        use_effect(make_effect("second"), None)
     finally:
         _set_hook_state(None)
+    ctx.flush_pending_effects()
+
+    assert "first" in cleanups
 
 
 def test_use_effect_skips_with_same_deps() -> None:
@@ -157,6 +278,7 @@ def test_use_effect_skips_with_same_deps() -> None:
         use_effect(lambda: calls.append("run"), [1, 2])
     finally:
         _set_hook_state(None)
+    ctx.flush_pending_effects()
 
     ctx.reset_index()
     _set_hook_state(ctx)
@@ -164,8 +286,120 @@ def test_use_effect_skips_with_same_deps() -> None:
         use_effect(lambda: calls.append("run"), [1, 2])
     finally:
         _set_hook_state(None)
+    ctx.flush_pending_effects()
 
     assert calls == ["run"]
+
+
+def test_use_effect_runs_after_reconciler_mount() -> None:
+    """Effects run automatically after Reconciler.mount() completes."""
+    calls: list = []
+
+    @component
+    def my_comp() -> Element:
+        use_effect(lambda: calls.append("effect"), [])
+        return Element("Text", {"text": "hi"}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.mount(my_comp())
+    assert calls == ["effect"]
+
+
+def test_use_effect_runs_after_reconciler_reconcile() -> None:
+    """Effects run automatically after Reconciler.reconcile() completes."""
+    calls: list = []
+
+    @component
+    def my_comp(dep: int = 0) -> Element:
+        use_effect(lambda: calls.append(f"effect-{dep}"), [dep])
+        return Element("Text", {"text": str(dep)}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.mount(my_comp(dep=0))
+    assert calls == ["effect-0"]
+
+    rec.reconcile(my_comp(dep=1))
+    assert calls == ["effect-0", "effect-1"]
+
+
+def test_use_effect_cleanup_on_unmount() -> None:
+    """Cleanup functions run when component is destroyed."""
+    cleanups: list = []
+    ctx = HookState()
+
+    _set_hook_state(ctx)
+    try:
+        use_effect(lambda: (lambda: cleanups.append("cleaned")), [])
+    finally:
+        _set_hook_state(None)
+    ctx.flush_pending_effects()
+
+    assert cleanups == []
+    ctx.cleanup_all_effects()
+    assert cleanups == ["cleaned"]
+
+
+# ======================================================================
+# batch_updates
+# ======================================================================
+
+
+def test_batch_updates_defers_render() -> None:
+    renders: list = []
+    ctx = HookState()
+    ctx._trigger_render = lambda: renders.append(1)
+    _set_hook_state(ctx)
+    try:
+        _, set_a = use_state(0)
+        _, set_b = use_state(0)
+    finally:
+        _set_hook_state(None)
+
+    with batch_updates():
+        set_a(1)
+        set_b(2)
+        assert len(renders) == 0, "Render should be deferred inside batch"
+
+    assert len(renders) == 1, "Exactly one render after batch exits"
+
+
+def test_batch_updates_nested() -> None:
+    renders: list = []
+    ctx = HookState()
+    ctx._trigger_render = lambda: renders.append(1)
+    _set_hook_state(ctx)
+    try:
+        _, set_a = use_state(0)
+        _, set_b = use_state(0)
+    finally:
+        _set_hook_state(None)
+
+    with batch_updates():
+        set_a(1)
+        with batch_updates():
+            set_b(2)
+            assert len(renders) == 0
+        assert len(renders) == 0, "Nested batch should not trigger render"
+
+    assert len(renders) == 1
+
+
+def test_batch_updates_no_render_when_unchanged() -> None:
+    renders: list = []
+    ctx = HookState()
+    ctx._trigger_render = lambda: renders.append(1)
+    _set_hook_state(ctx)
+    try:
+        _, set_a = use_state(5)
+    finally:
+        _set_hook_state(None)
+
+    with batch_updates():
+        set_a(5)
+
+    assert len(renders) == 0
 
 
 # ======================================================================

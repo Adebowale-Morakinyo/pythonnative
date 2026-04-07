@@ -5,23 +5,34 @@ PythonNative combines **direct native bindings** with a **declarative reconciler
 ## High-level model
 
 1. **Declarative element tree:** Your `@pn.component` function returns a tree of `Element` descriptors (similar to React elements / virtual DOM nodes).
-2. **Function components and hooks:** All UI is built with `@pn.component` functions using `use_state`, `use_effect`, `use_navigation`, etc. — inspired by React hooks but designed for Python.
+2. **Function components and hooks:** All UI is built with `@pn.component` functions using `use_state`, `use_reducer`, `use_effect`, `use_navigation`, etc. — inspired by React hooks but designed for Python.
 3. **Reconciler:** On first render, the reconciler walks the tree and creates real native views via the platform backend. On subsequent renders (triggered by hook state changes), it diffs the new tree against the old one and applies the minimal set of native mutations.
-4. **Key-based reconciliation:** Children can be assigned stable `key` values to preserve identity across re-renders — critical for lists and dynamic content.
-5. **Direct bindings:** Under the hood, native views are created and updated through direct platform calls:
+4. **Post-render effects:** Effects queued via `use_effect` are flushed **after** the reconciler commits native mutations, matching React semantics. This guarantees that effect callbacks interact with the committed native tree.
+5. **State batching:** Multiple state updates triggered during a render pass (e.g. from effects) are automatically batched into a single re-render. Explicit batching is available via `pn.batch_updates()`.
+6. **Key-based reconciliation:** Children can be assigned stable `key` values to preserve identity across re-renders — critical for lists and dynamic content.
+7. **Error boundaries:** `pn.ErrorBoundary` catches render errors in child subtrees and displays fallback UI, preventing a single component failure from crashing the entire page.
+8. **Direct bindings:** Under the hood, native views are created and updated through direct platform calls:
    - **iOS:** rubicon-objc exposes Objective-C/Swift classes (`UILabel`, `UIButton`, `UIStackView`, etc.).
    - **Android:** Chaquopy exposes Java classes (`android.widget.TextView`, `android.widget.Button`, etc.) via the JNI bridge.
-6. **Thin native bootstrap:** The host app remains native (Android `Activity` or iOS `UIViewController`). It calls `create_page()` internally to bootstrap your Python component, and the reconciler drives the UI from there.
+9. **Thin native bootstrap:** The host app remains native (Android `Activity` or iOS `UIViewController`). It calls `create_page()` internally to bootstrap your Python component, and the reconciler drives the UI from there.
 
 ## How it works
 
 ```
-@pn.component fn  →  Element tree  →  Reconciler  →  Native views
+@pn.component fn  →  Element tree  →  Reconciler  →  Native views  →  Flush effects
                                            ↑
-Hook set_state()  →  re-render  →  diff  →  patch native views
+Hook set_state()  →  schedule render  →  diff  →  patch native views  →  Flush effects
+                     (batched)
 ```
 
 The reconciler uses **key-based diffing** (matching children by key first, then by position). When a child with the same key/type is found, its props are updated in-place on the native view. When the type changes, the old native view is destroyed and a new one is created.
+
+### Render lifecycle
+
+1. **Render phase:** Component functions execute. Hooks record state reads, queue effects, and register memos. No native mutations happen yet.
+2. **Commit phase:** The reconciler applies the diff to native views — creating, updating, and removing views as needed.
+3. **Effect phase:** Pending effects are flushed in depth-first order (children before parents). Cleanup functions from the previous render run before new effect callbacks.
+4. **Drain phase:** If effects set state, a new render pass is automatically triggered and the cycle repeats (up to a safety limit to prevent infinite loops).
 
 ## Component model
 
@@ -40,7 +51,7 @@ def Counter(initial: int = 0):
 
 Each component is a Python function that:
 - Accepts props as keyword arguments
-- Uses hooks for state (`use_state`), side effects (`use_effect`), navigation (`use_navigation`), and more
+- Uses hooks for state (`use_state`, `use_reducer`), side effects (`use_effect`), navigation (`use_navigation`), and more
 - Returns an `Element` tree describing the UI
 - Each call site creates an independent instance with its own hook state
 

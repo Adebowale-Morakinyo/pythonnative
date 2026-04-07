@@ -2,7 +2,10 @@
 
 from typing import Any, Dict, List
 
+import pytest
+
 from pythonnative.element import Element
+from pythonnative.hooks import component
 from pythonnative.reconciler import Reconciler
 
 # ======================================================================
@@ -369,3 +372,157 @@ def test_keyed_children_insert_new() -> None:
 
     assert len(rec._tree.children) == 3
     assert rec._tree.children[1].element.key == "b"
+
+
+# ======================================================================
+# Tests: error boundaries
+# ======================================================================
+
+
+def test_error_boundary_catches_mount_error() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    def bad_component(**props: Any) -> Element:
+        raise ValueError("boom")
+
+    fallback = Element("Text", {"text": "error caught"}, [])
+    child = Element(bad_component, {}, [])
+    eb = Element("__ErrorBoundary__", {"__fallback__": fallback}, [child])
+
+    root = rec.mount(eb)
+    assert root.type_name == "Text"
+    assert root.props["text"] == "error caught"
+
+
+def test_error_boundary_callable_fallback() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    def bad_component(**props: Any) -> Element:
+        raise RuntimeError("oops")
+
+    def fallback_fn(exc: Exception) -> Element:
+        return Element("Text", {"text": f"caught: {exc}"}, [])
+
+    child = Element(bad_component, {}, [])
+    eb = Element("__ErrorBoundary__", {"__fallback__": fallback_fn}, [child])
+
+    root = rec.mount(eb)
+    assert root.type_name == "Text"
+    assert "caught: oops" in root.props["text"]
+
+
+def test_error_boundary_no_error_renders_child() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    child = Element("Text", {"text": "ok"}, [])
+    fallback = Element("Text", {"text": "error"}, [])
+    eb = Element("__ErrorBoundary__", {"__fallback__": fallback}, [child])
+
+    root = rec.mount(eb)
+    assert root.type_name == "Text"
+    assert root.props["text"] == "ok"
+
+
+def test_error_boundary_catches_reconcile_error() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    call_count = [0]
+
+    @component
+    def flaky() -> Element:
+        call_count[0] += 1
+        if call_count[0] > 1:
+            raise RuntimeError("reconcile boom")
+        return Element("Text", {"text": "ok"}, [])
+
+    def fallback_fn(exc: Exception) -> Element:
+        return Element("Text", {"text": f"recovered: {exc}"}, [])
+
+    eb1 = Element("__ErrorBoundary__", {"__fallback__": fallback_fn}, [flaky()])
+    root = rec.mount(eb1)
+    assert root.props["text"] == "ok"
+
+    eb2 = Element("__ErrorBoundary__", {"__fallback__": fallback_fn}, [flaky()])
+    root = rec.reconcile(eb2)
+    assert "recovered" in root.props["text"]
+
+
+def test_error_boundary_without_fallback_propagates() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+
+    def bad(**props: Any) -> Element:
+        raise ValueError("no fallback")
+
+    child = Element(bad, {}, [])
+    eb = Element("__ErrorBoundary__", {}, [child])
+
+    with pytest.raises(ValueError, match="no fallback"):
+        rec.mount(eb)
+
+
+# ======================================================================
+# Tests: post-render effect flushing
+# ======================================================================
+
+
+def test_effects_flushed_after_mount() -> None:
+    calls: list = []
+
+    @component
+    def my_comp() -> Element:
+        from pythonnative.hooks import use_effect
+
+        use_effect(lambda: calls.append("mounted"), [])
+        return Element("Text", {"text": "hi"}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.mount(my_comp())
+    assert calls == ["mounted"]
+
+
+def test_effects_flushed_after_reconcile() -> None:
+    calls: list = []
+
+    @component
+    def my_comp(dep: int = 0) -> Element:
+        from pythonnative.hooks import use_effect
+
+        use_effect(lambda: calls.append(f"e{dep}"), [dep])
+        return Element("Text", {"text": str(dep)}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.mount(my_comp(dep=1))
+    assert calls == ["e1"]
+
+    rec.reconcile(my_comp(dep=2))
+    assert calls == ["e1", "e2"]
+
+
+def test_effect_cleanup_runs_on_rerun() -> None:
+    log: list = []
+
+    @component
+    def my_comp(dep: int = 0) -> Element:
+        from pythonnative.hooks import use_effect
+
+        def effect() -> Any:
+            log.append(f"run-{dep}")
+            return lambda: log.append(f"cleanup-{dep}")
+
+        use_effect(effect, [dep])
+        return Element("Text", {"text": str(dep)}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.mount(my_comp(dep=1))
+    assert log == ["run-1"]
+
+    rec.reconcile(my_comp(dep=2))
+    assert log == ["run-1", "cleanup-1", "run-2"]

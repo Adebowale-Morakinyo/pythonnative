@@ -137,7 +137,7 @@ class ModuleReloader:
     @staticmethod
     def reload_page(page_instance: Any) -> None:
         """Force a page re-render after module reload."""
-        from .page import _re_render
+        from .page import _request_render
 
         if hasattr(page_instance, "_reconciler") and page_instance._reconciler is not None:
-            _re_render(page_instance)
+            _request_render(page_instance)

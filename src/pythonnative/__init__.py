@@ -20,6 +20,7 @@ from .components import (
     ActivityIndicator,
     Button,
     Column,
+    ErrorBoundary,
     FlatList,
     Image,
     Modal,
@@ -39,6 +40,7 @@ from .components import (
 from .element import Element
 from .hooks import (
     Provider,
+    batch_updates,
     component,
     create_context,
     use_callback,
@@ -46,6 +48,7 @@ from .hooks import (
     use_effect,
     use_memo,
     use_navigation,
+    use_reducer,
     use_ref,
     use_state,
 )
@@ -57,6 +60,7 @@ __all__ = [
     "ActivityIndicator",
     "Button",
     "Column",
+    "ErrorBoundary",
     "FlatList",
     "Image",
     "Modal",
@@ -76,6 +80,7 @@ __all__ = [
     "Element",
     "create_page",
     # Hooks
+    "batch_updates",
     "component",
     "create_context",
     "use_callback",
@@ -83,6 +88,7 @@ __all__ = [
     "use_effect",
     "use_memo",
     "use_navigation",
+    "use_reducer",
     "use_ref",
     "use_state",
     "Provider",

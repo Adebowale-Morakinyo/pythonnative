@@ -357,6 +357,29 @@ def Pressable(
     return Element("Pressable", props, children, key=key)
 
 
+def ErrorBoundary(
+    child: Optional[Element] = None,
+    *,
+    fallback: Optional[Any] = None,
+    key: Optional[str] = None,
+) -> Element:
+    """Catch render errors in *child* and display *fallback* instead.
+
+    *fallback* may be an ``Element`` or a callable that receives the
+    exception and returns an ``Element``::
+
+        pn.ErrorBoundary(
+            MyRiskyComponent(),
+            fallback=lambda err: pn.Text(f"Error: {err}"),
+        )
+    """
+    props: Dict[str, Any] = {}
+    if fallback is not None:
+        props["__fallback__"] = fallback
+    children = [child] if child is not None else []
+    return Element("__ErrorBoundary__", props, children, key=key)
+
+
 def FlatList(
     *,
     data: Optional[List[Any]] = None,

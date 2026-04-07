@@ -13,6 +13,10 @@
 
 Each returns an `Element` descriptor. Visual and layout properties are passed via `style={...}`. See the Component Property Reference for full details.
 
+### ErrorBoundary
+
+`pythonnative.ErrorBoundary(child, fallback=...)` — catches render errors in *child* and displays *fallback* instead. *fallback* may be an `Element` or a callable that receives the exception and returns an `Element`.
+
 ### Element
 
 `pythonnative.Element` — the descriptor type returned by element functions. You generally don't create these directly.
@@ -23,7 +27,8 @@ Function component primitives:
 
 - `pythonnative.component` — decorator to create a function component
 - `pythonnative.use_state(initial)` — local component state
-- `pythonnative.use_effect(effect, deps)` — side effects
+- `pythonnative.use_reducer(reducer, initial_state)` — reducer-based state management; returns `(state, dispatch)`
+- `pythonnative.use_effect(effect, deps)` — side effects, run after native commit
 - `pythonnative.use_navigation()` — navigation handle (push/pop/get_args)
 - `pythonnative.use_memo(factory, deps)` — memoised values
 - `pythonnative.use_callback(fn, deps)` — stable function references
@@ -31,6 +36,10 @@ Function component primitives:
 - `pythonnative.use_context(context)` — read from context
 - `pythonnative.create_context(default)` — create a new context
 - `pythonnative.Provider(context, value, child)` — provide a context value
+
+### Batching
+
+- `pythonnative.batch_updates()` — context manager that batches multiple state updates into a single re-render
 
 ### Styling
 
@@ -53,7 +62,7 @@ Function component primitives:
 
 ## Reconciler
 
-`pythonnative.reconciler.Reconciler` — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by `create_page`.
+`pythonnative.reconciler.Reconciler` — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, context providers, and error boundaries. Effects are flushed after each mount/reconcile pass. Used internally by `create_page`.
 
 ## Hot reload
 

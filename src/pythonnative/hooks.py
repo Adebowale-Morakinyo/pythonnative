@@ -19,7 +19,8 @@ Usage::
 
 import inspect
 import threading
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar
+from contextlib import contextmanager
+from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, TypeVar
 
 from .element import Element
 
@@ -29,6 +30,7 @@ _SENTINEL = object()
 
 _hook_context: threading.local = threading.local()
 
+_batch_context: threading.local = threading.local()
 
 # ======================================================================
 # Hook state container
@@ -36,9 +38,22 @@ _hook_context: threading.local = threading.local()
 
 
 class HookState:
-    """Stores all hook data for a single function component instance."""
+    """Stores all hook data for a single function component instance.
 
-    __slots__ = ("states", "effects", "memos", "refs", "hook_index", "_trigger_render")
+    Effects are **queued** during the render phase and **flushed** after
+    the reconciler commits native-view mutations.  This guarantees that
+    effect callbacks can safely interact with the committed native tree.
+    """
+
+    __slots__ = (
+        "states",
+        "effects",
+        "memos",
+        "refs",
+        "hook_index",
+        "_trigger_render",
+        "_pending_effects",
+    )
 
     def __init__(self) -> None:
         self.states: List[Any] = []
@@ -47,15 +62,24 @@ class HookState:
         self.refs: List[dict] = []
         self.hook_index: int = 0
         self._trigger_render: Optional[Callable[[], None]] = None
+        self._pending_effects: List[Tuple[int, Callable, Any]] = []
 
     def reset_index(self) -> None:
         self.hook_index = 0
 
-    def run_pending_effects(self) -> None:
-        """Execute effects whose deps changed during the last render pass."""
-        for i, (deps, cleanup) in enumerate(self.effects):
-            if deps is _SENTINEL:
-                continue
+    def flush_pending_effects(self) -> None:
+        """Execute effects queued during the render pass (called after commit)."""
+        pending = self._pending_effects
+        self._pending_effects = []
+        for idx, effect_fn, deps in pending:
+            _, prev_cleanup = self.effects[idx]
+            if callable(prev_cleanup):
+                try:
+                    prev_cleanup()
+                except Exception:
+                    pass
+            cleanup = effect_fn()
+            self.effects[idx] = (list(deps) if deps is not None else None, cleanup)
 
     def cleanup_all_effects(self) -> None:
         """Run all outstanding cleanup functions (called on unmount)."""
@@ -66,6 +90,7 @@ class HookState:
                 except Exception:
                     pass
             self.effects[i] = (_SENTINEL, None)
+        self._pending_effects = []
 
 
 # ======================================================================
@@ -89,6 +114,45 @@ def _deps_changed(prev: Any, current: Any) -> bool:
     if len(prev) != len(current):
         return True
     return any(p is not c and p != c for p, c in zip(prev, current))
+
+
+# ======================================================================
+# Batching helpers
+# ======================================================================
+
+
+def _schedule_trigger(trigger: Callable[[], None]) -> None:
+    """Call *trigger* now, or defer it if inside :func:`batch_updates`."""
+    if getattr(_batch_context, "depth", 0) > 0:
+        _batch_context.pending_trigger = trigger
+    else:
+        trigger()
+
+
+@contextmanager
+def batch_updates() -> Generator[None, None, None]:
+    """Batch multiple state updates so only one re-render occurs.
+
+    Usage::
+
+        with pn.batch_updates():
+            set_count(1)
+            set_name("hello")
+        # single re-render happens here
+    """
+    depth = getattr(_batch_context, "depth", 0)
+    _batch_context.depth = depth + 1
+    if depth == 0:
+        _batch_context.pending_trigger = None
+    try:
+        yield
+    finally:
+        _batch_context.depth -= 1
+        if _batch_context.depth == 0:
+            trigger = _batch_context.pending_trigger
+            _batch_context.pending_trigger = None
+            if trigger is not None:
+                trigger()
 
 
 # ======================================================================
@@ -121,13 +185,60 @@ def use_state(initial: Any = None) -> Tuple[Any, Callable]:
         if ctx.states[idx] is not new_value and ctx.states[idx] != new_value:
             ctx.states[idx] = new_value
             if ctx._trigger_render:
-                ctx._trigger_render()
+                _schedule_trigger(ctx._trigger_render)
 
     return current, setter
 
 
+def use_reducer(reducer: Callable[[Any, Any], Any], initial_state: Any) -> Tuple[Any, Callable]:
+    """Return ``(state, dispatch)`` for reducer-based state management.
+
+    The *reducer* is called as ``reducer(current_state, action)`` and
+    must return the new state.  If *initial_state* is callable it is
+    invoked once (lazy initialisation).
+
+    Usage::
+
+        def reducer(state, action):
+            if action == "increment":
+                return state + 1
+            if action == "reset":
+                return 0
+            return state
+
+        count, dispatch = pn.use_reducer(reducer, 0)
+        # dispatch("increment") -> re-render with count = 1
+    """
+    ctx = _get_hook_state()
+    if ctx is None:
+        raise RuntimeError("use_reducer must be called inside a @component function")
+
+    idx = ctx.hook_index
+    ctx.hook_index += 1
+
+    if idx >= len(ctx.states):
+        val = initial_state() if callable(initial_state) else initial_state
+        ctx.states.append(val)
+
+    current = ctx.states[idx]
+
+    def dispatch(action: Any) -> None:
+        new_state = reducer(ctx.states[idx], action)
+        if ctx.states[idx] is not new_state and ctx.states[idx] != new_state:
+            ctx.states[idx] = new_state
+            if ctx._trigger_render:
+                _schedule_trigger(ctx._trigger_render)
+
+    return current, dispatch
+
+
 def use_effect(effect: Callable, deps: Optional[list] = None) -> None:
-    """Schedule *effect* to run after render.
+    """Schedule *effect* to run **after** the native tree is committed.
+
+    Effects are queued during the render pass and flushed once the
+    reconciler has finished applying all native-view mutations.  This
+    means effects can safely measure layout or interact with committed
+    native views.
 
     *deps* controls when the effect re-runs:
 
@@ -146,18 +257,12 @@ def use_effect(effect: Callable, deps: Optional[list] = None) -> None:
 
     if idx >= len(ctx.effects):
         ctx.effects.append((_SENTINEL, None))
+        ctx._pending_effects.append((idx, effect, deps))
+        return
 
-    prev_deps, prev_cleanup = ctx.effects[idx]
+    prev_deps, _prev_cleanup = ctx.effects[idx]
     if _deps_changed(prev_deps, deps):
-        if callable(prev_cleanup):
-            try:
-                prev_cleanup()
-            except Exception:
-                pass
-        cleanup = effect()
-        ctx.effects[idx] = (list(deps) if deps is not None else None, cleanup)
-    else:
-        ctx.effects[idx] = (prev_deps, prev_cleanup)
+        ctx._pending_effects.append((idx, effect, deps))
 
 
 def use_memo(factory: Callable[[], T], deps: list) -> T:

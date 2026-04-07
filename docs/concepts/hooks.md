@@ -58,9 +58,40 @@ If the initial value is expensive to compute, pass a callable:
 count, set_count = pn.use_state(lambda: compute_default())
 ```
 
+### use_reducer
+
+For complex state logic, `use_reducer` lets you manage state transitions through a reducer function — similar to React's `useReducer`:
+
+```python
+def reducer(state, action):
+    if action == "increment":
+        return state + 1
+    if action == "decrement":
+        return state - 1
+    if action == "reset":
+        return 0
+    return state
+
+@pn.component
+def Counter():
+    count, dispatch = pn.use_reducer(reducer, 0)
+
+    return pn.Column(
+        pn.Text(f"Count: {count}"),
+        pn.Row(
+            pn.Button("-", on_click=lambda: dispatch("decrement")),
+            pn.Button("+", on_click=lambda: dispatch("increment")),
+            pn.Button("Reset", on_click=lambda: dispatch("reset")),
+            style={"spacing": 8},
+        ),
+    )
+```
+
+The reducer receives the current state and an action, and returns the new state. Actions can be any value (strings, dicts, etc.). The component only re-renders when the reducer returns a different state.
+
 ### use_effect
 
-Run side effects after render. The effect function may return a cleanup callable.
+Run side effects **after** the native view tree is committed. The effect function may return a cleanup callable.
 
 ```python
 @pn.component
@@ -77,6 +108,8 @@ def Timer():
 
     return pn.Text(f"Elapsed: {seconds}s")
 ```
+
+Effects are **deferred** — they are queued during the render phase and executed after the reconciler finishes committing native view mutations. This means effect callbacks can safely measure layout or interact with the committed native tree.
 
 Dependency control:
 
@@ -168,6 +201,45 @@ def UserProfile():
     user = pn.use_context(user_context)
     return pn.Text(f"Welcome, {user['name']}")
 ```
+
+## Batching state updates
+
+By default, each state setter call triggers a re-render. When you need to update multiple pieces of state at once, use `pn.batch_updates()` to coalesce them into a single render pass:
+
+```python
+@pn.component
+def Form():
+    name, set_name = pn.use_state("")
+    email, set_email = pn.use_state("")
+
+    def on_submit():
+        with pn.batch_updates():
+            set_name("Alice")
+            set_email("alice@example.com")
+        # single re-render here
+
+    return pn.Column(
+        pn.Text(f"{name} <{email}>"),
+        pn.Button("Fill", on_click=on_submit),
+    )
+```
+
+State updates triggered by effects during a render pass are automatically batched — the framework drains any pending re-renders after effect flushing completes, so you don't need `batch_updates()` inside effects.
+
+## Error boundaries
+
+Wrap risky components in `pn.ErrorBoundary` to catch render errors and display a fallback UI:
+
+```python
+@pn.component
+def App():
+    return pn.ErrorBoundary(
+        MyRiskyComponent(),
+        fallback=lambda err: pn.Text(f"Something went wrong: {err}"),
+    )
+```
+
+Without an error boundary, an exception during rendering crashes the entire page. Error boundaries catch errors during both initial mount and subsequent reconciliation.
 
 ## Custom hooks
 

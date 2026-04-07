@@ -11,8 +11,12 @@ Supports:
   ``@component``).  Their hook state is preserved across renders.
 - **Provider elements** (type ``"__Provider__"``), which push/pop
   context values during tree traversal.
+- **Error boundary elements** (type ``"__ErrorBoundary__"``), which
+  catch exceptions in child subtrees and render a fallback.
 - **Key-based child reconciliation** for stable identity across
   re-renders.
+- **Post-render effect flushing**: after each mount or reconcile pass,
+  all queued effects are executed so they see the committed native tree.
 """
 
 from typing import Any, List, Optional
@@ -36,6 +40,10 @@ class VNode:
 class Reconciler:
     """Create, diff, and patch native view trees from Element descriptors.
 
+    After each ``mount`` or ``reconcile`` call the reconciler walks the
+    committed tree and flushes all pending effects so that effect
+    callbacks run **after** native mutations are applied.
+
     Parameters
     ----------
     backend:
@@ -56,6 +64,7 @@ class Reconciler:
     def mount(self, element: Element) -> Any:
         """Build native views from *element* and return the root native view."""
         self._tree = self._create_tree(element)
+        self._flush_effects()
         return self._tree.native_view
 
     def reconcile(self, new_element: Element) -> Any:
@@ -65,10 +74,27 @@ class Reconciler:
         """
         if self._tree is None:
             self._tree = self._create_tree(new_element)
+            self._flush_effects()
             return self._tree.native_view
 
         self._tree = self._reconcile_node(self._tree, new_element)
+        self._flush_effects()
         return self._tree.native_view
+
+    # ------------------------------------------------------------------
+    # Effect flushing
+    # ------------------------------------------------------------------
+
+    def _flush_effects(self) -> None:
+        """Walk the committed tree and flush pending effects (depth-first)."""
+        if self._tree is not None:
+            self._flush_tree_effects(self._tree)
+
+    def _flush_tree_effects(self, node: VNode) -> None:
+        for child in node.children:
+            self._flush_tree_effects(child)
+        if node.hook_state is not None:
+            node.hook_state.flush_pending_effects()
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -86,6 +112,10 @@ class Reconciler:
             native_view = child_node.native_view if child_node else None
             children = [child_node] if child_node else []
             return VNode(element, native_view, children)
+
+        # Error boundary: catch exceptions in the child subtree
+        if element.type == "__ErrorBoundary__":
+            return self._create_error_boundary(element)
 
         # Function component: call with hook context
         if callable(element.type):
@@ -114,6 +144,20 @@ class Reconciler:
             children.append(child_node)
         return VNode(element, native_view, children)
 
+    def _create_error_boundary(self, element: Element) -> VNode:
+        fallback_fn = element.props.get("__fallback__")
+        try:
+            child_node = self._create_tree(element.children[0]) if element.children else None
+        except Exception as exc:
+            if fallback_fn is not None:
+                fallback_el = fallback_fn(exc) if callable(fallback_fn) else fallback_fn
+                child_node = self._create_tree(fallback_el)
+            else:
+                raise
+        native_view = child_node.native_view if child_node else None
+        children = [child_node] if child_node else []
+        return VNode(element, native_view, children)
+
     def _reconcile_node(self, old: VNode, new_el: Element) -> VNode:
         if not self._same_type(old.element, new_el):
             new_node = self._create_tree(new_el)
@@ -137,6 +181,10 @@ class Reconciler:
                 context._stack.pop()
             old.element = new_el
             return old
+
+        # Error boundary
+        if new_el.type == "__ErrorBoundary__":
+            return self._reconcile_error_boundary(old, new_el)
 
         # Function component
         if callable(new_el.type):
@@ -175,10 +223,34 @@ class Reconciler:
         old.element = new_el
         return old
 
+    def _reconcile_error_boundary(self, old: VNode, new_el: Element) -> VNode:
+        fallback_fn = new_el.props.get("__fallback__")
+        try:
+            if old.children and new_el.children:
+                child = self._reconcile_node(old.children[0], new_el.children[0])
+                old.children = [child]
+                old.native_view = child.native_view
+            elif new_el.children:
+                child = self._create_tree(new_el.children[0])
+                old.children = [child]
+                old.native_view = child.native_view
+        except Exception as exc:
+            for c in old.children:
+                self._destroy_tree(c)
+            if fallback_fn is not None:
+                fallback_el = fallback_fn(exc) if callable(fallback_fn) else fallback_fn
+                child = self._create_tree(fallback_el)
+                old.children = [child]
+                old.native_view = child.native_view
+            else:
+                raise
+        old.element = new_el
+        return old
+
     def _reconcile_children(self, parent: VNode, new_children: List[Element]) -> None:
         old_children = parent.children
         parent_type = parent.element.type
-        is_native = isinstance(parent_type, str) and parent_type != "__Provider__"
+        is_native = isinstance(parent_type, str) and parent_type not in ("__Provider__", "__ErrorBoundary__")
 
         old_by_key: dict = {}
         old_unkeyed: list = []

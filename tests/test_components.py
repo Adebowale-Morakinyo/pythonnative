@@ -4,6 +4,7 @@ from pythonnative.components import (
     ActivityIndicator,
     Button,
     Column,
+    ErrorBoundary,
     FlatList,
     Image,
     Modal,
@@ -369,3 +370,34 @@ def test_flat_list_empty() -> None:
 def test_spacer_flex() -> None:
     el = Spacer(flex=1)
     assert el.props["flex"] == 1
+
+
+# ======================================================================
+# ErrorBoundary
+# ======================================================================
+
+
+def test_error_boundary_creates_element() -> None:
+    child = Text("risky")
+    fallback = Text("error")
+    el = ErrorBoundary(child, fallback=fallback)
+    assert el.type == "__ErrorBoundary__"
+    assert el.props["__fallback__"] is fallback
+    assert len(el.children) == 1
+    assert el.children[0] is child
+
+
+def test_error_boundary_callable_fallback() -> None:
+    fn = lambda exc: Text(str(exc))  # noqa: E731
+    el = ErrorBoundary(Text("risky"), fallback=fn)
+    assert callable(el.props["__fallback__"])
+
+
+def test_error_boundary_no_child() -> None:
+    el = ErrorBoundary(fallback=Text("empty"))
+    assert len(el.children) == 0
+
+
+def test_error_boundary_with_key() -> None:
+    el = ErrorBoundary(Text("x"), fallback=Text("err"), key="eb1")
+    assert el.key == "eb1"

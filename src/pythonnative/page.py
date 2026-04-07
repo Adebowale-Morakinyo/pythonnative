@@ -29,6 +29,8 @@ from typing import Any, Dict, Optional
 
 from .utils import IS_ANDROID, set_android_context
 
+_MAX_RENDER_PASSES = 25
+
 # ======================================================================
 # Component path resolution
 # ======================================================================
@@ -62,6 +64,9 @@ def _init_host_common(host: Any) -> None:
     host._args = {}
     host._reconciler = None
     host._root_native_view = None
+    host._nav_handle = None
+    host._is_rendering = False
+    host._render_queued = False
 
 
 def _on_create(host: Any) -> None:
@@ -70,28 +75,68 @@ def _on_create(host: Any) -> None:
     from .reconciler import Reconciler
 
     host._reconciler = Reconciler(get_registry())
-    host._reconciler._page_re_render = lambda: _re_render(host)
+    host._reconciler._page_re_render = lambda: _request_render(host)
+    host._nav_handle = NavigationHandle(host)
 
-    nav_handle = NavigationHandle(host)
     app_element = host._component()
-    provider_element = Provider(_NavigationContext, nav_handle, app_element)
+    provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
 
-    host._root_native_view = host._reconciler.mount(provider_element)
-    host._attach_root(host._root_native_view)
+    host._is_rendering = True
+    try:
+        host._root_native_view = host._reconciler.mount(provider_element)
+        host._attach_root(host._root_native_view)
+        _drain_renders(host)
+    finally:
+        host._is_rendering = False
+
+
+def _request_render(host: Any) -> None:
+    """State-change trigger.  Defers if a render is already in progress."""
+    if host._is_rendering:
+        host._render_queued = True
+        return
+    _re_render(host)
 
 
 def _re_render(host: Any) -> None:
-    from .hooks import NavigationHandle, Provider, _NavigationContext
+    """Perform a full render pass, draining any state set during effects."""
+    from .hooks import Provider, _NavigationContext
 
-    nav_handle = NavigationHandle(host)
-    app_element = host._component()
-    provider_element = Provider(_NavigationContext, nav_handle, app_element)
+    host._is_rendering = True
+    try:
+        host._render_queued = False
 
-    new_root = host._reconciler.reconcile(provider_element)
-    if new_root is not host._root_native_view:
-        host._detach_root(host._root_native_view)
-        host._root_native_view = new_root
-        host._attach_root(new_root)
+        app_element = host._component()
+        provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
+
+        new_root = host._reconciler.reconcile(provider_element)
+        if new_root is not host._root_native_view:
+            host._detach_root(host._root_native_view)
+            host._root_native_view = new_root
+            host._attach_root(new_root)
+
+        _drain_renders(host)
+    finally:
+        host._is_rendering = False
+
+
+def _drain_renders(host: Any) -> None:
+    """Flush additional renders queued by effects that set state."""
+    from .hooks import Provider, _NavigationContext
+
+    for _ in range(_MAX_RENDER_PASSES):
+        if not host._render_queued:
+            break
+        host._render_queued = False
+
+        app_element = host._component()
+        provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
+
+        new_root = host._reconciler.reconcile(provider_element)
+        if new_root is not host._root_native_view:
+            host._detach_root(host._root_native_view)
+            host._root_native_view = new_root
+            host._attach_root(new_root)
 
 
 def _set_args(host: Any, args: Any) -> None:

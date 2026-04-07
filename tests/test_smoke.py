@@ -18,6 +18,7 @@ def test_public_api_names() -> None:
         "Button",
         "Column",
         "Element",
+        "ErrorBoundary",
         "FlatList",
         "Image",
         "Modal",
@@ -36,6 +37,7 @@ def test_public_api_names() -> None:
         # Core
         "create_page",
         # Hooks
+        "batch_updates",
         "component",
         "create_context",
         "use_callback",
@@ -43,6 +45,7 @@ def test_public_api_names() -> None:
         "use_effect",
         "use_memo",
         "use_navigation",
+        "use_reducer",
         "use_ref",
         "use_state",
         "Provider",

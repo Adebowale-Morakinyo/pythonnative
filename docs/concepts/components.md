@@ -52,6 +52,10 @@ pn.Column(
 
 - `Modal(*children, visible, on_dismiss, title)` — modal dialog
 
+**Error handling:**
+
+- `ErrorBoundary(child, fallback)` — catches render errors in child and displays fallback
+
 **Lists:**
 
 - `FlatList(data, render_item, key_extractor, separator_height)` — scrollable data list
@@ -164,7 +168,8 @@ Changing one `Counter` doesn't affect the other — each has its own hook state.
 ### Available hooks
 
 - `use_state(initial)` — local component state; returns `(value, setter)`
-- `use_effect(effect, deps)` — side effects (timers, API calls, subscriptions)
+- `use_reducer(reducer, initial_state)` — reducer-based state; returns `(state, dispatch)`
+- `use_effect(effect, deps)` — side effects, run after native commit (timers, API calls, subscriptions)
 - `use_memo(factory, deps)` — memoised computed values
 - `use_callback(fn, deps)` — stable function references
 - `use_ref(initial)` — mutable ref that persists across renders

@@ -56,6 +56,16 @@ The entry point `create_page()` is called internally by native templates to boot
 
 All components support layout properties inside the `style` dict: `width`, `height`, `flex`, `margin`, `min_width`, `max_width`, `min_height`, `max_height`, `align_self`. Containers (`Column`, `Row`) support `spacing`, `padding`, `alignment`, `align_items`, and `justify_content`.
 
+## Native view handlers
+
+Platform-specific rendering logic lives in the `native_views` package, organised into dedicated submodules:
+
+- `native_views.base` — shared `ViewHandler` protocol and common utilities (colour parsing, padding resolution, layout keys)
+- `native_views.android` — Android handlers using Chaquopy's Java bridge (`jclass`, `dynamic_proxy`)
+- `native_views.ios` — iOS handlers using rubicon-objc (`ObjCClass`, `objc_method`)
+
+Each handler class maps an element type name (e.g. `"Text"`, `"Button"`) to platform-native widget creation, property updates, and child management.  The `NativeViewRegistry` lazily imports only the relevant platform module at runtime, so the package can be imported on any platform for testing.
+
 ## Comparison
 
 - **Versus React Native:** RN uses JSX + a JavaScript bridge + Yoga layout. PythonNative uses Python + direct native calls + platform layout managers. No JS bridge, no serialisation overhead.

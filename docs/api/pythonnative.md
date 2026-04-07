@@ -64,3 +64,9 @@ Function component primitives:
 ## Native view registry
 
 `pythonnative.native_views.NativeViewRegistry` — maps element type names to platform-specific handlers. Use `set_registry()` to inject a mock for testing.
+
+The `native_views` package is organised into submodules:
+
+- `pythonnative.native_views.base` — shared `ViewHandler` protocol and utilities (`parse_color_int`, `resolve_padding`, `LAYOUT_KEYS`)
+- `pythonnative.native_views.android` — Android handlers (only imported at runtime on Android via Chaquopy)
+- `pythonnative.native_views.ios` — iOS handlers (only imported at runtime on iOS via rubicon-objc)

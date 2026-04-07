@@ -29,13 +29,24 @@ Function component primitives:
 - `pythonnative.use_state(initial)` — local component state
 - `pythonnative.use_reducer(reducer, initial_state)` — reducer-based state management; returns `(state, dispatch)`
 - `pythonnative.use_effect(effect, deps)` — side effects, run after native commit
-- `pythonnative.use_navigation()` — navigation handle (push/pop/get_args)
+- `pythonnative.use_navigation()` — navigation handle (navigate/go_back/get_params)
+- `pythonnative.use_route()` — convenience hook for current route params
+- `pythonnative.use_focus_effect(effect, deps)` — like `use_effect` but only runs when the screen is focused
 - `pythonnative.use_memo(factory, deps)` — memoised values
 - `pythonnative.use_callback(fn, deps)` — stable function references
 - `pythonnative.use_ref(initial)` — mutable ref object
 - `pythonnative.use_context(context)` — read from context
 - `pythonnative.create_context(default)` — create a new context
 - `pythonnative.Provider(context, value, child)` — provide a context value
+
+### Navigation
+
+Declarative, component-based navigation system:
+
+- `pythonnative.NavigationContainer(child)` — root container for the navigation tree
+- `pythonnative.create_stack_navigator()` — create a stack-based navigator (returns object with `.Navigator` and `.Screen`)
+- `pythonnative.create_tab_navigator()` — create a tab-based navigator
+- `pythonnative.create_drawer_navigator()` — create a drawer-based navigator
 
 ### Batching
 

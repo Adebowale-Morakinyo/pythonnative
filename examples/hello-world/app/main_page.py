@@ -47,9 +47,9 @@ def MainPage() -> pn.Element:
             counter_badge(),
             pn.Button(
                 "Go to Second Page",
-                on_click=lambda: nav.push(
+                on_click=lambda: nav.navigate(
                     "app.second_page.SecondPage",
-                    args={"message": "Greetings from MainPage"},
+                    params={"message": "Greetings from MainPage"},
                 ),
             ),
             style=styles["section"],

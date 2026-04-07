@@ -135,10 +135,17 @@ PythonNative provides cross-platform modules for common device APIs:
 
 ## Navigation model overview
 
-- See the Navigation guide for full details.
-  - Navigation is handled via the `use_navigation()` hook, which returns a `NavigationHandle` with `.push()`, `.pop()`, and `.get_args()`.
-  - iOS: one host `UIViewController` class, many instances pushed on a `UINavigationController`.
-  - Android: single host `Activity` with a `NavHostFragment` and a stack of generic `PageFragment`s driven by a navigation graph.
+PythonNative provides two navigation approaches:
+
+- **Declarative navigators** (recommended): `NavigationContainer` with `create_stack_navigator()`, `create_tab_navigator()`, and `create_drawer_navigator()`. Navigation state is managed in Python as component state, and navigators are composable — you can nest tabs inside stacks, etc.
+- **Page-level navigation**: `use_navigation()` returns a `NavigationHandle` with `.navigate()`, `.go_back()`, and `.get_params()`, delegating to native platform navigation when running on device.
+
+Both approaches are supported. The declarative system uses the existing reconciler pipeline — navigators are function components that render the active screen via `use_state`, and navigation context is provided via `Provider`.
+
+See the [Navigation guide](../guides/navigation.md) for full details.
+
+- iOS: one host `UIViewController` class, many instances pushed on a `UINavigationController`.
+- Android: single host `Activity` with a `NavHostFragment` and a stack of generic `PageFragment`s driven by a navigation graph.
 
 ## Related docs
 

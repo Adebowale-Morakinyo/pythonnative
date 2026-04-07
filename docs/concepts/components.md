@@ -174,7 +174,9 @@ Changing one `Counter` doesn't affect the other — each has its own hook state.
 - `use_callback(fn, deps)` — stable function references
 - `use_ref(initial)` — mutable ref that persists across renders
 - `use_context(context)` — read from a context provider
-- `use_navigation()` — navigation handle for push/pop between screens
+- `use_navigation()` — navigation handle for navigate/go_back/get_params
+- `use_route()` — convenience hook for current route params
+- `use_focus_effect(effect, deps)` — like `use_effect` but only runs when the screen is focused
 
 ### Custom hooks
 

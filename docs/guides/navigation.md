@@ -1,15 +1,33 @@
 # Navigation
 
-This guide shows how to navigate between screens and pass data using the `use_navigation()` hook.
+PythonNative offers two approaches to navigation:
 
-## Push / Pop
+1. **Declarative navigators** (recommended) — component-based, inspired by React Navigation
+2. **Legacy push/pop** — imperative navigation via `use_navigation()`
 
-Call `pn.use_navigation()` inside a `@pn.component` to get a `NavigationHandle`. Use `.push()` and `.pop()` to change screens, passing a component reference with optional `args`.
+## Declarative Navigation
+
+Declarative navigators manage screen state as components. Define your screens once, and the navigator handles rendering, transitions, and state.
+
+### Stack Navigator
+
+A stack navigator manages a stack of screens — push to go forward, pop to go back.
 
 ```python
 import pythonnative as pn
-from app.second_page import SecondPage
+from pythonnative.navigation import NavigationContainer, create_stack_navigator
 
+Stack = create_stack_navigator()
+
+@pn.component
+def App():
+    return NavigationContainer(
+        Stack.Navigator(
+            Stack.Screen("Home", component=HomeScreen),
+            Stack.Screen("Detail", component=DetailScreen),
+            initial_route="Home",
+        )
+    )
 
 @pn.component
 def HomeScreen():
@@ -17,37 +35,136 @@ def HomeScreen():
     return pn.Column(
         pn.Text("Home", style={"font_size": 24}),
         pn.Button(
-            "Go next",
-            on_click=lambda: nav.push(
-                SecondPage,
-                args={"message": "Hello from Home"},
-            ),
+            "Go to Detail",
+            on_click=lambda: nav.navigate("Detail", params={"id": 42}),
         ),
+        style={"spacing": 12, "padding": 16},
+    )
+
+@pn.component
+def DetailScreen():
+    nav = pn.use_navigation()
+    params = nav.get_params()
+    return pn.Column(
+        pn.Text(f"Detail #{params.get('id')}", style={"font_size": 20}),
+        pn.Button("Back", on_click=nav.go_back),
         style={"spacing": 12, "padding": 16},
     )
 ```
 
-On the target screen, retrieve args with `nav.get_args()`:
+### Tab Navigator
+
+A tab navigator renders a tab bar and switches between screens.
 
 ```python
+from pythonnative.navigation import create_tab_navigator
+
+Tab = create_tab_navigator()
+
 @pn.component
-def SecondPage():
+def App():
+    return NavigationContainer(
+        Tab.Navigator(
+            Tab.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Tab.Screen("Settings", component=SettingsScreen, options={"title": "Settings"}),
+        )
+    )
+```
+
+### Drawer Navigator
+
+A drawer navigator provides a side menu for switching screens.
+
+```python
+from pythonnative.navigation import create_drawer_navigator
+
+Drawer = create_drawer_navigator()
+
+@pn.component
+def App():
+    return NavigationContainer(
+        Drawer.Navigator(
+            Drawer.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Drawer.Screen("Profile", component=ProfileScreen, options={"title": "Profile"}),
+        )
+    )
+
+@pn.component
+def HomeScreen():
     nav = pn.use_navigation()
-    message = nav.get_args().get("message", "Second Page")
     return pn.Column(
-        pn.Text(message, style={"font_size": 20}),
-        pn.Button("Back", on_click=nav.pop),
-        style={"spacing": 12, "padding": 16},
+        pn.Button("Open Menu", on_click=nav.open_drawer),
+        pn.Text("Home Screen"),
+    )
+```
+
+### Nesting Navigators
+
+Navigators can be nested — for example, tabs containing stacks:
+
+```python
+Stack = create_stack_navigator()
+Tab = create_tab_navigator()
+
+@pn.component
+def HomeStack():
+    return Stack.Navigator(
+        Stack.Screen("Feed", component=FeedScreen),
+        Stack.Screen("Post", component=PostScreen),
+    )
+
+@pn.component
+def App():
+    return NavigationContainer(
+        Tab.Navigator(
+            Tab.Screen("Home", component=HomeStack, options={"title": "Home"}),
+            Tab.Screen("Settings", component=SettingsScreen, options={"title": "Settings"}),
+        )
     )
 ```
 
 ## NavigationHandle API
 
-`pn.use_navigation()` returns a `NavigationHandle` with:
+Inside any screen rendered by a navigator, `pn.use_navigation()` returns a handle with:
 
-- **`.push(component, args=...)`** — navigate to a new screen. Pass a component reference (the `@pn.component` function itself), with an optional `args` dict.
-- **`.pop()`** — go back to the previous screen.
-- **`.get_args()`** — retrieve the args dict passed by the caller.
+- **`.navigate(route_name, params=...)`** — navigate to a named route with optional params
+- **`.go_back()`** — pop the current screen
+- **`.get_params()`** — get the current route's params dict
+- **`.reset(route_name, params=...)`** — reset the stack to a single route
+
+### Drawer-specific methods
+
+When inside a drawer navigator, the handle also provides:
+
+- **`.open_drawer()`** — open the drawer
+- **`.close_drawer()`** — close the drawer
+- **`.toggle_drawer()`** — toggle the drawer open/closed
+
+## Focus-aware Effects
+
+Use `pn.use_focus_effect()` to run effects only when a screen is focused:
+
+```python
+@pn.component
+def DataScreen():
+    data, set_data = pn.use_state(None)
+
+    pn.use_focus_effect(lambda: fetch_data(set_data), [])
+
+    return pn.Text(f"Data: {data}")
+```
+
+## Route Parameters
+
+Use `pn.use_route()` for convenient access to route params:
+
+```python
+@pn.component
+def DetailScreen():
+    params = pn.use_route()
+    item_id = params.get("id", 0)
+    return pn.Text(f"Item #{item_id}")
+```
 
 ## Lifecycle
 
@@ -62,11 +179,6 @@ PythonNative forwards lifecycle events from the host:
 - `on_restart` (Android only)
 - `on_save_instance_state`
 - `on_restore_instance_state`
-
-## Notes
-
-- On Android, `push` navigates via `NavController` to a `PageFragment` and passes `page_path` and optional JSON `args`.
-- On iOS, `push` uses the root `UINavigationController` to push a new `ViewController` and passes page info via KVC.
 
 ## Platform specifics
 

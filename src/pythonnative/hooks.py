@@ -360,27 +360,28 @@ _NavigationContext: Context = create_context(None)
 
 
 class NavigationHandle:
-    """Object returned by :func:`use_navigation` providing push/pop/get_args.
+    """Object returned by :func:`use_navigation` providing navigation methods.
 
-    Navigates by component reference rather than string path, e.g.::
+    ::
 
         nav = pn.use_navigation()
-        nav.push(DetailScreen, args={"id": 42})
+        nav.navigate(DetailScreen, params={"id": 42})
+        nav.go_back()
     """
 
     def __init__(self, host: Any) -> None:
         self._host = host
 
-    def push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
-        """Navigate forward to *page* (a ``@component`` function or class)."""
-        self._host._push(page, args)
+    def navigate(self, page: Any, params: Optional[Dict[str, Any]] = None) -> None:
+        """Navigate forward to *page* with optional *params*."""
+        self._host._push(page, params)
 
-    def pop(self) -> None:
+    def go_back(self) -> None:
         """Navigate back to the previous screen."""
         self._host._pop()
 
-    def get_args(self) -> Dict[str, Any]:
-        """Return arguments passed from the previous screen."""
+    def get_params(self) -> Dict[str, Any]:
+        """Return parameters passed from the previous screen."""
         return self._host._get_nav_args()
 
 

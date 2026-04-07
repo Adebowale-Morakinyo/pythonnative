@@ -437,10 +437,10 @@ else:
                 return self._args
 
             def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
-                raise RuntimeError("push() requires a native runtime (iOS or Android)")
+                raise RuntimeError("navigate() requires a native runtime (iOS or Android)")
 
             def _pop(self) -> None:
-                raise RuntimeError("pop() requires a native runtime (iOS or Android)")
+                raise RuntimeError("go_back() requires a native runtime (iOS or Android)")
 
             def _attach_root(self, native_view: Any) -> None:
                 pass

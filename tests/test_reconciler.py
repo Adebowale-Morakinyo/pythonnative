@@ -293,7 +293,7 @@ def test_keyed_children_preserve_identity() -> None:
             Element("Text", {"text": "C"}, [], key="c"),
         ],
     )
-    rec.mount(el1)
+    root = rec.mount(el1)
     view_a = rec._tree.children[0].native_view
     view_b = rec._tree.children[1].native_view
     view_c = rec._tree.children[2].native_view
@@ -313,6 +313,11 @@ def test_keyed_children_preserve_identity() -> None:
     assert rec._tree.children[0].native_view is view_c
     assert rec._tree.children[1].native_view is view_a
     assert rec._tree.children[2].native_view is view_b
+
+    # Native children must also reflect the new order
+    assert root.children[0] is view_c
+    assert root.children[1] is view_a
+    assert root.children[2] is view_b
 
 
 def test_keyed_children_remove_by_key() -> None:

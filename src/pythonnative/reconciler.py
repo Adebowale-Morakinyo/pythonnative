@@ -301,6 +301,18 @@ class Reconciler:
                 self.backend.remove_child(parent.native_view, node.native_view, parent_type)
             self._destroy_tree(node)
 
+        # Reorder native children when keyed children changed positions.
+        # Without this, native sibling order drifts from the logical tree
+        # when keyed children swap positions across reconcile passes.
+        if is_native and used_keyed:
+            old_key_order = [c.element.key for c in old_children if c.element.key in used_keyed]
+            new_key_order = [n.element.key for n in new_child_nodes if n.element.key in used_keyed]
+            if old_key_order != new_key_order:
+                for node in new_child_nodes:
+                    self.backend.remove_child(parent.native_view, node.native_view, parent_type)
+                for node in new_child_nodes:
+                    self.backend.add_child(parent.native_view, node.native_view, parent_type)
+
         parent.children = new_child_nodes
 
     def _destroy_tree(self, node: VNode) -> None:

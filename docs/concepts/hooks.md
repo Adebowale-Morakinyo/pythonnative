@@ -119,7 +119,7 @@ Dependency control:
 
 ### use_navigation
 
-Access the navigation stack from any component. Returns a `NavigationHandle` with `.push()`, `.pop()`, and `.get_args()`.
+Access navigation from any component. Returns a `NavigationHandle` with `.navigate()`, `.go_back()`, and `.get_params()`.
 
 ```python
 @pn.component
@@ -130,7 +130,7 @@ def HomeScreen():
         pn.Text("Home", style={"font_size": 24}),
         pn.Button(
             "Go to Details",
-            on_click=lambda: nav.push(DetailScreen, args={"id": 42}),
+            on_click=lambda: nav.navigate("Detail", params={"id": 42}),
         ),
         style={"spacing": 12, "padding": 16},
     )
@@ -138,16 +138,40 @@ def HomeScreen():
 @pn.component
 def DetailScreen():
     nav = pn.use_navigation()
-    item_id = nav.get_args().get("id", 0)
+    item_id = nav.get_params().get("id", 0)
 
     return pn.Column(
         pn.Text(f"Detail #{item_id}", style={"font_size": 20}),
-        pn.Button("Back", on_click=nav.pop),
+        pn.Button("Back", on_click=nav.go_back),
         style={"spacing": 12, "padding": 16},
     )
 ```
 
 See the [Navigation guide](../guides/navigation.md) for full details.
+
+### use_route
+
+Convenience hook to read the current route's parameters:
+
+```python
+@pn.component
+def DetailScreen():
+    params = pn.use_route()
+    item_id = params.get("id", 0)
+    return pn.Text(f"Detail #{item_id}")
+```
+
+### use_focus_effect
+
+Like `use_effect` but only runs when the screen is focused. Useful for refreshing data when navigating back to a screen:
+
+```python
+@pn.component
+def FeedScreen():
+    items, set_items = pn.use_state([])
+    pn.use_focus_effect(lambda: load_items(set_items), [])
+    return pn.FlatList(data=items, render_item=lambda item, i: pn.Text(item))
+```
 
 ### use_memo
 

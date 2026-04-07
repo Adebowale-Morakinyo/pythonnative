@@ -693,7 +693,32 @@ def test_use_navigation_reads_context() -> None:
     try:
         nav = use_navigation()
         assert nav is handle
-        assert nav.get_args() == {"id": 42}
+        assert nav.get_params() == {"id": 42}
     finally:
         _set_hook_state(None)
         _NavigationContext._stack.pop()
+
+
+def test_navigation_handle_methods() -> None:
+    pushed: list = []
+    popped: list = []
+
+    class FakeHost:
+        def _push(self, page: Any, args: Any = None) -> None:
+            pushed.append((page, args))
+
+        def _pop(self) -> None:
+            popped.append(1)
+
+        def _get_nav_args(self) -> dict:
+            return {"key": "value"}
+
+    handle = NavigationHandle(FakeHost())
+
+    handle.navigate("SomePage", params={"x": 1})
+    assert pushed == [("SomePage", {"x": 1})]
+
+    handle.go_back()
+    assert len(popped) == 1
+
+    assert handle.get_params() == {"key": "value"}

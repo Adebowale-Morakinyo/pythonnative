@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict
 from java import dynamic_proxy, jclass
 
 from ..utils import get_android_context
-from .base import LAYOUT_KEYS, ViewHandler, parse_color_int, resolve_padding
+from .base import CONTAINER_KEYS, LAYOUT_KEYS, ViewHandler, is_vertical, parse_color_int, resolve_padding
 
 # ======================================================================
 # Shared helpers
@@ -32,10 +32,11 @@ def _dp(value: float) -> int:
 
 
 def _apply_layout(view: Any, props: Dict[str, Any]) -> None:
-    """Apply common layout properties to an Android view."""
+    """Apply common layout properties (child-level flex props) to an Android view."""
     lp = view.getLayoutParams()
     LayoutParams = jclass("android.widget.LinearLayout$LayoutParams")
     ViewGroupLP = jclass("android.view.ViewGroup$LayoutParams")
+    Gravity = jclass("android.view.Gravity")
     needs_set = False
 
     if lp is None:
@@ -48,12 +49,21 @@ def _apply_layout(view: Any, props: Dict[str, Any]) -> None:
     if "height" in props and props["height"] is not None:
         lp.height = _dp(float(props["height"]))
         needs_set = True
-    if "flex" in props and props["flex"] is not None:
+
+    flex = props.get("flex")
+    flex_grow = props.get("flex_grow")
+    weight = None
+    if flex is not None:
+        weight = float(flex)
+    elif flex_grow is not None:
+        weight = float(flex_grow)
+    if weight is not None:
         try:
-            lp.weight = float(props["flex"])
+            lp.weight = weight
             needs_set = True
         except Exception:
             pass
+
     if "margin" in props and props["margin"] is not None:
         left, top, right, bottom = resolve_padding(props["margin"])
         try:
@@ -62,17 +72,56 @@ def _apply_layout(view: Any, props: Dict[str, Any]) -> None:
         except Exception:
             pass
 
+    if "align_self" in props and props["align_self"] is not None:
+        align_map = {
+            "flex_start": Gravity.START | Gravity.TOP,
+            "leading": Gravity.START | Gravity.TOP,
+            "center": Gravity.CENTER,
+            "flex_end": Gravity.END | Gravity.BOTTOM,
+            "trailing": Gravity.END | Gravity.BOTTOM,
+            "stretch": Gravity.FILL,
+        }
+        g = align_map.get(props["align_self"])
+        if g is not None:
+            lp.gravity = g
+            needs_set = True
+
     if needs_set:
         view.setLayoutParams(lp)
 
+    if "min_width" in props and props["min_width"] is not None:
+        view.setMinimumWidth(_dp(float(props["min_width"])))
+    if "min_height" in props and props["min_height"] is not None:
+        view.setMinimumHeight(_dp(float(props["min_height"])))
 
-def _apply_stack_props(ll: Any, props: Dict[str, Any], *, vertical: bool) -> None:
-    """Apply spacing, padding, alignment, and background to a Column/Row LinearLayout.
 
-    Column and Row handlers share identical logic except for axis-dependent
-    constants.  This helper consolidates that logic.
+def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
+    """Apply visual properties shared across many handlers."""
+    if "background_color" in props and props["background_color"] is not None:
+        view.setBackgroundColor(parse_color_int(props["background_color"]))
+    if "overflow" in props:
+        clip = props["overflow"] == "hidden"
+        try:
+            view.setClipChildren(clip)
+            view.setClipToPadding(clip)
+        except Exception:
+            pass
+
+
+def _apply_flex_container(container: Any, props: Dict[str, Any]) -> None:
+    """Apply flex container properties to a LinearLayout.
+
+    Handles spacing, padding, alignment, justification, background, and overflow.
     """
+    LinearLayout = jclass("android.widget.LinearLayout")
     Gravity = jclass("android.view.Gravity")
+
+    if "flex_direction" in props:
+        vertical = is_vertical(props["flex_direction"])
+        container.setOrientation(LinearLayout.VERTICAL if vertical else LinearLayout.HORIZONTAL)
+
+    direction = props.get("flex_direction", "column")
+    vertical = is_vertical(direction)
 
     if "spacing" in props and props["spacing"]:
         px = _dp(float(props["spacing"]))
@@ -80,12 +129,12 @@ def _apply_stack_props(ll: Any, props: Dict[str, Any], *, vertical: bool) -> Non
         d = GradientDrawable()
         d.setColor(0x00000000)
         d.setSize(1 if vertical else px, px if vertical else 1)
-        ll.setShowDividers(jclass("android.widget.LinearLayout").SHOW_DIVIDER_MIDDLE)
-        ll.setDividerDrawable(d)
+        container.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE)
+        container.setDividerDrawable(d)
 
     if "padding" in props:
         left, top, right, bottom = resolve_padding(props["padding"])
-        ll.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
+        container.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
 
     gravity = 0
     ai = props.get("align_items") or props.get("alignment")
@@ -131,13 +180,50 @@ def _apply_stack_props(ll: Any, props: Dict[str, Any], *, vertical: bool) -> Non
         gravity |= main_map.get(jc, 0)
 
     if gravity:
-        ll.setGravity(gravity)
-    if "background_color" in props and props["background_color"] is not None:
-        ll.setBackgroundColor(parse_color_int(props["background_color"]))
+        container.setGravity(gravity)
+
+    _apply_common_visual(container, props)
 
 
 # ======================================================================
-# Handlers
+# Flex container handler (shared by Column, Row, View)
+# ======================================================================
+
+
+class FlexContainerHandler(ViewHandler):
+    """Unified handler for flex layout containers (Column, Row, View).
+
+    All three element types use ``LinearLayout`` with orientation
+    determined by the ``flex_direction`` prop.
+    """
+
+    def create(self, props: Dict[str, Any]) -> Any:
+        ll = jclass("android.widget.LinearLayout")(_ctx())
+        direction = props.get("flex_direction", "column")
+        LinearLayout = jclass("android.widget.LinearLayout")
+        ll.setOrientation(LinearLayout.VERTICAL if is_vertical(direction) else LinearLayout.HORIZONTAL)
+        _apply_flex_container(ll, props)
+        _apply_layout(ll, props)
+        return ll
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        if changed.keys() & CONTAINER_KEYS:
+            _apply_flex_container(native_view, changed)
+        if changed.keys() & LAYOUT_KEYS:
+            _apply_layout(native_view, changed)
+
+    def add_child(self, parent: Any, child: Any) -> None:
+        parent.addView(child)
+
+    def remove_child(self, parent: Any, child: Any) -> None:
+        parent.removeView(child)
+
+    def insert_child(self, parent: Any, child: Any, index: int) -> None:
+        parent.addView(child, index)
+
+
+# ======================================================================
+# Leaf handlers
 # ======================================================================
 
 
@@ -210,52 +296,6 @@ class ButtonHandler(ViewHandler):
                 btn.setOnClickListener(ClickProxy(cb))
             else:
                 btn.setOnClickListener(None)
-
-
-class ColumnHandler(ViewHandler):
-    def create(self, props: Dict[str, Any]) -> Any:
-        ll = jclass("android.widget.LinearLayout")(_ctx())
-        ll.setOrientation(jclass("android.widget.LinearLayout").VERTICAL)
-        _apply_stack_props(ll, props, vertical=True)
-        _apply_layout(ll, props)
-        return ll
-
-    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        _apply_stack_props(native_view, changed, vertical=True)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
-
-    def add_child(self, parent: Any, child: Any) -> None:
-        parent.addView(child)
-
-    def remove_child(self, parent: Any, child: Any) -> None:
-        parent.removeView(child)
-
-    def insert_child(self, parent: Any, child: Any, index: int) -> None:
-        parent.addView(child, index)
-
-
-class RowHandler(ViewHandler):
-    def create(self, props: Dict[str, Any]) -> Any:
-        ll = jclass("android.widget.LinearLayout")(_ctx())
-        ll.setOrientation(jclass("android.widget.LinearLayout").HORIZONTAL)
-        _apply_stack_props(ll, props, vertical=False)
-        _apply_layout(ll, props)
-        return ll
-
-    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        _apply_stack_props(native_view, changed, vertical=False)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
-
-    def add_child(self, parent: Any, child: Any) -> None:
-        parent.addView(child)
-
-    def remove_child(self, parent: Any, child: Any) -> None:
-        parent.removeView(child)
-
-    def insert_child(self, parent: Any, child: Any, index: int) -> None:
-        parent.addView(child, index)
 
 
 class ScrollViewHandler(ViewHandler):
@@ -500,39 +540,9 @@ class SpacerHandler(ViewHandler):
             native_view.setLayoutParams(lp)
 
 
-class GenericViewHandler(ViewHandler):
-    """Handler for the ``View`` element (FrameLayout container)."""
-
-    def create(self, props: Dict[str, Any]) -> Any:
-        fl = jclass("android.widget.FrameLayout")(_ctx())
-        if "background_color" in props and props["background_color"] is not None:
-            fl.setBackgroundColor(parse_color_int(props["background_color"]))
-        if "padding" in props:
-            left, top, right, bottom = resolve_padding(props["padding"])
-            fl.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
-        _apply_layout(fl, props)
-        return fl
-
-    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if "background_color" in changed and changed["background_color"] is not None:
-            native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
-        if "padding" in changed:
-            left, top, right, bottom = resolve_padding(changed["padding"])
-            native_view.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
-
-    def add_child(self, parent: Any, child: Any) -> None:
-        parent.addView(child)
-
-    def remove_child(self, parent: Any, child: Any) -> None:
-        parent.removeView(child)
-
-    def insert_child(self, parent: Any, child: Any, index: int) -> None:
-        parent.addView(child, index)
-
-
 class SafeAreaViewHandler(ViewHandler):
+    """Safe-area container using FrameLayout with ``fitsSystemWindows``."""
+
     def create(self, props: Dict[str, Any]) -> Any:
         fl = jclass("android.widget.FrameLayout")(_ctx())
         fl.setFitsSystemWindows(True)
@@ -659,10 +669,12 @@ class PressableHandler(ViewHandler):
 
 def register_handlers(registry: Any) -> None:
     """Register all Android view handlers with the given registry."""
+    flex = FlexContainerHandler()
     registry.register("Text", TextHandler())
     registry.register("Button", ButtonHandler())
-    registry.register("Column", ColumnHandler())
-    registry.register("Row", RowHandler())
+    registry.register("Column", flex)
+    registry.register("Row", flex)
+    registry.register("View", flex)
     registry.register("ScrollView", ScrollViewHandler())
     registry.register("TextInput", TextInputHandler())
     registry.register("Image", ImageHandler())
@@ -671,7 +683,6 @@ def register_handlers(registry: Any) -> None:
     registry.register("ActivityIndicator", ActivityIndicatorHandler())
     registry.register("WebView", WebViewHandler())
     registry.register("Spacer", SpacerHandler())
-    registry.register("View", GenericViewHandler())
     registry.register("SafeAreaView", SafeAreaViewHandler())
     registry.register("Modal", ModalHandler())
     registry.register("Slider", SliderHandler())

@@ -103,6 +103,7 @@ def test_column_with_children() -> None:
     assert el.props["spacing"] == 10
     assert el.props["padding"] == 16
     assert el.props["align_items"] == "stretch"
+    assert el.props["flex_direction"] == "column"
 
 
 def test_row_with_children() -> None:
@@ -110,17 +111,19 @@ def test_row_with_children() -> None:
     assert el.type == "Row"
     assert len(el.children) == 2
     assert el.props["spacing"] == 5
+    assert el.props["flex_direction"] == "row"
 
 
-def test_column_no_style_empty_props() -> None:
+def test_column_no_style_has_flex_direction() -> None:
     el = Column()
-    assert el.props == {}
+    assert el.props == {"flex_direction": "column"}
 
 
 def test_column_layout_via_style() -> None:
     el = Column(style={"flex": 2, "margin": {"horizontal": 8}})
     assert el.props["flex"] == 2
     assert el.props["margin"] == {"horizontal": 8}
+    assert el.props["flex_direction"] == "column"
 
 
 def test_column_justify_content() -> None:
@@ -132,6 +135,16 @@ def test_column_justify_content() -> None:
 def test_row_justify_content() -> None:
     el = Row(style={"justify_content": "space_between"})
     assert el.props["justify_content"] == "space_between"
+
+
+def test_column_direction_cannot_be_overridden() -> None:
+    el = Column(style={"flex_direction": "row"})
+    assert el.props["flex_direction"] == "column"
+
+
+def test_row_direction_cannot_be_overridden() -> None:
+    el = Row(style={"flex_direction": "column"})
+    assert el.props["flex_direction"] == "row"
 
 
 # ---------------------------------------------------------------------------
@@ -236,7 +249,7 @@ def test_column_key() -> None:
 
 
 # ---------------------------------------------------------------------------
-# New components
+# View (flex container)
 # ---------------------------------------------------------------------------
 
 
@@ -248,6 +261,44 @@ def test_view_container() -> None:
     assert el.props["background_color"] == "#FFF"
     assert el.props["padding"] == 8
     assert el.props["width"] == 200
+    assert el.props["flex_direction"] == "column"
+
+
+def test_view_default_direction_column() -> None:
+    el = View()
+    assert el.props["flex_direction"] == "column"
+
+
+def test_view_direction_override() -> None:
+    el = View(style={"flex_direction": "row"})
+    assert el.props["flex_direction"] == "row"
+
+
+def test_view_flex_props() -> None:
+    el = View(
+        Text("a"),
+        style={
+            "flex_direction": "row",
+            "justify_content": "space_between",
+            "align_items": "center",
+            "overflow": "hidden",
+        },
+    )
+    assert el.props["flex_direction"] == "row"
+    assert el.props["justify_content"] == "space_between"
+    assert el.props["align_items"] == "center"
+    assert el.props["overflow"] == "hidden"
+
+
+def test_view_flex_grow_shrink() -> None:
+    el = Text("flex child", style={"flex_grow": 1, "flex_shrink": 0})
+    assert el.props["flex_grow"] == 1
+    assert el.props["flex_shrink"] == 0
+
+
+# ---------------------------------------------------------------------------
+# Other containers
+# ---------------------------------------------------------------------------
 
 
 def test_safe_area_view() -> None:

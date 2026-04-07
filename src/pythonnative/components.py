@@ -9,12 +9,18 @@ which accepts a dict or a list of dicts (later entries override earlier).
 
 Layout properties supported by all components::
 
-    width, height, flex, margin, min_width, max_width, min_height,
-    max_height, align_self
+    width, height, flex, flex_grow, flex_shrink, margin,
+    min_width, max_width, min_height, max_height, align_self
 
-Container-specific layout properties (Column / Row)::
+Flex container properties (View / Column / Row)::
 
-    spacing, padding, align_items, justify_content
+    flex_direction, justify_content, align_items, overflow,
+    spacing, padding
+
+``View`` is the universal flex container (like React Native's ``View``).
+It defaults to ``flex_direction: "column"``.  ``Column`` and ``Row``
+are convenience wrappers that fix the direction to ``"column"`` and
+``"row"`` respectively.
 """
 
 from typing import Any, Callable, Dict, List, Optional
@@ -204,15 +210,48 @@ def Slider(
 # ======================================================================
 
 
+def View(
+    *children: Element,
+    style: StyleValue = None,
+    key: Optional[str] = None,
+) -> Element:
+    """Universal flex container (like React Native's ``View``).
+
+    Defaults to ``flex_direction: "column"``.  Override via ``style``::
+
+        pn.View(child_a, child_b, style={"flex_direction": "row"})
+
+    Flex container properties (inside ``style``):
+
+    - ``flex_direction`` — ``"column"`` (default), ``"row"``,
+      ``"column_reverse"``, ``"row_reverse"``
+    - ``justify_content`` — main-axis distribution:
+      ``"flex_start"`` (default), ``"center"``, ``"flex_end"``,
+      ``"space_between"``, ``"space_around"``, ``"space_evenly"``
+    - ``align_items`` — cross-axis alignment:
+      ``"stretch"`` (default), ``"flex_start"``, ``"center"``,
+      ``"flex_end"``
+    - ``overflow`` — ``"visible"`` (default) or ``"hidden"``
+    - ``spacing``, ``padding``, ``background_color``
+    """
+    props: Dict[str, Any] = {"flex_direction": "column"}
+    props.update(resolve_style(style))
+    return Element("View", props, list(children), key=key)
+
+
 def Column(
     *children: Element,
     style: StyleValue = None,
     key: Optional[str] = None,
 ) -> Element:
-    """Arrange children vertically.
+    """Arrange children vertically (``flex_direction: "column"``).
+
+    Convenience wrapper around :func:`View`.  The direction is fixed;
+    use :func:`View` directly if you need ``flex_direction: "row"``.
 
     Style properties: ``spacing``, ``padding``, ``align_items``,
-    ``justify_content``, ``background_color``, plus common layout props.
+    ``justify_content``, ``background_color``, ``overflow``,
+    plus common layout props.
 
     ``align_items`` controls cross-axis (horizontal) alignment:
     ``"stretch"`` (default), ``"flex_start"``/``"leading"``,
@@ -222,8 +261,9 @@ def Column(
     ``"flex_start"`` (default), ``"center"``, ``"flex_end"``,
     ``"space_between"``, ``"space_around"``, ``"space_evenly"``.
     """
-    props: Dict[str, Any] = {}
+    props: Dict[str, Any] = {"flex_direction": "column"}
     props.update(resolve_style(style))
+    props["flex_direction"] = "column"
     return Element("Column", props, list(children), key=key)
 
 
@@ -232,10 +272,14 @@ def Row(
     style: StyleValue = None,
     key: Optional[str] = None,
 ) -> Element:
-    """Arrange children horizontally.
+    """Arrange children horizontally (``flex_direction: "row"``).
+
+    Convenience wrapper around :func:`View`.  The direction is fixed;
+    use :func:`View` directly if you need ``flex_direction: "column"``.
 
     Style properties: ``spacing``, ``padding``, ``align_items``,
-    ``justify_content``, ``background_color``, plus common layout props.
+    ``justify_content``, ``background_color``, ``overflow``,
+    plus common layout props.
 
     ``align_items`` controls cross-axis (vertical) alignment:
     ``"stretch"`` (default), ``"flex_start"``/``"top"``,
@@ -245,8 +289,9 @@ def Row(
     ``"flex_start"`` (default), ``"center"``, ``"flex_end"``,
     ``"space_between"``, ``"space_around"``, ``"space_evenly"``.
     """
-    props: Dict[str, Any] = {}
+    props: Dict[str, Any] = {"flex_direction": "row"}
     props.update(resolve_style(style))
+    props["flex_direction"] = "row"
     return Element("Row", props, list(children), key=key)
 
 
@@ -261,17 +306,6 @@ def ScrollView(
     props: Dict[str, Any] = {}
     props.update(resolve_style(style))
     return Element("ScrollView", props, children, key=key)
-
-
-def View(
-    *children: Element,
-    style: StyleValue = None,
-    key: Optional[str] = None,
-) -> Element:
-    """Generic container view (``UIView`` / ``android.view.View``)."""
-    props: Dict[str, Any] = {}
-    props.update(resolve_style(style))
-    return Element("View", props, list(children), key=key)
 
 
 def SafeAreaView(

@@ -79,6 +79,40 @@ def resolve_padding(padding: Any) -> tuple:
 
 
 # ======================================================================
+# Flex layout constants
+# ======================================================================
+
+FLEX_DIRECTION_COLUMN = "column"
+FLEX_DIRECTION_ROW = "row"
+FLEX_DIRECTION_COLUMN_REVERSE = "column_reverse"
+FLEX_DIRECTION_ROW_REVERSE = "row_reverse"
+
+JUSTIFY_FLEX_START = "flex_start"
+JUSTIFY_CENTER = "center"
+JUSTIFY_FLEX_END = "flex_end"
+JUSTIFY_SPACE_BETWEEN = "space_between"
+JUSTIFY_SPACE_AROUND = "space_around"
+JUSTIFY_SPACE_EVENLY = "space_evenly"
+
+ALIGN_STRETCH = "stretch"
+ALIGN_FLEX_START = "flex_start"
+ALIGN_CENTER = "center"
+ALIGN_FLEX_END = "flex_end"
+
+POSITION_RELATIVE = "relative"
+POSITION_ABSOLUTE = "absolute"
+
+OVERFLOW_VISIBLE = "visible"
+OVERFLOW_HIDDEN = "hidden"
+OVERFLOW_SCROLL = "scroll"
+
+
+def is_vertical(direction: str) -> bool:
+    """Return ``True`` if *direction* represents a vertical (column) axis."""
+    return direction in (FLEX_DIRECTION_COLUMN, FLEX_DIRECTION_COLUMN_REVERSE)
+
+
+# ======================================================================
 # Layout property keys
 # ======================================================================
 
@@ -87,11 +121,30 @@ LAYOUT_KEYS = frozenset(
         "width",
         "height",
         "flex",
+        "flex_grow",
+        "flex_shrink",
         "margin",
         "min_width",
         "max_width",
         "min_height",
         "max_height",
         "align_self",
+        "position",
+        "top",
+        "right",
+        "bottom",
+        "left",
+    }
+)
+
+CONTAINER_KEYS = frozenset(
+    {
+        "flex_direction",
+        "justify_content",
+        "align_items",
+        "overflow",
+        "spacing",
+        "padding",
+        "background_color",
     }
 )

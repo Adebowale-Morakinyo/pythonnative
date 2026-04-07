@@ -8,12 +8,38 @@ All components accept these layout properties in their `style` dict:
 
 - `width` — fixed width in dp (Android) / pt (iOS)
 - `height` — fixed height
-- `flex` — flex grow factor within Column/Row
+- `flex` — flex grow factor (shorthand for `flex_grow`)
+- `flex_grow` — how much a child grows to fill available space
+- `flex_shrink` — how much a child shrinks when space is limited
 - `margin` — outer spacing (int, float, or dict with `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`)
 - `min_width`, `max_width` — width constraints
 - `min_height`, `max_height` — height constraints
-- `align_self` — override parent alignment (`"fill"`, `"center"`, etc.)
+- `align_self` — override parent alignment (`"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`)
 - `key` — stable identity for reconciliation (passed as a kwarg, not inside `style`)
+
+## View
+
+```python
+pn.View(*children, style={
+    "flex_direction": "column",
+    "justify_content": "center",
+    "align_items": "center",
+    "overflow": "hidden",
+    "spacing": 8,
+    "padding": 16,
+    "background_color": "#F5F5F5",
+})
+```
+
+Universal flex container (like React Native's `View`). Defaults to `flex_direction: "column"`.
+
+Flex container properties (inside `style`):
+
+- `flex_direction` — `"column"` (default), `"row"`, `"column_reverse"`, `"row_reverse"`
+- `justify_content` — `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
+- `align_items` — `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
+- `overflow` — `"visible"` (default), `"hidden"`
+- `spacing`, `padding`, `background_color`
 
 ## Text
 
@@ -42,22 +68,19 @@ pn.Column(*children, style={"spacing": 12, "padding": 16, "align_items": "center
 pn.Row(*children, style={"spacing": 8, "justify_content": "space_between"})
 ```
 
+Convenience wrappers for `View` with fixed `flex_direction`:
+
+- `Column` = `View` with `flex_direction: "column"` (always vertical)
+- `Row` = `View` with `flex_direction: "row"` (always horizontal)
+
 - `*children` — child elements (positional)
 - Style properties:
   - `spacing` — gap between children (dp / pt)
   - `padding` — inner padding (int for all sides, or dict with `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`)
-  - `alignment` — cross-axis alignment shorthand
-  - `align_items` — cross-axis alignment: `"fill"`, `"center"`, `"leading"` / `"start"`, `"trailing"` / `"end"`, `"stretch"`
-  - `justify_content` — main-axis distribution: `"start"`, `"center"`, `"end"`, `"space_between"`, `"space_around"`
+  - `align_items` — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`, `"leading"`, `"trailing"`
+  - `justify_content` — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
+  - `overflow` — `"visible"` (default), `"hidden"`
   - `background_color` — container background
-
-## View
-
-```python
-pn.View(*children, style={"background_color": "#F5F5F5", "padding": 16})
-```
-
-Generic container (UIView / FrameLayout). Supports all layout properties in `style`.
 
 ## SafeAreaView
 

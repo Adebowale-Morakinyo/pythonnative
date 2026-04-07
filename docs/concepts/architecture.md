@@ -54,15 +54,41 @@ The entry point `create_page()` is called internally by native templates to boot
 
 ## Layout
 
-All components support layout properties inside the `style` dict: `width`, `height`, `flex`, `margin`, `min_width`, `max_width`, `min_height`, `max_height`, `align_self`. Containers (`Column`, `Row`) support `spacing`, `padding`, `alignment`, `align_items`, and `justify_content`.
+PythonNative uses a **flexbox-inspired layout model** built on platform-native layout managers.
+
+`View` is the **universal flex container** (like React Native's `View`). It defaults to `flex_direction: "column"`. `Column` and `Row` are convenience wrappers that fix the direction.
+
+### Flex container properties (inside `style`)
+
+- `flex_direction` — `"column"` (default), `"row"`, `"column_reverse"`, `"row_reverse"`
+- `justify_content` — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
+- `align_items` — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
+- `overflow` — `"visible"` (default), `"hidden"`
+- `spacing` — gap between children (dp / pt)
+- `padding` — inner spacing
+
+### Child layout properties
+
+- `flex` — flex grow factor (shorthand)
+- `flex_grow`, `flex_shrink` — individual flex properties
+- `align_self` — override the parent's `align_items` for this child
+- `width`, `height` — fixed dimensions
+- `min_width`, `min_height` — minimum size constraints
+- `margin` — outer spacing
+
+Under the hood:
+- **Android:** `LinearLayout` with gravity, weights, and divider-based spacing
+- **iOS:** `UIStackView` with axis, alignment, distribution, and layout margins
 
 ## Native view handlers
 
 Platform-specific rendering logic lives in the `native_views` package, organised into dedicated submodules:
 
-- `native_views.base` — shared `ViewHandler` protocol and common utilities (colour parsing, padding resolution, layout keys)
+- `native_views.base` — shared `ViewHandler` protocol and common utilities (colour parsing, padding resolution, layout keys, flex constants)
 - `native_views.android` — Android handlers using Chaquopy's Java bridge (`jclass`, `dynamic_proxy`)
 - `native_views.ios` — iOS handlers using rubicon-objc (`ObjCClass`, `objc_method`)
+
+Column, Row, and View share a single `FlexContainerHandler` class on each platform. The handler reads `flex_direction` from the element's props to configure the native layout container.
 
 Each handler class maps an element type name (e.g. `"Text"`, `"Button"`) to platform-native widget creation, property updates, and child management.  The `NativeViewRegistry` lazily imports only the relevant platform module at runtime, so the package can be imported on any platform for testing.
 

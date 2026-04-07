@@ -22,10 +22,10 @@ pn.Column(
 
 **Layout:**
 
-- `Column(*children, style=...)` — vertical stack
-- `Row(*children, style=...)` — horizontal stack
+- `View(*children, style=...)` — universal flex container (default `flex_direction: "column"`)
+- `Column(*children, style=...)` — vertical flex container (fixed `flex_direction: "column"`)
+- `Row(*children, style=...)` — horizontal flex container (fixed `flex_direction: "row"`)
 - `ScrollView(child, style=...)` — scrollable container
-- `View(*children, style=...)` — generic container
 - `SafeAreaView(*children, style=...)` — safe-area-aware container
 - `Spacer(size, flex)` — empty space
 
@@ -56,15 +56,50 @@ pn.Column(
 
 - `FlatList(data, render_item, key_extractor, separator_height)` — scrollable data list
 
-### Layout properties
+### Flex layout model
 
-All components accept layout properties inside the `style` dict:
+PythonNative uses a **flexbox-inspired layout model**. `View` is the universal flex container — `Column` and `Row` are convenience wrappers.
+
+#### Flex container properties (inside `style`)
+
+- `flex_direction` — `"column"` (default), `"row"`, `"column_reverse"`, `"row_reverse"`
+- `justify_content` — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
+- `align_items` — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
+- `overflow` — `"visible"` (default), `"hidden"`
+- `spacing` — gap between children (dp / pt)
+- `padding` — inner spacing
+
+#### Child layout properties
+
+All components accept these in their `style` dict:
 
 - `width`, `height` — fixed dimensions (dp / pt)
-- `flex` — flex grow factor
+- `flex` — flex grow factor (shorthand)
+- `flex_grow`, `flex_shrink` — individual flex properties
 - `margin` — outer margin (int, float, or dict like padding)
-- `min_width`, `max_width`, `min_height`, `max_height` — size constraints
+- `min_width`, `min_height` — minimum size constraints
+- `max_width`, `max_height` — maximum size constraints
 - `align_self` — override parent alignment for this child
+
+#### Example: centering content
+
+```python
+pn.View(
+    pn.Text("Centered"),
+    style={"flex": 1, "justify_content": "center", "align_items": "center"},
+)
+```
+
+#### Example: horizontal row with spacing
+
+```python
+pn.Row(
+    pn.Button("Cancel"),
+    pn.Spacer(flex=1),
+    pn.Button("OK"),
+    style={"padding": 16, "align_items": "center"},
+)
+```
 
 ## Function components — the building block
 

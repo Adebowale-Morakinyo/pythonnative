@@ -22,7 +22,7 @@ import pythonnative as pn
 styles = pn.StyleSheet.create(
     title={"font_size": 28, "bold": True, "color": "#333"},
     subtitle={"font_size": 14, "color": "#666"},
-    container={"padding": 16, "spacing": 12, "alignment": "fill"},
+    container={"padding": 16, "spacing": 12, "align_items": "stretch"},
 )
 
 pn.Text("Welcome", style=styles["title"])
@@ -78,25 +78,80 @@ pn.Text("Title", style={"font_size": 24, "bold": True, "text_align": "center"})
 pn.Text("Subtitle", style={"font_size": 14, "color": "#666666"})
 ```
 
-## Layout properties
+## Flex layout
 
-All components support common layout properties inside `style`:
+PythonNative uses a flexbox-inspired layout model. `View` is the universal flex container, and `Column`/`Row` are convenience wrappers.
 
-```python
-pn.Text("Fixed size", style={"width": 200, "height": 50})
-pn.View(child, style={"flex": 1, "margin": 8})
-pn.Column(items, style={"margin": {"horizontal": 16, "vertical": 8}})
-```
+### Flex container properties
+
+These go in the `style` dict of `View`, `Column`, or `Row`:
+
+- `flex_direction` — `"column"` (default), `"row"`, `"column_reverse"`, `"row_reverse"` (only for `View`; `Column`/`Row` have fixed directions)
+- `justify_content` — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
+- `align_items` — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
+- `overflow` — `"visible"` (default), `"hidden"`
+- `spacing` — gap between children (dp / pt)
+- `padding` — inner spacing (int for all sides, or dict)
+
+### Child layout properties
+
+All components accept these in `style`:
 
 - `width`, `height` — fixed dimensions in dp (Android) / pt (iOS)
-- `flex` — flex grow factor within Column/Row
+- `flex` — flex grow factor (shorthand for `flex_grow`)
+- `flex_grow` — how much a child should grow to fill available space
+- `flex_shrink` — how much a child should shrink when space is tight
 - `margin` — outer spacing (int for all sides, or dict)
-- `min_width`, `max_width`, `min_height`, `max_height` — size constraints
-- `align_self` — override parent alignment
+- `min_width`, `min_height` — minimum size constraints
+- `max_width`, `max_height` — maximum size constraints
+- `align_self` — override parent alignment: `"flex_start"`, `"center"`, `"flex_end"`, `"stretch"`
+
+### Layout examples
+
+**Centering content:**
+
+```python
+pn.View(
+    pn.Text("Centered!"),
+    style={"flex": 1, "justify_content": "center", "align_items": "center"},
+)
+```
+
+**Horizontal row with spacer:**
+
+```python
+pn.Row(
+    pn.Text("Left"),
+    pn.Spacer(flex=1),
+    pn.Text("Right"),
+    style={"padding": 16, "align_items": "center"},
+)
+```
+
+**Child with flex grow:**
+
+```python
+pn.Column(
+    pn.Text("Header", style={"font_size": 20, "bold": True}),
+    pn.View(pn.Text("Content area"), style={"flex": 1}),
+    pn.Text("Footer"),
+    style={"flex": 1, "spacing": 8},
+)
+```
+
+**Horizontal button bar:**
+
+```python
+pn.Row(
+    pn.Button("Cancel", style={"flex": 1}),
+    pn.Button("OK", style={"flex": 1, "background_color": "#007AFF", "color": "#FFF"}),
+    style={"spacing": 8, "padding": 16},
+)
+```
 
 ## Layout with Column and Row
 
-`Column` (vertical) and `Row` (horizontal):
+`Column` (vertical) and `Row` (horizontal) are convenience wrappers for `View`:
 
 ```python
 pn.Column(
@@ -105,7 +160,7 @@ pn.Column(
     pn.Text("Password"),
     pn.TextInput(placeholder="Enter password", secure=True),
     pn.Button("Login", on_click=handle_login),
-    style={"spacing": 8, "padding": 16, "alignment": "fill"},
+    style={"spacing": 8, "padding": 16, "align_items": "stretch"},
 )
 ```
 
@@ -113,9 +168,8 @@ pn.Column(
 
 Column and Row support `align_items` and `justify_content` inside `style`:
 
-- **`align_items`** — cross-axis alignment: `"fill"`, `"center"`, `"leading"` / `"start"`, `"trailing"` / `"end"`
-- **`justify_content`** — main-axis distribution: `"start"`, `"center"`, `"end"`, `"space_between"`, `"space_around"`
-- **`alignment`** — shorthand for cross-axis alignment (same values as `align_items`)
+- **`align_items`** — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`, `"leading"`, `"trailing"`
+- **`justify_content`** — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
 
 ```python
 pn.Row(

@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, Optional
 
 from rubicon.objc import SEL, ObjCClass, objc_method
 
-from .base import LAYOUT_KEYS, ViewHandler, parse_color_int, resolve_padding
+from .base import CONTAINER_KEYS, LAYOUT_KEYS, ViewHandler, is_vertical, parse_color_int, resolve_padding
 
 NSObject = ObjCClass("NSObject")
 UIColor = ObjCClass("UIColor")
@@ -53,19 +53,42 @@ def _apply_ios_layout(view: Any, props: Dict[str, Any]) -> None:
             view.heightAnchor.constraintEqualToConstant_(float(props["height"])).setActive_(True)
         except Exception:
             pass
+    if "min_width" in props and props["min_width"] is not None:
+        try:
+            view.widthAnchor.constraintGreaterThanOrEqualToConstant_(float(props["min_width"])).setActive_(True)
+        except Exception:
+            pass
+    if "min_height" in props and props["min_height"] is not None:
+        try:
+            view.heightAnchor.constraintGreaterThanOrEqualToConstant_(float(props["min_height"])).setActive_(True)
+        except Exception:
+            pass
 
 
-def _apply_stack_props(sv: Any, props: Dict[str, Any], *, vertical: bool) -> None:
-    """Apply spacing, alignment, distribution, background, and padding to a UIStackView.
+def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
+    """Apply visual properties shared across many handlers."""
+    if "background_color" in props and props["background_color"] is not None:
+        view.setBackgroundColor_(_uicolor(props["background_color"]))
+    if "overflow" in props:
+        view.setClipsToBounds_(props["overflow"] == "hidden")
 
-    Column and Row handlers share identical logic except for axis-dependent
-    alignment constants.  This helper consolidates that logic.
+
+def _apply_flex_container(sv: Any, props: Dict[str, Any]) -> None:
+    """Apply flex container properties to a UIStackView.
+
+    Handles axis, spacing, alignment, distribution, background, padding, and overflow.
     """
+    if "flex_direction" in props:
+        vertical = is_vertical(props["flex_direction"])
+        sv.setAxis_(1 if vertical else 0)
+
     if "spacing" in props and props["spacing"]:
         sv.setSpacing_(float(props["spacing"]))
 
     ai = props.get("align_items") or props.get("alignment")
     if ai:
+        direction = props.get("flex_direction")
+        vertical = is_vertical(direction) if direction else bool(sv.axis())
         if vertical:
             alignment_map = {
                 "stretch": 0,
@@ -90,6 +113,9 @@ def _apply_stack_props(sv: Any, props: Dict[str, Any], *, vertical: bool) -> Non
 
     jc = props.get("justify_content")
     if jc:
+        # UIStackViewDistribution:
+        #   0 = fill, 1 = fillEqually, 2 = fillProportionally,
+        #   3 = equalSpacing (≈ space_between), 4 = equalCentering (≈ space_evenly)
         distribution_map = {
             "flex_start": 0,
             "center": 0,
@@ -100,8 +126,7 @@ def _apply_stack_props(sv: Any, props: Dict[str, Any], *, vertical: bool) -> Non
         }
         sv.setDistribution_(distribution_map.get(jc, 0))
 
-    if "background_color" in props and props["background_color"] is not None:
-        sv.setBackgroundColor_(_uicolor(props["background_color"]))
+    _apply_common_visual(sv, props)
 
     if "padding" in props:
         left, top, right, bottom = resolve_padding(props["padding"])
@@ -176,7 +201,44 @@ class _PNSliderTarget(NSObject):  # type: ignore[valid-type]
 
 
 # ======================================================================
-# Handlers
+# Flex container handler (shared by Column, Row, View)
+# ======================================================================
+
+
+class FlexContainerHandler(ViewHandler):
+    """Unified handler for flex layout containers (Column, Row, View).
+
+    All three element types use ``UIStackView`` with axis determined
+    by the ``flex_direction`` prop.
+    """
+
+    def create(self, props: Dict[str, Any]) -> Any:
+        sv = ObjCClass("UIStackView").alloc().initWithFrame_(((0, 0), (0, 0)))
+        direction = props.get("flex_direction", "column")
+        sv.setAxis_(1 if is_vertical(direction) else 0)
+        _apply_flex_container(sv, props)
+        _apply_ios_layout(sv, props)
+        return sv
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        if changed.keys() & CONTAINER_KEYS:
+            _apply_flex_container(native_view, changed)
+        if changed.keys() & LAYOUT_KEYS:
+            _apply_ios_layout(native_view, changed)
+
+    def add_child(self, parent: Any, child: Any) -> None:
+        parent.addArrangedSubview_(child)
+
+    def remove_child(self, parent: Any, child: Any) -> None:
+        parent.removeArrangedSubview_(child)
+        child.removeFromSuperview()
+
+    def insert_child(self, parent: Any, child: Any, index: int) -> None:
+        parent.insertArrangedSubview_atIndex_(child, index)
+
+
+# ======================================================================
+# Leaf handlers
 # ======================================================================
 
 
@@ -253,54 +315,6 @@ class ButtonHandler(ViewHandler):
                 handler._callback = props["on_click"]
                 _pn_btn_handler_map[id(btn)] = handler
                 btn.addTarget_action_forControlEvents_(handler, SEL("onTap:"), 1 << 6)
-
-
-class ColumnHandler(ViewHandler):
-    def create(self, props: Dict[str, Any]) -> Any:
-        sv = ObjCClass("UIStackView").alloc().initWithFrame_(((0, 0), (0, 0)))
-        sv.setAxis_(1)  # vertical
-        _apply_stack_props(sv, props, vertical=True)
-        _apply_ios_layout(sv, props)
-        return sv
-
-    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        _apply_stack_props(native_view, changed, vertical=True)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
-
-    def add_child(self, parent: Any, child: Any) -> None:
-        parent.addArrangedSubview_(child)
-
-    def remove_child(self, parent: Any, child: Any) -> None:
-        parent.removeArrangedSubview_(child)
-        child.removeFromSuperview()
-
-    def insert_child(self, parent: Any, child: Any, index: int) -> None:
-        parent.insertArrangedSubview_atIndex_(child, index)
-
-
-class RowHandler(ViewHandler):
-    def create(self, props: Dict[str, Any]) -> Any:
-        sv = ObjCClass("UIStackView").alloc().initWithFrame_(((0, 0), (0, 0)))
-        sv.setAxis_(0)  # horizontal
-        _apply_stack_props(sv, props, vertical=False)
-        _apply_ios_layout(sv, props)
-        return sv
-
-    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        _apply_stack_props(native_view, changed, vertical=False)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
-
-    def add_child(self, parent: Any, child: Any) -> None:
-        parent.addArrangedSubview_(child)
-
-    def remove_child(self, parent: Any, child: Any) -> None:
-        parent.removeArrangedSubview_(child)
-        child.removeFromSuperview()
-
-    def insert_child(self, parent: Any, child: Any, index: int) -> None:
-        parent.insertArrangedSubview_atIndex_(child, index)
 
 
 class ScrollViewHandler(ViewHandler):
@@ -493,29 +507,6 @@ class SpacerHandler(ViewHandler):
             native_view.setFrame_(((0, 0), (size, size)))
 
 
-class GenericViewHandler(ViewHandler):
-    """Handler for the ``View`` element (generic UIView container)."""
-
-    def create(self, props: Dict[str, Any]) -> Any:
-        v = ObjCClass("UIView").alloc().init()
-        if "background_color" in props and props["background_color"] is not None:
-            v.setBackgroundColor_(_uicolor(props["background_color"]))
-        _apply_ios_layout(v, props)
-        return v
-
-    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if "background_color" in changed and changed["background_color"] is not None:
-            native_view.setBackgroundColor_(_uicolor(changed["background_color"]))
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
-
-    def add_child(self, parent: Any, child: Any) -> None:
-        parent.addSubview_(child)
-
-    def remove_child(self, parent: Any, child: Any) -> None:
-        child.removeFromSuperview()
-
-
 class SafeAreaViewHandler(ViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         v = ObjCClass("UIView").alloc().init()
@@ -595,10 +586,12 @@ class PressableHandler(ViewHandler):
 
 def register_handlers(registry: Any) -> None:
     """Register all iOS view handlers with the given registry."""
+    flex = FlexContainerHandler()
     registry.register("Text", TextHandler())
     registry.register("Button", ButtonHandler())
-    registry.register("Column", ColumnHandler())
-    registry.register("Row", RowHandler())
+    registry.register("Column", flex)
+    registry.register("Row", flex)
+    registry.register("View", flex)
     registry.register("ScrollView", ScrollViewHandler())
     registry.register("TextInput", TextInputHandler())
     registry.register("Image", ImageHandler())
@@ -607,7 +600,6 @@ def register_handlers(registry: Any) -> None:
     registry.register("ActivityIndicator", ActivityIndicatorHandler())
     registry.register("WebView", WebViewHandler())
     registry.register("Spacer", SpacerHandler())
-    registry.register("View", GenericViewHandler())
     registry.register("SafeAreaView", SafeAreaViewHandler())
     registry.register("Modal", ModalHandler())
     registry.register("Slider", SliderHandler())

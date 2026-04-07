@@ -12,8 +12,10 @@ import pytest
 
 from pythonnative.native_views import NativeViewRegistry, set_registry
 from pythonnative.native_views.base import (
+    CONTAINER_KEYS,
     LAYOUT_KEYS,
     ViewHandler,
+    is_vertical,
     parse_color_int,
     resolve_padding,
 )
@@ -89,13 +91,64 @@ def test_resolve_padding_unsupported_type() -> None:
 
 
 # ======================================================================
-# LAYOUT_KEYS
+# is_vertical
+# ======================================================================
+
+
+def test_is_vertical_column() -> None:
+    assert is_vertical("column") is True
+
+
+def test_is_vertical_column_reverse() -> None:
+    assert is_vertical("column_reverse") is True
+
+
+def test_is_vertical_row() -> None:
+    assert is_vertical("row") is False
+
+
+def test_is_vertical_row_reverse() -> None:
+    assert is_vertical("row_reverse") is False
+
+
+# ======================================================================
+# LAYOUT_KEYS / CONTAINER_KEYS
 # ======================================================================
 
 
 def test_layout_keys_contains_expected() -> None:
-    expected = {"width", "height", "flex", "margin", "min_width", "max_width", "min_height", "max_height", "align_self"}
+    expected = {
+        "width",
+        "height",
+        "flex",
+        "flex_grow",
+        "flex_shrink",
+        "margin",
+        "min_width",
+        "max_width",
+        "min_height",
+        "max_height",
+        "align_self",
+        "position",
+        "top",
+        "right",
+        "bottom",
+        "left",
+    }
     assert expected == LAYOUT_KEYS
+
+
+def test_container_keys_contains_expected() -> None:
+    expected = {
+        "flex_direction",
+        "justify_content",
+        "align_items",
+        "overflow",
+        "spacing",
+        "padding",
+        "background_color",
+    }
+    assert expected == CONTAINER_KEYS
 
 
 # ======================================================================

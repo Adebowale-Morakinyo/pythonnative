@@ -9,7 +9,14 @@ styles = pn.StyleSheet.create(
     title={"font_size": 24, "bold": True},
     subtitle={"font_size": 16, "color": "#666666"},
     medal={"font_size": 32},
-    section={"spacing": 12, "padding": 16, "align_items": "stretch"},
+    card={
+        "spacing": 12,
+        "padding": 16,
+        "background_color": "#F8F9FA",
+        "align_items": "center",
+    },
+    section={"spacing": 16, "padding": 24, "align_items": "stretch"},
+    button_row={"spacing": 8, "align_items": "center"},
 )
 
 
@@ -19,11 +26,15 @@ def counter_badge(initial: int = 0) -> pn.Element:
     count, set_count = pn.use_state(initial)
     medal = emoji.emojize(MEDALS[count] if count < len(MEDALS) else ":star:")
 
-    return pn.Column(
+    return pn.View(
         pn.Text(f"Tapped {count} times", style=styles["subtitle"]),
         pn.Text(medal, style=styles["medal"]),
-        pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
-        style={"spacing": 4},
+        pn.Row(
+            pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
+            pn.Button("Reset", on_click=lambda: set_count(0)),
+            style=styles["button_row"],
+        ),
+        style=styles["card"],
     )
 
 

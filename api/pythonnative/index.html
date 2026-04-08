@@ -859,6 +859,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#errorboundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ErrorBoundary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#element" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -874,6 +885,28 @@
     <span class="md-ellipsis">
       
         Hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batching
       
     </span>
   </a>
@@ -1143,6 +1176,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#errorboundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ErrorBoundary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#element" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1158,6 +1202,28 @@
     <span class="md-ellipsis">
       
         Hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batching
       
     </span>
   </a>
@@ -1265,6 +1331,8 @@
 <li><code>pythonnative.View</code>, <code>SafeAreaView</code>, <code>Modal</code>, <code>Slider</code>, <code>Pressable</code>, <code>FlatList</code></li>
 </ul>
 <p>Each returns an <code>Element</code> descriptor. Visual and layout properties are passed via <code>style={...}</code>. See the Component Property Reference for full details.</p>
+<h3 id="errorboundary">ErrorBoundary<a class="headerlink" href="#errorboundary" title="Permanent link">&para;</a></h3>
+<p><code>pythonnative.ErrorBoundary(child, fallback=...)</code> — catches render errors in <em>child</em> and displays <em>fallback</em> instead. <em>fallback</em> may be an <code>Element</code> or a callable that receives the exception and returns an <code>Element</code>.</p>
 <h3 id="element">Element<a class="headerlink" href="#element" title="Permanent link">&para;</a></h3>
 <p><code>pythonnative.Element</code> — the descriptor type returned by element functions. You generally don't create these directly.</p>
 <h3 id="hooks">Hooks<a class="headerlink" href="#hooks" title="Permanent link">&para;</a></h3>
@@ -1272,14 +1340,29 @@
 <ul>
 <li><code>pythonnative.component</code> — decorator to create a function component</li>
 <li><code>pythonnative.use_state(initial)</code> — local component state</li>
-<li><code>pythonnative.use_effect(effect, deps)</code> — side effects</li>
-<li><code>pythonnative.use_navigation()</code> — navigation handle (push/pop/get_args)</li>
+<li><code>pythonnative.use_reducer(reducer, initial_state)</code> — reducer-based state management; returns <code>(state, dispatch)</code></li>
+<li><code>pythonnative.use_effect(effect, deps)</code> — side effects, run after native commit</li>
+<li><code>pythonnative.use_navigation()</code> — navigation handle (navigate/go_back/get_params)</li>
+<li><code>pythonnative.use_route()</code> — convenience hook for current route params</li>
+<li><code>pythonnative.use_focus_effect(effect, deps)</code> — like <code>use_effect</code> but only runs when the screen is focused</li>
 <li><code>pythonnative.use_memo(factory, deps)</code> — memoised values</li>
 <li><code>pythonnative.use_callback(fn, deps)</code> — stable function references</li>
 <li><code>pythonnative.use_ref(initial)</code> — mutable ref object</li>
 <li><code>pythonnative.use_context(context)</code> — read from context</li>
 <li><code>pythonnative.create_context(default)</code> — create a new context</li>
 <li><code>pythonnative.Provider(context, value, child)</code> — provide a context value</li>
+</ul>
+<h3 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h3>
+<p>Declarative, component-based navigation system:</p>
+<ul>
+<li><code>pythonnative.NavigationContainer(child)</code> — root container for the navigation tree</li>
+<li><code>pythonnative.create_stack_navigator()</code> — create a stack-based navigator (returns object with <code>.Navigator</code> and <code>.Screen</code>)</li>
+<li><code>pythonnative.create_tab_navigator()</code> — create a tab-based navigator</li>
+<li><code>pythonnative.create_drawer_navigator()</code> — create a drawer-based navigator</li>
+</ul>
+<h3 id="batching">Batching<a class="headerlink" href="#batching" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>pythonnative.batch_updates()</code> — context manager that batches multiple state updates into a single re-render</li>
 </ul>
 <h3 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1301,12 +1384,18 @@
 <li><code>pythonnative.utils.get_android_fragment_container()</code> — returns the current Fragment container <code>ViewGroup</code> used for page rendering.</li>
 </ul>
 <h2 id="reconciler">Reconciler<a class="headerlink" href="#reconciler" title="Permanent link">&para;</a></h2>
-<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, and context providers. Used internally by <code>create_page</code>.</p>
+<p><code>pythonnative.reconciler.Reconciler</code> — diffs element trees and applies minimal native mutations. Supports key-based child reconciliation, function components, context providers, and error boundaries. Effects are flushed after each mount/reconcile pass. Used internally by <code>create_page</code>.</p>
 <h2 id="hot-reload">Hot reload<a class="headerlink" href="#hot-reload" title="Permanent link">&para;</a></h2>
 <p><code>pythonnative.hot_reload.FileWatcher</code> — watches a directory for file changes and triggers a callback. Used by <code>pn run --hot-reload</code>.</p>
 <p><code>pythonnative.hot_reload.ModuleReloader</code> — reloads changed Python modules on the device and triggers page re-rendering.</p>
 <h2 id="native-view-registry">Native view registry<a class="headerlink" href="#native-view-registry" title="Permanent link">&para;</a></h2>
 <p><code>pythonnative.native_views.NativeViewRegistry</code> — maps element type names to platform-specific handlers. Use <code>set_registry()</code> to inject a mock for testing.</p>
+<p>The <code>native_views</code> package is organised into submodules:</p>
+<ul>
+<li><code>pythonnative.native_views.base</code> — shared <code>ViewHandler</code> protocol and utilities (<code>parse_color_int</code>, <code>resolve_padding</code>, <code>LAYOUT_KEYS</code>)</li>
+<li><code>pythonnative.native_views.android</code> — Android handlers (only imported at runtime on Android via Chaquopy)</li>
+<li><code>pythonnative.native_views.ios</code> — iOS handlers (only imported at runtime on iOS via rubicon-objc)</li>
+</ul>
 
 
 

@@ -486,6 +486,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#use_reducer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_reducer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use_effect" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -501,6 +512,28 @@
     <span class="md-ellipsis">
       
         use_navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use_route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use_focus_effect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_focus_effect
       
     </span>
   </a>
@@ -561,6 +594,28 @@
     <span class="md-ellipsis">
       
         Context and Provider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#batching-state-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batching state updates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error boundaries
       
     </span>
   </a>
@@ -1154,6 +1209,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#use_reducer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_reducer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use_effect" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1169,6 +1235,28 @@
     <span class="md-ellipsis">
       
         use_navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use_route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_route
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use_focus_effect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use_focus_effect
       
     </span>
   </a>
@@ -1229,6 +1317,28 @@
     <span class="md-ellipsis">
       
         Context and Provider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#batching-state-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batching state updates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error boundaries
       
     </span>
   </a>
@@ -1321,8 +1431,35 @@
 <div class="codehilite"><pre><span></span><code><span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">compute_default</span><span class="p">())</span>
 </code></pre></div>
 
+<h3 id="use_reducer">use_reducer<a class="headerlink" href="#use_reducer" title="Permanent link">&para;</a></h3>
+<p>For complex state logic, <code>use_reducer</code> lets you manage state transitions through a reducer function — similar to React's <code>useReducer</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reducer</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;increment&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">state</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;decrement&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">state</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Counter</span><span class="p">():</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">dispatch</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_reducer</span><span class="p">(</span><span class="n">reducer</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">dispatch</span><span class="p">(</span><span class="s2">&quot;decrement&quot;</span><span class="p">)),</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">dispatch</span><span class="p">(</span><span class="s2">&quot;increment&quot;</span><span class="p">)),</span>
+            <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Reset&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">dispatch</span><span class="p">(</span><span class="s2">&quot;reset&quot;</span><span class="p">)),</span>
+            <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p>The reducer receives the current state and an action, and returns the new state. Actions can be any value (strings, dicts, etc.). The component only re-renders when the reducer returns a different state.</p>
 <h3 id="use_effect">use_effect<a class="headerlink" href="#use_effect" title="Permanent link">&para;</a></h3>
-<p>Run side effects after render. The effect function may return a cleanup callable.</p>
+<p>Run side effects <strong>after</strong> the native view tree is committed. The effect function may return a cleanup callable.</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">Timer</span><span class="p">():</span>
     <span class="n">seconds</span><span class="p">,</span> <span class="n">set_seconds</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1338,6 +1475,7 @@
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Elapsed: </span><span class="si">{</span><span class="n">seconds</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
 </code></pre></div>
 
+<p>Effects are <strong>deferred</strong> — they are queued during the render phase and executed after the reconciler finishes committing native view mutations. This means effect callbacks can safely measure layout or interact with the committed native tree.</p>
 <p>Dependency control:</p>
 <ul>
 <li><code>pn.use_effect(fn, None)</code> — run on every render</li>
@@ -1345,7 +1483,7 @@
 <li><code>pn.use_effect(fn, [a, b])</code> — run when <code>a</code> or <code>b</code> change</li>
 </ul>
 <h3 id="use_navigation">use_navigation<a class="headerlink" href="#use_navigation" title="Permanent link">&para;</a></h3>
-<p>Access the navigation stack from any component. Returns a <code>NavigationHandle</code> with <code>.push()</code>, <code>.pop()</code>, and <code>.get_args()</code>.</p>
+<p>Access navigation from any component. Returns a <code>NavigationHandle</code> with <code>.navigate()</code>, <code>.go_back()</code>, and <code>.get_params()</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">HomeScreen</span><span class="p">():</span>
     <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
@@ -1354,7 +1492,7 @@
         <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}),</span>
         <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
             <span class="s2">&quot;Go to Details&quot;</span><span class="p">,</span>
-            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">DetailScreen</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}),</span>
+            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">navigate</span><span class="p">(</span><span class="s2">&quot;Detail&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}),</span>
         <span class="p">),</span>
         <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
     <span class="p">)</span>
@@ -1362,16 +1500,34 @@
 <span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">DetailScreen</span><span class="p">():</span>
     <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
-    <span class="n">item_id</span> <span class="o">=</span> <span class="n">nav</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">item_id</span> <span class="o">=</span> <span class="n">nav</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
         <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detail #</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}),</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">nav</span><span class="o">.</span><span class="n">pop</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">nav</span><span class="o">.</span><span class="n">go_back</span><span class="p">),</span>
         <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
     <span class="p">)</span>
 </code></pre></div>
 
 <p>See the <a href="../../guides/navigation/">Navigation guide</a> for full details.</p>
+<h3 id="use_route">use_route<a class="headerlink" href="#use_route" title="Permanent link">&para;</a></h3>
+<p>Convenience hook to read the current route's parameters:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DetailScreen</span><span class="p">():</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_route</span><span class="p">()</span>
+    <span class="n">item_id</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detail #</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="use_focus_effect">use_focus_effect<a class="headerlink" href="#use_focus_effect" title="Permanent link">&para;</a></h3>
+<p>Like <code>use_effect</code> but only runs when the screen is focused. Useful for refreshing data when navigating back to a screen:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">FeedScreen</span><span class="p">():</span>
+    <span class="n">items</span><span class="p">,</span> <span class="n">set_items</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">([])</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">use_focus_effect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">load_items</span><span class="p">(</span><span class="n">set_items</span><span class="p">),</span> <span class="p">[])</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">FlatList</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">items</span><span class="p">,</span> <span class="n">render_item</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+</code></pre></div>
+
 <h3 id="use_memo">use_memo<a class="headerlink" href="#use_memo" title="Permanent link">&para;</a></h3>
 <p>Memoise an expensive computation:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">sorted_items</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_memo</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="p">[</span><span class="n">items</span><span class="p">])</span>
@@ -1410,6 +1566,37 @@
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Welcome, </span><span class="si">{</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 
+<h2 id="batching-state-updates">Batching state updates<a class="headerlink" href="#batching-state-updates" title="Permanent link">&para;</a></h2>
+<p>By default, each state setter call triggers a re-render. When you need to update multiple pieces of state at once, use <code>pn.batch_updates()</code> to coalesce them into a single render pass:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Form</span><span class="p">():</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">set_name</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">email</span><span class="p">,</span> <span class="n">set_email</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">():</span>
+        <span class="k">with</span> <span class="n">pn</span><span class="o">.</span><span class="n">batch_updates</span><span class="p">():</span>
+            <span class="n">set_name</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+            <span class="n">set_email</span><span class="p">(</span><span class="s2">&quot;alice@example.com&quot;</span><span class="p">)</span>
+        <span class="c1"># single re-render here</span>
+
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> &lt;</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Fill&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">on_submit</span><span class="p">),</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p>State updates triggered by effects during a render pass are automatically batched — the framework drains any pending re-renders after effect flushing completes, so you don't need <code>batch_updates()</code> inside effects.</p>
+<h2 id="error-boundaries">Error boundaries<a class="headerlink" href="#error-boundaries" title="Permanent link">&para;</a></h2>
+<p>Wrap risky components in <code>pn.ErrorBoundary</code> to catch render errors and display a fallback UI:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">ErrorBoundary</span><span class="p">(</span>
+        <span class="n">MyRiskyComponent</span><span class="p">(),</span>
+        <span class="n">fallback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">err</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Something went wrong: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p>Without an error boundary, an exception during rendering crashes the entire page. Error boundaries catch errors during both initial mount and subsequent reconciliation.</p>
 <h2 id="custom-hooks">Custom hooks<a class="headerlink" href="#custom-hooks" title="Permanent link">&para;</a></h2>
 <p>Extract reusable stateful logic into plain functions:</p>
 <div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">use_toggle</span><span class="p">(</span><span class="n">initial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>

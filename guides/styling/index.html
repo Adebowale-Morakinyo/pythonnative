@@ -821,13 +821,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#layout-properties" class="md-nav__link">
+  <a href="#flex-layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Layout properties
+        Flex layout
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Flex layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex-container-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex container properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#child-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Child layout properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1248,13 +1287,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#layout-properties" class="md-nav__link">
+  <a href="#flex-layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Layout properties
+        Flex layout
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Flex layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex-container-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex container properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#child-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Child layout properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1383,7 +1461,7 @@
 <span class="n">styles</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StyleSheet</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#333&quot;</span><span class="p">},</span>
     <span class="n">subtitle</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#666&quot;</span><span class="p">},</span>
-    <span class="n">container</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;alignment&quot;</span><span class="p">:</span> <span class="s2">&quot;fill&quot;</span><span class="p">},</span>
+    <span class="n">container</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;align_items&quot;</span><span class="p">:</span> <span class="s2">&quot;stretch&quot;</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Welcome&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">])</span>
@@ -1424,38 +1502,81 @@
 <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Subtitle&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#666666&quot;</span><span class="p">})</span>
 </code></pre></div>
 
-<h2 id="layout-properties">Layout properties<a class="headerlink" href="#layout-properties" title="Permanent link">&para;</a></h2>
-<p>All components support common layout properties inside <code>style</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Fixed size&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">})</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;margin&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margin&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;horizontal&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;vertical&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">}})</span>
-</code></pre></div>
-
+<h2 id="flex-layout">Flex layout<a class="headerlink" href="#flex-layout" title="Permanent link">&para;</a></h2>
+<p>PythonNative uses a flexbox-inspired layout model. <code>View</code> is the universal flex container, and <code>Column</code>/<code>Row</code> are convenience wrappers.</p>
+<h3 id="flex-container-properties">Flex container properties<a class="headerlink" href="#flex-container-properties" title="Permanent link">&para;</a></h3>
+<p>These go in the <code>style</code> dict of <code>View</code>, <code>Column</code>, or <code>Row</code>:</p>
+<ul>
+<li><code>flex_direction</code> — <code>"column"</code> (default), <code>"row"</code>, <code>"column_reverse"</code>, <code>"row_reverse"</code> (only for <code>View</code>; <code>Column</code>/<code>Row</code> have fixed directions)</li>
+<li><code>justify_content</code> — main-axis distribution: <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>, <code>"space_between"</code>, <code>"space_around"</code>, <code>"space_evenly"</code></li>
+<li><code>align_items</code> — cross-axis alignment: <code>"stretch"</code>, <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code></li>
+<li><code>overflow</code> — <code>"visible"</code> (default), <code>"hidden"</code></li>
+<li><code>spacing</code> — gap between children (dp / pt)</li>
+<li><code>padding</code> — inner spacing (int for all sides, or dict)</li>
+</ul>
+<h3 id="child-layout-properties">Child layout properties<a class="headerlink" href="#child-layout-properties" title="Permanent link">&para;</a></h3>
+<p>All components accept these in <code>style</code>:</p>
 <ul>
 <li><code>width</code>, <code>height</code> — fixed dimensions in dp (Android) / pt (iOS)</li>
-<li><code>flex</code> — flex grow factor within Column/Row</li>
+<li><code>flex</code> — flex grow factor (shorthand for <code>flex_grow</code>)</li>
+<li><code>flex_grow</code> — how much a child should grow to fill available space</li>
+<li><code>flex_shrink</code> — how much a child should shrink when space is tight</li>
 <li><code>margin</code> — outer spacing (int for all sides, or dict)</li>
-<li><code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code> — size constraints</li>
-<li><code>align_self</code> — override parent alignment</li>
+<li><code>min_width</code>, <code>min_height</code> — minimum size constraints</li>
+<li><code>max_width</code>, <code>max_height</code> — maximum size constraints</li>
+<li><code>align_self</code> — override parent alignment: <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>, <code>"stretch"</code></li>
 </ul>
+<h3 id="layout-examples">Layout examples<a class="headerlink" href="#layout-examples" title="Permanent link">&para;</a></h3>
+<p><strong>Centering content:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Centered!&quot;</span><span class="p">),</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;justify_content&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="s2">&quot;align_items&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Horizontal row with spacer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Left&quot;</span><span class="p">),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(</span><span class="n">flex</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Right&quot;</span><span class="p">),</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;align_items&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Child with flex grow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Header&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Content area&quot;</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Footer&quot;</span><span class="p">),</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Horizontal button bar:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Cancel&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;background_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#007AFF&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#FFF&quot;</span><span class="p">}),</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+
 <h2 id="layout-with-column-and-row">Layout with Column and Row<a class="headerlink" href="#layout-with-column-and-row" title="Permanent link">&para;</a></h2>
-<p><code>Column</code> (vertical) and <code>Row</code> (horizontal):</p>
+<p><code>Column</code> (vertical) and <code>Row</code> (horizontal) are convenience wrappers for <code>View</code>:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Username&quot;</span><span class="p">),</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Enter username&quot;</span><span class="p">),</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Password&quot;</span><span class="p">),</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Enter password&quot;</span><span class="p">,</span> <span class="n">secure</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Login&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">handle_login</span><span class="p">),</span>
-    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;alignment&quot;</span><span class="p">:</span> <span class="s2">&quot;fill&quot;</span><span class="p">},</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;align_items&quot;</span><span class="p">:</span> <span class="s2">&quot;stretch&quot;</span><span class="p">},</span>
 <span class="p">)</span>
 </code></pre></div>
 
 <h3 id="alignment-properties">Alignment properties<a class="headerlink" href="#alignment-properties" title="Permanent link">&para;</a></h3>
 <p>Column and Row support <code>align_items</code> and <code>justify_content</code> inside <code>style</code>:</p>
 <ul>
-<li><strong><code>align_items</code></strong> — cross-axis alignment: <code>"fill"</code>, <code>"center"</code>, <code>"leading"</code> / <code>"start"</code>, <code>"trailing"</code> / <code>"end"</code></li>
-<li><strong><code>justify_content</code></strong> — main-axis distribution: <code>"start"</code>, <code>"center"</code>, <code>"end"</code>, <code>"space_between"</code>, <code>"space_around"</code></li>
-<li><strong><code>alignment</code></strong> — shorthand for cross-axis alignment (same values as <code>align_items</code>)</li>
+<li><strong><code>align_items</code></strong> — cross-axis alignment: <code>"stretch"</code>, <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>, <code>"leading"</code>, <code>"trailing"</code></li>
+<li><strong><code>justify_content</code></strong> — main-axis distribution: <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>, <code>"space_between"</code>, <code>"space_around"</code>, <code>"space_evenly"</code></li>
 </ul>
 <div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
     <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Left&quot;</span><span class="p">),</span>

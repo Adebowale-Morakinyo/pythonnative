@@ -447,13 +447,63 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#layout-properties" class="md-nav__link">
+  <a href="#flex-layout-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Layout properties
+        Flex layout model
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Flex layout model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex-container-properties-inside-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex container properties (inside style)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#child-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Child layout properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-centering-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: centering content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-horizontal-row-with-spacing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: horizontal row with spacing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1127,13 +1177,63 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#layout-properties" class="md-nav__link">
+  <a href="#flex-layout-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Layout properties
+        Flex layout model
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Flex layout model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex-container-properties-inside-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex container properties (inside style)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#child-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Child layout properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-centering-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: centering content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-horizontal-row-with-spacing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: horizontal row with spacing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1263,10 +1363,10 @@
 <h3 id="available-components">Available components<a class="headerlink" href="#available-components" title="Permanent link">&para;</a></h3>
 <p><strong>Layout:</strong></p>
 <ul>
-<li><code>Column(*children, style=...)</code> — vertical stack</li>
-<li><code>Row(*children, style=...)</code> — horizontal stack</li>
+<li><code>View(*children, style=...)</code> — universal flex container (default <code>flex_direction: "column"</code>)</li>
+<li><code>Column(*children, style=...)</code> — vertical flex container (fixed <code>flex_direction: "column"</code>)</li>
+<li><code>Row(*children, style=...)</code> — horizontal flex container (fixed <code>flex_direction: "row"</code>)</li>
 <li><code>ScrollView(child, style=...)</code> — scrollable container</li>
-<li><code>View(*children, style=...)</code> — generic container</li>
 <li><code>SafeAreaView(*children, style=...)</code> — safe-area-aware container</li>
 <li><code>Spacer(size, flex)</code> — empty space</li>
 </ul>
@@ -1293,19 +1393,52 @@
 <ul>
 <li><code>Modal(*children, visible, on_dismiss, title)</code> — modal dialog</li>
 </ul>
+<p><strong>Error handling:</strong></p>
+<ul>
+<li><code>ErrorBoundary(child, fallback)</code> — catches render errors in child and displays fallback</li>
+</ul>
 <p><strong>Lists:</strong></p>
 <ul>
 <li><code>FlatList(data, render_item, key_extractor, separator_height)</code> — scrollable data list</li>
 </ul>
-<h3 id="layout-properties">Layout properties<a class="headerlink" href="#layout-properties" title="Permanent link">&para;</a></h3>
-<p>All components accept layout properties inside the <code>style</code> dict:</p>
+<h3 id="flex-layout-model">Flex layout model<a class="headerlink" href="#flex-layout-model" title="Permanent link">&para;</a></h3>
+<p>PythonNative uses a <strong>flexbox-inspired layout model</strong>. <code>View</code> is the universal flex container — <code>Column</code> and <code>Row</code> are convenience wrappers.</p>
+<h4 id="flex-container-properties-inside-style">Flex container properties (inside <code>style</code>)<a class="headerlink" href="#flex-container-properties-inside-style" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>flex_direction</code> — <code>"column"</code> (default), <code>"row"</code>, <code>"column_reverse"</code>, <code>"row_reverse"</code></li>
+<li><code>justify_content</code> — main-axis distribution: <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>, <code>"space_between"</code>, <code>"space_around"</code>, <code>"space_evenly"</code></li>
+<li><code>align_items</code> — cross-axis alignment: <code>"stretch"</code>, <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code></li>
+<li><code>overflow</code> — <code>"visible"</code> (default), <code>"hidden"</code></li>
+<li><code>spacing</code> — gap between children (dp / pt)</li>
+<li><code>padding</code> — inner spacing</li>
+</ul>
+<h4 id="child-layout-properties">Child layout properties<a class="headerlink" href="#child-layout-properties" title="Permanent link">&para;</a></h4>
+<p>All components accept these in their <code>style</code> dict:</p>
 <ul>
 <li><code>width</code>, <code>height</code> — fixed dimensions (dp / pt)</li>
-<li><code>flex</code> — flex grow factor</li>
+<li><code>flex</code> — flex grow factor (shorthand)</li>
+<li><code>flex_grow</code>, <code>flex_shrink</code> — individual flex properties</li>
 <li><code>margin</code> — outer margin (int, float, or dict like padding)</li>
-<li><code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code> — size constraints</li>
+<li><code>min_width</code>, <code>min_height</code> — minimum size constraints</li>
+<li><code>max_width</code>, <code>max_height</code> — maximum size constraints</li>
 <li><code>align_self</code> — override parent alignment for this child</li>
 </ul>
+<h4 id="example-centering-content">Example: centering content<a class="headerlink" href="#example-centering-content" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Centered&quot;</span><span class="p">),</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;justify_content&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="s2">&quot;align_items&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h4 id="example-horizontal-row-with-spacing">Example: horizontal row with spacing<a class="headerlink" href="#example-horizontal-row-with-spacing" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Cancel&quot;</span><span class="p">),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(</span><span class="n">flex</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">),</span>
+    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;align_items&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+
 <h2 id="function-components-the-building-block">Function components — the building block<a class="headerlink" href="#function-components-the-building-block" title="Permanent link">&para;</a></h2>
 <p>All UI in PythonNative is built with <code>@pn.component</code> function components. Each screen is a function component that returns an element tree:</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
@@ -1358,12 +1491,15 @@
 <h3 id="available-hooks">Available hooks<a class="headerlink" href="#available-hooks" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>use_state(initial)</code> — local component state; returns <code>(value, setter)</code></li>
-<li><code>use_effect(effect, deps)</code> — side effects (timers, API calls, subscriptions)</li>
+<li><code>use_reducer(reducer, initial_state)</code> — reducer-based state; returns <code>(state, dispatch)</code></li>
+<li><code>use_effect(effect, deps)</code> — side effects, run after native commit (timers, API calls, subscriptions)</li>
 <li><code>use_memo(factory, deps)</code> — memoised computed values</li>
 <li><code>use_callback(fn, deps)</code> — stable function references</li>
 <li><code>use_ref(initial)</code> — mutable ref that persists across renders</li>
 <li><code>use_context(context)</code> — read from a context provider</li>
-<li><code>use_navigation()</code> — navigation handle for push/pop between screens</li>
+<li><code>use_navigation()</code> — navigation handle for navigate/go_back/get_params</li>
+<li><code>use_route()</code> — convenience hook for current route params</li>
+<li><code>use_focus_effect(effect, deps)</code> — like <code>use_effect</code> but only runs when the screen is focused</li>
 </ul>
 <h3 id="custom-hooks">Custom hooks<a class="headerlink" href="#custom-hooks" title="Permanent link">&para;</a></h3>
 <p>Extract reusable stateful logic into plain functions:</p>

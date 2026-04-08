@@ -710,13 +710,63 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#push-pop" class="md-nav__link">
+  <a href="#declarative-navigation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Push / Pop
+        Declarative Navigation
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Declarative Navigation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stack-navigator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stack Navigator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tab-navigator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tab Navigator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drawer-navigator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drawer Navigator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nesting-navigators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nesting Navigators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -729,13 +779,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="NavigationHandle API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#drawer-specific-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drawer-specific methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#lifecycle" class="md-nav__link">
+  <a href="#focus-aware-effects" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lifecycle
+        Focus-aware Effects
       
     </span>
   </a>
@@ -743,10 +810,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
+  <a href="#route-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Notes
+        Route Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lifecycle
       
     </span>
   </a>
@@ -1076,13 +1154,63 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#push-pop" class="md-nav__link">
+  <a href="#declarative-navigation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Push / Pop
+        Declarative Navigation
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Declarative Navigation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stack-navigator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stack Navigator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tab-navigator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tab Navigator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drawer-navigator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drawer Navigator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nesting-navigators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nesting Navigators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1095,13 +1223,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="NavigationHandle API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#drawer-specific-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drawer-specific methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#lifecycle" class="md-nav__link">
+  <a href="#focus-aware-effects" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lifecycle
+        Focus-aware Effects
       
     </span>
   </a>
@@ -1109,10 +1254,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
+  <a href="#route-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Notes
+        Route Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lifecycle
       
     </span>
   </a>
@@ -1190,12 +1346,29 @@
 
 
 <h1 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h1>
-<p>This guide shows how to navigate between screens and pass data using the <code>use_navigation()</code> hook.</p>
-<h2 id="push-pop">Push / Pop<a class="headerlink" href="#push-pop" title="Permanent link">&para;</a></h2>
-<p>Call <code>pn.use_navigation()</code> inside a <code>@pn.component</code> to get a <code>NavigationHandle</code>. Use <code>.push()</code> and <code>.pop()</code> to change screens, passing a component reference with optional <code>args</code>.</p>
+<p>PythonNative offers two approaches to navigation:</p>
+<ol>
+<li><strong>Declarative navigators</strong> (recommended) — component-based, inspired by React Navigation</li>
+<li><strong>Page-level push/pop</strong> — imperative navigation via <code>use_navigation()</code> (for native page transitions)</li>
+</ol>
+<h2 id="declarative-navigation">Declarative Navigation<a class="headerlink" href="#declarative-navigation" title="Permanent link">&para;</a></h2>
+<p>Declarative navigators manage screen state as components. Define your screens once, and the navigator handles rendering, transitions, and state.</p>
+<h3 id="stack-navigator">Stack Navigator<a class="headerlink" href="#stack-navigator" title="Permanent link">&para;</a></h3>
+<p>A stack navigator manages a stack of screens — push to go forward, pop to go back.</p>
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">app.second_page</span><span class="w"> </span><span class="kn">import</span> <span class="n">SecondPage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.navigation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NavigationContainer</span><span class="p">,</span> <span class="n">create_stack_navigator</span>
 
+<span class="n">Stack</span> <span class="o">=</span> <span class="n">create_stack_navigator</span><span class="p">()</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">NavigationContainer</span><span class="p">(</span>
+        <span class="n">Stack</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
+            <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">HomeScreen</span><span class="p">),</span>
+            <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Detail&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">DetailScreen</span><span class="p">),</span>
+            <span class="n">initial_route</span><span class="o">=</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 
 <span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">HomeScreen</span><span class="p">():</span>
@@ -1203,35 +1376,146 @@
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
         <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">}),</span>
         <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-            <span class="s2">&quot;Go next&quot;</span><span class="p">,</span>
-            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">push</span><span class="p">(</span>
-                <span class="n">SecondPage</span><span class="p">,</span>
-                <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello from Home&quot;</span><span class="p">},</span>
-            <span class="p">),</span>
+            <span class="s2">&quot;Go to Detail&quot;</span><span class="p">,</span>
+            <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">navigate</span><span class="p">(</span><span class="s2">&quot;Detail&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}),</span>
         <span class="p">),</span>
         <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
     <span class="p">)</span>
-</code></pre></div>
 
-<p>On the target screen, retrieve args with <code>nav.get_args()</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">SecondPage</span><span class="p">():</span>
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DetailScreen</span><span class="p">():</span>
     <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="n">nav</span><span class="o">.</span><span class="n">get_args</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;Second Page&quot;</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">nav</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}),</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">nav</span><span class="o">.</span><span class="n">pop</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detail #</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Back&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">nav</span><span class="o">.</span><span class="n">go_back</span><span class="p">),</span>
         <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
     <span class="p">)</span>
 </code></pre></div>
 
+<h3 id="tab-navigator">Tab Navigator<a class="headerlink" href="#tab-navigator" title="Permanent link">&para;</a></h3>
+<p>A tab navigator renders a <strong>native tab bar</strong> and switches between screens.
+On Android the tab bar is a <code>BottomNavigationView</code> from Material Components;
+on iOS it is a <code>UITabBar</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.navigation</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_tab_navigator</span>
+
+<span class="n">Tab</span> <span class="o">=</span> <span class="n">create_tab_navigator</span><span class="p">()</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">NavigationContainer</span><span class="p">(</span>
+        <span class="n">Tab</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
+            <span class="n">Tab</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">HomeScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Home&quot;</span><span class="p">}),</span>
+            <span class="n">Tab</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Settings&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">SettingsScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Settings&quot;</span><span class="p">}),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p>The tab bar emits a <code>TabBar</code> element that maps to platform-native views:</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Native view</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Android</td>
+<td><code>BottomNavigationView</code></td>
+</tr>
+<tr>
+<td>iOS</td>
+<td><code>UITabBar</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="drawer-navigator">Drawer Navigator<a class="headerlink" href="#drawer-navigator" title="Permanent link">&para;</a></h3>
+<p>A drawer navigator provides a side menu for switching screens.</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.navigation</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_drawer_navigator</span>
+
+<span class="n">Drawer</span> <span class="o">=</span> <span class="n">create_drawer_navigator</span><span class="p">()</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">NavigationContainer</span><span class="p">(</span>
+        <span class="n">Drawer</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
+            <span class="n">Drawer</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">HomeScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Home&quot;</span><span class="p">}),</span>
+            <span class="n">Drawer</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Profile&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">ProfileScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Profile&quot;</span><span class="p">}),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">HomeScreen</span><span class="p">():</span>
+    <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Open Menu&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">nav</span><span class="o">.</span><span class="n">open_drawer</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Home Screen&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<h3 id="nesting-navigators">Nesting Navigators<a class="headerlink" href="#nesting-navigators" title="Permanent link">&para;</a></h3>
+<p>Navigators can be nested — for example, tabs containing stacks.
+When a child navigator receives a <code>navigate()</code> call for an unknown route,
+it automatically <strong>forwards</strong> the request to its parent navigator.
+Similarly, <code>go_back()</code> at the root of a child stack forwards to the parent.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Stack</span> <span class="o">=</span> <span class="n">create_stack_navigator</span><span class="p">()</span>
+<span class="n">Tab</span> <span class="o">=</span> <span class="n">create_tab_navigator</span><span class="p">()</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">HomeStack</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">Stack</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
+        <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Feed&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">FeedScreen</span><span class="p">),</span>
+        <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Post&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">PostScreen</span><span class="p">),</span>
+    <span class="p">)</span>
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">NavigationContainer</span><span class="p">(</span>
+        <span class="n">Tab</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
+            <span class="n">Tab</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">HomeStack</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Home&quot;</span><span class="p">}),</span>
+            <span class="n">Tab</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Settings&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">SettingsScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Settings&quot;</span><span class="p">}),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<p>Inside <code>FeedScreen</code>, calling <code>nav.navigate("Settings")</code> will forward to the
+parent tab navigator and switch to the Settings tab.</p>
 <h2 id="navigationhandle-api">NavigationHandle API<a class="headerlink" href="#navigationhandle-api" title="Permanent link">&para;</a></h2>
-<p><code>pn.use_navigation()</code> returns a <code>NavigationHandle</code> with:</p>
+<p>Inside any screen rendered by a navigator, <code>pn.use_navigation()</code> returns a handle with:</p>
 <ul>
-<li><strong><code>.push(component, args=...)</code></strong> — navigate to a new screen. Pass a component reference (the <code>@pn.component</code> function itself), with an optional <code>args</code> dict.</li>
-<li><strong><code>.pop()</code></strong> — go back to the previous screen.</li>
-<li><strong><code>.get_args()</code></strong> — retrieve the args dict passed by the caller.</li>
+<li><strong><code>.navigate(route_name, params=...)</code></strong> — navigate to a named route with optional params</li>
+<li><strong><code>.go_back()</code></strong> — pop the current screen</li>
+<li><strong><code>.get_params()</code></strong> — get the current route's params dict</li>
+<li><strong><code>.reset(route_name, params=...)</code></strong> — reset the stack to a single route</li>
 </ul>
+<h3 id="drawer-specific-methods">Drawer-specific methods<a class="headerlink" href="#drawer-specific-methods" title="Permanent link">&para;</a></h3>
+<p>When inside a drawer navigator, the handle also provides:</p>
+<ul>
+<li><strong><code>.open_drawer()</code></strong> — open the drawer</li>
+<li><strong><code>.close_drawer()</code></strong> — close the drawer</li>
+<li><strong><code>.toggle_drawer()</code></strong> — toggle the drawer open/closed</li>
+</ul>
+<h2 id="focus-aware-effects">Focus-aware Effects<a class="headerlink" href="#focus-aware-effects" title="Permanent link">&para;</a></h2>
+<p>Use <code>pn.use_focus_effect()</code> to run effects only when a screen is focused:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DataScreen</span><span class="p">():</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">set_data</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">pn</span><span class="o">.</span><span class="n">use_focus_effect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">fetch_data</span><span class="p">(</span><span class="n">set_data</span><span class="p">),</span> <span class="p">[])</span>
+
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="route-parameters">Route Parameters<a class="headerlink" href="#route-parameters" title="Permanent link">&para;</a></h2>
+<p>Use <code>pn.use_route()</code> for convenient access to route params:</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DetailScreen</span><span class="p">():</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_route</span><span class="p">()</span>
+    <span class="n">item_id</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item #</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
 <h2 id="lifecycle">Lifecycle<a class="headerlink" href="#lifecycle" title="Permanent link">&para;</a></h2>
 <p>PythonNative forwards lifecycle events from the host:</p>
 <ul>
@@ -1244,11 +1528,6 @@
 <li><code>on_restart</code> (Android only)</li>
 <li><code>on_save_instance_state</code></li>
 <li><code>on_restore_instance_state</code></li>
-</ul>
-<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
-<ul>
-<li>On Android, <code>push</code> navigates via <code>NavController</code> to a <code>PageFragment</code> and passes <code>page_path</code> and optional JSON <code>args</code>.</li>
-<li>On iOS, <code>push</code> uses the root <code>UINavigationController</code> to push a new <code>ViewController</code> and passes page info via KVC.</li>
 </ul>
 <h2 id="platform-specifics">Platform specifics<a class="headerlink" href="#platform-specifics" title="Permanent link">&para;</a></h2>
 <h3 id="ios-uiviewcontroller-per-page">iOS (UIViewController per page)<a class="headerlink" href="#ios-uiviewcontroller-per-page" title="Permanent link">&para;</a></h3>

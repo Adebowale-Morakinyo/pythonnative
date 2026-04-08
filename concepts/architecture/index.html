@@ -415,6 +415,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How it works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#render-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Render lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -444,6 +461,45 @@
     <span class="md-ellipsis">
       
         Layout
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex-container-properties-inside-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex container properties (inside style)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#child-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Child layout properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-view-handlers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native view handlers
       
     </span>
   </a>
@@ -1133,6 +1189,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How it works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#render-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Render lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1162,6 +1235,45 @@
     <span class="md-ellipsis">
       
         Layout
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex-container-properties-inside-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flex container properties (inside style)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#child-layout-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Child layout properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-view-handlers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native view handlers
       
     </span>
   </a>
@@ -1270,21 +1382,32 @@
 <h2 id="high-level-model">High-level model<a class="headerlink" href="#high-level-model" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Declarative element tree:</strong> Your <code>@pn.component</code> function returns a tree of <code>Element</code> descriptors (similar to React elements / virtual DOM nodes).</li>
-<li><strong>Function components and hooks:</strong> All UI is built with <code>@pn.component</code> functions using <code>use_state</code>, <code>use_effect</code>, <code>use_navigation</code>, etc. — inspired by React hooks but designed for Python.</li>
+<li><strong>Function components and hooks:</strong> All UI is built with <code>@pn.component</code> functions using <code>use_state</code>, <code>use_reducer</code>, <code>use_effect</code>, <code>use_navigation</code>, etc. — inspired by React hooks but designed for Python.</li>
 <li><strong>Reconciler:</strong> On first render, the reconciler walks the tree and creates real native views via the platform backend. On subsequent renders (triggered by hook state changes), it diffs the new tree against the old one and applies the minimal set of native mutations.</li>
+<li><strong>Post-render effects:</strong> Effects queued via <code>use_effect</code> are flushed <strong>after</strong> the reconciler commits native mutations, matching React semantics. This guarantees that effect callbacks interact with the committed native tree.</li>
+<li><strong>State batching:</strong> Multiple state updates triggered during a render pass (e.g. from effects) are automatically batched into a single re-render. Explicit batching is available via <code>pn.batch_updates()</code>.</li>
 <li><strong>Key-based reconciliation:</strong> Children can be assigned stable <code>key</code> values to preserve identity across re-renders — critical for lists and dynamic content.</li>
+<li><strong>Error boundaries:</strong> <code>pn.ErrorBoundary</code> catches render errors in child subtrees and displays fallback UI, preventing a single component failure from crashing the entire page.</li>
 <li><strong>Direct bindings:</strong> Under the hood, native views are created and updated through direct platform calls:</li>
 <li><strong>iOS:</strong> rubicon-objc exposes Objective-C/Swift classes (<code>UILabel</code>, <code>UIButton</code>, <code>UIStackView</code>, etc.).</li>
 <li><strong>Android:</strong> Chaquopy exposes Java classes (<code>android.widget.TextView</code>, <code>android.widget.Button</code>, etc.) via the JNI bridge.</li>
 <li><strong>Thin native bootstrap:</strong> The host app remains native (Android <code>Activity</code> or iOS <code>UIViewController</code>). It calls <code>create_page()</code> internally to bootstrap your Python component, and the reconciler drives the UI from there.</li>
 </ol>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span></span><code><span class="nv">@pn</span><span class="p">.</span><span class="n">component</span><span class="w"> </span><span class="n">fn</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="k">Element</span><span class="w"> </span><span class="n">tree</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">Reconciler</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">Native</span><span class="w"> </span><span class="n">views</span>
+<div class="codehilite"><pre><span></span><code><span class="nv">@pn</span><span class="p">.</span><span class="n">component</span><span class="w"> </span><span class="n">fn</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="k">Element</span><span class="w"> </span><span class="n">tree</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">Reconciler</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">Native</span><span class="w"> </span><span class="n">views</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">Flush</span><span class="w"> </span><span class="n">effects</span>
 <span class="w">                                           </span><span class="err">↑</span>
-<span class="n">Hook</span><span class="w"> </span><span class="n">set_state</span><span class="p">()</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">re</span><span class="o">-</span><span class="n">render</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">diff</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">patch</span><span class="w"> </span><span class="n">native</span><span class="w"> </span><span class="n">views</span>
+<span class="n">Hook</span><span class="w"> </span><span class="n">set_state</span><span class="p">()</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">schedule</span><span class="w"> </span><span class="n">render</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">diff</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">patch</span><span class="w"> </span><span class="n">native</span><span class="w"> </span><span class="n">views</span><span class="w">  </span><span class="err">→</span><span class="w">  </span><span class="n">Flush</span><span class="w"> </span><span class="n">effects</span>
+<span class="w">                     </span><span class="p">(</span><span class="n">batched</span><span class="p">)</span>
 </code></pre></div>
 
 <p>The reconciler uses <strong>key-based diffing</strong> (matching children by key first, then by position). When a child with the same key/type is found, its props are updated in-place on the native view. When the type changes, the old native view is destroyed and a new one is created.</p>
+<h3 id="render-lifecycle">Render lifecycle<a class="headerlink" href="#render-lifecycle" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Render phase:</strong> Component functions execute. Hooks record state reads, queue effects, and register memos. No native mutations happen yet.</li>
+<li><strong>Commit phase:</strong> The reconciler applies the diff to native views — creating, updating, and removing views as needed.</li>
+<li><strong>Effect phase:</strong> Pending effects are flushed in depth-first order (children before parents). Cleanup functions from the previous render run before new effect callbacks.</li>
+<li><strong>Drain phase:</strong> If effects set state, a new render pass is automatically triggered and the cycle repeats (up to a safety limit to prevent infinite loops).</li>
+</ol>
 <h2 id="component-model">Component model<a class="headerlink" href="#component-model" title="Permanent link">&para;</a></h2>
 <p>PythonNative uses a single component model: <strong>function components</strong> decorated with <code>@pn.component</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
@@ -1299,7 +1422,7 @@
 
 <p>Each component is a Python function that:
 - Accepts props as keyword arguments
-- Uses hooks for state (<code>use_state</code>), side effects (<code>use_effect</code>), navigation (<code>use_navigation</code>), and more
+- Uses hooks for state (<code>use_state</code>, <code>use_reducer</code>), side effects (<code>use_effect</code>), navigation (<code>use_navigation</code>), and more
 - Returns an <code>Element</code> tree describing the UI
 - Each call site creates an independent instance with its own hook state</p>
 <p>The entry point <code>create_page()</code> is called internally by native templates to bootstrap your root component. You don't call it directly.</p>
@@ -1310,7 +1433,38 @@
 <li><strong>Theming:</strong> Use <code>pn.ThemeContext</code> with <code>pn.Provider</code> and <code>pn.use_context</code> to propagate theme values through the tree.</li>
 </ul>
 <h2 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h2>
-<p>All components support layout properties inside the <code>style</code> dict: <code>width</code>, <code>height</code>, <code>flex</code>, <code>margin</code>, <code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code>, <code>align_self</code>. Containers (<code>Column</code>, <code>Row</code>) support <code>spacing</code>, <code>padding</code>, <code>alignment</code>, <code>align_items</code>, and <code>justify_content</code>.</p>
+<p>PythonNative uses a <strong>flexbox-inspired layout model</strong> built on platform-native layout managers.</p>
+<p><code>View</code> is the <strong>universal flex container</strong> (like React Native's <code>View</code>). It defaults to <code>flex_direction: "column"</code>. <code>Column</code> and <code>Row</code> are convenience wrappers that fix the direction.</p>
+<h3 id="flex-container-properties-inside-style">Flex container properties (inside <code>style</code>)<a class="headerlink" href="#flex-container-properties-inside-style" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>flex_direction</code> — <code>"column"</code> (default), <code>"row"</code>, <code>"column_reverse"</code>, <code>"row_reverse"</code></li>
+<li><code>justify_content</code> — main-axis distribution: <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>, <code>"space_between"</code>, <code>"space_around"</code>, <code>"space_evenly"</code></li>
+<li><code>align_items</code> — cross-axis alignment: <code>"stretch"</code>, <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code></li>
+<li><code>overflow</code> — <code>"visible"</code> (default), <code>"hidden"</code></li>
+<li><code>spacing</code> — gap between children (dp / pt)</li>
+<li><code>padding</code> — inner spacing</li>
+</ul>
+<h3 id="child-layout-properties">Child layout properties<a class="headerlink" href="#child-layout-properties" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>flex</code> — flex grow factor (shorthand)</li>
+<li><code>flex_grow</code>, <code>flex_shrink</code> — individual flex properties</li>
+<li><code>align_self</code> — override the parent's <code>align_items</code> for this child</li>
+<li><code>width</code>, <code>height</code> — fixed dimensions</li>
+<li><code>min_width</code>, <code>min_height</code> — minimum size constraints</li>
+<li><code>margin</code> — outer spacing</li>
+</ul>
+<p>Under the hood:
+- <strong>Android:</strong> <code>LinearLayout</code> with gravity, weights, and divider-based spacing
+- <strong>iOS:</strong> <code>UIStackView</code> with axis, alignment, distribution, and layout margins</p>
+<h2 id="native-view-handlers">Native view handlers<a class="headerlink" href="#native-view-handlers" title="Permanent link">&para;</a></h2>
+<p>Platform-specific rendering logic lives in the <code>native_views</code> package, organised into dedicated submodules:</p>
+<ul>
+<li><code>native_views.base</code> — shared <code>ViewHandler</code> protocol and common utilities (colour parsing, padding resolution, layout keys, flex constants)</li>
+<li><code>native_views.android</code> — Android handlers using Chaquopy's Java bridge (<code>jclass</code>, <code>dynamic_proxy</code>)</li>
+<li><code>native_views.ios</code> — iOS handlers using rubicon-objc (<code>ObjCClass</code>, <code>objc_method</code>)</li>
+</ul>
+<p>Column, Row, and View share a single <code>FlexContainerHandler</code> class on each platform. The handler reads <code>flex_direction</code> from the element's props to configure the native layout container.</p>
+<p>Each handler class maps an element type name (e.g. <code>"Text"</code>, <code>"Button"</code>) to platform-native widget creation, property updates, and child management.  The <code>NativeViewRegistry</code> lazily imports only the relevant platform module at runtime, so the package can be imported on any platform for testing.</p>
 <h2 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Versus React Native:</strong> RN uses JSX + a JavaScript bridge + Yoga layout. PythonNative uses Python + direct native calls + platform layout managers. No JS bridge, no serialisation overhead.</li>
@@ -1339,9 +1493,14 @@
 <li><code>pythonnative.native_modules.Notifications</code> — local push notifications</li>
 </ul>
 <h2 id="navigation-model-overview">Navigation model overview<a class="headerlink" href="#navigation-model-overview" title="Permanent link">&para;</a></h2>
+<p>PythonNative provides two navigation approaches:</p>
 <ul>
-<li>See the Navigation guide for full details.</li>
-<li>Navigation is handled via the <code>use_navigation()</code> hook, which returns a <code>NavigationHandle</code> with <code>.push()</code>, <code>.pop()</code>, and <code>.get_args()</code>.</li>
+<li><strong>Declarative navigators</strong> (recommended): <code>NavigationContainer</code> with <code>create_stack_navigator()</code>, <code>create_tab_navigator()</code>, and <code>create_drawer_navigator()</code>. Navigation state is managed in Python as component state, and navigators are composable — you can nest tabs inside stacks, etc.</li>
+<li><strong>Page-level navigation</strong>: <code>use_navigation()</code> returns a <code>NavigationHandle</code> with <code>.navigate()</code>, <code>.go_back()</code>, and <code>.get_params()</code>, delegating to native platform navigation when running on device.</li>
+</ul>
+<p>Both approaches are supported. The declarative system uses the existing reconciler pipeline — navigators are function components that render the active screen via <code>use_state</code>, and navigation context is provided via <code>Provider</code>.</p>
+<p>See the <a href="../../guides/navigation/">Navigation guide</a> for full details.</p>
+<ul>
 <li>iOS: one host <code>UIViewController</code> class, many instances pushed on a <code>UINavigationController</code>.</li>
 <li>Android: single host <code>Activity</code> with a <code>NavHostFragment</code> and a stack of generic <code>PageFragment</code>s driven by a navigation graph.</li>
 </ul>

@@ -1,6 +1,28 @@
 # CHANGELOG
 
 
+## v0.8.0 (2026-04-08)
+
+### Features
+
+- **hooks,reconciler**: Defer effects; add batching and use_reducer
+  ([`bf6bb57`](https://github.com/pythonnative/pythonnative/commit/bf6bb57b6f97c140820a902ea0eff6bf6a7ffdbc))
+
+- **native_views,components**: Add flexbox-inspired layout system
+  ([`094d997`](https://github.com/pythonnative/pythonnative/commit/094d99786f7153a7286eb7db9775db0bb90abf1d))
+
+- **navigation**: Add declarative navigation system
+  ([`828bbb0`](https://github.com/pythonnative/pythonnative/commit/828bbb0c83fba640a7055edf1237500f27493fd3))
+
+- **navigation**: Add native tab bars and nested navigator forwarding
+  ([`2b80032`](https://github.com/pythonnative/pythonnative/commit/2b8003218267dd39b968c630b89bd5e212ea7254))
+
+### Refactoring
+
+- **native_views**: Split monolithic module into platform-specific package
+  ([`d0068fd`](https://github.com/pythonnative/pythonnative/commit/d0068fdbcceb4745b02d8043b03eade2b54dde66))
+
+
 ## v0.7.0 (2026-04-03)
 
 ### Features

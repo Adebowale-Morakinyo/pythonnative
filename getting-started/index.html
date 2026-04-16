@@ -337,6 +337,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#viewing-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing logs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#clean" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1035,6 +1046,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#viewing-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing logs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#clean" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1121,6 +1143,35 @@ pn<span class="w"> </span>run<span class="w"> </span>ios<span class="w"> </span>
 </code></pre></div>
 
 <p>This stages files under <code>build/</code> so you can open them in Android Studio or Xcode.</p>
+<h2 id="viewing-logs">Viewing logs<a class="headerlink" href="#viewing-logs" title="Permanent link">&para;</a></h2>
+<p>After the app launches, <code>pn run</code> attaches to the app's stdout/stderr so Python
+<code>print()</code> output and tracebacks stream back into your terminal until you press
+Ctrl+C:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+
+
+<span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">MainPage</span><span class="p">():</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[MainPage] render count=</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Tap me&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_count</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>On Android, logs are streamed via <code>adb logcat</code> filtered to the
+  <code>python.stdout</code> / <code>python.stderr</code> tags (that Chaquopy redirects <code>print()</code> to)
+  plus the template's Kotlin tags.</li>
+<li>On iOS Simulator, the app is launched via <code>xcrun simctl launch --console-pty</code>,
+  which forwards the Python process's standard streams to your terminal.</li>
+</ul>
+<p>Pass <code>--no-logs</code> if you'd rather run fire-and-forget:</p>
+<div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--no-logs
+pn<span class="w"> </span>run<span class="w"> </span>ios<span class="w"> </span>--no-logs
+</code></pre></div>
+
 <h2 id="clean">Clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h2>
 <p>Remove the build artifacts safely:</p>
 <div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>clean

@@ -715,6 +715,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#viewing-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing logs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Viewing logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#clean" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1070,6 +1098,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#viewing-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Viewing logs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Viewing logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#clean" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1127,6 +1183,25 @@
 </code></pre></div>
 
 <p>You can then open <code>build/ios/ios_template/ios_template.xcodeproj</code> in Xcode.</p>
+<h2 id="viewing-logs">Viewing logs<a class="headerlink" href="#viewing-logs" title="Permanent link">&para;</a></h2>
+<p>After building and installing into the Simulator, <code>pn run ios</code> launches the app
+with <code>xcrun simctl launch --console-pty</code>, which attaches your terminal to the
+app's stdout/stderr. Python <code>print()</code> calls and exception tracebacks appear
+inline until you press Ctrl+C, at which point the app is terminated cleanly.</p>
+<p><code>SIMCTL_CHILD_PYTHONUNBUFFERED=1</code> is forwarded to the launched process so
+output is line-buffered and doesn't get stuck behind Python's stream buffers.</p>
+<p>Pass <code>--no-logs</code> to skip the console attach and use the legacy fire-and-exit
+launch instead — useful when you want to continue interacting with the app
+from Xcode or Console.app, or when running in a non-interactive context like
+CI (see the <code>e2e.yml</code> workflow for an example).</p>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Xcode 14 or newer.</strong> <code>simctl launch --console-pty</code> was added in Xcode 14;
+  on older toolchains either upgrade Xcode or pass <code>--no-logs</code>.</li>
+<li>Python <code>print()</code> output on the Simulator is routed through the app's stderr
+  by the <code>pythonnative._ios_log</code> module — this runs automatically when the
+  embedded Python bootstraps on iOS, so you don't need to configure it.</li>
+</ul>
 <h2 id="clean">Clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h2>
 <p>Remove the build directory safely:</p>
 <div class="codehilite"><pre><span></span><code>pn<span class="w"> </span>clean

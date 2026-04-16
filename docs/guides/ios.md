@@ -26,6 +26,29 @@ pn run ios --prepare-only
 
 You can then open `build/ios/ios_template/ios_template.xcodeproj` in Xcode.
 
+## Viewing logs
+
+After building and installing into the Simulator, `pn run ios` launches the app
+with `xcrun simctl launch --console-pty`, which attaches your terminal to the
+app's stdout/stderr. Python `print()` calls and exception tracebacks appear
+inline until you press Ctrl+C, at which point the app is terminated cleanly.
+
+`SIMCTL_CHILD_PYTHONUNBUFFERED=1` is forwarded to the launched process so
+output is line-buffered and doesn't get stuck behind Python's stream buffers.
+
+Pass `--no-logs` to skip the console attach and use the legacy fire-and-exit
+launch instead — useful when you want to continue interacting with the app
+from Xcode or Console.app, or when running in a non-interactive context like
+CI (see the `e2e.yml` workflow for an example).
+
+### Requirements
+
+- **Xcode 14 or newer.** `simctl launch --console-pty` was added in Xcode 14;
+  on older toolchains either upgrade Xcode or pass `--no-logs`.
+- Python `print()` output on the Simulator is routed through the app's stderr
+  by the `pythonnative._ios_log` module — this runs automatically when the
+  embedded Python bootstraps on iOS, so you don't need to configure it.
+
 ## Clean
 
 Remove the build directory safely:

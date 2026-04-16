@@ -27,7 +27,7 @@ import importlib
 import json
 from typing import Any, Dict, Optional
 
-from .utils import IS_ANDROID, set_android_context
+from .utils import IS_ANDROID, IS_IOS, set_android_context
 
 _MAX_RENDER_PASSES = 25
 
@@ -249,6 +249,21 @@ else:
         _gc.disable()
     except ImportError:
         pass
+
+    # Redirect Python's stdout/stderr through fd 2 so ``print()`` output is
+    # visible via ``xcrun simctl launch --console-pty``. This runs at
+    # ``pythonnative.page`` import time, i.e. before any user page module
+    # (e.g. ``app.main_page``) is imported, so their top-level ``print()``
+    # calls are captured too. Gated on ``IS_IOS`` rather than rubicon-objc
+    # being importable, so installing the ``[ios]`` extra on macOS does
+    # not silently swap ``sys.stdout`` on a dev machine.
+    if IS_IOS:
+        try:
+            from . import _ios_log
+
+            _ios_log.install()
+        except Exception:
+            pass
 
     _IOS_PAGE_REGISTRY: _Dict[int, Any] = {}
 

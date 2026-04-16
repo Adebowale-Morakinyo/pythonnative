@@ -64,6 +64,39 @@ pn run ios --prepare-only
 
 This stages files under `build/` so you can open them in Android Studio or Xcode.
 
+## Viewing logs
+
+After the app launches, `pn run` attaches to the app's stdout/stderr so Python
+`print()` output and tracebacks stream back into your terminal until you press
+Ctrl+C:
+
+```python
+import pythonnative as pn
+
+
+@pn.component
+def MainPage():
+    count, set_count = pn.use_state(0)
+    print(f"[MainPage] render count={count}")
+    return pn.Column(
+        pn.Text(f"Count: {count}"),
+        pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
+    )
+```
+
+- On Android, logs are streamed via `adb logcat` filtered to the
+  `python.stdout` / `python.stderr` tags (that Chaquopy redirects `print()` to)
+  plus the template's Kotlin tags.
+- On iOS Simulator, the app is launched via `xcrun simctl launch --console-pty`,
+  which forwards the Python process's standard streams to your terminal.
+
+Pass `--no-logs` if you'd rather run fire-and-forget:
+
+```bash
+pn run android --no-logs
+pn run ios --no-logs
+```
+
 ## Clean
 
 Remove the build artifacts safely:

@@ -27,13 +27,18 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Ensure a visible background when created programmatically (storyboards set this automatically)
         view.backgroundColor = .systemBackground
-        NSLog("[PN][ViewController] viewDidLoad")
-        if let bundleId = Bundle.main.bundleIdentifier {
-            NSLog("[PN] Bundle Identifier: \(bundleId)")
-        }
-        NSLog("[PN] Bundle Path: \(Bundle.main.bundlePath)")
-        NSLog("[PN] Resource Path: \(Bundle.main.resourcePath ?? "nil")")
-        // Configure embedded Python if available in bundle
+
+        let firstInit = !ViewController.hasInitializedPython
+
+        // Signal to pythonnative that we're running on iOS. Read on the
+        // Python side (pythonnative.utils.IS_IOS) to gate iOS-only setup
+        // like sys.stdout redirection. Set before Python starts so it's
+        // visible to the very first import.
+        setenv("PN_PLATFORM", "ios", 1)
+
+        // Configure embedded Python if available in bundle. PYTHONHOME /
+        // PYTHONPATH only need to be set once per process, but setting them
+        // again is harmless and keeps the flow simple.
         if let resourcePath = Bundle.main.resourcePath {
             let pyStd = "\(resourcePath)/python-stdlib"
             let pyDyn = "\(resourcePath)/python-stdlib/lib-dynload"
@@ -44,8 +49,6 @@ class ViewController: UIViewController {
             }
             setenv("PYTHONHOME", pyStd, 1)
             setenv("PYTHONPATH", pyPath, 1)
-            NSLog("[PN] Set PYTHONHOME=\(pyStd)")
-            NSLog("[PN] Set PYTHONPATH=\(pyPath)")
         }
         #if canImport(PythonKit)
         // Ensure PythonKit knows where to load the Python library from when using an embedded framework.
@@ -53,34 +56,25 @@ class ViewController: UIViewController {
             let frameworkLib = "\(bundlePath)/Frameworks/Python.framework/Python"
             setenv("PYTHON_LIBRARY", frameworkLib, 1)
             if FileManager.default.fileExists(atPath: frameworkLib) {
-                if !ViewController.hasInitializedPython {
-                    NSLog("[PN] Using embedded Python lib at: \(frameworkLib)")
+                if firstInit {
                     PythonLibrary.useLibrary(at: frameworkLib)
                     ViewController.hasInitializedPython = true
-                } else {
-                    NSLog("[PN] Python library already initialized; skipping useLibrary")
                 }
                 pythonReady = true
             } else {
                 NSLog("[PN] Embedded Python library not found at: \(frameworkLib)")
             }
         }
-        NSLog("[PN] PythonKit available; attempting Python bootstrap")
         let sys = Python.import("sys")
-        NSLog("[PN] Python version: \(sys.version)")
-        NSLog("[PN] Initial sys.path: \(sys.path)")
+        if firstInit {
+            // One concise bootstrap line per process; per-page detail is left
+            // to Python-side print() statements streamed via pn run ios.
+            let shortVersion = "\(sys.version)".split(separator: "\n").first.map(String.init) ?? "\(sys.version)"
+            NSLog("[PN] Python \(shortVersion) initialized")
+        }
         if let resourcePath = Bundle.main.resourcePath {
             sys.path.append(resourcePath)
             sys.path.append("\(resourcePath)/app")
-            NSLog("[PN] Updated sys.path: \(sys.path)")
-            // List bundled resources to verify Python files are present
-            let fm = FileManager.default
-            let appDir = "\(resourcePath)/app"
-            if let entries = try? fm.contentsOfDirectory(atPath: appDir) {
-                NSLog("[PN] Contents of /app in bundle: \(entries)")
-            } else {
-                NSLog("[PN] Could not list contents of \(appDir).")
-            }
         }
         // Determine which Python page to load
         let pagePath: String = requestedPagePath ?? "app.main_page.MainPage"

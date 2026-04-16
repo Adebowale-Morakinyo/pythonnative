@@ -246,6 +246,55 @@ def _read_requirements(requirements_path: str) -> list[str]:
     return result
 
 
+ANDROID_LOGCAT_FILTERS: list[str] = [
+    "python.stdout:V",
+    "python.stderr:V",
+    "MainActivity:V",
+    "PageFragment:V",
+    "Navigator:V",
+    "PythonNative:V",
+    "AndroidRuntime:E",
+    "System.err:W",
+    "*:S",
+]
+
+IOS_BUNDLE_ID: str = "com.pythonnative.ios-template"
+
+
+def _start_android_log_stream() -> Optional[subprocess.Popen]:
+    """Clear logcat and stream Python-relevant log tags to the terminal.
+
+    Returns the ``adb logcat`` subprocess, or ``None`` when ``adb`` is
+    unavailable. Python's ``print()`` output reaches logcat via Chaquopy,
+    which redirects ``sys.stdout``/``sys.stderr`` to the ``python.stdout``
+    and ``python.stderr`` tags.
+    """
+    try:
+        subprocess.run(["adb", "logcat", "-c"], check=False, capture_output=True)
+    except FileNotFoundError:
+        print("Note: 'adb' not found on PATH; skipping log streaming.")
+        return None
+    try:
+        proc = subprocess.Popen(["adb", "logcat", *ANDROID_LOGCAT_FILTERS])
+    except FileNotFoundError:
+        return None
+    print("Streaming Python logs from device (Ctrl+C to stop)...")
+    return proc
+
+
+def _terminate_subprocess(proc: Optional[subprocess.Popen]) -> None:
+    """Politely stop a subprocess, escalating to SIGKILL if needed."""
+    if proc is None:
+        return
+    if proc.poll() is not None:
+        return
+    proc.terminate()
+    try:
+        proc.wait(timeout=3)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+
+
 def run_project(args: argparse.Namespace) -> None:
     """
     Run the specified project.
@@ -254,6 +303,7 @@ def run_project(args: argparse.Namespace) -> None:
     platform: str = args.platform
     prepare_only: bool = getattr(args, "prepare_only", False)
     hot_reload: bool = getattr(args, "hot_reload", False)
+    show_logs: bool = not getattr(args, "no_logs", False)
 
     # Read project configuration and save project root before any chdir
     project_dir: str = os.getcwd()
@@ -371,6 +421,18 @@ def run_project(args: argparse.Namespace) -> None:
             ],
             check=True,
         )
+
+        # Stream Python logs from logcat unless the user opted out or requested
+        # hot-reload (hot-reload handles its own log tailing below).
+        if show_logs and not hot_reload:
+            logcat_proc = _start_android_log_stream()
+            if logcat_proc is not None:
+                try:
+                    logcat_proc.wait()
+                except KeyboardInterrupt:
+                    print()
+                    _terminate_subprocess(logcat_proc)
+                    print("Stopped log streaming.")
     elif platform == "ios":
         # Attempt to build and run on iOS Simulator (best-effort)
         ios_project_dir: str = os.path.join(build_dir, "ios_template")
@@ -640,22 +702,64 @@ def run_project(args: argparse.Namespace) -> None:
                     return
 
                 udid = preferred.get("udid")
-                # Boot (no-op if already booted)
-                subprocess.run(["xcrun", "simctl", "boot", udid], check=False)
-                # Install and launch
+                # Boot (no-op if already booted). simctl returns non-zero and
+                # prints to stderr when the device is already Booted; we
+                # don't care about that case, so swallow its output.
+                subprocess.run(["xcrun", "simctl", "boot", udid], check=False, capture_output=True)
+                # Install
                 subprocess.run(["xcrun", "simctl", "install", udid, app_path], check=False)
-                subprocess.run(["xcrun", "simctl", "launch", udid, "com.pythonnative.ios-template"], check=False)
-                print("Launched iOS app on Simulator (best-effort).")
+                if show_logs and not hot_reload:
+                    # Attach the app's stdout/stderr to this terminal so Python
+                    # print() calls and exceptions are visible. SIMCTL_CHILD_*
+                    # env vars are forwarded to the launched process.
+                    sim_env = os.environ.copy()
+                    sim_env["SIMCTL_CHILD_PYTHONUNBUFFERED"] = "1"
+                    print("Launched iOS app on Simulator. Streaming logs (Ctrl+C to stop)...")
+                    try:
+                        subprocess.run(
+                            [
+                                "xcrun",
+                                "simctl",
+                                "launch",
+                                "--console-pty",
+                                "--terminate-running-process",
+                                udid,
+                                IOS_BUNDLE_ID,
+                            ],
+                            env=sim_env,
+                            check=False,
+                        )
+                    except KeyboardInterrupt:
+                        print()
+                        subprocess.run(
+                            ["xcrun", "simctl", "terminate", udid, IOS_BUNDLE_ID],
+                            check=False,
+                            capture_output=True,
+                        )
+                        print("Stopped log streaming.")
+                else:
+                    subprocess.run(["xcrun", "simctl", "launch", udid, IOS_BUNDLE_ID], check=False)
+                    print("Launched iOS app on Simulator (best-effort).")
+                    if show_logs and hot_reload:
+                        print(
+                            "Note: live Python log streaming on iOS is disabled while --hot-reload is active; "
+                            "use Console.app or Xcode to view logs."
+                        )
             except Exception:
                 print("Failed to auto-run on Simulator; open the project in Xcode to run.")
 
     # Hot-reload file watcher
     if hot_reload and not prepare_only:
-        _run_hot_reload(platform, project_dir, build_dir)
+        _run_hot_reload(platform, project_dir, build_dir, show_logs=show_logs)
 
 
-def _run_hot_reload(platform: str, project_dir: str, build_dir: str) -> None:
-    """Watch ``app/`` for changes and push updated files to the device."""
+def _run_hot_reload(platform: str, project_dir: str, build_dir: str, show_logs: bool = True) -> None:
+    """Watch ``app/`` for changes and push updated files to the device.
+
+    When ``show_logs`` is true and targeting Android, ``adb logcat`` is
+    streamed in parallel so Python print/exception output stays visible
+    alongside hot-reload notifications.
+    """
     from .hot_reload import FileWatcher
 
     app_dir = os.path.join(project_dir, "app")
@@ -673,12 +777,23 @@ def _run_hot_reload(platform: str, project_dir: str, build_dir: str) -> None:
     print("[hot-reload] Watching app/ for changes. Press Ctrl+C to stop.")
     watcher = FileWatcher(app_dir, on_change, interval=1.0)
     watcher.start()
-    try:
-        import time
 
-        while True:
-            time.sleep(1)
+    logcat_proc: Optional[subprocess.Popen] = None
+    if show_logs and platform == "android":
+        logcat_proc = _start_android_log_stream()
+
+    try:
+        if logcat_proc is not None:
+            logcat_proc.wait()
+        else:
+            import time
+
+            while True:
+                time.sleep(1)
     except KeyboardInterrupt:
+        pass
+    finally:
+        _terminate_subprocess(logcat_proc)
         watcher.stop()
         print("\n[hot-reload] Stopped.")
 
@@ -720,6 +835,11 @@ def main() -> None:
         "--hot-reload",
         action="store_true",
         help="Watch app/ for changes and push updates to the running app",
+    )
+    parser_run.add_argument(
+        "--no-logs",
+        action="store_true",
+        help="Don't attach to the app's stdout/stderr after launching (default: stream logs)",
     )
     parser_run.set_defaults(func=run_project)
 

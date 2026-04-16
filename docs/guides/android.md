@@ -26,6 +26,24 @@ pn run android --prepare-only
 
 This will stage files under `build/android/android_template` so you can open it in Android Studio if you prefer.
 
+## Viewing logs
+
+After the app is installed and launched, `pn run android` tails `adb logcat` and
+streams it back to your terminal. The filter is scoped to the tags Chaquopy and
+the template use, so you get Python output without the usual logcat noise:
+
+| Tag             | Source                                           |
+|-----------------|--------------------------------------------------|
+| `python.stdout` | `print()` / anything written to `sys.stdout`     |
+| `python.stderr` | tracebacks / anything written to `sys.stderr`    |
+| `MainActivity`, `PageFragment`, `Navigator` | Kotlin template lifecycle |
+| `AndroidRuntime:E` | Fatal Java/Kotlin exceptions                  |
+
+Press Ctrl+C to stop streaming. Pass `--no-logs` to skip log streaming
+entirely (useful in CI or when you'd rather watch logs from Android Studio).
+
+If you need unfiltered output, run `adb logcat` yourself in another terminal.
+
 ## Clean
 
 Remove the build directory safely:

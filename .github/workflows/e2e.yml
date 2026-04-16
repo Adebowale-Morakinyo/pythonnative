@@ -42,7 +42,7 @@ jobs:
           arch: x86_64
           script: >-
             cd examples/hello-world &&
-            pn run android &&
+            pn run android --no-logs &&
             sleep 5 &&
             cd ../.. &&
             maestro test tests/e2e/android.yaml
@@ -71,7 +71,7 @@ jobs:
 
       - name: Build and launch iOS app
         working-directory: examples/hello-world
-        run: pn run ios
+        run: pn run ios --no-logs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1,7 +1,11 @@
+from typing import Callable
+
 import emoji
 
 import pythonnative as pn
 from pythonnative.navigation import NavigationContainer, create_tab_navigator
+
+print("[hello-world] main_page module imported")
 
 MEDALS = [":1st_place_medal:", ":2nd_place_medal:", ":3rd_place_medal:"]
 
@@ -28,12 +32,22 @@ def counter_badge(initial: int = 0) -> pn.Element:
     count, set_count = pn.use_state(initial)
     medal = emoji.emojize(MEDALS[count] if count < len(MEDALS) else ":star:")
 
+    print(f"[counter_badge] render count={count}")
+
+    def handle_tap() -> None:
+        print(f"[counter_badge] Tap me clicked; {count} -> {count + 1}")
+        set_count(count + 1)
+
+    def handle_reset() -> None:
+        print(f"[counter_badge] Reset clicked from count={count}")
+        set_count(0)
+
     return pn.View(
         pn.Text(f"Tapped {count} times", style=styles["subtitle"]),
         pn.Text(medal, style=styles["medal"]),
         pn.Row(
-            pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
-            pn.Button("Reset", on_click=lambda: set_count(0)),
+            pn.Button("Tap me", on_click=handle_tap),
+            pn.Button("Reset", on_click=handle_reset),
             style=styles["button_row"],
         ),
         style=styles["card"],
@@ -44,17 +58,25 @@ def counter_badge(initial: int = 0) -> pn.Element:
 def HomeTab() -> pn.Element:
     """Home tab — counter demo and push-navigation to other pages."""
     nav = pn.use_navigation()
+
+    def _on_mount() -> Callable[[], None]:
+        print("[HomeTab] mounted")
+        return lambda: print("[HomeTab] unmounted")
+
+    pn.use_effect(_on_mount, [])
+
+    def go_to_second() -> None:
+        print("[HomeTab] navigating to SecondPage")
+        nav.navigate(
+            "app.second_page.SecondPage",
+            params={"message": "Greetings from MainPage"},
+        )
+
     return pn.ScrollView(
         pn.Column(
             pn.Text("Hello from PythonNative Demo!", style=styles["title"]),
             counter_badge(),
-            pn.Button(
-                "Go to Second Page",
-                on_click=lambda: nav.navigate(
-                    "app.second_page.SecondPage",
-                    params={"message": "Greetings from MainPage"},
-                ),
-            ),
+            pn.Button("Go to Second Page", on_click=go_to_second),
             style=styles["section"],
         )
     )

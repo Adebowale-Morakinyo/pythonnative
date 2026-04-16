@@ -41,6 +41,28 @@ def test_cli_init_and_clean() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+def test_cli_run_help_lists_logging_flags() -> None:
+    """`pn run --help` should advertise both --no-logs and --hot-reload."""
+    tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
+    try:
+        result = run_pn(["run", "--help"], tmpdir)
+        assert result.returncode == 0, result.stderr
+        assert "--no-logs" in result.stdout
+        assert "--hot-reload" in result.stdout
+        assert "--prepare-only" in result.stdout
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_cli_run_rejects_unknown_flag() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
+    try:
+        result = run_pn(["run", "android", "--does-not-exist"], tmpdir)
+        assert result.returncode != 0
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 def test_cli_run_prepare_only_android_and_ios() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
@@ -48,8 +70,10 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         result = run_pn(["init", "MyApp"], tmpdir)
         assert result.returncode == 0, result.stderr
 
-        # prepare-only android
-        result = run_pn(["run", "android", "--prepare-only"], tmpdir)
+        # prepare-only android, combined with --no-logs to verify both flags
+        # coexist without launching any adb/simctl subprocess (prepare-only
+        # returns before logcat would ever be spawned).
+        result = run_pn(["run", "android", "--prepare-only", "--no-logs"], tmpdir)
         assert result.returncode == 0, result.stderr
         android_root = os.path.join(tmpdir, "build", "android", "android_template")
         assert os.path.isdir(android_root)
@@ -77,8 +101,8 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         )
         assert os.path.isfile(nav_graph)
 
-        # prepare-only ios
-        result = run_pn(["run", "ios", "--prepare-only"], tmpdir)
+        # prepare-only ios with --no-logs
+        result = run_pn(["run", "ios", "--prepare-only", "--no-logs"], tmpdir)
         assert result.returncode == 0, result.stderr
         assert os.path.isdir(os.path.join(tmpdir, "build", "ios", "ios_template"))
     finally:

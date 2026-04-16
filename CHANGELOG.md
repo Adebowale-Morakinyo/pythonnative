@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.9.0 (2026-04-16)
+
+### Features
+
+- **cli,page,templates**: Stream Python logs from pn run android/ios
+  ([`57179b9`](https://github.com/pythonnative/pythonnative/commit/57179b9c3946486aac6eb37a38dbdaa8755335b2))
+
+
 ## v0.8.0 (2026-04-08)
 
 ### Features

@@ -1,6 +1,9 @@
-# Function Components and Hooks
+# Function components and hooks
 
-PythonNative uses React-like function components with hooks for managing state, effects, navigation, memoisation, and context. Function components decorated with `@pn.component` are the only way to build UI in PythonNative.
+PythonNative uses React-like function components with hooks for
+managing state, effects, navigation, memoization, and context.
+Function components decorated with `@pn.component` are the only way
+to build UI in PythonNative.
 
 ## Creating a function component
 
@@ -60,7 +63,9 @@ count, set_count = pn.use_state(lambda: compute_default())
 
 ### use_reducer
 
-For complex state logic, `use_reducer` lets you manage state transitions through a reducer function — similar to React's `useReducer`:
+For complex state logic, [`use_reducer`][pythonnative.use_reducer]
+lets you manage state transitions through a reducer function (similar
+to React's `useReducer`):
 
 ```python
 def reducer(state, action):
@@ -109,17 +114,21 @@ def Timer():
     return pn.Text(f"Elapsed: {seconds}s")
 ```
 
-Effects are **deferred** — they are queued during the render phase and executed after the reconciler finishes committing native view mutations. This means effect callbacks can safely measure layout or interact with the committed native tree.
+Effects are **deferred**: they are queued during the render phase and
+executed after the reconciler finishes committing native view
+mutations. This means effect callbacks can safely measure layout or
+interact with the committed native tree.
 
 Dependency control:
 
-- `pn.use_effect(fn, None)` — run on every render
-- `pn.use_effect(fn, [])` — run on mount only
-- `pn.use_effect(fn, [a, b])` — run when `a` or `b` change
+- `pn.use_effect(fn, None)`: run on every render.
+- `pn.use_effect(fn, [])`: run on mount only.
+- `pn.use_effect(fn, [a, b])`: run when `a` or `b` change.
 
 ### use_navigation
 
-Access navigation from any component. Returns a `NavigationHandle` with `.navigate()`, `.go_back()`, and `.get_params()`.
+Access navigation from any component. Returns a navigation handle with
+`.navigate()`, `.go_back()`, and `.get_params()`.
 
 ```python
 @pn.component
@@ -163,7 +172,9 @@ def DetailScreen():
 
 ### use_focus_effect
 
-Like `use_effect` but only runs when the screen is focused. Useful for refreshing data when navigating back to a screen:
+Like [`use_effect`][pythonnative.use_effect] but only runs when the
+screen is focused. Useful for refreshing data when navigating back to
+a screen:
 
 ```python
 @pn.component
@@ -175,7 +186,7 @@ def FeedScreen():
 
 ### use_memo
 
-Memoise an expensive computation:
+Memoize an expensive computation:
 
 ```python
 sorted_items = pn.use_memo(lambda: sorted(items, key=lambda x: x.name), [items])
@@ -228,7 +239,10 @@ def UserProfile():
 
 ## Batching state updates
 
-By default, each state setter call triggers a re-render. When you need to update multiple pieces of state at once, use `pn.batch_updates()` to coalesce them into a single render pass:
+By default, each state setter call triggers a re-render. When you
+need to update multiple pieces of state at once, use
+[`batch_updates`][pythonnative.batch_updates] to coalesce them into a
+single render pass:
 
 ```python
 @pn.component
@@ -248,11 +262,16 @@ def Form():
     )
 ```
 
-State updates triggered by effects during a render pass are automatically batched — the framework drains any pending re-renders after effect flushing completes, so you don't need `batch_updates()` inside effects.
+State updates triggered by effects during a render pass are
+automatically batched; the framework drains any pending re-renders
+after effect flushing completes, so you don't need `batch_updates()`
+inside effects.
 
 ## Error boundaries
 
-Wrap risky components in `pn.ErrorBoundary` to catch render errors and display a fallback UI:
+Wrap risky components in
+[`ErrorBoundary`][pythonnative.ErrorBoundary] to catch render errors
+and display a fallback UI:
 
 ```python
 @pn.component
@@ -298,6 +317,21 @@ def Settings():
 
 ## Rules of hooks
 
-1. Only call hooks inside `@pn.component` functions
-2. Call hooks at the top level — not inside loops, conditions, or nested functions
-3. Hooks must be called in the same order on every render
+1. Only call hooks inside `@pn.component` functions.
+2. Call hooks at the top level, not inside loops, conditions, or
+   nested functions.
+3. Hooks must be called in the same order on every render.
+
+!!! tip "Why these rules?"
+    Hooks are matched to per-component slots by call order. If a hook
+    is conditional, the slot it lands in changes from render to render
+    and the framework can't keep your state straight. Move the
+    condition *inside* the hook, or compose the hook into a helper
+    that the parent calls unconditionally.
+
+## Next steps
+
+- See hooks in worked examples: [Counter](../examples/counter.md),
+  [Forms](../examples/forms.md), [Lists](../examples/lists.md).
+- Read about deferred effects in [Lifecycle](lifecycle.md).
+- Browse the API: [Hooks](../api/hooks.md).

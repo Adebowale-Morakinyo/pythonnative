@@ -1,27 +1,37 @@
 # Examples
 
-A collection of examples showing PythonNative's declarative component model and patterns.
+Small, self-contained snippets and full apps that show PythonNative's
+component model and patterns. Each example is also runnable inside a
+project scaffolded with `pn init`.
 
-## Quick counter
+## Featured examples
 
-```python
-import pythonnative as pn
+| Page | What it covers |
+|---|---|
+| [Hello world](examples/hello-world.md) | The smallest possible app and how it boots. |
+| [Counter](examples/counter.md) | `use_state`, event handlers, and basic styling. |
+| [Forms](examples/forms.md) | `TextInput`, controlled inputs, validation, submit. |
+| [Lists](examples/lists.md) | `FlatList`, keyed children, dynamic rendering. |
+| [Navigation](examples/navigation.md) | Stack, tab, and drawer navigators side-by-side. |
 
+## Working from a project
 
-@pn.component
-def Counter():
-    count, set_count = pn.use_state(0)
-    return pn.Column(
-        pn.Text(f"Count: {count}", style={"font_size": 24}),
-        pn.Button(
-            "Increment",
-            on_click=lambda: set_count(count + 1),
-        ),
-        style={"spacing": 12, "padding": 16},
-    )
+```bash
+pn init my-app
+cd my-app
+# Edit app/main_page.py and paste any of the snippets below.
+pn run android   # or: pn run ios
 ```
 
-## Reusable components
+The `app/main_page.py` that `pn init` writes already returns a small
+counter; replace it with one of the snippets to try a different
+example.
+
+## Snippets
+
+### Reusable components
+
+Compose small components and pass them as children:
 
 ```python
 import pythonnative as pn
@@ -37,10 +47,10 @@ def LabeledInput(label: str = "", placeholder: str = ""):
 
 
 @pn.component
-def FormPage():
+def SignUp():
     return pn.ScrollView(
         pn.Column(
-            pn.Text("Sign Up", style={"font_size": 24, "bold": True}),
+            pn.Text("Sign up", style={"font_size": 24, "bold": True}),
             LabeledInput(label="Name", placeholder="Enter your name"),
             LabeledInput(label="Email", placeholder="you@example.com"),
             pn.Button("Submit", on_click=lambda: print("submitted")),
@@ -49,4 +59,48 @@ def FormPage():
     )
 ```
 
-See `examples/hello-world/` for a full multi-page demo with navigation.
+### Theming via context
+
+```python
+ThemeContext = pn.create_context({"primary": "#0a84ff", "bg": "#fff"})
+
+
+@pn.component
+def Header():
+    theme = pn.use_context(ThemeContext)
+    return pn.Text(
+        "Hello",
+        style={"color": theme["primary"], "font_size": 28, "bold": True},
+    )
+
+
+@pn.component
+def App():
+    return pn.Provider(
+        ThemeContext,
+        {"primary": "#222", "bg": "#fafafa"},
+        pn.Column(Header(), style={"padding": 16}),
+    )
+```
+
+### Wrapping with an error boundary
+
+```python
+@pn.component
+def Risky():
+    raise RuntimeError("oops")
+
+
+@pn.component
+def Safe():
+    return pn.ErrorBoundary(
+        Risky(),
+        fallback=lambda exc: pn.Text(f"Failed: {exc}"),
+    )
+```
+
+## Next steps
+
+- Walk through the smallest possible app: [Hello world](examples/hello-world.md).
+- Learn the bigger picture: [Mental model](concepts/mental-model.md).
+- See the live API: [Package overview](api/pythonnative.md).

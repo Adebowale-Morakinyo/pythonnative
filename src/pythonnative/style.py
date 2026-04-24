@@ -1,11 +1,21 @@
 """StyleSheet, style resolution, and theming support.
 
-Provides a :class:`StyleSheet` helper for creating and composing
-reusable style dictionaries, a :func:`resolve_style` utility for
-flattening the ``style`` prop, and built-in theme contexts.
+Provides:
 
-Usage::
+- A [`StyleSheet`][pythonnative.StyleSheet] helper for creating and
+  composing reusable style dictionaries.
+- A [`resolve_style`][pythonnative.style.resolve_style] utility for
+  flattening the `style` prop accepted by every component factory.
+- A pair of light and dark default themes plus a
+  [`ThemeContext`][pythonnative.ThemeContext] for distributing a theme
+  dict across a subtree.
 
+Style values are plain Python dicts so they are trivial to compose,
+diff, and store. Properties unrecognized by the platform handler are
+ignored.
+
+Example:
+    ```python
     import pythonnative as pn
 
     styles = pn.StyleSheet.create(
@@ -13,8 +23,11 @@ Usage::
         container={"padding": 16, "spacing": 12},
     )
 
-    pn.Text("Hello", style=styles["title"])
-    pn.Column(..., style=styles["container"])
+    pn.Column(
+        pn.Text("Hello", style=styles["title"]),
+        style=styles["container"],
+    )
+    ```
 """
 
 from typing import Any, Dict, List, Optional, Union
@@ -26,10 +39,19 @@ StyleValue = Union[None, _StyleDict, List[Optional[_StyleDict]]]
 
 
 def resolve_style(style: StyleValue) -> _StyleDict:
-    """Flatten a ``style`` prop into a single dict.
+    """Flatten a `style` prop into a single dict.
 
-    Accepts ``None``, a single dict, or a list of dicts (later entries
-    override earlier ones, mirroring React Native's array style pattern).
+    Accepts `None`, a single dict, or a list of dicts (later entries
+    override earlier ones, mirroring React Native's array-style
+    pattern). Used by every built-in element factory in
+    `pythonnative.components`.
+
+    Args:
+        style: The raw value of the component's `style` argument.
+
+    Returns:
+        A flat dict suitable for the native handler. Always a fresh
+        dict, never the input.
     """
     if style is None:
         return {}
@@ -48,25 +70,49 @@ def resolve_style(style: StyleValue) -> _StyleDict:
 
 
 class StyleSheet:
-    """Utility for creating and composing style dictionaries."""
+    """Utility for creating, composing, and flattening style dictionaries.
+
+    All methods are stateless and return fresh dicts, so the values can
+    be reused safely across components.
+    """
 
     @staticmethod
     def create(**named_styles: _StyleDict) -> Dict[str, _StyleDict]:
-        """Create a set of named styles.
+        """Create a set of named styles from keyword arguments.
 
-        Each keyword argument is a style name mapping to a dict of
-        property values::
+        Args:
+            **named_styles: Each keyword argument is a style name
+                mapping to a dict of property values.
+
+        Returns:
+            A dict mapping each name to a copy of the supplied dict, so
+            the caller can mutate the result without affecting the
+            originals.
+
+        Example:
+            ```python
+            from pythonnative import StyleSheet
 
             styles = StyleSheet.create(
                 heading={"font_size": 28, "bold": True},
                 body={"font_size": 16},
             )
+            ```
         """
         return {name: dict(props) for name, props in named_styles.items()}
 
     @staticmethod
     def compose(*styles: _StyleDict) -> _StyleDict:
-        """Merge multiple style dicts, later values overriding earlier ones."""
+        """Merge multiple style dicts.
+
+        Args:
+            *styles: Style dicts to merge. Later dicts override keys
+                from earlier ones.
+
+        Returns:
+            A new dict containing the merged result. Falsy entries
+            (e.g., `None`) are skipped.
+        """
         merged: _StyleDict = {}
         for style in styles:
             if style:
@@ -75,9 +121,17 @@ class StyleSheet:
 
     @staticmethod
     def flatten(styles: Any) -> _StyleDict:
-        """Flatten a style or list of styles into a single dict.
+        """Flatten a style value or list of styles into a single dict.
 
-        Accepts a single dict, a list of dicts, or ``None``.
+        Equivalent to
+        [`resolve_style`][pythonnative.style.resolve_style] but exposed
+        on `StyleSheet` for parity with React Native's API.
+
+        Args:
+            styles: A single dict, a list of dicts, or `None`.
+
+        Returns:
+            A flat dict combining the inputs.
         """
         if styles is None:
             return {}
@@ -133,3 +187,10 @@ DEFAULT_DARK_THEME: _StyleDict = {
 }
 
 ThemeContext: Context = create_context(DEFAULT_LIGHT_THEME)
+"""Default theme context populated with `DEFAULT_LIGHT_THEME`.
+
+Wrap a subtree in
+[`Provider(ThemeContext, my_theme, ...)`][pythonnative.Provider] to
+override the theme for that subtree, then read it inside descendants
+via [`use_context(ThemeContext)`][pythonnative.use_context].
+"""

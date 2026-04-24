@@ -1,10 +1,23 @@
 """Lightweight element descriptors for the virtual view tree.
 
-An Element is an immutable description of a UI node — analogous to a React
-element.  It captures a type (name string **or** component function), a props
-dictionary, and an ordered list of children without creating any native
-platform objects.  The reconciler consumes these trees to determine what
-native views must be created, updated, or removed.
+An [`Element`][pythonnative.Element] is an immutable description of a UI
+node, analogous to a React element. It captures a type (name string or
+component function), a props dict, and an ordered list of children
+without creating any native platform objects. The reconciler consumes
+these trees to determine what native views must be created, updated, or
+removed.
+
+Elements are produced by built-in factories such as
+[`Text`][pythonnative.Text], [`Button`][pythonnative.Button], and
+[`Column`][pythonnative.Column], or by calling functions decorated with
+[`component`][pythonnative.component].
+
+Example:
+    ```python
+    from pythonnative import Element
+
+    node = Element("Text", {"text": "Hello"}, [])
+    ```
 """
 
 from typing import Any, Dict, List, Optional, Union
@@ -13,9 +26,20 @@ from typing import Any, Dict, List, Optional, Union
 class Element:
     """Immutable description of a single UI node.
 
-    ``type_name`` may be a *string* (e.g. ``"Text"``) for built-in native
-    elements or a *callable* for function components decorated with
-    :func:`~pythonnative.hooks.component`.
+    Built-in elements use a string `type` (`"Text"`, `"Button"`,
+    `"Column"`, etc.); function components use the function itself as
+    `type`. The reconciler dispatches on this distinction when mounting
+    the tree.
+
+    Attributes:
+        type: A string for built-in elements or a callable for function
+            components decorated with [`component`][pythonnative.component].
+        props: Dict of properties passed to the native handler or
+            component function.
+        children: Ordered list of child `Element` instances.
+        key: Optional stable identity used by the reconciler when
+            diffing keyed lists. Two elements with the same `type` and
+            `key` are treated as the same logical node across renders.
     """
 
     __slots__ = ("type", "props", "children", "key")

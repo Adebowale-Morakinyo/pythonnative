@@ -1,3 +1,19 @@
+"""`pn` CLI: scaffold, run, and clean PythonNative projects.
+
+The console script `pn` (declared in `pyproject.toml` under
+`[project.scripts]`) dispatches to one of three subcommands:
+
+- `pn init [name]`: scaffold a new project in the current directory.
+- `pn run android|ios`: stage code into a native template, build it,
+  install it, and stream logs back to the terminal.
+- `pn clean`: remove the local `build/` directory.
+
+The implementation here is intentionally side-effect heavy: it shells
+out to `gradle`, `xcodebuild`, `adb`, and `xcrun simctl`. Errors from
+those tools are usually surfaced inline so the developer sees the
+underlying message.
+"""
+
 import argparse
 import hashlib
 import json
@@ -13,9 +29,18 @@ from typing import Any, Dict, List, Optional
 
 
 def init_project(args: argparse.Namespace) -> None:
-    """
-    Initialize a new PythonNative project.
-    Creates `app/`, `pythonnative.json`, `requirements.txt`, `.gitignore`.
+    """Scaffold a new PythonNative project in the current directory.
+
+    Creates `app/main_page.py`, `pythonnative.json`,
+    `requirements.txt`, and `.gitignore`. Refuses to overwrite
+    existing files unless `--force` is passed.
+
+    Args:
+        args: The parsed argparse namespace. Recognized attributes:
+
+            - `name` (`str`, optional): Project name (defaults to the
+              current directory name).
+            - `force` (`bool`): Overwrite existing files.
     """
     project_name: str = getattr(args, "name", None) or os.path.basename(os.getcwd())
     cwd: str = os.getcwd()
@@ -88,16 +113,29 @@ def MainPage():
 
 
 def _copy_dir(src: str, dst: str) -> None:
+    """Recursively copy `src` into `dst`, creating parents as needed."""
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
 
 def _copy_bundled_template_dir(template_dir: str, destination: str) -> None:
-    """
-    Copy a bundled template directory into the destination directory.
-    Tries the repository `templates/` first during development, then
-    package resources when installed from a wheel.
-    The result should be `${destination}/{template_dir}`.
+    """Copy a bundled template directory into `destination`.
+
+    Search order:
+
+    1. Local source checkout (`src/pythonnative/templates/<name>`).
+    2. Repository `templates/<name>` (used when running from a clone).
+    3. Installed package data via `importlib.resources`.
+    4. `sysconfig` data/site directories (last resort).
+
+    Args:
+        template_dir: The bundled template subdirectory to copy
+            (e.g., `"android_template"`).
+        destination: Parent directory; the template lands at
+            `<destination>/<template_dir>`.
+
+    Raises:
+        FileNotFoundError: If no bundled copy can be located.
     """
     dest_path = os.path.join(destination, template_dir)
 
@@ -150,6 +188,11 @@ def _copy_bundled_template_dir(template_dir: str, destination: str) -> None:
 
 
 def _github_json(url: str) -> Any:
+    """Fetch a GitHub JSON endpoint, optionally authenticated.
+
+    Reads `GITHUB_TOKEN` or `GH_TOKEN` from the environment to raise
+    the unauthenticated rate limit.
+    """
     headers: dict[str, str] = {"User-Agent": "pythonnative-cli"}
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if token:
@@ -162,10 +205,21 @@ def _github_json(url: str) -> Any:
 def _resolve_python_apple_support_asset(
     py_major_minor: str = "3.11", preferred_name: str = "Python-3.11-iOS-support.b7.tar.gz"
 ) -> Optional[str]:
-    """
-    Find a browser_download_url for a Python-Apple-support asset on GitHub Releases.
-    Prefers an exact name match (preferred_name). Falls back to the newest
-    asset whose name contains "Python-{py_major_minor}-iOS-support" and endswith .tar.gz.
+    """Resolve a download URL for a `Python-Apple-support` release asset.
+
+    Prefers an exact name match for `preferred_name`; otherwise falls
+    back to the newest asset whose name contains
+    `Python-{py_major_minor}-iOS-support` and ends with `.tar.gz`.
+
+    Args:
+        py_major_minor: Python version string used in the asset name
+            (e.g., `"3.11"`).
+        preferred_name: Exact filename to prefer when multiple matching
+            assets exist.
+
+    Returns:
+        A `browser_download_url` string, or `None` if the GitHub API
+        call fails or no matching asset is found.
     """
     try:
         releases = _github_json("https://api.github.com/repos/beeware/Python-Apple-support/releases?per_page=100")
@@ -188,29 +242,33 @@ def _resolve_python_apple_support_asset(
 
 
 def create_android_project(project_name: str, destination: str) -> None:
-    """
-    Create a new Android project using a template.
+    """Stage the bundled Android template into `destination`.
 
-    :param project_name: The name of the project.
-    :param destination: The directory where the project will be created.
+    Args:
+        project_name: Project name (currently informational; the
+            template uses fixed package IDs).
+        destination: Directory to receive the staged project.
     """
-    # Copy the Android template project directory
     _copy_bundled_template_dir("android_template", destination)
 
 
 def create_ios_project(project_name: str, destination: str) -> None:
-    """
-    Create a new iOS project using a template.
+    """Stage the bundled iOS template into `destination`.
 
-    :param project_name: The name of the project.
-    :param destination: The directory where the project will be created.
+    Args:
+        project_name: Project name (currently informational; the
+            template uses fixed bundle IDs).
+        destination: Directory to receive the staged project.
     """
-    # Copy the iOS template project directory
     _copy_bundled_template_dir("ios_template", destination)
 
 
 def _read_project_config() -> dict:
-    """Read pythonnative.json from the current working directory."""
+    """Read `pythonnative.json` from the current working directory.
+
+    Returns:
+        The parsed config dict, or `{}` if the file is missing.
+    """
     config_path = os.path.join(os.getcwd(), "pythonnative.json")
     if os.path.exists(config_path):
         with open(config_path, encoding="utf-8") as f:
@@ -221,8 +279,15 @@ def _read_project_config() -> dict:
 def _read_requirements(requirements_path: str) -> list[str]:
     """Read a requirements file and return non-empty, non-comment lines.
 
-    Exits with an error if pythonnative is listed — the CLI bundles it
-    directly, so it must not be installed separately via pip/Chaquopy.
+    Exits with an error if `pythonnative` is listed: the CLI bundles
+    it directly, so it must not be installed separately via pip or
+    Chaquopy.
+
+    Args:
+        requirements_path: Path to a `requirements.txt` file.
+
+    Returns:
+        A list of requirement specifier strings, in file order.
     """
     if not os.path.exists(requirements_path):
         return []
@@ -264,10 +329,13 @@ IOS_BUNDLE_ID: str = "com.pythonnative.ios-template"
 def _start_android_log_stream() -> Optional[subprocess.Popen]:
     """Clear logcat and stream Python-relevant log tags to the terminal.
 
-    Returns the ``adb logcat`` subprocess, or ``None`` when ``adb`` is
-    unavailable. Python's ``print()`` output reaches logcat via Chaquopy,
-    which redirects ``sys.stdout``/``sys.stderr`` to the ``python.stdout``
-    and ``python.stderr`` tags.
+    Python's `print()` output reaches logcat via Chaquopy, which
+    redirects `sys.stdout`/`sys.stderr` to the `python.stdout` and
+    `python.stderr` tags.
+
+    Returns:
+        The `adb logcat` subprocess, or `None` when `adb` is
+        unavailable on `PATH`.
     """
     try:
         subprocess.run(["adb", "logcat", "-c"], check=False, capture_output=True)
@@ -283,7 +351,10 @@ def _start_android_log_stream() -> Optional[subprocess.Popen]:
 
 
 def _terminate_subprocess(proc: Optional[subprocess.Popen]) -> None:
-    """Politely stop a subprocess, escalating to SIGKILL if needed."""
+    """Politely stop a subprocess, escalating to `SIGKILL` if needed.
+
+    A no-op when `proc` is `None` or has already exited.
+    """
     if proc is None:
         return
     if proc.poll() is not None:
@@ -296,8 +367,21 @@ def _terminate_subprocess(proc: Optional[subprocess.Popen]) -> None:
 
 
 def run_project(args: argparse.Namespace) -> None:
-    """
-    Run the specified project.
+    """Build and run the project on the requested platform.
+
+    Stages templates, copies the user's `app/` into the platform
+    project, optionally installs Python requirements, and (unless
+    `--prepare-only` is set) builds and launches the app on a
+    connected device or simulator. With `--hot-reload`, also watches
+    `app/` for changes and pushes updates to the device.
+
+    Args:
+        args: Parsed argparse namespace. Recognized attributes:
+
+            - `platform` (`"android"` | `"ios"`): Build target.
+            - `prepare_only` (`bool`): Stage files but skip the build.
+            - `hot_reload` (`bool`): Watch `app/` and push changes.
+            - `no_logs` (`bool`): Don't stream device logs after launch.
     """
     # Determine the platform
     platform: str = args.platform
@@ -754,11 +838,17 @@ def run_project(args: argparse.Namespace) -> None:
 
 
 def _run_hot_reload(platform: str, project_dir: str, build_dir: str, show_logs: bool = True) -> None:
-    """Watch ``app/`` for changes and push updated files to the device.
+    """Watch `app/` for changes and push updated files to the device.
 
-    When ``show_logs`` is true and targeting Android, ``adb logcat`` is
-    streamed in parallel so Python print/exception output stays visible
-    alongside hot-reload notifications.
+    When `show_logs` is true and targeting Android, `adb logcat` is
+    streamed in parallel so Python print and exception output stays
+    visible alongside hot-reload notifications.
+
+    Args:
+        platform: Either `"android"` or `"ios"`.
+        project_dir: Absolute path to the user's project root.
+        build_dir: Absolute path to the staged build directory.
+        show_logs: Whether to stream device logs in parallel.
     """
     from .hot_reload import FileWatcher
 
@@ -799,8 +889,11 @@ def _run_hot_reload(platform: str, project_dir: str, build_dir: str, show_logs: 
 
 
 def clean_project(args: argparse.Namespace) -> None:
-    """
-    Clean the specified project.
+    """Remove the local `build/` directory.
+
+    Args:
+        args: Parsed argparse namespace (unused; accepted for the
+            `set_defaults(func=...)` dispatch shape).
     """
     # Define the build directory
     build_dir: str = os.path.join(os.getcwd(), "build")
@@ -814,6 +907,11 @@ def clean_project(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    """Entry point for the `pn` console script.
+
+    Wires up the `init`, `run`, and `clean` subcommands and dispatches
+    to the corresponding handler.
+    """
     parser = argparse.ArgumentParser(prog="pn", description="PythonNative CLI")
     subparsers = parser.add_subparsers()
 

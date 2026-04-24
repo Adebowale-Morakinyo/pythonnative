@@ -1,7 +1,31 @@
-"""PythonNative — declarative native UI for Android and iOS.
+"""PythonNative: declarative native UI for Android and iOS.
 
-Public API::
+PythonNative is a cross-platform toolkit that turns Python ``@component``
+functions into real, native Android and iOS views. The component model
+is React-like (function components plus hooks), but rendering happens
+through direct platform bindings: Chaquopy on Android (Java) and
+rubicon-objc on iOS (Objective-C). There is no JavaScript bridge.
 
+Key building blocks:
+
+- **Element factories** ([`Text`][pythonnative.Text],
+  [`Button`][pythonnative.Button], [`Column`][pythonnative.Column], etc.)
+  return immutable [`Element`][pythonnative.Element] descriptors.
+- **Hooks** ([`use_state`][pythonnative.use_state],
+  [`use_effect`][pythonnative.use_effect],
+  [`use_reducer`][pythonnative.use_reducer], etc.) manage state, side
+  effects, and context inside `@component` functions.
+- **Navigation** is built from
+  [`NavigationContainer`][pythonnative.NavigationContainer] plus one of
+  the [`create_stack_navigator`][pythonnative.create_stack_navigator],
+  [`create_tab_navigator`][pythonnative.create_tab_navigator], or
+  [`create_drawer_navigator`][pythonnative.create_drawer_navigator]
+  factories.
+- **Styling** uses a single ``style`` dict per element (or a list of
+  dicts), composable via [`StyleSheet`][pythonnative.StyleSheet].
+
+Example:
+    ```python
     import pythonnative as pn
 
     @pn.component
@@ -12,6 +36,7 @@ Public API::
             pn.Button("+", on_click=lambda: set_count(count + 1)),
             style={"spacing": 12},
         )
+    ```
 """
 
 __version__ = "0.9.0"

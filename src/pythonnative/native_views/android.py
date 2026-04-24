@@ -1,10 +1,17 @@
-"""Android native view handlers (Chaquopy / Java bridge).
+"""Android native-view handlers (Chaquopy / Java bridge).
 
-Each handler class maps a PythonNative element type to an Android widget,
-implementing view creation, property updates, and child management.
+Each handler class maps a PythonNative element type to an Android
+widget, implementing view creation, property updates, and child
+management. Handlers are registered with the
+[`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry] by
+[`register_handlers`][pythonnative.native_views.android.register_handlers].
 
-This module is only imported on Android at runtime; desktop tests inject
-a mock registry via :func:`~.set_registry` and never trigger this import.
+This module is only imported on Android at runtime. Desktop tests
+inject a mock registry via
+[`set_registry`][pythonnative.native_views.set_registry] and never
+trigger this import path. `dp` conversions assume the active
+`Resources` are available; values are cached the first time the
+density is queried.
 """
 
 from typing import Any, Callable, Dict

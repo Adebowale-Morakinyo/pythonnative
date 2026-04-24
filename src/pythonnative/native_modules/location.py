@@ -1,7 +1,25 @@
 """Cross-platform location / GPS access.
 
-Provides methods for requesting the current device location.
-Uses Android's ``LocationManager`` or iOS's ``CLLocationManager``.
+Provides static methods for requesting the device's current
+coordinates. Uses Android's `LocationManager` or iOS's
+`CLLocationManager`. Permission prompts are triggered by the system the
+first time a location-using API is called; ensure the appropriate
+manifest entries (`android.permission.ACCESS_FINE_LOCATION`) and
+Info.plist keys (`NSLocationWhenInUseUsageDescription`) are present.
+
+Example:
+    ```python
+    from pythonnative import Location
+
+    def handle(coords):
+        if coords is None:
+            print("Location unavailable")
+        else:
+            lat, lon = coords
+            print(f"You are at {lat:.5f}, {lon:.5f}")
+
+    Location.get_current(on_result=handle)
+    ```
 """
 
 from typing import Any, Callable, Optional, Tuple
@@ -10,20 +28,25 @@ from ..utils import IS_ANDROID
 
 
 class Location:
-    """GPS / Location services interface."""
+    """GPS / location-services interface.
+
+    All methods are static and dispatch to the correct platform
+    implementation at call time.
+    """
 
     @staticmethod
     def get_current(
         on_result: Optional[Callable[[Optional[Tuple[float, float]]], None]] = None,
         **options: Any,
     ) -> None:
-        """Request the current location.
+        """Request the device's current location.
 
-        Parameters
-        ----------
-        on_result:
-            ``((lat, lon) | None) -> None`` called with coordinates or
-            ``None`` if location is unavailable.
+        Args:
+            on_result: Callable invoked with `(latitude, longitude)`
+                tuples, or `None` if no recent fix is available or the
+                user denies permission.
+            **options: Reserved for platform-specific tuning (e.g.,
+                `accuracy`, `timeout`).
         """
         if IS_ANDROID:
             Location._android_get(on_result, **options)

@@ -1,0 +1,22 @@
+# Element
+
+Immutable descriptor for a single node in PythonNative's virtual view
+tree. `Element` instances are produced by the
+[component factories](components.md) and consumed by the
+[`Reconciler`][pythonnative.reconciler.Reconciler].
+
+You almost never construct an `Element` by hand; the factory functions
+exist precisely so app code stays in plain Python.
+
+::: pythonnative.element
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+      members_order: source
+      filters: ["!^_"]
+
+## Next steps
+
+- See how trees of elements get mounted in
+  [Reconciliation](../concepts/reconciliation.md).
+- Browse the built-in element types in [Components](components.md).

@@ -1,10 +1,17 @@
-"""iOS native view handlers (rubicon-objc).
+"""iOS native-view handlers (rubicon-objc).
 
-Each handler class maps a PythonNative element type to a UIKit widget,
+Each handler class maps a PythonNative element type to a UIKit view,
 implementing view creation, property updates, and child management.
+Handlers are registered with the
+[`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry] by
+[`register_handlers`][pythonnative.native_views.ios.register_handlers].
 
-This module is only imported on iOS at runtime; desktop tests inject
-a mock registry via :func:`~.set_registry` and never trigger this import.
+This module is only imported on iOS at runtime. Desktop tests inject a
+mock registry via
+[`set_registry`][pythonnative.native_views.set_registry] and never
+trigger this import path. Layout uses Auto Layout constraints
+exclusively; props that map onto layout (`flex`, `padding`, etc.) are
+translated into the corresponding `NSLayoutConstraint`s on update.
 """
 
 import ctypes as _ct
@@ -25,7 +32,7 @@ UIFont = ObjCClass("UIFont")
 
 
 def _uicolor(color: Any) -> Any:
-    """Convert a color value to a ``UIColor`` instance."""
+    """Convert a color value to a `UIColor` instance."""
     argb = parse_color_int(color)
     if argb < 0:
         argb += 0x100000000

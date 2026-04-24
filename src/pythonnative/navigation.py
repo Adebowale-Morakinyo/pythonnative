@@ -1,17 +1,28 @@
 """Declarative navigation for PythonNative.
 
-Provides a component-based navigation system inspired by React Navigation.
-Navigators manage screen state in Python; they render the active screen's
-component using the standard reconciler pipeline.
+Provides a component-based navigation system inspired by React
+Navigation. Navigators manage screen state in Python and render the
+active screen's component through the standard reconciler pipeline, so
+hooks ([`use_state`][pythonnative.use_state],
+[`use_effect`][pythonnative.use_effect], etc.) and providers continue
+to work inside navigated screens.
 
-Usage::
+Three navigator factories are provided out of the box:
 
-    from pythonnative.navigation import (
-        NavigationContainer,
-        create_stack_navigator,
-        create_tab_navigator,
-        create_drawer_navigator,
-    )
+- [`create_stack_navigator`][pythonnative.create_stack_navigator]: push
+  and pop screens.
+- [`create_tab_navigator`][pythonnative.create_tab_navigator]: switch
+  between sibling tabs (with a tab bar).
+- [`create_drawer_navigator`][pythonnative.create_drawer_navigator]:
+  switch between sibling screens via a side drawer menu.
+
+Navigators may be nested arbitrarily; nested handles forward unknown
+routes and root-level `go_back` calls to their parent.
+
+Example:
+    ```python
+    import pythonnative as pn
+    from pythonnative.navigation import NavigationContainer, create_stack_navigator
 
     Stack = create_stack_navigator()
 
@@ -23,6 +34,7 @@ Usage::
                 Stack.Screen("Detail", component=DetailScreen),
             )
         )
+    ```
 """
 
 from typing import Any, Callable, Dict, List, Optional
@@ -52,7 +64,16 @@ _FocusContext = create_context(False)
 
 
 class _ScreenDef:
-    """Configuration for a single screen within a navigator."""
+    """Configuration for a single screen within a navigator.
+
+    Attributes:
+        name: Route name used by `navigate(name, ...)`.
+        component: A `@component` function rendered when this screen is
+            active.
+        options: Free-form per-screen options (e.g., `title` for the
+            tab bar, `headerShown`, etc.). Interpretation is up to the
+            specific navigator implementation.
+    """
 
     __slots__ = ("name", "component", "options")
 
@@ -66,7 +87,12 @@ class _ScreenDef:
 
 
 class _RouteEntry:
-    """An entry in the navigation stack."""
+    """One entry on a stack-style navigation stack.
+
+    Attributes:
+        name: Route name (matches a `_ScreenDef.name`).
+        params: Params dict passed via `navigate(..., params=...)`.
+    """
 
     __slots__ = ("name", "params")
 
@@ -86,15 +112,16 @@ class _RouteEntry:
 class _DeclarativeNavHandle:
     """Navigation handle provided by declarative navigators.
 
-    Implements the same interface as :class:`~pythonnative.hooks.NavigationHandle`
-    so that ``use_navigation()`` returns a compatible object regardless of
-    whether the app uses the legacy page-based navigation or declarative
-    navigators.
+    Implements the same interface as
+    [`NavigationHandle`][pythonnative.NavigationHandle] so
+    [`use_navigation`][pythonnative.use_navigation] returns a
+    compatible object regardless of whether the app uses page-based
+    navigation or declarative navigators.
 
-    When *parent* is provided, unknown routes and root-level ``go_back``
-    calls are forwarded to the parent handle.  This enables nested
-    navigators (e.g. a stack inside a tab) to delegate navigation actions
-    that they cannot handle locally.
+    When `parent` is provided, unknown routes and root-level `go_back`
+    calls are forwarded to the parent handle. This enables nested
+    navigators (e.g., a stack inside a tab) to delegate navigation
+    actions that they cannot handle locally.
     """
 
     def __init__(
@@ -112,8 +139,16 @@ class _DeclarativeNavHandle:
     def navigate(self, route_name: str, params: Optional[Dict[str, Any]] = None) -> None:
         """Navigate to a named route, pushing it onto the stack.
 
-        If *route_name* is not known locally and a parent handle exists,
-        the call is forwarded to the parent navigator.
+        Args:
+            route_name: A route registered on this navigator. If unknown
+                and a parent handle exists, the call is forwarded.
+            params: Optional dict made available to the destination
+                screen via [`use_route`][pythonnative.use_route] or
+                `nav.get_params()`.
+
+        Raises:
+            ValueError: If `route_name` is unknown and no parent handle
+                exists.
         """
         if route_name in self._screen_map:
             entry = _RouteEntry(route_name, params)
@@ -127,7 +162,8 @@ class _DeclarativeNavHandle:
         """Pop the current screen from the stack.
 
         If the stack is at its root and a parent handle exists, the call
-        is forwarded to the parent navigator.
+        is forwarded to the parent navigator (so a nested stack inside
+        a tab still pops back through the tab's host).
         """
         stack = self._get_stack()
         if len(stack) > 1:
@@ -136,19 +172,40 @@ class _DeclarativeNavHandle:
             self._parent.go_back()
 
     def get_params(self) -> Dict[str, Any]:
-        """Return the parameters for the current route."""
+        """Return the params dict for the current route.
+
+        Returns:
+            The dict supplied to the most recent matching `navigate(...)`
+            call, or an empty dict if none was supplied.
+        """
         stack = self._get_stack()
         return stack[-1].params if stack else {}
 
     def reset(self, route_name: str, params: Optional[Dict[str, Any]] = None) -> None:
-        """Reset the stack to a single route."""
+        """Reset the stack to a single route.
+
+        Useful for "log out" or "deep link entry" flows where you want
+        to discard the existing back stack.
+
+        Args:
+            route_name: Route to install as the new root.
+            params: Optional params for that route.
+
+        Raises:
+            ValueError: If `route_name` is unknown.
+        """
         if route_name not in self._screen_map:
             raise ValueError(f"Unknown route: {route_name!r}. Known routes: {list(self._screen_map)}")
         self._set_stack([_RouteEntry(route_name, params)])
 
 
 class _TabNavHandle(_DeclarativeNavHandle):
-    """Navigation handle for tab navigators with tab switching."""
+    """Navigation handle for tab navigators.
+
+    `navigate(name)` switches the active tab instead of pushing a new
+    entry onto a stack. Unknown routes are forwarded to the parent
+    handle if one exists.
+    """
 
     def __init__(
         self,
@@ -172,7 +229,14 @@ class _TabNavHandle(_DeclarativeNavHandle):
 
 
 class _DrawerNavHandle(_DeclarativeNavHandle):
-    """Navigation handle for drawer navigators with open/close control."""
+    """Navigation handle for drawer navigators.
+
+    Adds drawer-specific methods
+    ([`open_drawer`][pythonnative.navigation._DrawerNavHandle.open_drawer],
+    [`close_drawer`][pythonnative.navigation._DrawerNavHandle.close_drawer],
+    [`toggle_drawer`][pythonnative.navigation._DrawerNavHandle.toggle_drawer])
+    on top of the standard `_DeclarativeNavHandle` interface.
+    """
 
     def __init__(
         self,
@@ -258,28 +322,67 @@ def _stack_navigator_impl(screens: Any = None, initial_route: Optional[str] = No
 def create_stack_navigator() -> Any:
     """Create a stack-based navigator.
 
-    Returns an object with ``Navigator`` and ``Screen`` members::
+    Stacks support push (`navigate(name, params=...)`) and pop
+    (`go_back()`). The active screen is the top of the stack.
+
+    Returns:
+        An object exposing two static factories:
+
+        - `Screen(name, *, component, options=None)`: define a screen.
+        - `Navigator(*screens, initial_route=None, key=None)`: render
+            the navigator with the given screens.
+
+    Example:
+        ```python
+        import pythonnative as pn
+        from pythonnative.navigation import (
+            NavigationContainer, create_stack_navigator
+        )
 
         Stack = create_stack_navigator()
 
-        Stack.Screen("Home", component=HomeScreen)
-
-        Stack.Navigator(
-            Stack.Screen("Home", component=HomeScreen),
-            Stack.Screen("Detail", component=DetailScreen),
-            initial_route="Home",
-        )
+        @pn.component
+        def App():
+            return NavigationContainer(
+                Stack.Navigator(
+                    Stack.Screen("Home", component=HomeScreen),
+                    Stack.Screen("Detail", component=DetailScreen),
+                    initial_route="Home",
+                )
+            )
+        ```
     """
 
     class _StackNavigator:
         @staticmethod
         def Screen(name: str, *, component: Any, options: Optional[Dict[str, Any]] = None) -> "_ScreenDef":
-            """Define a screen within this stack navigator."""
+            """Define a screen within this stack navigator.
+
+            Args:
+                name: Route name used by `navigate(name)`.
+                component: A `@component` function rendered when this
+                    screen is active.
+                options: Optional per-screen settings.
+
+            Returns:
+                A `_ScreenDef` consumed by `Navigator(...)`.
+            """
             return _ScreenDef(name, component, options)
 
         @staticmethod
         def Navigator(*screens: Any, initial_route: Optional[str] = None, key: Optional[str] = None) -> Element:
-            """Render the stack navigator with the given screens."""
+            """Render the stack navigator with the given screens.
+
+            Args:
+                *screens: One or more `Screen(...)` definitions.
+                initial_route: Optional name of the route to mount
+                    first. Defaults to the first screen passed.
+                key: Stable identity for keyed reconciliation.
+
+            Returns:
+                An [`Element`][pythonnative.Element] that mounts the
+                stack navigator.
+            """
             return _stack_navigator_impl(screens=list(screens), initial_route=initial_route, key=key)
 
     return _StackNavigator()
@@ -356,25 +459,64 @@ def _tab_navigator_impl(screens: Any = None, initial_route: Optional[str] = None
 def create_tab_navigator() -> Any:
     """Create a tab-based navigator.
 
-    Returns an object with ``Navigator`` and ``Screen`` members::
+    Tab navigators render a tab bar and switch between sibling screens.
+    Use `options={"title": "..."}` on a `Screen` to label the tab.
+
+    Returns:
+        An object exposing static `Screen(...)` and `Navigator(...)`
+        factories analogous to
+        [`create_stack_navigator`][pythonnative.create_stack_navigator].
+
+    Example:
+        ```python
+        import pythonnative as pn
+        from pythonnative.navigation import (
+            NavigationContainer, create_tab_navigator
+        )
 
         Tab = create_tab_navigator()
 
-        Tab.Navigator(
-            Tab.Screen("Home", component=HomeScreen, options={"title": "Home"}),
-            Tab.Screen("Settings", component=SettingsScreen),
-        )
+        @pn.component
+        def App():
+            return NavigationContainer(
+                Tab.Navigator(
+                    Tab.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+                    Tab.Screen("Settings", component=SettingsScreen),
+                )
+            )
+        ```
     """
 
     class _TabNavigator:
         @staticmethod
         def Screen(name: str, *, component: Any, options: Optional[Dict[str, Any]] = None) -> "_ScreenDef":
-            """Define a screen within this tab navigator."""
+            """Define a screen within this tab navigator.
+
+            Args:
+                name: Route name and default tab title.
+                component: A `@component` function rendered when this
+                    tab is active.
+                options: Optional per-screen settings (e.g.,
+                    `{"title": "..."}`).
+
+            Returns:
+                A `_ScreenDef` consumed by `Navigator(...)`.
+            """
             return _ScreenDef(name, component, options)
 
         @staticmethod
         def Navigator(*screens: Any, initial_route: Optional[str] = None, key: Optional[str] = None) -> Element:
-            """Render the tab navigator with the given screens."""
+            """Render the tab navigator with the given screens.
+
+            Args:
+                *screens: One or more `Screen(...)` definitions.
+                initial_route: Optional name of the tab to start on.
+                key: Stable identity for keyed reconciliation.
+
+            Returns:
+                An [`Element`][pythonnative.Element] that mounts the
+                tab navigator.
+            """
             return _tab_navigator_impl(screens=list(screens), initial_route=initial_route, key=key)
 
     return _TabNavigator()
@@ -474,29 +616,69 @@ def _drawer_navigator_impl(screens: Any = None, initial_route: Optional[str] = N
 def create_drawer_navigator() -> Any:
     """Create a drawer-based navigator.
 
-    Returns an object with ``Navigator`` and ``Screen`` members::
+    Drawer navigators render a side panel for switching between sibling
+    screens. The navigation handle returned by
+    [`use_navigation`][pythonnative.use_navigation] inside a drawer
+    navigator includes `open_drawer()`, `close_drawer()`, and
+    `toggle_drawer()` methods in addition to the standard
+    `navigate`/`go_back`/`reset` interface.
+
+    Returns:
+        An object exposing static `Screen(...)` and `Navigator(...)`
+        factories analogous to
+        [`create_stack_navigator`][pythonnative.create_stack_navigator].
+
+    Example:
+        ```python
+        import pythonnative as pn
+        from pythonnative.navigation import (
+            NavigationContainer, create_drawer_navigator
+        )
 
         Drawer = create_drawer_navigator()
 
-        Drawer.Navigator(
-            Drawer.Screen("Home", component=HomeScreen, options={"title": "Home"}),
-            Drawer.Screen("Settings", component=SettingsScreen),
-        )
-
-    The navigation handle returned by ``use_navigation()`` inside a drawer
-    navigator includes ``open_drawer()``, ``close_drawer()``, and
-    ``toggle_drawer()`` methods.
+        @pn.component
+        def App():
+            return NavigationContainer(
+                Drawer.Navigator(
+                    Drawer.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+                    Drawer.Screen("Settings", component=SettingsScreen),
+                )
+            )
+        ```
     """
 
     class _DrawerNavigator:
         @staticmethod
         def Screen(name: str, *, component: Any, options: Optional[Dict[str, Any]] = None) -> "_ScreenDef":
-            """Define a screen within this drawer navigator."""
+            """Define a screen within this drawer navigator.
+
+            Args:
+                name: Route name and default drawer-menu label.
+                component: A `@component` function rendered when this
+                    screen is active.
+                options: Optional per-screen settings (e.g.,
+                    `{"title": "..."}`).
+
+            Returns:
+                A `_ScreenDef` consumed by `Navigator(...)`.
+            """
             return _ScreenDef(name, component, options)
 
         @staticmethod
         def Navigator(*screens: Any, initial_route: Optional[str] = None, key: Optional[str] = None) -> Element:
-            """Render the drawer navigator with the given screens."""
+            """Render the drawer navigator with the given screens.
+
+            Args:
+                *screens: One or more `Screen(...)` definitions.
+                initial_route: Optional name of the screen to mount
+                    first.
+                key: Stable identity for keyed reconciliation.
+
+            Returns:
+                An [`Element`][pythonnative.Element] that mounts the
+                drawer navigator.
+            """
             return _drawer_navigator_impl(screens=list(screens), initial_route=initial_route, key=key)
 
     return _DrawerNavigator()
@@ -512,7 +694,24 @@ def NavigationContainer(child: Element, *, key: Optional[str] = None) -> Element
 
     Wraps the child navigator in a full-size view. All declarative
     navigators (stack, tab, drawer) should be nested inside a
-    ``NavigationContainer``::
+    `NavigationContainer`.
+
+    Args:
+        child: The root navigator element (typically a `Stack.Navigator`,
+            `Tab.Navigator`, or `Drawer.Navigator`).
+        key: Stable identity for keyed reconciliation.
+
+    Returns:
+        An [`Element`][pythonnative.Element] of type `"View"`.
+
+    Example:
+        ```python
+        import pythonnative as pn
+        from pythonnative.navigation import (
+            NavigationContainer, create_stack_navigator
+        )
+
+        Stack = create_stack_navigator()
 
         @pn.component
         def App():
@@ -521,6 +720,7 @@ def NavigationContainer(child: Element, *, key: Optional[str] = None) -> Element
                     Stack.Screen("Home", component=HomeScreen),
                 )
             )
+        ```
     """
     return Element("View", {"flex": 1}, [child], key=key)
 
@@ -531,15 +731,26 @@ def NavigationContainer(child: Element, *, key: Optional[str] = None) -> Element
 
 
 def use_route() -> Dict[str, Any]:
-    """Return the current route's parameters.
+    """Return the current route's params dict.
 
-    Convenience hook that reads from the navigation context::
+    Convenience hook that reads from the navigation context. Equivalent
+    to `use_navigation().get_params()` but tolerates the no-navigation
+    case (returns `{}` instead of raising).
+
+    Returns:
+        The current route's `params` dict, or `{}` if no navigator is
+        in scope.
+
+    Example:
+        ```python
+        import pythonnative as pn
 
         @pn.component
         def DetailScreen():
             params = pn.use_route()
             item_id = params.get("id")
-            ...
+            return pn.Text(f"Item {item_id}")
+        ```
     """
     nav = use_context(_NavigationContext)
     if nav is None:
@@ -551,14 +762,28 @@ def use_route() -> Dict[str, Any]:
 
 
 def use_focus_effect(effect: Callable, deps: Optional[list] = None) -> None:
-    """Run *effect* only when the screen is focused.
+    """Run `effect` only while the screen is focused.
 
-    Like ``use_effect`` but skips execution when the screen is not the
-    active/focused screen in a navigator::
+    Like [`use_effect`][pythonnative.use_effect], but the callback runs
+    only when the enclosing navigator marks this screen as the active
+    one. Useful for starting subscriptions, refreshing data, or
+    pausing animations on the inactive screen.
+
+    Args:
+        effect: A zero-arg callable invoked when focused. Optionally
+            returns a cleanup callable.
+        deps: Dependency list, or `None` to run on every render while
+            focused.
+
+    Example:
+        ```python
+        import pythonnative as pn
 
         @pn.component
         def HomeScreen():
             pn.use_focus_effect(lambda: print("screen focused"), [])
+            return pn.Text("Home")
+        ```
     """
     is_focused = use_context(_FocusContext)
     all_deps = [is_focused] + (list(deps) if deps is not None else [])

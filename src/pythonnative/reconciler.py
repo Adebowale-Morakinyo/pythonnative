@@ -1,21 +1,23 @@
 """Virtual-tree reconciler.
 
-Maintains a tree of :class:`VNode` objects (each wrapping a native view)
-and diffs incoming :class:`Element` trees to apply the minimal set of
+Maintains a tree of [`VNode`][pythonnative.reconciler.VNode] objects
+(each wrapping a native view) and diffs incoming
+[`Element`][pythonnative.Element] trees to apply the minimal set of
 native mutations.
 
 Supports:
 
-- **Native elements** (type is a string like ``"Text"``).
-- **Function components** (type is a callable decorated with
-  ``@component``).  Their hook state is preserved across renders.
-- **Provider elements** (type ``"__Provider__"``), which push/pop
+- **Native elements** (`type` is a string like `"Text"`).
+- **Function components** (`type` is a callable decorated with
+  [`component`][pythonnative.component]). Their hook state is preserved
+  across renders.
+- **Provider elements** (`type == "__Provider__"`), which push and pop
   context values during tree traversal.
-- **Error boundary elements** (type ``"__ErrorBoundary__"``), which
+- **Error boundary elements** (`type == "__ErrorBoundary__"`), which
   catch exceptions in child subtrees and render a fallback.
 - **Key-based child reconciliation** for stable identity across
   re-renders.
-- **Post-render effect flushing**: after each mount or reconcile pass,
+- **Post-render effect flushing**. After each mount or reconcile pass,
   all queued effects are executed so they see the committed native tree.
 """
 
@@ -25,7 +27,21 @@ from .element import Element
 
 
 class VNode:
-    """A mounted element paired with its native view and child VNodes."""
+    """A mounted [`Element`][pythonnative.Element] plus its native view.
+
+    The reconciler walks parallel trees of `VNode` and incoming
+    `Element` to compute the minimal set of native mutations.
+
+    Attributes:
+        element: The `Element` last rendered into this slot.
+        native_view: The platform-native view (e.g., an Android `View`
+            or an iOS `UIView`). May be `None` for purely virtual
+            wrappers such as providers and error boundaries.
+        children: Ordered list of child `VNode` instances.
+        hook_state: The component's
+            [`HookState`][pythonnative.hooks.HookState] when the node
+            wraps a function component, otherwise `None`.
+    """
 
     __slots__ = ("element", "native_view", "children", "hook_state", "_rendered")
 
@@ -38,18 +54,18 @@ class VNode:
 
 
 class Reconciler:
-    """Create, diff, and patch native view trees from Element descriptors.
+    """Create, diff, and patch native view trees from `Element` descriptors.
 
-    After each ``mount`` or ``reconcile`` call the reconciler walks the
-    committed tree and flushes all pending effects so that effect
-    callbacks run **after** native mutations are applied.
+    After each [`mount`][pythonnative.reconciler.Reconciler.mount] or
+    [`reconcile`][pythonnative.reconciler.Reconciler.reconcile] call the
+    reconciler walks the committed tree and flushes all pending effects
+    so effect callbacks run *after* native mutations are applied.
 
-    Parameters
-    ----------
-    backend:
-        An object implementing the :class:`NativeViewRegistry` protocol
-        (``create_view``, ``update_view``, ``add_child``, ``remove_child``,
-        ``insert_child``).
+    Args:
+        backend: An object implementing the native-view protocol
+            (`create_view`, `update_view`, `add_child`, `remove_child`,
+            `insert_child`). PythonNative ships an Android backend and
+            an iOS backend; tests can pass a mock.
     """
 
     def __init__(self, backend: Any) -> None:
@@ -62,15 +78,27 @@ class Reconciler:
     # ------------------------------------------------------------------
 
     def mount(self, element: Element) -> Any:
-        """Build native views from *element* and return the root native view."""
+        """Build native views from `element` and return the root native view.
+
+        Args:
+            element: The root `Element` to render.
+
+        Returns:
+            The platform-native view that represents the root of the
+            mounted tree.
+        """
         self._tree = self._create_tree(element)
         self._flush_effects()
         return self._tree.native_view
 
     def reconcile(self, new_element: Element) -> Any:
-        """Diff *new_element* against the current tree and patch native views.
+        """Diff `new_element` against the current tree and patch native views.
 
-        Returns the (possibly replaced) root native view.
+        Args:
+            new_element: The desired root element after a state change.
+
+        Returns:
+            The (possibly replaced) root native view.
         """
         if self._tree is None:
             self._tree = self._create_tree(new_element)
@@ -334,7 +362,13 @@ class Reconciler:
 
     @staticmethod
     def _diff_props(old: dict, new: dict) -> dict:
-        """Return props that changed (callables always count as changed)."""
+        """Return only the props that changed.
+
+        Callables always count as changed (we cannot compare two
+        closures cheaply, and event handlers are usually fresh on every
+        render). Internal `__*__` props are skipped because they are
+        consumed by the reconciler itself, not the native handler.
+        """
         changed = {}
         for key, new_val in new.items():
             if key.startswith("__"):

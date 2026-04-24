@@ -1,10 +1,15 @@
 # Components
 
-PythonNative uses a **declarative component model** inspired by React. You describe *what* the UI should look like, and the framework handles creating and updating native views.
+PythonNative uses a **declarative component model** inspired by
+React. You describe *what* the UI should look like, and the framework
+handles creating and updating native views.
 
 ## Element functions
 
-UI is built with element-creating functions. Each returns a lightweight `Element` descriptor — no native objects are created until the reconciler mounts the tree.
+UI is built with element-creating functions. Each returns a
+lightweight [`Element`][pythonnative.Element] descriptor; no native
+objects are created until the
+[`Reconciler`][pythonnative.reconciler.Reconciler] mounts the tree.
 
 ```python
 import pythonnative as pn
@@ -22,68 +27,89 @@ pn.Column(
 
 **Layout:**
 
-- `View(*children, style=...)` — universal flex container (default `flex_direction: "column"`)
-- `Column(*children, style=...)` — vertical flex container (fixed `flex_direction: "column"`)
-- `Row(*children, style=...)` — horizontal flex container (fixed `flex_direction: "row"`)
-- `ScrollView(child, style=...)` — scrollable container
-- `SafeAreaView(*children, style=...)` — safe-area-aware container
-- `Spacer(size, flex)` — empty space
+- [`View(*children, style=...)`][pythonnative.View]: universal flex
+  container (default `flex_direction: "column"`).
+- [`Column(*children, style=...)`][pythonnative.Column]: vertical
+  flex container (fixed `flex_direction: "column"`).
+- [`Row(*children, style=...)`][pythonnative.Row]: horizontal flex
+  container (fixed `flex_direction: "row"`).
+- [`ScrollView(child, style=...)`][pythonnative.ScrollView]:
+  scrollable container.
+- [`SafeAreaView(*children, style=...)`][pythonnative.SafeAreaView]:
+  safe-area-aware container.
+- [`Spacer(size, flex)`][pythonnative.Spacer]: empty space.
 
 **Display:**
 
-- `Text(text, style=...)` — text display
-- `Image(source, style=...)` — image display (supports URLs and resource names)
-- `WebView(url)` — embedded web content
+- [`Text(text, style=...)`][pythonnative.Text]: text display.
+- [`Image(source, style=...)`][pythonnative.Image]: image display
+  (supports URLs and resource names).
+- [`WebView(url)`][pythonnative.WebView]: embedded web content.
 
 **Input:**
 
-- `Button(title, on_click, style=...)` — tappable button
-- `TextInput(value, placeholder, on_change, secure, style=...)` — text entry
-- `Switch(value, on_change)` — toggle switch
-- `Slider(value, min_value, max_value, on_change)` — continuous slider
-- `Pressable(child, on_press, on_long_press)` — tap handler wrapper
+- [`Button(title, on_click, style=...)`][pythonnative.Button]:
+  tappable button.
+- [`TextInput(value, placeholder, on_change, secure, style=...)`][pythonnative.TextInput]:
+  text entry.
+- [`Switch(value, on_change)`][pythonnative.Switch]: toggle switch.
+- [`Slider(value, min_value, max_value, on_change)`][pythonnative.Slider]:
+  continuous slider.
+- [`Pressable(child, on_press, on_long_press)`][pythonnative.Pressable]:
+  tap handler wrapper.
 
 **Feedback:**
 
-- `ProgressBar(value)` — determinate progress (0.0–1.0)
-- `ActivityIndicator(animating)` — indeterminate spinner
+- [`ProgressBar(value)`][pythonnative.ProgressBar]: determinate
+  progress (0.0 to 1.0).
+- [`ActivityIndicator(animating)`][pythonnative.ActivityIndicator]:
+  indeterminate spinner.
 
 **Overlay:**
 
-- `Modal(*children, visible, on_dismiss, title)` — modal dialog
+- [`Modal(*children, visible, on_dismiss, title)`][pythonnative.Modal]:
+  modal dialog.
 
 **Error handling:**
 
-- `ErrorBoundary(child, fallback)` — catches render errors in child and displays fallback
+- [`ErrorBoundary(child, fallback)`][pythonnative.ErrorBoundary]:
+  catches render errors in child and displays fallback.
 
 **Lists:**
 
-- `FlatList(data, render_item, key_extractor, separator_height)` — scrollable data list
+- [`FlatList(data, render_item, key_extractor, separator_height)`][pythonnative.FlatList]:
+  scrollable data list.
 
 ### Flex layout model
 
-PythonNative uses a **flexbox-inspired layout model**. `View` is the universal flex container — `Column` and `Row` are convenience wrappers.
+PythonNative uses a **flexbox-inspired layout model**. `View` is the
+universal flex container; `Column` and `Row` are convenience wrappers
+that fix the direction.
 
 #### Flex container properties (inside `style`)
 
-- `flex_direction` — `"column"` (default), `"row"`, `"column_reverse"`, `"row_reverse"`
-- `justify_content` — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
-- `align_items` — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
-- `overflow` — `"visible"` (default), `"hidden"`
-- `spacing` — gap between children (dp / pt)
-- `padding` — inner spacing
+- `flex_direction`: `"column"` (default), `"row"`, `"column_reverse"`,
+  `"row_reverse"`.
+- `justify_content`: main-axis distribution: `"flex_start"`,
+  `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`,
+  `"space_evenly"`.
+- `align_items`: cross-axis alignment: `"stretch"`, `"flex_start"`,
+  `"center"`, `"flex_end"`.
+- `overflow`: `"visible"` (default), `"hidden"`.
+- `spacing`: gap between children (dp / pt).
+- `padding`: inner spacing.
 
 #### Child layout properties
 
 All components accept these in their `style` dict:
 
-- `width`, `height` — fixed dimensions (dp / pt)
-- `flex` — flex grow factor (shorthand)
-- `flex_grow`, `flex_shrink` — individual flex properties
-- `margin` — outer margin (int, float, or dict like padding)
-- `min_width`, `min_height` — minimum size constraints
-- `max_width`, `max_height` — maximum size constraints
-- `align_self` — override parent alignment for this child
+- `width`, `height`: fixed dimensions (dp / pt).
+- `flex`: flex grow factor (shorthand).
+- `flex_grow`, `flex_shrink`: individual flex properties.
+- `margin`: outer margin (int, float, or dict like padding).
+- `min_width`, `min_height`: minimum size constraints.
+- `max_width`, `max_height`: maximum size constraints.
+- `align_self`: override parent alignment for this child.
 
 #### Example: centering content
 
@@ -105,9 +131,11 @@ pn.Row(
 )
 ```
 
-## Function components — the building block
+## Function components: the building block
 
-All UI in PythonNative is built with `@pn.component` function components. Each screen is a function component that returns an element tree:
+All UI in PythonNative is built with `@pn.component` function
+components. Each screen is a function component that returns an
+element tree:
 
 ```python
 @pn.component
@@ -116,11 +144,17 @@ def MainPage():
     return pn.Text(f"Hello, {name}!", style={"font_size": 24})
 ```
 
-The entry point `create_page()` is called internally by native templates to bootstrap your root component. You don't call it directly — just export your component and configure the entry point in `pythonnative.json`.
+The entry point [`create_page`][pythonnative.create_page] is called
+internally by native templates to bootstrap your root component. You
+don't call it directly; just export your component and configure the
+entry point in `pythonnative.json`.
 
 ## State and re-rendering
 
-Use `pn.use_state(initial)` to create local component state. Call the setter to update — the framework automatically re-renders the component and applies only the differences to the native views:
+Use [`use_state(initial)`][pythonnative.use_state] to create local
+component state. Call the setter to update; the framework automatically
+re-renders the component and applies only the differences to the
+native views:
 
 ```python
 @pn.component
@@ -136,7 +170,8 @@ def CounterPage():
 
 ## Composing components
 
-Build complex UIs by composing smaller `@pn.component` functions. Each instance has **independent state**:
+Build complex UIs by composing smaller `@pn.component` functions.
+Each instance has **independent state**:
 
 ```python
 @pn.component
@@ -163,20 +198,31 @@ def MainPage():
     )
 ```
 
-Changing one `Counter` doesn't affect the other — each has its own hook state.
+Changing one `Counter` doesn't affect the other; each has its own
+hook state.
 
 ### Available hooks
 
-- `use_state(initial)` — local component state; returns `(value, setter)`
-- `use_reducer(reducer, initial_state)` — reducer-based state; returns `(state, dispatch)`
-- `use_effect(effect, deps)` — side effects, run after native commit (timers, API calls, subscriptions)
-- `use_memo(factory, deps)` — memoised computed values
-- `use_callback(fn, deps)` — stable function references
-- `use_ref(initial)` — mutable ref that persists across renders
-- `use_context(context)` — read from a context provider
-- `use_navigation()` — navigation handle for navigate/go_back/get_params
-- `use_route()` — convenience hook for current route params
-- `use_focus_effect(effect, deps)` — like `use_effect` but only runs when the screen is focused
+- [`use_state(initial)`][pythonnative.use_state]: local component
+  state; returns `(value, setter)`.
+- [`use_reducer(reducer, initial_state)`][pythonnative.use_reducer]:
+  reducer-based state; returns `(state, dispatch)`.
+- [`use_effect(effect, deps)`][pythonnative.use_effect]: side effects,
+  run after native commit (timers, API calls, subscriptions).
+- [`use_memo(factory, deps)`][pythonnative.use_memo]: memoized
+  computed values.
+- [`use_callback(fn, deps)`][pythonnative.use_callback]: stable
+  function references.
+- [`use_ref(initial)`][pythonnative.use_ref]: mutable ref that
+  persists across renders.
+- [`use_context(context)`][pythonnative.use_context]: read from a
+  context provider.
+- [`use_navigation()`][pythonnative.use_navigation]: navigation
+  handle for navigate/go_back/get_params.
+- [`use_route()`][pythonnative.use_route]: convenience hook for
+  current route params.
+- [`use_focus_effect(effect, deps)`][pythonnative.use_focus_effect]:
+  like `use_effect` but only runs when the screen is focused.
 
 ### Custom hooks
 
@@ -211,10 +257,18 @@ def MyComponent():
 
 ## Platform detection
 
-Use `pythonnative.utils.IS_ANDROID` when you need platform-specific logic:
+Use `utils.IS_ANDROID` / `utils.IS_IOS` when you need
+platform-specific logic:
 
 ```python
 from pythonnative.utils import IS_ANDROID
 
 title = "Android App" if IS_ANDROID else "iOS App"
 ```
+
+## Next steps
+
+- Learn the renderer underneath: [Architecture](architecture.md).
+- Manage state and side effects: [Hooks](hooks.md).
+- See worked examples: [Examples](../examples.md).
+- Browse the API: [Components](../api/components.md).

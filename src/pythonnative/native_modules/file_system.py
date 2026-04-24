@@ -1,7 +1,17 @@
-"""Cross-platform file system access.
+"""Cross-platform app-scoped file I/O.
 
-Provides helpers for reading and writing files within the app's
-sandboxed storage area.
+Provides static helpers for reading, writing, and deleting files in the
+app's sandboxed storage area. Relative paths are resolved against
+[`FileSystem.app_dir`][pythonnative.native_modules.FileSystem.app_dir];
+absolute paths are used as-is.
+
+Example:
+    ```python
+    from pythonnative import FileSystem
+
+    FileSystem.write_text("notes/today.txt", "Hello, file system!")
+    print(FileSystem.read_text("notes/today.txt"))
+    ```
 """
 
 import os
@@ -11,11 +21,28 @@ from ..utils import IS_ANDROID
 
 
 class FileSystem:
-    """App-scoped file I/O."""
+    """App-scoped file I/O.
+
+    Every instance method operates on either an absolute path or a path
+    relative to
+    [`app_dir`][pythonnative.native_modules.FileSystem.app_dir].
+    Errors are swallowed and reported as falsy return values (`None`
+    for readers, `False` for writers) so callers can treat the API as
+    best-effort.
+    """
 
     @staticmethod
     def app_dir() -> str:
-        """Return the app's writable data directory."""
+        """Return the app's writable data directory.
+
+        On Android the result is `Context.getFilesDir()`. On iOS it is
+        the user's Documents directory. On a desktop machine without
+        either runtime, a `.pythonnative_data` directory is created
+        under the user's home folder.
+
+        Returns:
+            Absolute path to the app's data directory.
+        """
         if IS_ANDROID:
             try:
                 from ..utils import get_android_context
@@ -39,7 +66,17 @@ class FileSystem:
 
     @staticmethod
     def read_text(path: str, encoding: str = "utf-8") -> Optional[str]:
-        """Read a text file relative to :meth:`app_dir` (or an absolute path)."""
+        """Read a text file.
+
+        Args:
+            path: Absolute path or path relative to
+                [`app_dir`][pythonnative.native_modules.FileSystem.app_dir].
+            encoding: Text encoding (default `"utf-8"`).
+
+        Returns:
+            File contents as a `str`, or `None` if the file cannot be
+            read.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             with open(full, encoding=encoding) as f:
@@ -49,7 +86,16 @@ class FileSystem:
 
     @staticmethod
     def write_text(path: str, content: str, encoding: str = "utf-8") -> bool:
-        """Write a text file. Returns ``True`` on success."""
+        """Write a text file, creating parent directories as needed.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+            content: String to write.
+            encoding: Text encoding (default `"utf-8"`).
+
+        Returns:
+            `True` on success, `False` on `OSError`.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             os.makedirs(os.path.dirname(full), exist_ok=True)
@@ -61,13 +107,27 @@ class FileSystem:
 
     @staticmethod
     def exists(path: str) -> bool:
-        """Check if a file or directory exists."""
+        """Return whether a file or directory exists.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+
+        Returns:
+            `True` if the path exists.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         return os.path.exists(full)
 
     @staticmethod
     def delete(path: str) -> bool:
-        """Delete a file. Returns ``True`` on success."""
+        """Delete a single file.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+
+        Returns:
+            `True` on success, `False` on `OSError`.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             os.remove(full)
@@ -77,7 +137,15 @@ class FileSystem:
 
     @staticmethod
     def list_dir(path: str = "") -> list:
-        """List entries in a directory."""
+        """List the entries in a directory.
+
+        Args:
+            path: Absolute or `app_dir`-relative path. Defaults to the
+                app data directory itself.
+
+        Returns:
+            A list of entry names, or an empty list on error.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             return os.listdir(full)
@@ -86,7 +154,15 @@ class FileSystem:
 
     @staticmethod
     def read_bytes(path: str) -> Optional[bytes]:
-        """Read a binary file."""
+        """Read a binary file.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+
+        Returns:
+            File contents as `bytes`, or `None` if the file cannot be
+            read.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             with open(full, "rb") as f:
@@ -96,7 +172,15 @@ class FileSystem:
 
     @staticmethod
     def write_bytes(path: str, data: bytes) -> bool:
-        """Write a binary file. Returns ``True`` on success."""
+        """Write a binary file, creating parent directories as needed.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+            data: Bytes to write.
+
+        Returns:
+            `True` on success, `False` on `OSError`.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             os.makedirs(os.path.dirname(full), exist_ok=True)
@@ -108,7 +192,15 @@ class FileSystem:
 
     @staticmethod
     def get_size(path: str) -> Optional[int]:
-        """Return file size in bytes, or ``None`` if not found."""
+        """Return file size in bytes.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+
+        Returns:
+            File size in bytes, or `None` if the file is missing or
+            unreadable.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             return os.path.getsize(full)
@@ -117,7 +209,14 @@ class FileSystem:
 
     @staticmethod
     def ensure_dir(path: str) -> bool:
-        """Create a directory (and parents) if it doesn't exist."""
+        """Create a directory (and any missing parents) idempotently.
+
+        Args:
+            path: Absolute or `app_dir`-relative path.
+
+        Returns:
+            `True` on success or if the directory already exists.
+        """
         full = path if os.path.isabs(path) else os.path.join(FileSystem.app_dir(), path)
         try:
             os.makedirs(full, exist_ok=True)
@@ -127,5 +226,16 @@ class FileSystem:
 
     @staticmethod
     def join(*parts: Any) -> str:
-        """Join path components."""
+        """Join path components using the OS separator.
+
+        Equivalent to `os.path.join(*map(str, parts))`. Provided as a
+        convenience so callers do not need to import `os.path`
+        directly.
+
+        Args:
+            *parts: Path components (each coerced to `str`).
+
+        Returns:
+            The joined path string.
+        """
         return os.path.join(*[str(p) for p in parts])

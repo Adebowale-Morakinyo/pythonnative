@@ -35,6 +35,8 @@ docs = [
   "mkdocs>=1.5",
   "mkdocs-material[imaging]>=9.5",
   "mkdocstrings[python]>=0.24",
+  "mkdocs-autorefs>=1.0",
+  "pymdown-extensions>=10.7",
 ]
 dev = [
   "black>=24.0",
@@ -81,8 +83,32 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
-ignore = []
+# Docstring (D) rules use the Google convention; see [tool.ruff.lint.pydocstyle].
+# Selectively enabled so tests/examples/templates aren't penalized.
+select = ["E", "F", "I", "D"]
+# D107 (missing __init__ docstring): mkdocstrings is configured to merge
+#   __init__ into the class docstring, so the class docstring is the source of truth.
+# D105 (magic method docstring): most are self-explanatory (__repr__, __eq__, etc.).
+# D203/D213: conflict with Google convention defaults; ruff auto-suppresses
+#   these via `convention = "google"`, but we list them defensively.
+ignore = ["D107", "D105", "D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D"]
+"examples/**/*.py" = ["D"]
+"src/pythonnative/templates/**/*.py" = ["D"]
+"setup.py" = ["D"]
+"conftest.py" = ["D"]
+# Platform handler subclasses implement the ViewHandler ABC defined in
+# native_views/base.py, which carries the canonical docstrings for the
+# protocol. The concrete classes are internal (registered by name in
+# NativeViewRegistry, never imported by users), so requiring per-method
+# docstrings would only add boilerplate that repeats the ABC.
+"src/pythonnative/native_views/android.py" = ["D101", "D102"]
+"src/pythonnative/native_views/ios.py" = ["D101", "D102"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.black]
 line-length = 120

@@ -54,6 +54,11 @@ cd examples/hello-world && pn run android
 - Prefer explicit, descriptive names; keep platform abstractions clean.
 - Add/extend tests under `tests/` for new behavior.
 - Do not commit generated artifacts or large binaries; templates live under `templates/`.
+- Docstrings: Google style throughout. Ruff is configured with the Google
+  convention (`pydocstyle.convention = "google"`) and enforces the `D` rule
+  set on `src/pythonnative/`. See the
+  [Documentation style guide](https://docs.pythonnative.com/meta/style-guide/)
+  for examples and Markdown/grammar conventions.
 
 Common commands:
 
@@ -291,7 +296,7 @@ Test flows live in `tests/e2e/flows/` and cover main page rendering, counter int
 - **E2E** (`e2e.yml`): builds the hello-world example on Android (Linux emulator) and iOS (macOS simulator), then runs Maestro flows. Triggers on pushes to `main`, PRs, and manual dispatch.
 - **PR Lint** (`pr-lint.yml`): validates the PR title against Conventional Commits format (protects squash merges) and checks individual commit messages via commitlint (protects rebase merges). Recommended: add the **PR title** job as a required status check in branch-protection settings.
 - **Release** (`release.yml`): runs on merge to `main`; computes version, generates changelog, tags, creates GitHub Release, and (when `DRAFT_RELEASE` is `"false"`) publishes to PyPI.
-- **Docs** (`docs.yml`): deploys documentation to GitHub Pages on push to `main`.
+- **Docs** (`docs.yml`): builds the MkDocs site in strict mode on every push and pull request, and deploys to GitHub Pages on push to `main`.
 
 ## Security and provenance
 

@@ -2,16 +2,22 @@
 
 PythonNative offers two approaches to navigation:
 
-1. **Declarative navigators** (recommended) — component-based, inspired by React Navigation
-2. **Page-level push/pop** — imperative navigation via `use_navigation()` (for native page transitions)
+1. **Declarative navigators** (recommended): component-based,
+   inspired by React Navigation.
+2. **Page-level push/pop**: imperative navigation via
+   [`use_navigation`][pythonnative.use_navigation] (for native page
+   transitions).
 
-## Declarative Navigation
+## Declarative navigation
 
-Declarative navigators manage screen state as components. Define your screens once, and the navigator handles rendering, transitions, and state.
+Declarative navigators manage screen state as components. Define your
+screens once, and the navigator handles rendering, transitions, and
+state.
 
-### Stack Navigator
+### Stack navigator
 
-A stack navigator manages a stack of screens — push to go forward, pop to go back.
+A stack navigator manages a stack of screens; push to go forward,
+pop to go back.
 
 ```python
 import pythonnative as pn
@@ -52,11 +58,11 @@ def DetailScreen():
     )
 ```
 
-### Tab Navigator
+### Tab navigator
 
-A tab navigator renders a **native tab bar** and switches between screens.
-On Android the tab bar is a `BottomNavigationView` from Material Components;
-on iOS it is a `UITabBar`.
+A tab navigator renders a **native tab bar** and switches between
+screens. On Android the tab bar is a `BottomNavigationView` from
+Material Components; on iOS it is a `UITabBar`.
 
 ```python
 from pythonnative.navigation import create_tab_navigator
@@ -80,7 +86,7 @@ The tab bar emits a `TabBar` element that maps to platform-native views:
 | Android  | `BottomNavigationView`       |
 | iOS      | `UITabBar`                   |
 
-### Drawer Navigator
+### Drawer navigator
 
 A drawer navigator provides a side menu for switching screens.
 
@@ -107,12 +113,13 @@ def HomeScreen():
     )
 ```
 
-### Nesting Navigators
+### Nesting navigators
 
-Navigators can be nested — for example, tabs containing stacks.
-When a child navigator receives a `navigate()` call for an unknown route,
-it automatically **forwards** the request to its parent navigator.
-Similarly, `go_back()` at the root of a child stack forwards to the parent.
+Navigators can be nested (for example, tabs containing stacks). When a
+child navigator receives a `navigate()` call for an unknown route, it
+automatically **forwards** the request to its parent navigator.
+Similarly, `go_back()` at the root of a child stack forwards to the
+parent.
 
 ```python
 Stack = create_stack_navigator()
@@ -140,24 +147,28 @@ parent tab navigator and switch to the Settings tab.
 
 ## NavigationHandle API
 
-Inside any screen rendered by a navigator, `pn.use_navigation()` returns a handle with:
+Inside any screen rendered by a navigator,
+[`use_navigation`][pythonnative.use_navigation] returns a handle with:
 
-- **`.navigate(route_name, params=...)`** — navigate to a named route with optional params
-- **`.go_back()`** — pop the current screen
-- **`.get_params()`** — get the current route's params dict
-- **`.reset(route_name, params=...)`** — reset the stack to a single route
+- **`.navigate(route_name, params=...)`**: navigate to a named route
+  with optional params.
+- **`.go_back()`**: pop the current screen.
+- **`.get_params()`**: get the current route's params dict.
+- **`.reset(route_name, params=...)`**: reset the stack to a single
+  route.
 
 ### Drawer-specific methods
 
 When inside a drawer navigator, the handle also provides:
 
-- **`.open_drawer()`** — open the drawer
-- **`.close_drawer()`** — close the drawer
-- **`.toggle_drawer()`** — toggle the drawer open/closed
+- **`.open_drawer()`**: open the drawer.
+- **`.close_drawer()`**: close the drawer.
+- **`.toggle_drawer()`**: toggle the drawer open/closed.
 
-## Focus-aware Effects
+## Focus-aware effects
 
-Use `pn.use_focus_effect()` to run effects only when a screen is focused:
+Use [`use_focus_effect`][pythonnative.use_focus_effect] to run effects
+only when a screen is focused:
 
 ```python
 @pn.component
@@ -169,9 +180,10 @@ def DataScreen():
     return pn.Text(f"Data: {data}")
 ```
 
-## Route Parameters
+## Route parameters
 
-Use `pn.use_route()` for convenient access to route params:
+Use [`use_route`][pythonnative.use_route] for convenient access to
+route params:
 
 ```python
 @pn.component
@@ -185,15 +197,15 @@ def DetailScreen():
 
 PythonNative forwards lifecycle events from the host:
 
-- `on_create` — triggers the initial render
-- `on_start`
-- `on_resume`
-- `on_pause`
-- `on_stop`
-- `on_destroy`
-- `on_restart` (Android only)
-- `on_save_instance_state`
-- `on_restore_instance_state`
+- `on_create`: triggers the initial render.
+- `on_start`.
+- `on_resume`.
+- `on_pause`.
+- `on_stop`.
+- `on_destroy`.
+- `on_restart` (Android only).
+- `on_save_instance_state`.
+- `on_restore_instance_state`.
 
 ## Platform specifics
 
@@ -209,6 +221,17 @@ PythonNative forwards lifecycle events from the host:
 - Arguments live in Fragment arguments and restore across configuration changes.
 
 ## Comparison to other frameworks
-- **React Native:** Android: single `Activity`, screens managed via `Fragment`s. iOS: screens map to `UIViewController`s pushed on `UINavigationController`.
-- **NativeScript:** Android: single `Activity`, pages as `Fragment`s. iOS: pages as `UIViewController`s on `UINavigationController`.
-- **Flutter:** Android: single `Activity`. iOS: `FlutterViewController` hosts Flutter's navigator.
+
+- **React Native**. Android: single `Activity`, screens managed via
+  `Fragment`s. iOS: screens map to `UIViewController`s pushed on
+  `UINavigationController`.
+- **NativeScript**. Android: single `Activity`, pages as `Fragment`s.
+  iOS: pages as `UIViewController`s on `UINavigationController`.
+- **Flutter**. Android: single `Activity`. iOS:
+  `FlutterViewController` hosts Flutter's navigator.
+
+## Next steps
+
+- See worked navigation examples: [Examples/Navigation](../examples/navigation.md).
+- Browse the API: [Navigation](../api/navigation.md).
+- Learn how focus interacts with effects: [Lifecycle](../concepts/lifecycle.md).

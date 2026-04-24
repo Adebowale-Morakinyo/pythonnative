@@ -1,28 +1,63 @@
-"""Shared base classes and utilities for native view handlers.
+"""Shared base classes and utilities for native-view handlers.
 
-Provides the :class:`ViewHandler` abstract base class and common helper
-functions used by both Android and iOS platform implementations.
+Provides the [`ViewHandler`][pythonnative.native_views.base.ViewHandler]
+protocol implemented by Android and iOS handlers, plus common helpers
+for color parsing, padding normalization, and flex-layout constants
+shared across platforms.
 """
 
 from typing import Any, Dict, Union
 
 
 class ViewHandler:
-    """Protocol for creating, updating, and managing children of a native view type."""
+    """Protocol implemented by every native-view handler.
+
+    A `ViewHandler` knows how to create, update, and re-parent native
+    views of one element type. The reconciler dispatches through the
+    [`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry];
+    handlers never need to know about `Element` or `VNode`.
+
+    Subclasses must override [`create`][pythonnative.native_views.base.ViewHandler.create]
+    and [`update`][pythonnative.native_views.base.ViewHandler.update].
+    Container handlers override the child-management methods; leaf
+    handlers can leave them as no-ops.
+    """
 
     def create(self, props: Dict[str, Any]) -> Any:
+        """Create a fresh native view and apply initial props.
+
+        Args:
+            props: Initial props dict.
+
+        Returns:
+            The platform-native view object.
+
+        Raises:
+            NotImplementedError: Subclasses must override.
+        """
         raise NotImplementedError
 
     def update(self, native_view: Any, changed_props: Dict[str, Any]) -> None:
+        """Apply only the props that changed since the last render.
+
+        Args:
+            native_view: The platform-native view to mutate.
+            changed_props: Props whose values changed (a value of
+                `None` indicates the prop was removed).
+
+        Raises:
+            NotImplementedError: Subclasses must override.
+        """
         raise NotImplementedError
 
     def add_child(self, parent: Any, child: Any) -> None:
-        pass
+        """Append `child` to `parent`. No-op for leaf handlers."""
 
     def remove_child(self, parent: Any, child: Any) -> None:
-        pass
+        """Remove `child` from `parent`. No-op for leaf handlers."""
 
     def insert_child(self, parent: Any, child: Any, index: int) -> None:
+        """Insert `child` at `index`. Defaults to appending."""
         self.add_child(parent, child)
 
 
@@ -32,10 +67,18 @@ class ViewHandler:
 
 
 def parse_color_int(color: Union[str, int]) -> int:
-    """Parse ``#RRGGBB`` / ``#AARRGGBB`` hex string or raw int to a *signed* ARGB int.
+    """Parse a color value into a signed 32-bit ARGB int.
 
-    Java's ``setBackgroundColor`` et al. expect a signed 32-bit int, so values
-    with a high alpha byte (e.g. 0xFF…) must be converted to negative ints.
+    Accepts `"#RRGGBB"`, `"#AARRGGBB"`, or a raw integer. Java APIs
+    such as `setBackgroundColor` expect a signed 32-bit int, so values
+    with a high alpha byte (e.g., `0xFF......`) must be converted to
+    their negative two's-complement equivalent.
+
+    Args:
+        color: Hex string (with or without leading `#`) or an int.
+
+    Returns:
+        Signed 32-bit ARGB int suitable for Android's color APIs.
     """
     if isinstance(color, int):
         val = color
@@ -55,7 +98,21 @@ def parse_color_int(color: Union[str, int]) -> int:
 
 
 def resolve_padding(padding: Any) -> tuple:
-    """Normalise various padding representations to ``(left, top, right, bottom)``."""
+    """Normalize a padding value to `(left, top, right, bottom)`.
+
+    Accepts:
+
+    - `None`: returns `(0, 0, 0, 0)`.
+    - A scalar int/float: same value on all sides.
+    - A dict with any of `horizontal`, `vertical`, `left`, `right`,
+      `top`, `bottom`, `all` keys.
+
+    Args:
+        padding: One of the forms above.
+
+    Returns:
+        A 4-tuple of `(left, top, right, bottom)` ints.
+    """
     if padding is None:
         return (0, 0, 0, 0)
     if isinstance(padding, (int, float)):
@@ -108,7 +165,7 @@ OVERFLOW_SCROLL = "scroll"
 
 
 def is_vertical(direction: str) -> bool:
-    """Return ``True`` if *direction* represents a vertical (column) axis."""
+    """Return whether `direction` represents a vertical (column) axis."""
     return direction in (FLEX_DIRECTION_COLUMN, FLEX_DIRECTION_COLUMN_REVERSE)
 
 

@@ -1,6 +1,9 @@
 # Styling
 
-Style properties are passed via the `style` prop as a dict (or list of dicts) to any element function. PythonNative also provides a `StyleSheet` utility for creating reusable styles and a theming system via context.
+Style properties are passed via the `style` prop as a dict (or list of
+dicts) to any element function. PythonNative also provides a
+[`StyleSheet`][pythonnative.StyleSheet] utility for creating reusable
+styles and a theming system via context.
 
 ## Inline styles
 
@@ -14,7 +17,8 @@ pn.Column(pn.Text("Content"), style={"background_color": "#FFF5F5F5"})
 
 ## StyleSheet
 
-Create reusable named styles with `StyleSheet.create()`:
+Create reusable named styles with
+[`StyleSheet.create`][pythonnative.style.StyleSheet.create]:
 
 ```python
 import pythonnative as pn
@@ -34,7 +38,8 @@ pn.Column(
 
 ### Composing styles
 
-Merge multiple style dicts with `StyleSheet.compose()`:
+Merge multiple style dicts with
+[`StyleSheet.compose`][pythonnative.style.StyleSheet.compose]:
 
 ```python
 base = {"font_size": 16, "color": "#000"}
@@ -86,25 +91,31 @@ PythonNative uses a flexbox-inspired layout model. `View` is the universal flex 
 
 These go in the `style` dict of `View`, `Column`, or `Row`:
 
-- `flex_direction` — `"column"` (default), `"row"`, `"column_reverse"`, `"row_reverse"` (only for `View`; `Column`/`Row` have fixed directions)
-- `justify_content` — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
-- `align_items` — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
-- `overflow` — `"visible"` (default), `"hidden"`
-- `spacing` — gap between children (dp / pt)
-- `padding` — inner spacing (int for all sides, or dict)
+- `flex_direction`: `"column"` (default), `"row"`, `"column_reverse"`,
+  `"row_reverse"` (only for `View`; `Column` and `Row` have fixed
+  directions).
+- `justify_content`: main-axis distribution: `"flex_start"`,
+  `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`,
+  `"space_evenly"`.
+- `align_items`: cross-axis alignment: `"stretch"`, `"flex_start"`,
+  `"center"`, `"flex_end"`.
+- `overflow`: `"visible"` (default), `"hidden"`.
+- `spacing`: gap between children (dp / pt).
+- `padding`: inner spacing (int for all sides, or dict).
 
 ### Child layout properties
 
 All components accept these in `style`:
 
-- `width`, `height` — fixed dimensions in dp (Android) / pt (iOS)
-- `flex` — flex grow factor (shorthand for `flex_grow`)
-- `flex_grow` — how much a child should grow to fill available space
-- `flex_shrink` — how much a child should shrink when space is tight
-- `margin` — outer spacing (int for all sides, or dict)
-- `min_width`, `min_height` — minimum size constraints
-- `max_width`, `max_height` — maximum size constraints
-- `align_self` — override parent alignment: `"flex_start"`, `"center"`, `"flex_end"`, `"stretch"`
+- `width`, `height`: fixed dimensions in dp (Android) / pt (iOS).
+- `flex`: flex grow factor (shorthand for `flex_grow`).
+- `flex_grow`: how much a child should grow to fill available space.
+- `flex_shrink`: how much a child should shrink when space is tight.
+- `margin`: outer spacing (int for all sides, or dict).
+- `min_width`, `min_height`: minimum size constraints.
+- `max_width`, `max_height`: maximum size constraints.
+- `align_self`: override parent alignment: `"flex_start"`, `"center"`,
+  `"flex_end"`, `"stretch"`.
 
 ### Layout examples
 
@@ -166,10 +177,14 @@ pn.Column(
 
 ### Alignment properties
 
-Column and Row support `align_items` and `justify_content` inside `style`:
+`Column` and `Row` support `align_items` and `justify_content` inside
+`style`:
 
-- **`align_items`** — cross-axis alignment: `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`, `"leading"`, `"trailing"`
-- **`justify_content`** — main-axis distribution: `"flex_start"`, `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`, `"space_evenly"`
+- **`align_items`**: cross-axis alignment: `"stretch"`,
+  `"flex_start"`, `"center"`, `"flex_end"`, `"leading"`, `"trailing"`.
+- **`justify_content`**: main-axis distribution: `"flex_start"`,
+  `"center"`, `"flex_end"`, `"space_between"`, `"space_around"`,
+  `"space_evenly"`.
 
 ```python
 pn.Row(
@@ -186,9 +201,10 @@ pn.Row(
 
 ### Padding
 
-- `padding: 16` — all sides
-- `padding: {"horizontal": 12, "vertical": 8}` — per axis
-- `padding: {"left": 8, "top": 16, "right": 8, "bottom": 16}` — per side
+- `padding: 16`: all sides.
+- `padding: {"horizontal": 12, "vertical": 8}`: per axis.
+- `padding: {"left": 8, "top": 16, "right": 8, "bottom": 16}`: per
+  side.
 
 ## Theming
 
@@ -219,25 +235,34 @@ def DarkPage():
 
 Both light and dark themes include:
 
-- `primary_color`, `secondary_color` — accent colors
-- `background_color`, `surface_color` — background colors
-- `text_color`, `text_secondary_color` — text colors
-- `error_color`, `success_color`, `warning_color` — semantic colors
-- `font_size`, `font_size_small`, `font_size_large`, `font_size_title` — typography
-- `spacing`, `spacing_large` — layout spacing
-- `border_radius` — corner rounding
+- `primary_color`, `secondary_color`: accent colors.
+- `background_color`, `surface_color`: background colors.
+- `text_color`, `text_secondary_color`: text colors.
+- `error_color`, `success_color`, `warning_color`: semantic colors.
+- `font_size`, `font_size_small`, `font_size_large`,
+  `font_size_title`: typography.
+- `spacing`, `spacing_large`: layout spacing.
+- `border_radius`: corner rounding.
 
 ## ScrollView
 
-Wrap content in a `ScrollView`:
+Wrap content in a [`ScrollView`][pythonnative.ScrollView]:
 
 ```python
 pn.ScrollView(
     pn.Column(
         pn.Text("Item 1"),
         pn.Text("Item 2"),
-        # ... many items
         style={"spacing": 8},
     )
 )
 ```
+
+## Next steps
+
+- See it in practice: [Forms](../examples/forms.md),
+  [Lists](../examples/lists.md).
+- Browse the API: [Style](../api/style.md),
+  [Components](../api/components.md).
+- Learn about reconciliation and how style props are diffed:
+  [Reconciliation](../concepts/reconciliation.md).

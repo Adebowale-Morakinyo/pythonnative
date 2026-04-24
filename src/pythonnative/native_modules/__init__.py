@@ -2,13 +2,19 @@
 
 Provides cross-platform Python interfaces to common device APIs:
 
-- :mod:`~.camera` — photo capture and gallery picking
-- :mod:`~.location` — GPS / location services
-- :mod:`~.file_system` — app-scoped file I/O
-- :mod:`~.notifications` — local push notifications
+- [`Camera`][pythonnative.native_modules.Camera]: photo capture and
+  gallery picking.
+- [`Location`][pythonnative.native_modules.Location]: GPS and
+  location services.
+- [`FileSystem`][pythonnative.native_modules.FileSystem]: app-scoped
+  file I/O.
+- [`Notifications`][pythonnative.native_modules.Notifications]: local
+  push notifications.
 
-Each module auto-detects the platform and calls the appropriate native
-APIs via Chaquopy (Android) or rubicon-objc (iOS).
+Each module auto-detects the platform at import time and dispatches to
+the appropriate native APIs via Chaquopy (Android) or rubicon-objc (iOS).
+On a desktop machine without either runtime, the modules raise
+informative `RuntimeError` instances when called.
 """
 
 from .camera import Camera

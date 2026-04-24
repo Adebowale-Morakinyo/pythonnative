@@ -1,11 +1,25 @@
-"""Page host — the bridge between native lifecycle and function components.
+"""Page host: the bridge between native lifecycle and function components.
 
-Users no longer subclass ``Page``.  Instead they write ``@component``
-functions and the native template calls :func:`create_page` to obtain
-an :class:`_AppHost` that manages the reconciler and lifecycle.
+Users do not subclass `Page`. Instead they write `@component` functions
+and the native template calls
+[`create_page`][pythonnative.create_page] to obtain a host that manages
+the reconciler and lifecycle.
 
-Usage (user code)::
+The page host owns:
 
+- A [`Reconciler`][pythonnative.reconciler.Reconciler] backed by the
+  platform's native-view registry.
+- A [`NavigationHandle`][pythonnative.hooks.NavigationHandle] (delivered to
+  components via the navigation context) so screens can push and pop
+  without holding a direct reference to native classes.
+- Render scheduling. State changes during render are queued and drained
+  in batches so the reconciler runs at most a bounded number of passes
+  per user gesture.
+
+Example:
+    User code defines a top-level component:
+
+    ```python
     import pythonnative as pn
 
     @pn.component
@@ -16,11 +30,17 @@ Usage (user code)::
             pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
             style={"spacing": 12, "padding": 16},
         )
+    ```
 
-The native template calls::
+    The native template wires it in:
 
-    host = pythonnative.page.create_page("app.main_page.MainPage", native_instance)
+    ```python
+    host = pythonnative.page.create_page(
+        "app.main_page.MainPage",
+        native_instance,
+    )
     host.on_create()
+    ```
 """
 
 import importlib
@@ -37,7 +57,7 @@ _MAX_RENDER_PASSES = 25
 
 
 def _resolve_component_path(page_ref: Any) -> str:
-    """Resolve a component function to a ``module.name`` path string."""
+    """Resolve a component function or string into a `module.name` path."""
     if isinstance(page_ref, str):
         return page_ref
     func = getattr(page_ref, "__wrapped__", page_ref)
@@ -91,7 +111,12 @@ def _on_create(host: Any) -> None:
 
 
 def _request_render(host: Any) -> None:
-    """State-change trigger.  Defers if a render is already in progress."""
+    """Request a render pass.
+
+    If a render is already in progress (state changed mid-render or
+    inside an effect), the request is queued and drained at the end of
+    the current pass so the reconciler is never re-entered.
+    """
     if host._is_rendering:
         host._render_queued = True
         return
@@ -99,7 +124,7 @@ def _request_render(host: Any) -> None:
 
 
 def _re_render(host: Any) -> None:
-    """Perform a full render pass, draining any state set during effects."""
+    """Run one render pass, then drain any renders queued during it."""
     from .hooks import Provider, _NavigationContext
 
     host._is_rendering = True
@@ -121,7 +146,11 @@ def _re_render(host: Any) -> None:
 
 
 def _drain_renders(host: Any) -> None:
-    """Flush additional renders queued by effects that set state."""
+    """Flush additional renders queued by effects that set state.
+
+    Capped at `_MAX_RENDER_PASSES` to break runaway feedback loops
+    (e.g., an effect that unconditionally calls a setter).
+    """
     from .hooks import Provider, _NavigationContext
 
     for _ in range(_MAX_RENDER_PASSES):
@@ -157,7 +186,12 @@ if IS_ANDROID:
     from java import jclass
 
     class _AppHost:
-        """Android host backed by an Activity and Fragment navigation."""
+        """Android host backed by an `Activity` and fragment-based navigation.
+
+        Owned by the page fragment template. Bridges Android lifecycle
+        callbacks (`onCreate`, `onPause`, etc.) to the reconciler and
+        the function component.
+        """
 
         def __init__(self, native_instance: Any, component_func: Any) -> None:
             self.native_instance = native_instance
@@ -282,7 +316,14 @@ else:
             pass
 
     def forward_lifecycle(native_addr: int, event: str) -> None:
-        """Forward a lifecycle event from Swift ViewController to the registered host."""
+        """Forward a Swift `UIViewController` lifecycle event to its host.
+
+        Args:
+            native_addr: Pointer (`int`) of the calling
+                `UIViewController` instance, used to look up the
+                registered host.
+            event: Lifecycle method name (e.g., `"on_resume"`).
+        """
         host = _IOS_PAGE_REGISTRY.get(int(native_addr))
         if host is None:
             return
@@ -293,7 +334,12 @@ else:
     if _rubicon_available:
 
         class _AppHost:
-            """iOS host backed by a UIViewController."""
+            """iOS host backed by a `UIViewController`.
+
+            Owned by the page view-controller template. Bridges iOS
+            lifecycle callbacks (`viewDidLoad`, `viewWillDisappear`,
+            etc.) to the reconciler and the function component.
+            """
 
             def __init__(self, native_instance: Any, component_func: Any) -> None:
                 if isinstance(native_instance, int):
@@ -407,10 +453,13 @@ else:
     else:
 
         class _AppHost:
-            """Desktop stub — no native runtime available.
+            """Desktop stub used when no native runtime is available.
 
-            Fully functional for testing with a mock backend via
-            ``native_views.set_registry()``.
+            Fully functional for unit tests when a mock backend is
+            installed via
+            [`set_registry`][pythonnative.native_views.set_registry].
+            Calls to navigation methods raise `RuntimeError` because
+            there is no native navigation stack to push onto.
             """
 
             def __init__(self, native_instance: Any = None, component_func: Any = None) -> None:
@@ -476,17 +525,32 @@ def create_page(
 ) -> _AppHost:
     """Create a page host for a function component.
 
-    Called by native templates (PageFragment.kt / ViewController.swift)
-    to bridge the native lifecycle to a ``@component`` function.
+    Called by native templates (`PageFragment.kt` on Android,
+    `ViewController.swift` on iOS) to bridge the native lifecycle to a
+    [`@component`][pythonnative.component] function.
 
-    Parameters
-    ----------
-    component_path:
-        Dotted Python path to the component, e.g. ``"app.main_page.MainPage"``.
-    native_instance:
-        The native Activity (Android) or ViewController pointer (iOS).
-    args_json:
-        Optional JSON string of navigation arguments.
+    Args:
+        component_path: Dotted Python path to the component, e.g.,
+            `"app.main_page.MainPage"`. The function is imported lazily
+            so user modules can be reloaded by the dev server.
+        native_instance: The native `Activity` (Android) or
+            `UIViewController` (iOS) pointer that owns this page.
+        args_json: Optional JSON string of navigation arguments to pass
+            to the component on first render.
+
+    Returns:
+        An `_AppHost` ready to receive lifecycle callbacks (`on_create`,
+        `on_pause`, etc.) from the platform.
+
+    Example:
+        ```python
+        host = pythonnative.page.create_page(
+            "app.main_page.MainPage",
+            native_instance,
+            args_json='{"id": 42}',
+        )
+        host.on_create()
+        ```
     """
     component_func = _import_component(component_path)
     host = _AppHost(native_instance, component_func)

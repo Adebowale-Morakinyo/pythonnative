@@ -1,7 +1,22 @@
-"""Cross-platform camera access.
+"""Cross-platform camera and gallery access.
 
-Provides methods for capturing photos and picking images from the gallery.
-Uses Android's ``Intent``/``MediaStore`` or iOS's ``UIImagePickerController``.
+Provides static methods for capturing a photo or picking an image from
+the device gallery. The platform implementation is selected at call
+time and uses Android's `Intent`/`MediaStore` APIs or iOS's
+`UIImagePickerController`.
+
+All methods accept an `on_result` callback that receives either the
+saved image path (a `str`) or `None` if the user cancels.
+
+Example:
+    ```python
+    from pythonnative import Camera
+
+    def handle(path):
+        print("Photo saved to" if path else "Cancelled", path)
+
+    Camera.take_photo(on_result=handle)
+    ```
 """
 
 from typing import Any, Callable, Optional
@@ -10,21 +25,23 @@ from ..utils import IS_ANDROID
 
 
 class Camera:
-    """Camera and image picker interface.
+    """Camera and image-picker interface.
 
-    All methods accept an ``on_result`` callback that receives the image
-    file path (or ``None`` on cancellation).
+    All methods are static. They dispatch to the Android or iOS
+    implementation at call time based on `IS_ANDROID` (from
+    `pythonnative.utils`).
     """
 
     @staticmethod
     def take_photo(on_result: Optional[Callable[[Optional[str]], None]] = None, **options: Any) -> None:
         """Launch the device camera to capture a photo.
 
-        Parameters
-        ----------
-        on_result:
-            ``(path_or_none) -> None`` called with the saved image path,
-            or ``None`` if the user cancelled.
+        Args:
+            on_result: Callable invoked with the saved image path, or
+                `None` if the user cancelled.
+            **options: Reserved for platform-specific tuning. Currently
+                unused; future kwargs (e.g., `quality`, `flash_mode`)
+                will land here.
         """
         if IS_ANDROID:
             Camera._android_take_photo(on_result, **options)
@@ -35,11 +52,10 @@ class Camera:
     def pick_from_gallery(on_result: Optional[Callable[[Optional[str]], None]] = None, **options: Any) -> None:
         """Open the system gallery picker.
 
-        Parameters
-        ----------
-        on_result:
-            ``(path_or_none) -> None`` called with the selected image path,
-            or ``None`` if the user cancelled.
+        Args:
+            on_result: Callable invoked with the selected image path, or
+                `None` if the user cancelled.
+            **options: Reserved for platform-specific tuning.
         """
         if IS_ANDROID:
             Camera._android_pick_gallery(on_result, **options)

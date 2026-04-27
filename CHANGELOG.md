@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.10.0 (2026-04-27)
+
+### Documentation
+
+- Adopt Google-style docstrings; revamp MkDocs site
+  ([`922ec94`](https://github.com/pythonnative/pythonnative/commit/922ec94bee841c8309b9b26a0c5085f663addb11))
+
+### Features
+
+- **hot_reload**: Reload Python app code without rebuilding
+  ([`cddbcdc`](https://github.com/pythonnative/pythonnative/commit/cddbcdc1bfd57ea2362116f0a8e0b1f8c98ca8f9))
+
+
 ## v0.9.0 (2026-04-16)
 
 ### Features

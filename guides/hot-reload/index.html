@@ -1058,6 +1058,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-the-device-sees-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the device sees changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-gets-reloaded" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2172,6 +2183,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-the-device-sees-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the device sees changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-gets-reloaded" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2287,18 +2309,38 @@ the affected modules and asks the page host to re-render.</p>
 <li>Launch the app on a connected device or simulator.</li>
 <li>Start a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;FileWatcher&lt;/span&gt;" href="../../api/hot_reload/#pythonnative.hot_reload.FileWatcher"><code>FileWatcher</code></a> over
    <code>app/</code>.</li>
+<li>Push changed Python files into a writable on-device overlay.</li>
+<li>Write a small reload manifest that the running app polls from the
+   main thread.</li>
 <li>Tail logs (Android) or print hot-reload notifications (iOS) until
    you press <code>Ctrl+C</code>.</li>
 </ol>
+<h2 id="how-the-device-sees-changes">How the device sees changes<a class="headerlink" href="#how-the-device-sees-changes" title="Permanent link">&para;</a></h2>
+<p>The native templates call
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;configure_dev_environment&lt;/span&gt;" href="../../api/hot_reload/#pythonnative.hot_reload.configure_dev_environment"><code>configure_dev_environment()</code></a>
+before importing your app. That creates a <code>pythonnative_dev/</code> directory
+in the app's writable sandbox and puts it before the bundled app code
+on <code>sys.path</code>.</p>
+<p>When a source file changes, the CLI copies it to that overlay:</p>
+<ul>
+<li>Android: app-private storage via <code>adb</code> + <code>run-as</code></li>
+<li>iOS Simulator: the installed app's <code>Documents/pythonnative_dev/</code>
+  directory</li>
+</ul>
+<p>After the files are in place, the CLI writes <code>reload.json</code>. The
+Android and iOS templates poll that manifest on the platform main
+thread and call the page host's reload hook. The host re-imports the
+root component by dotted path, resets hook/navigation state for the
+page, and mounts the refreshed tree.</p>
 <h2 id="what-gets-reloaded">What gets reloaded<a class="headerlink" href="#what-gets-reloaded" title="Permanent link">&para;</a></h2>
 <p>PythonNative reloads any <code>.py</code> file under <code>app/</code>. The device-side
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ModuleReloader&lt;/span&gt;" href="../../api/hot_reload/#pythonnative.hot_reload.ModuleReloader"><code>ModuleReloader</code></a> resolves
 the file to a dotted module name (e.g., <code>app/pages/home.py</code> becomes
 <code>app.pages.home</code>) and calls <code>importlib.reload</code> on it.</p>
-<p>After reloading, the page host is notified to re-render the active
-page. Hook state for the affected component instances is <strong>reset</strong> on
-reload (this matches React Native's "fast refresh" model and avoids
-stale closures from older module versions).</p>
+<p>After reloading, the page host remounts the active page. Hook state for
+the affected page is <strong>reset</strong> on reload. This is intentionally more
+conservative than React Native Fast Refresh, but it avoids stale Python
+closures while the runtime is still young.</p>
 <h2 id="what-doesnt-reload">What doesn't reload<a class="headerlink" href="#what-doesnt-reload" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Native template files (anything under <code>android_template/</code> or
@@ -2319,11 +2361,11 @@ reload. Idempotent registration is fine; non-idempotent setup
 </div>
 <div class="admonition warning">
 <p class="admonition-title">References across modules</p>
-<p>If module <code>a</code> does <code>from b import Foo</code> and you reload <code>b</code>, module
-<code>a</code> still holds the <em>old</em> <code>Foo</code>. The reconciler sidesteps this
-for components by re-resolving the function on every render, but
-long-lived references (e.g., stashed in a global) can drift. When
-in doubt, restart the app.</p>
+<p>If module <code>a</code> does <code>from b import Foo</code> and only <code>b.py</code> changes,
+module <code>a</code> may still hold the <em>old</em> <code>Foo</code>. The page host always
+reloads the root page module after changed modules so common
+component imports update, but long-lived references (e.g., stashed
+in a global) can drift. When in doubt, restart the app.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Hook signature changes</p>
@@ -2348,9 +2390,9 @@ hot-reload and you want the smallest possible cycle.</p>
 reloaded modules. Pass <code>--no-logs</code> to suppress the stream:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--hot-reload<span class="w"> </span>--no-logs
 </span></code></pre></div>
-<p>On iOS, the simulator attaches the launching terminal to the app's
-stderr; PythonNative also rewires <code>sys.stdout</code> to that channel so
-<code>print()</code> calls show up alongside <code>NSLog</code> output.</p>
+<p>On iOS hot reload currently targets the Simulator flow. Use Console.app
+or Xcode for full live logs while the CLI keeps the watcher process in
+the foreground.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Reference: <a href="../../api/hot_reload/">Hot reload API</a>.</li>

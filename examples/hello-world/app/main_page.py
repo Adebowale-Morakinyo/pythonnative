@@ -14,6 +14,7 @@ Tab = create_tab_navigator()
 styles = pn.StyleSheet.create(
     title={"font_size": 24, "bold": True},
     subtitle={"font_size": 16, "color": "#666666"},
+    hint={"font_size": 14, "color": "#666666"},
     medal={"font_size": 32},
     card={
         "spacing": 12,
@@ -75,6 +76,11 @@ def HomeTab() -> pn.Element:
     return pn.ScrollView(
         pn.Column(
             pn.Text("Hello from PythonNative Demo!", style=styles["title"]),
+            pn.Text(
+                "Try `pn run android --hot-reload`, edit this text, and save. "
+                "The running app should update without a rebuild.",
+                style=styles["hint"],
+            ),
             counter_badge(),
             pn.Button("Go to Second Page", on_click=go_to_second),
             style=styles["section"],

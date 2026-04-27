@@ -3,7 +3,13 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from pathlib import Path
 from typing import List
+
+import pytest
+
+import pythonnative.cli.pn as pn_cli
+import pythonnative.hot_reload as hot_reload_module
 
 
 def run_pn(args: List[str], cwd: str) -> subprocess.CompletedProcess[str]:
@@ -107,3 +113,70 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         assert os.path.isdir(os.path.join(tmpdir, "build", "ios", "ios_template"))
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_hot_reload_manifest_payload_maps_files_to_modules(tmp_path: Path) -> None:
+    app_dir = tmp_path / "app"
+    app_dir.mkdir()
+    changed = app_dir / "main_page.py"
+    changed.write_text("print('hi')\n", encoding="utf-8")
+
+    payload = pn_cli._hot_reload_manifest_payload([os.fspath(changed)], os.fspath(tmp_path), version="v1")
+
+    assert payload == {
+        "version": "v1",
+        "files": ["app/main_page.py"],
+        "modules": ["app.main_page"],
+    }
+
+
+def test_android_hot_reload_dest_points_to_overlay() -> None:
+    assert pn_cli._android_hot_reload_dest("app/main_page.py") == os.path.join(
+        "files",
+        "pythonnative_dev",
+        "app/main_page.py",
+    )
+
+
+def test_clear_ios_hot_reload_overlay_removes_stale_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    overlay = tmp_path / "Documents" / "pythonnative_dev"
+    overlay.mkdir(parents=True)
+    (overlay / "reload.json").write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(pn_cli, "_ios_data_container", lambda: os.fspath(tmp_path))
+
+    assert pn_cli._clear_ios_hot_reload_overlay() is True
+    assert not overlay.exists()
+
+
+def test_run_hot_reload_imports_top_level_watcher(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    app_dir = tmp_path / "app"
+    app_dir.mkdir()
+    build_dir = tmp_path / "build"
+    events: list[str] = []
+
+    class FakeWatcher:
+        def __init__(self, watch_dir: str, on_change: object, interval: float = 1.0) -> None:
+            assert watch_dir == os.fspath(app_dir)
+
+        def start(self) -> None:
+            events.append("start")
+
+        def stop(self) -> None:
+            events.append("stop")
+
+    def stop_loop(_seconds: float) -> None:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(hot_reload_module, "FileWatcher", FakeWatcher)
+    monkeypatch.setattr("time.sleep", stop_loop)
+
+    pn_cli._run_hot_reload("ios", os.fspath(tmp_path), os.fspath(build_dir), show_logs=False)
+
+    assert events == ["start", "stop"]

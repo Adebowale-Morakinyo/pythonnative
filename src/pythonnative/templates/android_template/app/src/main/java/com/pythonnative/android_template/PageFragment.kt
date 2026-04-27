@@ -1,6 +1,8 @@
 package com.pythonnative.android_template
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,18 @@ import com.chaquo.python.android.AndroidPlatform
 class PageFragment : Fragment() {
     private val TAG = javaClass.simpleName
     private var page: PyObject? = null
+    private val hotReloadHandler = Handler(Looper.getMainLooper())
+    private val hotReloadRunnable = object : Runnable {
+        override fun run() {
+            try {
+                page?.callAttr("hot_reload_tick")
+            } catch (e: Exception) {
+                Log.w(TAG, "hot_reload_tick failed", e)
+            } finally {
+                hotReloadHandler.postDelayed(this, 500)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +39,13 @@ class PageFragment : Fragment() {
             val py = Python.getInstance()
             val pagePath = arguments?.getString("page_path") ?: "app.main_page.MainPage"
             val argsJson = arguments?.getString("args_json")
+            val filesRoot = requireContext().filesDir.absolutePath
+            val devRoot = "$filesRoot/pythonnative_dev"
+            val hotReload = py.getModule("pythonnative.hot_reload")
+            hotReload.callAttr("configure_dev_environment", filesRoot)
             val pnPage = py.getModule("pythonnative.page")
             page = pnPage.callAttr("create_page", pagePath, requireActivity(), argsJson)
+            page?.callAttr("enable_hot_reload", "$devRoot/reload.json", devRoot)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to instantiate page", e)
         }
@@ -58,6 +77,8 @@ class PageFragment : Fragment() {
             utils.callAttr("set_android_fragment_container", view)
             // Now that container exists, invoke on_create so Python can attach its root view
             page?.callAttr("on_create")
+            hotReloadHandler.removeCallbacks(hotReloadRunnable)
+            hotReloadHandler.postDelayed(hotReloadRunnable, 500)
         } catch (e: Exception) {
             Log.e(TAG, "on_create failed", e)
         }
@@ -85,10 +106,12 @@ class PageFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        hotReloadHandler.removeCallbacks(hotReloadRunnable)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        hotReloadHandler.removeCallbacks(hotReloadRunnable)
         try { page?.callAttr("on_destroy") } catch (e: Exception) { Log.w(TAG, "on_destroy failed", e) }
     }
 

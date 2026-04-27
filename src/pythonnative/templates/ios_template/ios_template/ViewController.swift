@@ -22,6 +22,10 @@ class ViewController: UIViewController {
     @objc dynamic var requestedPagePath: String? = nil
     @objc dynamic var requestedPageArgsJSON: String? = nil
     private var pythonReady: Bool = false
+    #if canImport(PythonKit)
+    private var page: PythonObject? = nil
+    #endif
+    private var hotReloadTimer: Timer? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +46,8 @@ class ViewController: UIViewController {
         if let resourcePath = Bundle.main.resourcePath {
             let pyStd = "\(resourcePath)/python-stdlib"
             let pyDyn = "\(resourcePath)/python-stdlib/lib-dynload"
-            var pyPath = "\(pyStd):\(pyDyn):\(resourcePath):\(resourcePath)/app"
+            let devRoot = "\(NSHomeDirectory())/Documents/pythonnative_dev"
+            var pyPath = "\(devRoot):\(pyStd):\(pyDyn):\(resourcePath):\(resourcePath)/app"
             let platSite = "\(resourcePath)/platform-site"
             if FileManager.default.fileExists(atPath: platSite) {
                 pyPath += ":\(platSite)"
@@ -73,8 +78,17 @@ class ViewController: UIViewController {
             NSLog("[PN] Python \(shortVersion) initialized")
         }
         if let resourcePath = Bundle.main.resourcePath {
+            let devRoot = "\(NSHomeDirectory())/Documents/pythonnative_dev"
+            sys.path.insert(0, devRoot)
             sys.path.append(resourcePath)
             sys.path.append("\(resourcePath)/app")
+            do {
+                let hotReload = try Python.attemptImport("pythonnative.hot_reload")
+                let docsPath = "\(NSHomeDirectory())/Documents"
+                _ = try hotReload.configure_dev_environment.throwing.dynamicallyCall(withArguments: [docsPath])
+            } catch {
+                NSLog("[PN] Hot reload setup skipped: \(error)")
+            }
         }
         // Determine which Python page to load
         let pagePath: String = requestedPagePath ?? "app.main_page.MainPage"
@@ -88,7 +102,12 @@ class ViewController: UIViewController {
             let page = try pnPage.create_page.throwing.dynamicallyCall(
                 withArguments: [pagePath, addr, argsJson]
             )
+            self.page = page
+            let devRoot = "\(NSHomeDirectory())/Documents/pythonnative_dev"
+            let manifestPath = "\(devRoot)/reload.json"
+            _ = try page.enable_hot_reload.throwing.dynamicallyCall(withArguments: [manifestPath, devRoot])
             _ = try page.on_create.throwing.dynamicallyCall(withArguments: [])
+            startHotReloadPolling()
             return
         } catch {
             NSLog("[PN] Python bootstrap failed: \(error)")
@@ -183,6 +202,7 @@ class ViewController: UIViewController {
     }
 
     deinit {
+        hotReloadTimer?.invalidate()
         #if canImport(PythonKit)
         if pythonReady {
             let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
@@ -194,6 +214,19 @@ class ViewController: UIViewController {
         #endif
     }
 
+    private func startHotReloadPolling() {
+        #if canImport(PythonKit)
+        hotReloadTimer?.invalidate()
+        hotReloadTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let page = self?.page else { return }
+            do {
+                _ = try page.hot_reload_tick.throwing.dynamicallyCall(withArguments: [])
+            } catch {
+                NSLog("[PN] hot_reload_tick failed: \(error)")
+            }
+        }
+        #endif
+    }
 
 }
 

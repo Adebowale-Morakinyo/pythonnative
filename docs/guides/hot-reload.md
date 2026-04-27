@@ -21,8 +21,31 @@ pn run ios --hot-reload
 2. Launch the app on a connected device or simulator.
 3. Start a [`FileWatcher`][pythonnative.hot_reload.FileWatcher] over
    `app/`.
-4. Tail logs (Android) or print hot-reload notifications (iOS) until
+4. Push changed Python files into a writable on-device overlay.
+5. Write a small reload manifest that the running app polls from the
+   main thread.
+6. Tail logs (Android) or print hot-reload notifications (iOS) until
    you press `Ctrl+C`.
+
+## How the device sees changes
+
+The native templates call
+[`configure_dev_environment()`][pythonnative.hot_reload.configure_dev_environment]
+before importing your app. That creates a `pythonnative_dev/` directory
+in the app's writable sandbox and puts it before the bundled app code
+on `sys.path`.
+
+When a source file changes, the CLI copies it to that overlay:
+
+- Android: app-private storage via `adb` + `run-as`
+- iOS Simulator: the installed app's `Documents/pythonnative_dev/`
+  directory
+
+After the files are in place, the CLI writes `reload.json`. The
+Android and iOS templates poll that manifest on the platform main
+thread and call the page host's reload hook. The host re-imports the
+root component by dotted path, resets hook/navigation state for the
+page, and mounts the refreshed tree.
 
 ## What gets reloaded
 
@@ -31,10 +54,10 @@ PythonNative reloads any `.py` file under `app/`. The device-side
 the file to a dotted module name (e.g., `app/pages/home.py` becomes
 `app.pages.home`) and calls `importlib.reload` on it.
 
-After reloading, the page host is notified to re-render the active
-page. Hook state for the affected component instances is **reset** on
-reload (this matches React Native's "fast refresh" model and avoids
-stale closures from older module versions).
+After reloading, the page host remounts the active page. Hook state for
+the affected page is **reset** on reload. This is intentionally more
+conservative than React Native Fast Refresh, but it avoids stale Python
+closures while the runtime is still young.
 
 ## What doesn't reload
 
@@ -55,11 +78,11 @@ stale closures from older module versions).
     (counters, network calls) needs guarding.
 
 !!! warning "References across modules"
-    If module `a` does `from b import Foo` and you reload `b`, module
-    `a` still holds the *old* `Foo`. The reconciler sidesteps this
-    for components by re-resolving the function on every render, but
-    long-lived references (e.g., stashed in a global) can drift. When
-    in doubt, restart the app.
+    If module `a` does `from b import Foo` and only `b.py` changes,
+    module `a` may still hold the *old* `Foo`. The page host always
+    reloads the root page module after changed modules so common
+    component imports update, but long-lived references (e.g., stashed
+    in a global) can drift. When in doubt, restart the app.
 
 !!! warning "Hook signature changes"
     Adding or removing a hook in a component changes the slot layout.
@@ -92,9 +115,9 @@ reloaded modules. Pass `--no-logs` to suppress the stream:
 pn run android --hot-reload --no-logs
 ```
 
-On iOS, the simulator attaches the launching terminal to the app's
-stderr; PythonNative also rewires `sys.stdout` to that channel so
-`print()` calls show up alongside `NSLog` output.
+On iOS hot reload currently targets the Simulator flow. Use Console.app
+or Xcode for full live logs while the CLI keeps the watcher process in
+the foreground.
 
 ## Next steps
 

@@ -45,7 +45,8 @@ Example:
 
 import importlib
 import json
-from typing import Any, Dict, Optional
+import sys
+from typing import Any, Dict, Optional, Sequence
 
 from .utils import IS_ANDROID, IS_IOS, set_android_context
 
@@ -80,25 +81,46 @@ def _import_component(component_path: str) -> Any:
 # ======================================================================
 
 
-def _init_host_common(host: Any) -> None:
+def _init_host_common(host: Any, component_path: str, component_func: Any) -> None:
+    host._component_path = component_path
+    host._component = component_func
     host._args = {}
     host._reconciler = None
     host._root_native_view = None
     host._nav_handle = None
     host._is_rendering = False
     host._render_queued = False
+    host._hot_reload_manifest_path = None
+    host._hot_reload_last_version = None
+
+
+def _get_component(host: Any) -> Any:
+    """Resolve the current component function from its dotted path."""
+    host._component = _import_component(host._component_path)
+    return host._component
+
+
+def _render_app(host: Any) -> Any:
+    """Call the current root component and return its element tree."""
+    return _get_component(host)()
+
+
+def _new_reconciler(host: Any) -> Any:
+    from .native_views import get_registry
+    from .reconciler import Reconciler
+
+    reconciler = Reconciler(get_registry())
+    reconciler._page_re_render = lambda: _request_render(host)
+    return reconciler
 
 
 def _on_create(host: Any) -> None:
     from .hooks import NavigationHandle, Provider, _NavigationContext
-    from .native_views import get_registry
-    from .reconciler import Reconciler
 
-    host._reconciler = Reconciler(get_registry())
-    host._reconciler._page_re_render = lambda: _request_render(host)
     host._nav_handle = NavigationHandle(host)
+    host._reconciler = _new_reconciler(host)
 
-    app_element = host._component()
+    app_element = _render_app(host)
     provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
 
     host._is_rendering = True
@@ -117,6 +139,8 @@ def _request_render(host: Any) -> None:
     inside an effect), the request is queued and drained at the end of
     the current pass so the reconciler is never re-entered.
     """
+    if host._reconciler is None:
+        return
     if host._is_rendering:
         host._render_queued = True
         return
@@ -131,7 +155,7 @@ def _re_render(host: Any) -> None:
     try:
         host._render_queued = False
 
-        app_element = host._component()
+        app_element = _render_app(host)
         provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
 
         new_root = host._reconciler.reconcile(provider_element)
@@ -158,7 +182,7 @@ def _drain_renders(host: Any) -> None:
             break
         host._render_queued = False
 
-        app_element = host._component()
+        app_element = _render_app(host)
         provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
 
         new_root = host._reconciler.reconcile(provider_element)
@@ -178,6 +202,74 @@ def _set_args(host: Any, args: Any) -> None:
     host._args = args if isinstance(args, dict) else {}
 
 
+def _enable_hot_reload(host: Any, manifest_path: str) -> None:
+    host._hot_reload_manifest_path = manifest_path
+    host._hot_reload_last_version = None
+
+
+def _hot_reload_tick(host: Any) -> bool:
+    manifest_path = getattr(host, "_hot_reload_manifest_path", None)
+    if not manifest_path:
+        return False
+
+    from .hot_reload import ModuleReloader
+
+    next_version = ModuleReloader.reload_from_manifest(
+        host,
+        manifest_path,
+        last_version=getattr(host, "_hot_reload_last_version", None),
+    )
+    if next_version == getattr(host, "_hot_reload_last_version", None):
+        return False
+    host._hot_reload_last_version = next_version
+    return True
+
+
+def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> None:
+    from .hooks import NavigationHandle, Provider, _NavigationContext
+    from .hot_reload import ModuleReloader
+
+    modules = list(changed_modules or [])
+    root_module = host._component_path.rsplit(".", 1)[0]
+    if root_module not in modules:
+        modules.append(root_module)
+
+    ModuleReloader.reload_modules(modules)
+    host._component = _import_component(host._component_path)
+
+    if host._reconciler is None:
+        return
+
+    old_reconciler = host._reconciler
+    old_root = host._root_native_view
+    old_nav = host._nav_handle
+
+    new_reconciler = _new_reconciler(host)
+    host._reconciler = new_reconciler
+    host._nav_handle = NavigationHandle(host)
+    host._is_rendering = True
+    try:
+        app_element = _render_app(host)
+        provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
+        new_root = new_reconciler.mount(provider_element)
+    except Exception:
+        host._reconciler = old_reconciler
+        host._nav_handle = old_nav
+        raise
+    finally:
+        host._is_rendering = False
+
+    if old_reconciler is not None and old_reconciler._tree is not None:
+        old_reconciler._destroy_tree(old_reconciler._tree)
+    if old_root is not None:
+        host._detach_root(old_root)
+
+    host._root_native_view = new_root
+    host._attach_root(new_root)
+    _drain_renders(host)
+    print(f"[hot-reload] Reloaded {', '.join(modules)}", file=sys.stderr)
+
+
 # ======================================================================
 # Platform implementations
 # ======================================================================
@@ -193,11 +285,10 @@ if IS_ANDROID:
         the function component.
         """
 
-        def __init__(self, native_instance: Any, component_func: Any) -> None:
+        def __init__(self, native_instance: Any, component_path: str, component_func: Any) -> None:
             self.native_instance = native_instance
-            self._component = component_func
             set_android_context(native_instance)
-            _init_host_common(self)
+            _init_host_common(self, component_path, component_func)
 
         def on_create(self) -> None:
             _on_create(self)
@@ -216,6 +307,15 @@ if IS_ANDROID:
 
         def on_destroy(self) -> None:
             pass
+
+        def enable_hot_reload(self, manifest_path: str, source_root: Optional[str] = None) -> None:
+            _enable_hot_reload(self, manifest_path)
+
+        def hot_reload_tick(self) -> bool:
+            return _hot_reload_tick(self)
+
+        def reload(self, changed_modules: Optional[Sequence[str]] = None) -> None:
+            _reload_host(self, changed_modules)
 
         def on_restart(self) -> None:
             pass
@@ -341,15 +441,14 @@ else:
             etc.) to the reconciler and the function component.
             """
 
-            def __init__(self, native_instance: Any, component_func: Any) -> None:
+            def __init__(self, native_instance: Any, component_path: str, component_func: Any) -> None:
                 if isinstance(native_instance, int):
                     try:
                         native_instance = ObjCInstance(native_instance)
                     except Exception:
                         native_instance = None
                 self.native_instance = native_instance
-                self._component = component_func
-                _init_host_common(self)
+                _init_host_common(self, component_path, component_func)
                 if self.native_instance is not None:
                     _ios_register_page(self.native_instance, self)
 
@@ -371,6 +470,15 @@ else:
             def on_destroy(self) -> None:
                 if self.native_instance is not None:
                     _ios_unregister_page(self.native_instance)
+
+            def enable_hot_reload(self, manifest_path: str, source_root: Optional[str] = None) -> None:
+                _enable_hot_reload(self, manifest_path)
+
+            def hot_reload_tick(self) -> bool:
+                return _hot_reload_tick(self)
+
+            def reload(self, changed_modules: Optional[Sequence[str]] = None) -> None:
+                _reload_host(self, changed_modules)
 
             def on_restart(self) -> None:
                 pass
@@ -462,10 +570,14 @@ else:
             there is no native navigation stack to push onto.
             """
 
-            def __init__(self, native_instance: Any = None, component_func: Any = None) -> None:
+            def __init__(
+                self,
+                native_instance: Any = None,
+                component_path: str = "",
+                component_func: Any = None,
+            ) -> None:
                 self.native_instance = native_instance
-                self._component = component_func
-                _init_host_common(self)
+                _init_host_common(self, component_path, component_func)
 
             def on_create(self) -> None:
                 _on_create(self)
@@ -484,6 +596,15 @@ else:
 
             def on_destroy(self) -> None:
                 pass
+
+            def enable_hot_reload(self, manifest_path: str, source_root: Optional[str] = None) -> None:
+                _enable_hot_reload(self, manifest_path)
+
+            def hot_reload_tick(self) -> bool:
+                return _hot_reload_tick(self)
+
+            def reload(self, changed_modules: Optional[Sequence[str]] = None) -> None:
+                _reload_host(self, changed_modules)
 
             def on_restart(self) -> None:
                 pass
@@ -553,7 +674,7 @@ def create_page(
         ```
     """
     component_func = _import_component(component_path)
-    host = _AppHost(native_instance, component_func)
+    host = _AppHost(native_instance, component_path, component_func)
     if args_json:
         _set_args(host, args_json)
     return host

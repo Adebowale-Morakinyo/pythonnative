@@ -23,6 +23,10 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
             // Optionally, bootstrap Python so first fragment can create the initial page onCreate
             val py = Python.getInstance()
+            py.getModule("pythonnative.hot_reload").callAttr(
+                "configure_dev_environment",
+                filesDir.absolutePath
+            )
             // Touch module to ensure bundled Python code is available; actual instantiation happens in PageFragment
             py.getModule("app.main_page")
         } catch (e: Exception) {

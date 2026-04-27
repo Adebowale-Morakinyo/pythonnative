@@ -64,6 +64,21 @@ pn run ios --prepare-only
 
 This stages files under `build/` so you can open them in Android Studio or Xcode.
 
+## Hot reload while developing
+
+For day-to-day UI work, run with `--hot-reload`:
+
+```bash
+pn run android --hot-reload
+pn run ios --hot-reload
+```
+
+The first run still builds and launches the native app. After that,
+edits under `app/` are copied into the running app's writable source
+overlay and the active page is remounted without a full rebuild. This is
+best for Python UI changes; native template changes still require a
+normal rebuild.
+
 ## Viewing logs
 
 After the app launches, `pn run` attaches to the app's stdout/stderr so Python

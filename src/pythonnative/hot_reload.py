@@ -27,11 +27,65 @@ Example:
 """
 
 import importlib
+import importlib.util
+import json
 import os
 import sys
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Sequence
+
+DEV_ROOT_DIR = "pythonnative_dev"
+"""Name of the writable on-device directory that shadows bundled app code."""
+
+RELOAD_MANIFEST = "reload.json"
+"""Manifest filename written by the host and polled by native templates."""
+
+
+def configure_dev_environment(writable_root: str) -> str:
+    """Create and prioritize the writable hot-reload source overlay.
+
+    The returned directory is inserted at the front of `sys.path`, so a
+    pushed `app/main_page.py` shadows the copy bundled into the native
+    application. Templates call this before importing user code.
+
+    Args:
+        writable_root: Platform data directory that the app can write to
+            (Android `filesDir`, iOS `Documents`, or a test directory).
+
+    Returns:
+        Absolute path to the hot-reload overlay root.
+    """
+    dev_root = os.path.abspath(os.path.join(writable_root, DEV_ROOT_DIR))
+    os.makedirs(os.path.join(dev_root, "app"), exist_ok=True)
+    if dev_root in sys.path:
+        sys.path.remove(dev_root)
+    sys.path.insert(0, dev_root)
+    os.environ["PYTHONNATIVE_HOT_RELOAD_ROOT"] = dev_root
+    return dev_root
+
+
+def manifest_path_for(dev_root: str) -> str:
+    """Return the reload-manifest path inside a hot-reload overlay."""
+    return os.path.join(dev_root, RELOAD_MANIFEST)
+
+
+def _overlay_module_path(module_name: str) -> Optional[str]:
+    dev_root = os.environ.get("PYTHONNATIVE_HOT_RELOAD_ROOT")
+    if not dev_root:
+        return None
+
+    rel_parts = module_name.split(".")
+    module_path = os.path.join(dev_root, *rel_parts) + ".py"
+    if os.path.exists(module_path):
+        return module_path
+
+    package_path = os.path.join(dev_root, *rel_parts, "__init__.py")
+    if os.path.exists(package_path):
+        return package_path
+
+    return None
+
 
 # ======================================================================
 # Host-side file watcher
@@ -140,17 +194,51 @@ class ModuleReloader:
             module_name: Dotted module name (e.g., `"app.main_page"`).
 
         Returns:
-            `True` if the module was found in `sys.modules` and
-            reloaded without raising; `False` otherwise.
+            `True` if the module imported successfully from the current
+            `sys.path`; `False` otherwise.
         """
-        mod = sys.modules.get(module_name)
-        if mod is None:
-            return False
+        previous = sys.modules.get(module_name)
         try:
-            importlib.reload(mod)
+            importlib.invalidate_caches()
+            overlay_path = _overlay_module_path(module_name)
+            if overlay_path is not None:
+                spec = importlib.util.spec_from_file_location(module_name, overlay_path)
+                if spec is None or spec.loader is None:
+                    return False
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[module_name] = module
+                spec.loader.exec_module(module)
+            else:
+                sys.modules.pop(module_name, None)
+                importlib.import_module(module_name)
             return True
         except Exception:
+            if previous is not None:
+                sys.modules[module_name] = previous
+            else:
+                sys.modules.pop(module_name, None)
             return False
+
+    @staticmethod
+    def reload_modules(module_names: Sequence[str]) -> List[str]:
+        """Reload the modules that are already imported.
+
+        Args:
+            module_names: Dotted module names to reload.
+
+        Returns:
+            Names that were successfully reloaded.
+        """
+        importlib.invalidate_caches()
+        reloaded: List[str] = []
+        seen: set[str] = set()
+        for module_name in module_names:
+            if not module_name or module_name in seen:
+                continue
+            seen.add(module_name)
+            if ModuleReloader.reload_module(module_name):
+                reloaded.append(module_name)
+        return reloaded
 
     @staticmethod
     def file_to_module(file_path: str, base_dir: str = "") -> Optional[str]:
@@ -166,6 +254,7 @@ class ModuleReloader:
             `None` for an empty path.
         """
         rel = os.path.relpath(file_path, base_dir) if base_dir else file_path
+        rel = rel.replace("\\", os.sep).replace("/", os.sep).lstrip(os.sep)
         if rel.endswith(".py"):
             rel = rel[:-3]
         parts = rel.replace(os.sep, ".").split(".")
@@ -174,14 +263,67 @@ class ModuleReloader:
         return ".".join(parts) if parts else None
 
     @staticmethod
-    def reload_page(page_instance: Any) -> None:
+    def modules_from_files(file_paths: Sequence[str], base_dir: str = "") -> List[str]:
+        """Convert Python source paths to importable module names."""
+        modules: List[str] = []
+        for file_path in file_paths:
+            module = ModuleReloader.file_to_module(file_path, base_dir=base_dir)
+            if module is not None:
+                modules.append(module)
+        return modules
+
+    @staticmethod
+    def reload_page(page_instance: Any, module_names: Optional[Sequence[str]] = None) -> None:
         """Force a page re-render after a module reload.
 
         Args:
             page_instance: An `_AppHost` instance (or duck-typed
                 equivalent) that exposes a `_reconciler` attribute.
+            module_names: Optional modules that changed. Reload-aware
+                page hosts use this to refresh imports before re-render.
         """
+        reload_fn = getattr(page_instance, "reload", None)
+        if callable(reload_fn):
+            reload_fn(list(module_names or []))
+            return
+
         from .page import _request_render
 
         if hasattr(page_instance, "_reconciler") and page_instance._reconciler is not None:
             _request_render(page_instance)
+
+    @staticmethod
+    def reload_from_manifest(
+        page_instance: Any,
+        manifest_path: str,
+        *,
+        last_version: Optional[str] = None,
+    ) -> Optional[str]:
+        """Apply a reload manifest if it is newer than `last_version`.
+
+        Args:
+            page_instance: Page host to refresh.
+            manifest_path: JSON manifest written by the CLI.
+            last_version: Version already applied by this page host.
+
+        Returns:
+            The manifest version after applying, or `last_version` when
+            no new manifest is available.
+        """
+        if not os.path.exists(manifest_path):
+            return last_version
+
+        with open(manifest_path, encoding="utf-8") as f:
+            manifest = json.load(f)
+
+        version = str(manifest.get("version", ""))
+        if not version or version == last_version:
+            return last_version
+
+        modules = manifest.get("modules")
+        if not isinstance(modules, list):
+            files = manifest.get("files", [])
+            modules = ModuleReloader.modules_from_files(files if isinstance(files, list) else [])
+
+        ModuleReloader.reload_page(page_instance, [str(module) for module in modules])
+        return version

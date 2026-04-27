@@ -23,6 +23,7 @@ import shutil
 import subprocess
 import sys
 import sysconfig
+import time
 import urllib.request
 from importlib import resources
 from typing import Any, Dict, List, Optional
@@ -311,6 +312,9 @@ def _read_requirements(requirements_path: str) -> list[str]:
     return result
 
 
+ANDROID_PACKAGE_ID: str = "com.pythonnative.android_template"
+HOT_RELOAD_DEV_ROOT: str = "pythonnative_dev"
+
 ANDROID_LOGCAT_FILTERS: list[str] = [
     "python.stdout:V",
     "python.stderr:V",
@@ -364,6 +368,125 @@ def _terminate_subprocess(proc: Optional[subprocess.Popen]) -> None:
         proc.wait(timeout=3)
     except subprocess.TimeoutExpired:
         proc.kill()
+
+
+def _hot_reload_manifest_payload(
+    changed_files: List[str],
+    project_dir: str,
+    *,
+    version: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Build the reload manifest consumed by the running app."""
+    from pythonnative.hot_reload import ModuleReloader
+
+    rel_files = sorted(os.path.relpath(path, project_dir) for path in changed_files)
+    return {
+        "version": version or str(time.time_ns()),
+        "files": rel_files,
+        "modules": ModuleReloader.modules_from_files(rel_files),
+    }
+
+
+def _write_hot_reload_manifest(changed_files: List[str], project_dir: str, build_dir: str) -> str:
+    """Write a local hot-reload manifest and return its path."""
+    manifest_dir = os.path.join(build_dir, "hot_reload")
+    os.makedirs(manifest_dir, exist_ok=True)
+    manifest_path = os.path.join(manifest_dir, "reload.json")
+    with open(manifest_path, "w", encoding="utf-8") as f:
+        json.dump(_hot_reload_manifest_payload(changed_files, project_dir), f)
+    return manifest_path
+
+
+def _android_hot_reload_dest(rel_path: str) -> str:
+    """Return a `run-as` relative destination for an app source file."""
+    return os.path.join("files", HOT_RELOAD_DEV_ROOT, rel_path)
+
+
+def _push_android_hot_reload_file(local_path: str, rel_path: str) -> bool:
+    """Push one file into the Android app's writable hot-reload overlay."""
+    tmp_path = f"/data/local/tmp/pythonnative-hot-reload-{os.getpid()}-{os.path.basename(local_path)}"
+    dest_path = _android_hot_reload_dest(rel_path)
+    dest_dir = os.path.dirname(dest_path)
+    push = subprocess.run(["adb", "push", local_path, tmp_path], check=False, capture_output=True)
+    if push.returncode != 0:
+        return False
+    subprocess.run(
+        ["adb", "shell", "run-as", ANDROID_PACKAGE_ID, "mkdir", "-p", dest_dir],
+        check=False,
+        capture_output=True,
+    )
+    copy = subprocess.run(
+        ["adb", "shell", "run-as", ANDROID_PACKAGE_ID, "cp", tmp_path, dest_path],
+        check=False,
+        capture_output=True,
+    )
+    subprocess.run(["adb", "shell", "rm", "-f", tmp_path], check=False, capture_output=True)
+    return copy.returncode == 0
+
+
+def _ios_data_container() -> Optional[str]:
+    """Return the booted simulator's app data container, if available."""
+    try:
+        result = subprocess.run(
+            ["xcrun", "simctl", "get_app_container", "booted", IOS_BUNDLE_ID, "data"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except FileNotFoundError:
+        return None
+    if result.returncode != 0:
+        return None
+    container = result.stdout.strip()
+    return container or None
+
+
+def _push_ios_hot_reload_file(local_path: str, rel_path: str) -> bool:
+    """Copy one file into the booted iOS Simulator's hot-reload overlay."""
+    container = _ios_data_container()
+    if container is None:
+        return False
+    dest_path = os.path.join(container, "Documents", HOT_RELOAD_DEV_ROOT, rel_path)
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    shutil.copy2(local_path, dest_path)
+    return True
+
+
+def _clear_android_hot_reload_overlay() -> bool:
+    """Remove stale Android hot-reload files before launching."""
+    result = subprocess.run(
+        ["adb", "shell", "run-as", ANDROID_PACKAGE_ID, "rm", "-rf", f"files/{HOT_RELOAD_DEV_ROOT}"],
+        check=False,
+        capture_output=True,
+    )
+    return result.returncode == 0
+
+
+def _clear_ios_hot_reload_overlay() -> bool:
+    """Remove stale iOS Simulator hot-reload files before launching."""
+    container = _ios_data_container()
+    if container is None:
+        return False
+    shutil.rmtree(os.path.join(container, "Documents", HOT_RELOAD_DEV_ROOT), ignore_errors=True)
+    return True
+
+
+def _clear_hot_reload_overlay(platform: str) -> bool:
+    """Remove stale hot-reload overlay files for `platform`."""
+    if platform == "android":
+        return _clear_android_hot_reload_overlay()
+    if platform == "ios":
+        return _clear_ios_hot_reload_overlay()
+    return False
+
+
+def _push_hot_reload_file(platform: str, local_path: str, rel_path: str) -> bool:
+    """Push a changed source file to the running app."""
+    if platform == "android":
+        return _push_android_hot_reload_file(local_path, rel_path)
+    if platform == "ios":
+        return _push_ios_hot_reload_file(local_path, rel_path)
+    return False
 
 
 def run_project(args: argparse.Namespace) -> None:
@@ -491,6 +614,8 @@ def run_project(args: argparse.Namespace) -> None:
                 pass
         subprocess.run(["./gradlew", "installDebug"], check=True, env=env)
 
+        _clear_hot_reload_overlay(platform)
+
         # Run the Android app
         # Assumes that the package name of your app is "com.example.myapp" and the main activity is "MainActivity"
         # Replace "com.example.myapp" and ".MainActivity" with your actual package name and main activity
@@ -501,7 +626,7 @@ def run_project(args: argparse.Namespace) -> None:
                 "am",
                 "start",
                 "-n",
-                "com.pythonnative.android_template/.MainActivity",
+                f"{ANDROID_PACKAGE_ID}/.MainActivity",
             ],
             check=True,
         )
@@ -792,6 +917,7 @@ def run_project(args: argparse.Namespace) -> None:
                 subprocess.run(["xcrun", "simctl", "boot", udid], check=False, capture_output=True)
                 # Install
                 subprocess.run(["xcrun", "simctl", "install", udid, app_path], check=False)
+                _clear_hot_reload_overlay(platform)
                 if show_logs and not hot_reload:
                     # Attach the app's stdout/stderr to this terminal so Python
                     # print() calls and exceptions are visible. SIMCTL_CHILD_*
@@ -850,19 +976,25 @@ def _run_hot_reload(platform: str, project_dir: str, build_dir: str, show_logs: 
         build_dir: Absolute path to the staged build directory.
         show_logs: Whether to stream device logs in parallel.
     """
-    from .hot_reload import FileWatcher
+    from ..hot_reload import FileWatcher
 
     app_dir = os.path.join(project_dir, "app")
 
     def on_change(changed_files: List[str]) -> None:
+        pushed: List[str] = []
         for fpath in changed_files:
             rel = os.path.relpath(fpath, project_dir)
             print(f"[hot-reload] Changed: {rel}")
-            if platform == "android":
-                dest = f"/data/data/com.pythonnative.android_template/files/{rel}"
-                subprocess.run(["adb", "push", fpath, dest], check=False, capture_output=True)
-            elif platform == "ios":
-                pass  # simctl file push would go here
+            if _push_hot_reload_file(platform, fpath, rel):
+                pushed.append(fpath)
+            else:
+                print(f"[hot-reload] Failed to push {rel}")
+        if pushed:
+            manifest = _write_hot_reload_manifest(pushed, project_dir, build_dir)
+            if _push_hot_reload_file(platform, manifest, "reload.json"):
+                print(f"[hot-reload] Signaled reload for {len(pushed)} file(s).")
+            else:
+                print("[hot-reload] Failed to signal reload; app will not refresh automatically.")
 
     print("[hot-reload] Watching app/ for changes. Press Ctrl+C to stop.")
     watcher = FileWatcher(app_dir, on_change, interval=1.0)

@@ -30,7 +30,7 @@ from pythonnative.native_views import NativeViewRegistry, set_registry
 
 class _MockHandler:
     def create_view(self, props):
-        return {"props": dict(props), "children": []}
+        return {"props": dict(props), "children": [], "frame": (0, 0, 0, 0)}
 
     def update_view(self, view, prev, next):
         view["props"] = dict(next)
@@ -43,6 +43,12 @@ class _MockHandler:
 
     def insert_child(self, parent, child, index):
         parent["children"].insert(index, child)
+
+    def set_frame(self, view, x, y, width, height):
+        view["frame"] = (x, y, width, height)
+
+    def measure_intrinsic(self, view, max_w, max_h):
+        return (0.0, 0.0)
 
 
 def install_mock_registry():
@@ -134,6 +140,35 @@ def test_use_toggle():
     root["props"]["on_click"]()
     assert root["props"]["text"] == "on"
 ```
+
+## Testing layouts
+
+The flexbox engine in `pythonnative.layout` is pure Python and easy
+to test in isolation. For a single tree:
+
+```python
+from pythonnative.layout import LayoutNode, calculate_layout
+
+
+def test_row_distributes_flex_children():
+    root = LayoutNode(
+        style={"flex_direction": "row", "width": 300, "height": 50,
+               "spacing": 10},
+        children=[
+            LayoutNode(style={"flex": 1, "height": 50}),
+            LayoutNode(style={"flex": 2, "height": 50}),
+        ],
+    )
+    calculate_layout(root, 400, 600)
+
+    a, b = root.children
+    assert a.x == 0 and a.width == (300 - 10) / 3
+    assert b.x == a.width + 10 and b.width == 2 * (300 - 10) / 3
+```
+
+To test the layout pass for a real component (with the mock registry),
+use [`Reconciler.compute_layout_for_test`][pythonnative.reconciler.Reconciler.compute_layout_for_test]
+which returns the computed `LayoutNode` tree.
 
 ## Testing native modules
 

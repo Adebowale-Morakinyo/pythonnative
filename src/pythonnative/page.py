@@ -45,12 +45,29 @@ Example:
 
 import importlib
 import json
+import os
 import sys
 from typing import Any, Dict, Optional, Sequence
 
 from .utils import IS_ANDROID, IS_IOS, set_android_context
 
 _MAX_RENDER_PASSES = 25
+_DEBUG_ENV = "PYTHONNATIVE_DEBUG"
+
+
+def _debug_enabled() -> bool:
+    return os.environ.get(_DEBUG_ENV, "").lower() in {"1", "true", "yes", "on"}
+
+
+def _log_pn(msg: str) -> None:
+    """Emit optional diagnostics when ``PYTHONNATIVE_DEBUG`` is enabled."""
+    if not _debug_enabled():
+        return
+    try:
+        print(f"[PN] {msg}", flush=True)
+    except Exception:
+        pass
+
 
 # ======================================================================
 # Component path resolution
@@ -90,8 +107,25 @@ def _init_host_common(host: Any, component_path: str, component_func: Any) -> No
     host._nav_handle = None
     host._is_rendering = False
     host._render_queued = False
+    host._render_scheduled = False
     host._hot_reload_manifest_path = None
     host._hot_reload_last_version = None
+    host._layout_listener = None  # retained on Android to prevent GC
+
+
+def _push_viewport_size(host: Any, width: float, height: float) -> None:
+    """Forward a viewport-size change to the reconciler.
+
+    Called by the native template (or our injected layout listener
+    on Android, or `_attach_root` on iOS) whenever the page
+    container's bounds change. Coordinates must be in points (not
+    raw pixels).
+    """
+    if host._reconciler is None:
+        return
+    if width <= 0 or height <= 0:
+        return
+    host._reconciler.set_viewport_size(float(width), float(height))
 
 
 def _get_component(host: Any) -> Any:
@@ -112,6 +146,24 @@ def _new_reconciler(host: Any) -> Any:
     reconciler = Reconciler(get_registry())
     reconciler._page_re_render = lambda: _request_render(host)
     return reconciler
+
+
+def _schedule_render_async(host: Any) -> bool:
+    """Schedule a render for a later platform turn, if supported."""
+    return False
+
+
+def _flush_scheduled_renders(hosts: Sequence[Any]) -> None:
+    """Run renders that were deferred out of a native event callback."""
+    for host in hosts:
+        host._render_scheduled = False
+        if host._reconciler is None:
+            continue
+        if host._is_rendering:
+            host._render_queued = True
+            _schedule_render_async(host)
+            continue
+        _re_render(host)
 
 
 def _on_create(host: Any) -> None:
@@ -144,6 +196,8 @@ def _request_render(host: Any) -> None:
     if host._is_rendering:
         host._render_queued = True
         return
+    if _schedule_render_async(host):
+        return
     _re_render(host)
 
 
@@ -151,6 +205,7 @@ def _re_render(host: Any) -> None:
     """Run one render pass, then drain any renders queued during it."""
     from .hooks import Provider, _NavigationContext
 
+    _log_pn("_re_render: starting render pass")
     host._is_rendering = True
     try:
         host._render_queued = False
@@ -160,6 +215,7 @@ def _re_render(host: Any) -> None:
 
         new_root = host._reconciler.reconcile(provider_element)
         if new_root is not host._root_native_view:
+            _log_pn(f"_re_render: ROOT VIEW CHANGED ({id(host._root_native_view)} -> {id(new_root)}); reattaching")
             host._detach_root(host._root_native_view)
             host._root_native_view = new_root
             host._attach_root(new_root)
@@ -167,6 +223,7 @@ def _re_render(host: Any) -> None:
         _drain_renders(host)
     finally:
         host._is_rendering = False
+    _log_pn("_re_render: done")
 
 
 def _drain_renders(host: Any) -> None:
@@ -177,9 +234,10 @@ def _drain_renders(host: Any) -> None:
     """
     from .hooks import Provider, _NavigationContext
 
-    for _ in range(_MAX_RENDER_PASSES):
+    for i in range(_MAX_RENDER_PASSES):
         if not host._render_queued:
             break
+        _log_pn(f"_drain_renders: draining pass #{i + 1}")
         host._render_queued = False
 
         app_element = _render_app(host)
@@ -187,6 +245,7 @@ def _drain_renders(host: Any) -> None:
 
         new_root = host._reconciler.reconcile(provider_element)
         if new_root is not host._root_native_view:
+            _log_pn(f"_drain_renders: ROOT VIEW CHANGED ({id(host._root_native_view)} -> {id(new_root)}); reattaching")
             host._detach_root(host._root_native_view)
             host._root_native_view = new_root
             host._attach_root(new_root)
@@ -214,13 +273,22 @@ def _hot_reload_tick(host: Any) -> bool:
 
     from .hot_reload import ModuleReloader
 
+    last = getattr(host, "_hot_reload_last_version", None)
+    manifest_exists = os.path.exists(manifest_path)
+    if not manifest_exists and last is None:
+        return False
+
     next_version = ModuleReloader.reload_from_manifest(
         host,
         manifest_path,
-        last_version=getattr(host, "_hot_reload_last_version", None),
+        last_version=last,
     )
-    if next_version == getattr(host, "_hot_reload_last_version", None):
+    if next_version == last:
         return False
+    _log_pn(
+        f"_hot_reload_tick: triggered reload "
+        f"(manifest_exists={manifest_exists}, last={last!r}, next={next_version!r})"
+    )
     host._hot_reload_last_version = next_version
     return True
 
@@ -275,7 +343,127 @@ def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> 
 # ======================================================================
 
 if IS_ANDROID:
-    from java import jclass
+    from java import dynamic_proxy, jclass
+
+    def _android_publish_window_insets(view: Any) -> None:
+        """Read system-bar insets from *view* and publish them to platform_metrics.
+
+        Most production Android themes already exclude the system
+        navigation bar from the activity content area, so the bottom
+        inset reported here is typically ``0`` on classic devices.
+        On edge-to-edge themes (or 3-button gesture nav strips), the
+        bottom inset is non-zero and the tab bar needs to claim that
+        space so the system gesture indicator does not overlap its
+        labels.
+
+        The function is best-effort: API levels < 30 expose
+        ``getSystemWindowInsetBottom`` instead of the typed
+        ``getInsets(systemBars())`` API, and very old phones may
+        not expose ``getRootWindowInsets`` at all. All branches are
+        wrapped in ``try/except`` because diagnostics here must
+        never crash a page host.
+        """
+        try:
+            from . import platform_metrics
+        except Exception:
+            return
+        try:
+            insets_obj = view.getRootWindowInsets()
+            if insets_obj is None:
+                return
+            density = float(view.getResources().getDisplayMetrics().density) or 1.0
+            top_px = 0
+            left_px = 0
+            bottom_px = 0
+            right_px = 0
+            try:
+                WindowInsets = jclass("android.view.WindowInsets")
+                Type = WindowInsets.Type
+                bars = Type.systemBars()
+                typed = insets_obj.getInsets(bars)
+                top_px = int(typed.top)
+                left_px = int(typed.left)
+                bottom_px = int(typed.bottom)
+                right_px = int(typed.right)
+            except Exception:
+                top_px = int(insets_obj.getSystemWindowInsetTop() or 0)
+                left_px = int(insets_obj.getSystemWindowInsetLeft() or 0)
+                bottom_px = int(insets_obj.getSystemWindowInsetBottom() or 0)
+                right_px = int(insets_obj.getSystemWindowInsetRight() or 0)
+            platform_metrics.set_safe_area_insets(
+                top_px / density,
+                left_px / density,
+                bottom_px / density,
+                right_px / density,
+            )
+        except Exception:
+            pass
+
+    def _android_register_layout_listener(host: Any, view: Any) -> None:
+        """Push the container's measured size into the reconciler whenever it changes."""
+        try:
+            View = jclass("android.view.View")
+
+            class _PNLayoutChangeListener(dynamic_proxy(View.OnLayoutChangeListener)):  # type: ignore[misc]
+                def __init__(self, host_obj: Any) -> None:
+                    super().__init__()
+                    self.host_obj = host_obj
+
+                def onLayoutChange(
+                    self,
+                    v: Any,
+                    left: int,
+                    top: int,
+                    right: int,
+                    bottom: int,
+                    old_left: int,
+                    old_top: int,
+                    old_right: int,
+                    old_bottom: int,
+                ) -> None:
+                    try:
+                        # Publish insets *before* the viewport push so
+                        # the layout pass triggered by the size change
+                        # sees the latest values; otherwise inset-aware
+                        # handlers (e.g., a future ``SafeAreaView``)
+                        # would lay out one frame stale and the user
+                        # would see a flicker on first paint.
+                        _android_publish_window_insets(v)
+                        density = float(v.getResources().getDisplayMetrics().density) or 1.0
+                        _push_viewport_size(self.host_obj, (right - left) / density, (bottom - top) / density)
+                    except Exception:
+                        pass
+
+            listener = _PNLayoutChangeListener(host)
+            view.addOnLayoutChangeListener(listener)
+            host._layout_listener = listener  # retain to prevent GC
+        except Exception:
+            pass
+
+    def _android_push_initial_viewport(host: Any, view: Any) -> None:
+        """Push the current measured size if available (no-op until layout completes)."""
+        try:
+            # Publish insets first so the very first layout pass sees
+            # them. Otherwise handlers reading insets at first paint
+            # would get ``(0, 0, 0, 0)`` and re-measure once the
+            # ``OnLayoutChangeListener`` fires moments later — a
+            # measurable flicker (~50–200 ms on a stock Pixel
+            # emulator).
+            _android_publish_window_insets(view)
+            w = int(view.getWidth() or 0)
+            h = int(view.getHeight() or 0)
+            if w > 0 and h > 0:
+                density = float(view.getResources().getDisplayMetrics().density) or 1.0
+                _push_viewport_size(host, w / density, h / density)
+            else:
+                # Fall back to display metrics so we always have a non-zero
+                # viewport even before the first layout pass; the listener
+                # will refine it as soon as the container is measured.
+                metrics = view.getResources().getDisplayMetrics()
+                density = float(metrics.density) or 1.0
+                _push_viewport_size(host, metrics.widthPixels / density, metrics.heightPixels / density)
+        except Exception:
+            pass
 
     class _AppHost:
         """Android host backed by an `Activity` and fragment-based navigation.
@@ -297,6 +485,13 @@ if IS_ANDROID:
             pass
 
         def on_resume(self) -> None:
+            pass
+
+        def on_layout(self) -> None:
+            # Android pushes viewport changes through the
+            # ``OnLayoutChangeListener`` registered in ``_attach_root``;
+            # this no-op exists so callers can fire the same lifecycle
+            # event on both platforms.
             pass
 
         def on_pause(self) -> None:
@@ -346,6 +541,7 @@ if IS_ANDROID:
                 self.native_instance.finish()
 
         def _attach_root(self, native_view: Any) -> None:
+            container = None
             try:
                 from .utils import get_android_fragment_container
 
@@ -359,6 +555,11 @@ if IS_ANDROID:
                 container.addView(native_view, lp)
             except Exception:
                 self.native_instance.setContentView(native_view)
+                container = native_view
+
+            if container is not None:
+                _android_register_layout_listener(self, container)
+                _android_push_initial_viewport(self, container)
 
         def _detach_root(self, native_view: Any) -> None:
             try:
@@ -369,12 +570,16 @@ if IS_ANDROID:
             except Exception:
                 pass
 
+        def set_viewport_size(self, width: float, height: float) -> None:
+            """Public hook for native code to push viewport sizes (Maestro/tests)."""
+            _push_viewport_size(self, width, height)
+
 else:
     from typing import Dict as _Dict
 
     _rubicon_available = False
     try:
-        from rubicon.objc import ObjCClass, ObjCInstance
+        from rubicon.objc import SEL, ObjCClass, ObjCInstance, objc_method
 
         _rubicon_available = True
 
@@ -400,20 +605,75 @@ else:
             pass
 
     _IOS_PAGE_REGISTRY: _Dict[int, Any] = {}
+    _IOS_SCHEDULED_RENDER_HOSTS: _Dict[int, Any] = {}
+    _ios_render_scheduler_target: Any = None
+
+    def _objc_addr(obj: Any) -> Optional[int]:
+        """Return the underlying address of an ``ObjCInstance`` as an int.
+
+        rubicon-objc exposes the pointer as ``ObjCInstance.ptr``, but
+        the concrete type varies between releases:
+
+        - On rubicon-objc 0.5.x ``ptr`` is ``bytes`` (the raw 8-byte,
+          little-endian address) — ``int(ptr)`` raises ``ValueError``
+          because Python tries to parse the bytes as a decimal string.
+        - Older releases return a ``c_void_p`` for which ``int(ptr)``
+          works.
+        - Pure-Python integers also occur (e.g., when the caller has
+          already converted).
+
+        This helper covers all three so the page-host registry is
+        keyed under the same integer Swift sends back via
+        ``forward_lifecycle``. Returns ``None`` only if every conversion
+        path fails, in which case the caller logs a diagnostic.
+        """
+        ptr = getattr(obj, "ptr", None)
+        if ptr is None:
+            return None
+        if isinstance(ptr, (bytes, bytearray)):
+            try:
+                return int.from_bytes(ptr, byteorder=sys.byteorder, signed=False)
+            except Exception:
+                return None
+        if isinstance(ptr, int):
+            return ptr
+        value = getattr(ptr, "value", None)
+        if isinstance(value, int):
+            return value
+        try:
+            return int(ptr)
+        except Exception:
+            return None
+
+    def _log_pn(msg: str) -> None:
+        """Emit optional diagnostics when ``PYTHONNATIVE_DEBUG`` is enabled."""
+        if not _debug_enabled():
+            return
+        try:
+            print(f"[PN] {msg}", flush=True)
+        except Exception:
+            pass
 
     def _ios_register_page(vc_instance: Any, host_obj: Any) -> None:
-        try:
-            ptr = int(vc_instance.ptr)
-            _IOS_PAGE_REGISTRY[ptr] = host_obj
-        except Exception:
-            pass
+        ptr = _objc_addr(vc_instance)
+        if ptr is None:
+            _log_pn(f"register_page: could not extract address from {type(vc_instance).__name__}")
+            return
+        _IOS_PAGE_REGISTRY[ptr] = host_obj
+        _log_pn(f"register_page: addr={ptr} (registry size={len(_IOS_PAGE_REGISTRY)})")
 
     def _ios_unregister_page(vc_instance: Any) -> None:
-        try:
-            ptr = int(vc_instance.ptr)
-            _IOS_PAGE_REGISTRY.pop(ptr, None)
-        except Exception:
-            pass
+        ptr = _objc_addr(vc_instance)
+        if ptr is None:
+            return
+        _IOS_PAGE_REGISTRY.pop(ptr, None)
+
+    def _flush_ios_scheduled_renders() -> None:
+        hosts = list(_IOS_SCHEDULED_RENDER_HOSTS.values())
+        _IOS_SCHEDULED_RENDER_HOSTS.clear()
+        if hosts:
+            _log_pn(f"render_scheduler: flushing {len(hosts)} host(s)")
+        _flush_scheduled_renders(hosts)
 
     def forward_lifecycle(native_addr: int, event: str) -> None:
         """Forward a Swift `UIViewController` lifecycle event to its host.
@@ -424,14 +684,73 @@ else:
                 registered host.
             event: Lifecycle method name (e.g., `"on_resume"`).
         """
-        host = _IOS_PAGE_REGISTRY.get(int(native_addr))
+        try:
+            key = int(native_addr)
+        except Exception as e:
+            _log_pn(f"forward_lifecycle: bad native_addr={native_addr!r}: {e!r}")
+            return
+        host = _IOS_PAGE_REGISTRY.get(key)
         if host is None:
+            _log_pn(
+                f"forward_lifecycle: NO HOST for event={event!r} addr={key} "
+                f"(registry has {len(_IOS_PAGE_REGISTRY)} entry(ies): "
+                f"{list(_IOS_PAGE_REGISTRY.keys())})"
+            )
             return
         handler = getattr(host, event, None)
-        if handler:
+        if handler is None:
+            _log_pn(f"forward_lifecycle: host has no '{event}' attr")
+            return
+        try:
             handler()
+        except Exception as e:
+            _log_pn(f"forward_lifecycle: '{event}' handler raised: {e!r}")
 
-    if _rubicon_available:
+    if _rubicon_available and IS_IOS:
+        NSObject = ObjCClass("NSObject")
+
+        class _PNRenderSchedulerTarget(NSObject):  # type: ignore[misc, valid-type]
+            @objc_method
+            def onRenderTimer_(self, timer: object) -> None:
+                _flush_ios_scheduled_renders()
+
+        def _ensure_ios_render_scheduler_target() -> Any:
+            global _ios_render_scheduler_target
+
+            if _ios_render_scheduler_target is None:
+                target = _PNRenderSchedulerTarget.new()
+                try:
+                    target.retain()
+                except Exception:
+                    pass
+                _ios_render_scheduler_target = target
+            return _ios_render_scheduler_target
+
+        def _schedule_render_async(host: Any) -> bool:
+            if not IS_IOS:
+                return False
+            if getattr(host, "_render_scheduled", False):
+                return True
+
+            try:
+                NSTimer = ObjCClass("NSTimer")
+                target = _ensure_ios_render_scheduler_target()
+                host._render_scheduled = True
+                _IOS_SCHEDULED_RENDER_HOSTS[id(host)] = host
+                NSTimer.scheduledTimerWithTimeInterval_target_selector_userInfo_repeats_(
+                    0.0,
+                    target,
+                    SEL("onRenderTimer:"),
+                    None,
+                    False,
+                )
+                _log_pn("_request_render: deferred iOS render to next run-loop turn")
+                return True
+            except Exception as e:
+                host._render_scheduled = False
+                _IOS_SCHEDULED_RENDER_HOSTS.pop(id(host), None)
+                _log_pn(f"_request_render: iOS defer failed ({e!r}); rendering synchronously")
+                return False
 
         class _AppHost:
             """iOS host backed by a `UIViewController`.
@@ -456,9 +775,6 @@ else:
                 _on_create(self)
 
             def on_start(self) -> None:
-                pass
-
-            def on_resume(self) -> None:
                 pass
 
             def on_pause(self) -> None:
@@ -536,27 +852,134 @@ else:
 
             def _attach_root(self, native_view: Any) -> None:
                 root_view = self.native_instance.view
-                native_view.setTranslatesAutoresizingMaskIntoConstraints_(False)
                 root_view.addSubview_(native_view)
+                # Use classic frame-based layout for the root container so
+                # the layout engine's per-child frames inside it are honored
+                # without competing with Auto Layout constraints.
                 try:
-                    safe = root_view.safeAreaLayoutGuide
-                    native_view.topAnchor.constraintEqualToAnchor_(safe.topAnchor).setActive_(True)
-                    native_view.bottomAnchor.constraintEqualToAnchor_(safe.bottomAnchor).setActive_(True)
-                    native_view.leadingAnchor.constraintEqualToAnchor_(safe.leadingAnchor).setActive_(True)
-                    native_view.trailingAnchor.constraintEqualToAnchor_(safe.trailingAnchor).setActive_(True)
-                except Exception:
                     native_view.setTranslatesAutoresizingMaskIntoConstraints_(True)
-                    try:
-                        native_view.setFrame_(root_view.bounds)
-                        native_view.setAutoresizingMask_(2 | 16)
-                    except Exception:
-                        pass
+                    native_view.setAutoresizingMask_(2 | 16)  # FlexibleWidth | FlexibleHeight
+                except Exception:
+                    pass
+                self._sync_root_frame(native_view)
+                self._push_viewport_from_root(native_view)
 
             def _detach_root(self, native_view: Any) -> None:
                 try:
                     native_view.removeFromSuperview()
                 except Exception:
                     pass
+
+            def _sync_root_frame(self, native_view: Any) -> None:
+                """Position the root view below the top safe area, full-bleed at the bottom.
+
+                The frame intentionally extends *past* the bottom
+                safe-area inset so a tab bar can reach the home
+                indicator (otherwise it floats with an empty 34 pt
+                gap below it). The bottom inset itself is published
+                via
+                [`pythonnative.platform_metrics`][pythonnative.platform_metrics]
+                so handlers like
+                [`TabBarHandler`][pythonnative.native_views.ios.TabBarHandler]
+                can absorb it into their intrinsic height. Apps that
+                render content directly at the bottom (no tab bar)
+                opt back into safe-area padding via ``SafeAreaView``
+                or by reading the insets explicitly.
+
+                Uses ``safeAreaInsets`` rather than
+                ``safeAreaLayoutGuide.layoutFrame`` because the
+                latter returns ``CGRectZero`` until UIKit has run its
+                first layout pass; the insets are populated as soon
+                as the controller's view is in a window, which is
+                reliably true by the time ``viewDidLayoutSubviews``
+                fires.
+                """
+                root_view = self.native_instance.view
+                if root_view is None:
+                    _log_pn("sync_root_frame: root_view is None, skipping")
+                    return
+                try:
+                    bounds = root_view.bounds
+                    insets = root_view.safeAreaInsets
+                    bw = float(bounds.size.width)
+                    bh = float(bounds.size.height)
+                    top = float(insets.top)
+                    left = float(insets.left)
+                    right = float(insets.right)
+                    bottom = float(insets.bottom)
+                    w = max(0.0, bw - left - right)
+                    h = max(0.0, bh - top)
+                    _log_pn(
+                        "sync_root_frame: "
+                        f"root.bounds=({bw:.1f},{bh:.1f}) "
+                        f"insets=(t{top:.1f},l{left:.1f},b{bottom:.1f},r{right:.1f}) "
+                        f"-> child frame=({left:.1f},{top:.1f},{w:.1f},{h:.1f}) "
+                        f"(bottom inset {bottom:.1f} published to platform_metrics)"
+                    )
+                    try:
+                        from . import platform_metrics
+
+                        platform_metrics.set_safe_area_insets(0.0, left, bottom, right)
+                    except Exception as e:
+                        _log_pn(f"sync_root_frame: publish insets failed: {e!r}")
+                    if w > 0 and h > 0:
+                        native_view.setFrame_(((left, top), (w, h)))
+                        return
+                except Exception as e:
+                    _log_pn(f"sync_root_frame: insets-path failed: {e!r}")
+                try:
+                    bounds = root_view.bounds
+                    bw2 = float(bounds.size.width)
+                    bh2 = float(bounds.size.height)
+                    _log_pn(f"sync_root_frame: fallback to bounds=({bw2:.1f},{bh2:.1f})")
+                    native_view.setFrame_(((0, 0), (bw2, bh2)))
+                except Exception as e:
+                    _log_pn(f"sync_root_frame: bounds fallback failed: {e!r}")
+
+            def _push_viewport_from_root(self, native_view: Any) -> None:
+                """Push the root view's measured size into the reconciler."""
+                try:
+                    bounds = native_view.bounds
+                    w = float(bounds.size.width)
+                    h = float(bounds.size.height)
+                    source = "native_view.bounds"
+                    if w <= 0 or h <= 0:
+                        UIScreen = ObjCClass("UIScreen")
+                        screen_bounds = UIScreen.mainScreen.bounds
+                        w = float(screen_bounds.size.width)
+                        h = float(screen_bounds.size.height)
+                        source = "UIScreen.mainScreen.bounds"
+                    _log_pn(f"push_viewport: ({w:.1f},{h:.1f}) from {source}")
+                    _push_viewport_size(self, w, h)
+                except Exception as e:
+                    _log_pn(f"push_viewport: failed: {e!r}")
+
+            def on_layout(self) -> None:
+                # Forwarded from ``viewDidLayoutSubviews``: the safe area
+                # insets are now valid (initial layout, rotation,
+                # multitasking, …). Re-sync the root frame and push the
+                # viewport so the layout engine matches the visible area.
+                if self._root_native_view is None:
+                    _log_pn("on_layout: no root_native_view yet, skipping")
+                    return
+                _log_pn("on_layout: re-syncing")
+                self._sync_root_frame(self._root_native_view)
+                self._push_viewport_from_root(self._root_native_view)
+
+            def on_resume(self) -> None:
+                # ``viewDidAppear`` always follows ``viewDidLayoutSubviews``,
+                # but trigger one extra sync here for safety in case a
+                # template overrides the layout call without forwarding.
+                if self._root_native_view is None:
+                    _log_pn("on_resume: no root_native_view yet, skipping")
+                    return
+                _log_pn("on_resume: re-syncing")
+                self._sync_root_frame(self._root_native_view)
+                self._push_viewport_from_root(self._root_native_view)
+
+            def set_viewport_size(self, width: float, height: float) -> None:
+                """Public hook for native code (Swift) to push viewport sizes."""
+                _push_viewport_size(self, width, height)
 
     else:
 
@@ -586,6 +1009,9 @@ else:
                 pass
 
             def on_resume(self) -> None:
+                pass
+
+            def on_layout(self) -> None:
                 pass
 
             def on_pause(self) -> None:

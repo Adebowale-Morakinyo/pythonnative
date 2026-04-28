@@ -4,3 +4,4 @@ env:
 ---
 - runFlow: flows/main_page.yaml
 - runFlow: flows/navigation.yaml
+- runFlow: flows/layout_tab.yaml

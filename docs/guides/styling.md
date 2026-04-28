@@ -85,7 +85,10 @@ pn.Text("Subtitle", style={"font_size": 14, "color": "#666666"})
 
 ## Flex layout
 
-PythonNative uses a flexbox-inspired layout model. `View` is the universal flex container, and `Column`/`Row` are convenience wrappers.
+PythonNative uses a Yoga-style flexbox layout model implemented in
+pure Python (see [Layout engine](../concepts/layout.md)). `View` is
+the universal flex container, and `Column`/`Row` are convenience
+wrappers that fix the direction.
 
 ### Flex container properties
 
@@ -107,15 +110,20 @@ These go in the `style` dict of `View`, `Column`, or `Row`:
 
 All components accept these in `style`:
 
-- `width`, `height`: fixed dimensions in dp (Android) / pt (iOS).
-- `flex`: flex grow factor (shorthand for `flex_grow`).
-- `flex_grow`: how much a child should grow to fill available space.
-- `flex_shrink`: how much a child should shrink when space is tight.
-- `margin`: outer spacing (int for all sides, or dict).
-- `min_width`, `min_height`: minimum size constraints.
-- `max_width`, `max_height`: maximum size constraints.
-- `align_self`: override parent alignment: `"flex_start"`, `"center"`,
-  `"flex_end"`, `"stretch"`.
+- `width`, `height`: fixed dimensions (number in dp / pt, or
+  percentage string like `"50%"`).
+- `min_width`, `min_height`, `max_width`, `max_height`: size
+  constraints.
+- `aspect_ratio`: derive the unknown axis from the known one
+  (`width / height`).
+- `flex`: shorthand for `flex_grow: N, flex_shrink: 1, flex_basis: 0`.
+- `flex_grow`, `flex_shrink`, `flex_basis`: explicit flex properties.
+- `margin`: outer spacing (number for all sides, or dict).
+- `align_self`: override parent alignment: `"auto"`, `"flex_start"`,
+  `"center"`, `"flex_end"`, `"stretch"`.
+- `position`: `"relative"` (default) or `"absolute"`.
+- `top`, `right`, `bottom`, `left`: edge offsets when
+  `position: "absolute"` (number or percentage string).
 
 ### Layout examples
 
@@ -157,6 +165,32 @@ pn.Row(
     pn.Button("Cancel", style={"flex": 1}),
     pn.Button("OK", style={"flex": 1, "background_color": "#007AFF", "color": "#FFF"}),
     style={"spacing": 8, "padding": 16},
+)
+```
+
+**Absolute positioning:**
+
+```python
+pn.View(
+    pn.View(style={"position": "absolute", "top": 0, "left": 0,
+                   "width": 40, "height": 40, "background_color": "#F00"}),
+    pn.View(style={"position": "absolute", "bottom": 0, "right": 0,
+                   "width": 40, "height": 40, "background_color": "#0A0"}),
+    pn.Text("Centered overlay", style={
+        "position": "absolute",
+        "top": "50%", "left": "10%", "right": "10%",
+        "text_align": "center",
+    }),
+    style={"width": 240, "height": 160, "background_color": "#EEE"},
+)
+```
+
+**Aspect-ratio thumbnail grid cell:**
+
+```python
+pn.View(
+    pn.Image(source="cover.jpg", style={"flex": 1}),
+    style={"width": "33%", "aspect_ratio": 1.0, "padding": 4},
 )
 ```
 

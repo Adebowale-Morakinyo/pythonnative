@@ -287,7 +287,14 @@ def Spacer(
     """
     props: Dict[str, Any] = {}
     if size is not None:
+        # The layout engine sees ``width`` / ``height`` only, so a fixed
+        # ``size`` is mirrored on both axes. Whichever axis the parent
+        # container's ``flex_direction`` chooses as main becomes the
+        # actual gap; the cross axis is constrained by the parent's
+        # ``align_items`` (typically ``stretch``) anyway.
         props["size"] = size
+        props["width"] = size
+        props["height"] = size
     if flex is not None:
         props["flex"] = flex
     return Element("Spacer", props, [], key=key)

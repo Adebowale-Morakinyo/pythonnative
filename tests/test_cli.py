@@ -115,6 +115,48 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+def test_booted_ios_udid_picks_first_booted_device(monkeypatch: pytest.MonkeyPatch) -> None:
+    """`_booted_ios_udid` parses ``simctl list devices booted --json``."""
+    sample_json = (
+        '{"devices": {'
+        '"com.apple.CoreSimulator.SimRuntime.iOS-26-4": ['
+        '{"name": "iPhone 17 Pro", "state": "Booted", "udid": "abc-123"}'
+        "]}}"
+    )
+
+    class _StubResult:
+        def __init__(self, stdout: str) -> None:
+            self.stdout = stdout
+
+    def _fake_run(cmd: List[str], **kwargs: object) -> _StubResult:
+        assert cmd[:2] == ["xcrun", "simctl"]
+        assert "booted" in cmd
+        return _StubResult(sample_json)
+
+    monkeypatch.setattr(pn_cli.subprocess, "run", _fake_run)
+    assert pn_cli._booted_ios_udid() == "abc-123"
+
+
+def test_booted_ios_udid_returns_none_when_no_devices(monkeypatch: pytest.MonkeyPatch) -> None:
+    """`_booted_ios_udid` returns ``None`` when nothing is booted."""
+
+    class _StubResult:
+        stdout = '{"devices": {}}'
+
+    monkeypatch.setattr(pn_cli.subprocess, "run", lambda *a, **kw: _StubResult())
+    assert pn_cli._booted_ios_udid() is None
+
+
+def test_booted_ios_udid_handles_xcrun_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """`_booted_ios_udid` returns ``None`` when ``xcrun`` isn't on PATH."""
+
+    def _raise(*args: object, **kwargs: object) -> None:
+        raise FileNotFoundError("xcrun missing")
+
+    monkeypatch.setattr(pn_cli.subprocess, "run", _raise)
+    assert pn_cli._booted_ios_udid() is None
+
+
 def test_hot_reload_manifest_payload_maps_files_to_modules(tmp_path: Path) -> None:
     app_dir = tmp_path / "app"
     app_dir.mkdir()

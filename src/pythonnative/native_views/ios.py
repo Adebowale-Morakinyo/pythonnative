@@ -1,25 +1,33 @@
 """iOS native-view handlers (rubicon-objc).
 
 Each handler class maps a PythonNative element type to a UIKit view,
-implementing view creation, property updates, and child management.
-Handlers are registered with the
+implementing view creation, property updates, child management, and
+frame application. Handlers are registered with the
 [`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry] by
 [`register_handlers`][pythonnative.native_views.ios.register_handlers].
+
+Layout is owned by the pure-Python flex engine in
+[`pythonnative.layout`][pythonnative.layout]: container handlers create
+plain `UIView`s, the engine computes per-child frames in points, and
+[`set_frame`][pythonnative.native_views.ios.IOSViewHandler.set_frame]
+applies those frames via UIKit's classic ``frame`` property (with Auto
+Layout disabled). Handlers therefore only deal with *visual* props and
+ignore everything in
+[`pythonnative.layout.LAYOUT_STYLE_KEYS`][pythonnative.layout.LAYOUT_STYLE_KEYS].
 
 This module is only imported on iOS at runtime. Desktop tests inject a
 mock registry via
 [`set_registry`][pythonnative.native_views.set_registry] and never
-trigger this import path. Layout uses Auto Layout constraints
-exclusively; props that map onto layout (`flex`, `padding`, etc.) are
-translated into the corresponding `NSLayoutConstraint`s on update.
+trigger this import path.
 """
 
 import ctypes as _ct
-from typing import Any, Callable, Dict, Optional
+import math
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from rubicon.objc import SEL, ObjCClass, objc_method
 
-from .base import CONTAINER_KEYS, LAYOUT_KEYS, ViewHandler, is_vertical, parse_color_int, resolve_padding
+from .base import ViewHandler, _safe_max, parse_color_int
 
 NSObject = ObjCClass("NSObject")
 UIColor = ObjCClass("UIColor")
@@ -43,36 +51,6 @@ def _uicolor(color: Any) -> Any:
     return UIColor.colorWithRed_green_blue_alpha_(r, g, b, a)
 
 
-def _apply_ios_layout(view: Any, props: Dict[str, Any]) -> None:
-    """Apply common layout constraints to an iOS view."""
-    if "width" in props and props["width"] is not None:
-        try:
-            for c in list(view.constraints or []):
-                if c.firstAttribute == 7:  # NSLayoutAttributeWidth
-                    c.setActive_(False)
-            view.widthAnchor.constraintEqualToConstant_(float(props["width"])).setActive_(True)
-        except Exception:
-            pass
-    if "height" in props and props["height"] is not None:
-        try:
-            for c in list(view.constraints or []):
-                if c.firstAttribute == 8:  # NSLayoutAttributeHeight
-                    c.setActive_(False)
-            view.heightAnchor.constraintEqualToConstant_(float(props["height"])).setActive_(True)
-        except Exception:
-            pass
-    if "min_width" in props and props["min_width"] is not None:
-        try:
-            view.widthAnchor.constraintGreaterThanOrEqualToConstant_(float(props["min_width"])).setActive_(True)
-        except Exception:
-            pass
-    if "min_height" in props and props["min_height"] is not None:
-        try:
-            view.heightAnchor.constraintGreaterThanOrEqualToConstant_(float(props["min_height"])).setActive_(True)
-        except Exception:
-            pass
-
-
 def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
     """Apply visual properties shared across many handlers."""
     if "background_color" in props and props["background_color"] is not None:
@@ -81,68 +59,60 @@ def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
         view.setClipsToBounds_(props["overflow"] == "hidden")
 
 
-def _apply_flex_container(sv: Any, props: Dict[str, Any]) -> None:
-    """Apply flex container properties to a UIStackView.
+# ======================================================================
+# Base class with shared frame/measure implementations
+# ======================================================================
 
-    Handles axis, spacing, alignment, distribution, background, padding, and overflow.
+
+class IOSViewHandler(ViewHandler):
+    """Base class providing the shared `set_frame` / measure contract.
+
+    All iOS handlers go through `set_frame` to apply the layout
+    engine's computed frames via classic ``CGRect`` positioning (Auto
+    Layout off). Child management defaults to UIKit's
+    `addSubview_:` / `removeFromSuperview` API.
     """
-    if "flex_direction" in props:
-        vertical = is_vertical(props["flex_direction"])
-        sv.setAxis_(1 if vertical else 0)
 
-    if "spacing" in props and props["spacing"]:
-        sv.setSpacing_(float(props["spacing"]))
-
-    ai = props.get("align_items") or props.get("alignment")
-    if ai:
-        direction = props.get("flex_direction")
-        vertical = is_vertical(direction) if direction else bool(sv.axis())
-        if vertical:
-            alignment_map = {
-                "stretch": 0,
-                "fill": 0,
-                "flex_start": 1,
-                "leading": 1,
-                "center": 3,
-                "flex_end": 4,
-                "trailing": 4,
-            }
-        else:
-            alignment_map = {
-                "stretch": 0,
-                "fill": 0,
-                "flex_start": 1,
-                "top": 1,
-                "center": 3,
-                "flex_end": 4,
-                "bottom": 4,
-            }
-        sv.setAlignment_(alignment_map.get(ai, 0))
-
-    jc = props.get("justify_content")
-    if jc:
-        # UIStackViewDistribution:
-        #   0 = fill, 1 = fillEqually, 2 = fillProportionally,
-        #   3 = equalSpacing (≈ space_between), 4 = equalCentering (≈ space_evenly)
-        distribution_map = {
-            "flex_start": 0,
-            "center": 0,
-            "flex_end": 0,
-            "space_between": 3,
-            "space_around": 4,
-            "space_evenly": 4,
-        }
-        sv.setDistribution_(distribution_map.get(jc, 0))
-
-    _apply_common_visual(sv, props)
-
-    if "padding" in props:
-        left, top, right, bottom = resolve_padding(props["padding"])
-        sv.setLayoutMarginsRelativeArrangement_(True)
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        if native_view is None:
+            return
         try:
-            sv.setDirectionalLayoutMargins_((top, left, bottom, right))
+            frame_x = float(x)
+            frame_y = float(y)
+            frame_w = float(max(0.0, width))
+            frame_h = float(max(0.0, height))
+            native_view.setTranslatesAutoresizingMaskIntoConstraints_(True)
+            native_view.setFrame_(((frame_x, frame_y), (frame_w, frame_h)))
+            try:
+                parent = native_view.superview
+                set_content_size = getattr(parent, "setContentSize_", None)
+                if set_content_size is not None:
+                    bounds = parent.bounds
+                    content_w = max(float(bounds.size.width), frame_x + frame_w)
+                    content_h = max(float(bounds.size.height), frame_y + frame_h)
+                    set_content_size((content_w, content_h))
+            except Exception:
+                pass
         except Exception:
-            sv.setLayoutMargins_((top, left, bottom, right))
+            pass
+
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        try:
+            mw = _safe_max(max_width, fallback=10000.0)
+            mh = _safe_max(max_height, fallback=10000.0)
+            size = native_view.sizeThatFits_((mw, mh))
+            w = float(size.width)
+            h = float(size.height)
+            if math.isfinite(max_width):
+                w = min(w, max_width)
+            return (w, h)
+        except Exception:
+            return (0.0, 0.0)
 
 
 # ======================================================================
@@ -150,16 +120,20 @@ def _apply_flex_container(sv: Any, props: Dict[str, Any]) -> None:
 # ======================================================================
 
 _pn_btn_handler_map: dict = {}
+_pn_btn_callback_map: dict = {}
 _pn_retained_views: list = []
 
 
 class _PNButtonTarget(NSObject):  # type: ignore[valid-type]
-    _callback: Optional[Callable[[], None]] = None
-
     @objc_method
     def onTap_(self, sender: object) -> None:
-        if self._callback is not None:
-            self._callback()
+        # Do not introspect ``sender`` here. On rubicon-objc 0.5.x the
+        # selector trampoline can hand this callback a raw ObjC pointer;
+        # calling ``getattr(sender, "ptr", ...)`` has been observed to
+        # segfault before the user's callback runs.
+        cb = _pn_btn_callback_map.get(id(self))
+        if cb is not None:
+            cb()
 
 
 _pn_tf_handler_map: dict = {}
@@ -213,36 +187,39 @@ class _PNSliderTarget(NSObject):  # type: ignore[valid-type]
 # ======================================================================
 
 
-class FlexContainerHandler(ViewHandler):
-    """Unified handler for flex layout containers (Column, Row, View).
+class FlexContainerHandler(IOSViewHandler):
+    """Container for flex layout — a bare `UIView`.
 
-    All three element types use ``UIStackView`` with axis determined
-    by the ``flex_direction`` prop.
+    All flex semantics (direction, alignment, distribution, padding)
+    are computed by the layout engine and applied via
+    [`set_frame`][pythonnative.native_views.ios.IOSViewHandler.set_frame].
     """
 
     def create(self, props: Dict[str, Any]) -> Any:
-        sv = ObjCClass("UIStackView").alloc().initWithFrame_(((0, 0), (0, 0)))
-        direction = props.get("flex_direction", "column")
-        sv.setAxis_(1 if is_vertical(direction) else 0)
-        _apply_flex_container(sv, props)
-        _apply_ios_layout(sv, props)
-        return sv
+        v = ObjCClass("UIView").alloc().init()
+        v.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        _apply_common_visual(v, props)
+        return v
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if changed.keys() & CONTAINER_KEYS:
-            _apply_flex_container(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
+        _apply_common_visual(native_view, changed)
 
     def add_child(self, parent: Any, child: Any) -> None:
-        parent.addArrangedSubview_(child)
+        try:
+            child.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        except Exception:
+            pass
+        parent.addSubview_(child)
 
     def remove_child(self, parent: Any, child: Any) -> None:
-        parent.removeArrangedSubview_(child)
         child.removeFromSuperview()
 
     def insert_child(self, parent: Any, child: Any, index: int) -> None:
-        parent.insertArrangedSubview_atIndex_(child, index)
+        try:
+            child.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        except Exception:
+            pass
+        parent.insertSubview_atIndex_(child, index)
 
 
 # ======================================================================
@@ -250,28 +227,34 @@ class FlexContainerHandler(ViewHandler):
 # ======================================================================
 
 
-class TextHandler(ViewHandler):
+class TextHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         label = ObjCClass("UILabel").alloc().init()
+        label.setNumberOfLines_(0)
+        label.setTranslatesAutoresizingMaskIntoConstraints_(True)
         self._apply(label, props)
-        _apply_ios_layout(label, props)
         return label
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
 
     def _apply(self, label: Any, props: Dict[str, Any]) -> None:
         if "text" in props:
-            label.setText_(str(props["text"]))
+            label.setText_(str(props["text"]) if props["text"] is not None else "")
         if "font_size" in props and props["font_size"] is not None:
             if props.get("bold"):
                 label.setFont_(UIFont.boldSystemFontOfSize_(float(props["font_size"])))
             else:
                 label.setFont_(UIFont.systemFontOfSize_(float(props["font_size"])))
         elif "bold" in props and props["bold"]:
-            size = label.font().pointSize() if label.font() else 17.0
+            # ``UILabel.font`` is a property in rubicon-objc, so use attribute
+            # access (no parens) — calling it as ``label.font()`` would try to
+            # invoke the returned ``UIFont`` ObjCInstance and raise TypeError.
+            current_font = label.font
+            try:
+                size = float(current_font.pointSize) if current_font is not None else 17.0
+            except Exception:
+                size = 17.0
             label.setFont_(UIFont.boldSystemFontOfSize_(size))
         if "color" in props and props["color"] is not None:
             label.setTextColor_(_uicolor(props["color"]))
@@ -284,27 +267,52 @@ class TextHandler(ViewHandler):
             label.setTextAlignment_(mapping.get(props["text_align"], 0))
 
 
-class ButtonHandler(ViewHandler):
+class ButtonHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
-        btn = ObjCClass("UIButton").alloc().init()
+        # ``UIButtonTypeSystem`` (1) gives us a properly-sized button
+        # with intrinsicContentSize derived from the title; the default
+        # ``UIButtonTypeCustom`` returns CGSizeZero from sizeThatFits_,
+        # which makes the button collapse to 0×0 under the layout engine.
+        btn = ObjCClass("UIButton").buttonWithType_(1)
+        btn.setTranslatesAutoresizingMaskIntoConstraints_(True)
         btn.retain()
         _pn_retained_views.append(btn)
-        _ios_blue = UIColor.colorWithRed_green_blue_alpha_(0.0, 0.478, 1.0, 1.0)
-        btn.setTitleColor_forState_(_ios_blue, 0)
         self._apply(btn, props)
-        _apply_ios_layout(btn, props)
         return btn
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
+
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        # ``intrinsicContentSize`` honours the button's content insets and
+        # title font; ``sizeThatFits_`` historically returns 0×0 for many
+        # UIButton subtypes. Padding is added so the button has real
+        # tappable area even on iOS 15+ where the default insets are 0.
+        try:
+            size = native_view.intrinsicContentSize()
+            w = float(size.width) + 24.0
+            h = float(size.height) + 12.0
+            if math.isfinite(max_width):
+                w = min(w, max_width)
+            if math.isfinite(max_height):
+                h = min(h, max_height)
+            return (max(w, 44.0), max(h, 32.0))
+        except Exception:
+            return (44.0, 32.0)
 
     def _apply(self, btn: Any, props: Dict[str, Any]) -> None:
         if "title" in props:
-            btn.setTitle_forState_(str(props["title"]), 0)
+            btn.setTitle_forState_(str(props["title"]) if props["title"] is not None else "", 0)
         if "font_size" in props and props["font_size"] is not None:
-            btn.titleLabel().setFont_(UIFont.systemFontOfSize_(float(props["font_size"])))
+            # ``UIButton.titleLabel`` is a property in rubicon-objc; access it
+            # as an attribute (no parens) — calling it would try to invoke the
+            # returned UILabel and raise ``TypeError``.
+            btn.titleLabel.setFont_(UIFont.systemFontOfSize_(float(props["font_size"])))
         if "background_color" in props and props["background_color"] is not None:
             btn.setBackgroundColor_(_uicolor(props["background_color"]))
             if "color" not in props:
@@ -317,20 +325,28 @@ class ButtonHandler(ViewHandler):
         if "on_click" in props:
             existing = _pn_btn_handler_map.get(id(btn))
             if existing is not None:
-                existing._callback = props["on_click"]
+                _pn_btn_callback_map[id(existing)] = props["on_click"]
             else:
                 handler = _PNButtonTarget.new()
-                handler._callback = props["on_click"]
                 _pn_btn_handler_map[id(btn)] = handler
+                _pn_btn_callback_map[id(handler)] = props["on_click"]
                 btn.addTarget_action_forControlEvents_(handler, SEL("onTap:"), 1 << 6)
 
 
-class ScrollViewHandler(ViewHandler):
+class ScrollViewHandler(IOSViewHandler):
+    """Scroll container — wraps a single child whose height is unbounded.
+
+    The child is positioned by the layout engine using its natural
+    content height. The shared frame applier expands the parent
+    `UIScrollView.contentSize` whenever a child frame extends beyond
+    the visible bounds.
+    """
+
     def create(self, props: Dict[str, Any]) -> Any:
         sv = ObjCClass("UIScrollView").alloc().init()
+        sv.setTranslatesAutoresizingMaskIntoConstraints_(True)
         if "background_color" in props and props["background_color"] is not None:
             sv.setBackgroundColor_(_uicolor(props["background_color"]))
-        _apply_ios_layout(sv, props)
         return sv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -338,38 +354,32 @@ class ScrollViewHandler(ViewHandler):
             native_view.setBackgroundColor_(_uicolor(changed["background_color"]))
 
     def add_child(self, parent: Any, child: Any) -> None:
-        child.setTranslatesAutoresizingMaskIntoConstraints_(False)
+        try:
+            child.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        except Exception:
+            pass
         parent.addSubview_(child)
-        content_guide = parent.contentLayoutGuide
-        frame_guide = parent.frameLayoutGuide
-        child.topAnchor.constraintEqualToAnchor_(content_guide.topAnchor).setActive_(True)
-        child.leadingAnchor.constraintEqualToAnchor_(content_guide.leadingAnchor).setActive_(True)
-        child.trailingAnchor.constraintEqualToAnchor_(content_guide.trailingAnchor).setActive_(True)
-        child.bottomAnchor.constraintEqualToAnchor_(content_guide.bottomAnchor).setActive_(True)
-        child.widthAnchor.constraintEqualToAnchor_(frame_guide.widthAnchor).setActive_(True)
 
     def remove_child(self, parent: Any, child: Any) -> None:
         child.removeFromSuperview()
 
 
-class TextInputHandler(ViewHandler):
+class TextInputHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         tf = ObjCClass("UITextField").alloc().init()
         tf.setBorderStyle_(2)  # RoundedRect
+        tf.setTranslatesAutoresizingMaskIntoConstraints_(True)
         self._apply(tf, props)
-        _apply_ios_layout(tf, props)
         return tf
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
 
     def _apply(self, tf: Any, props: Dict[str, Any]) -> None:
         if "value" in props:
-            tf.setText_(str(props["value"]))
+            tf.setText_(str(props["value"]) if props["value"] is not None else "")
         if "placeholder" in props:
-            tf.setPlaceholder_(str(props["placeholder"]))
+            tf.setPlaceholder_(str(props["placeholder"]) if props["placeholder"] is not None else "")
         if "font_size" in props and props["font_size"] is not None:
             tf.setFont_(UIFont.systemFontOfSize_(float(props["font_size"])))
         if "color" in props and props["color"] is not None:
@@ -389,17 +399,15 @@ class TextInputHandler(ViewHandler):
                 tf.addTarget_action_forControlEvents_(handler, SEL("onEdit:"), 1 << 17)
 
 
-class ImageHandler(ViewHandler):
+class ImageHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         iv = ObjCClass("UIImageView").alloc().init()
+        iv.setTranslatesAutoresizingMaskIntoConstraints_(True)
         self._apply(iv, props)
-        _apply_ios_layout(iv, props)
         return iv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
 
     def _apply(self, iv: Any, props: Dict[str, Any]) -> None:
         if "background_color" in props and props["background_color"] is not None:
@@ -431,9 +439,10 @@ class ImageHandler(ViewHandler):
             pass
 
 
-class SwitchHandler(ViewHandler):
+class SwitchHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         sw = ObjCClass("UISwitch").alloc().init()
+        sw.setTranslatesAutoresizingMaskIntoConstraints_(True)
         self._apply(sw, props)
         return sw
 
@@ -454,12 +463,12 @@ class SwitchHandler(ViewHandler):
                 sw.addTarget_action_forControlEvents_(handler, SEL("onToggle:"), 1 << 12)
 
 
-class ProgressBarHandler(ViewHandler):
+class ProgressBarHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         pv = ObjCClass("UIProgressView").alloc().init()
+        pv.setTranslatesAutoresizingMaskIntoConstraints_(True)
         if "value" in props:
             pv.setProgress_(float(props["value"]))
-        _apply_ios_layout(pv, props)
         return pv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -467,9 +476,10 @@ class ProgressBarHandler(ViewHandler):
             native_view.setProgress_(float(changed["value"]))
 
 
-class ActivityIndicatorHandler(ViewHandler):
+class ActivityIndicatorHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         ai = ObjCClass("UIActivityIndicatorView").alloc().init()
+        ai.setTranslatesAutoresizingMaskIntoConstraints_(True)
         if props.get("animating", True):
             ai.startAnimating()
         return ai
@@ -482,15 +492,15 @@ class ActivityIndicatorHandler(ViewHandler):
                 native_view.stopAnimating()
 
 
-class WebViewHandler(ViewHandler):
+class WebViewHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         wv = ObjCClass("WKWebView").alloc().init()
+        wv.setTranslatesAutoresizingMaskIntoConstraints_(True)
         if "url" in props and props["url"]:
             NSURL = ObjCClass("NSURL")
             NSURLRequest = ObjCClass("NSURLRequest")
             url_obj = NSURL.URLWithString_(str(props["url"]))
             wv.loadRequest_(NSURLRequest.requestWithURL_(url_obj))
-        _apply_ios_layout(wv, props)
         return wv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -501,23 +511,26 @@ class WebViewHandler(ViewHandler):
             native_view.loadRequest_(NSURLRequest.requestWithURL_(url_obj))
 
 
-class SpacerHandler(ViewHandler):
+class SpacerHandler(IOSViewHandler):
+    """Empty layout placeholder used as a flexible gap.
+
+    All sizing semantics live in the layout engine; ``Spacer``
+    behaves identically to a `View` with the same style props.
+    """
+
     def create(self, props: Dict[str, Any]) -> Any:
         v = ObjCClass("UIView").alloc().init()
-        if "size" in props and props["size"] is not None:
-            size = float(props["size"])
-            v.setFrame_(((0, 0), (size, size)))
+        v.setTranslatesAutoresizingMaskIntoConstraints_(True)
         return v
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if "size" in changed and changed["size"] is not None:
-            size = float(changed["size"])
-            native_view.setFrame_(((0, 0), (size, size)))
+        pass
 
 
-class SafeAreaViewHandler(ViewHandler):
+class SafeAreaViewHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         v = ObjCClass("UIView").alloc().init()
+        v.setTranslatesAutoresizingMaskIntoConstraints_(True)
         if "background_color" in props and props["background_color"] is not None:
             v.setBackgroundColor_(_uicolor(props["background_color"]))
         return v
@@ -527,13 +540,17 @@ class SafeAreaViewHandler(ViewHandler):
             native_view.setBackgroundColor_(_uicolor(changed["background_color"]))
 
     def add_child(self, parent: Any, child: Any) -> None:
+        try:
+            child.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        except Exception:
+            pass
         parent.addSubview_(child)
 
     def remove_child(self, parent: Any, child: Any) -> None:
         child.removeFromSuperview()
 
 
-class ModalHandler(ViewHandler):
+class ModalHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         v = ObjCClass("UIView").alloc().init()
         v.setHidden_(True)
@@ -542,12 +559,16 @@ class ModalHandler(ViewHandler):
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         pass
 
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        # Modal is a virtual placeholder — not rendered inline.
+        return
 
-class SliderHandler(ViewHandler):
+
+class SliderHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         sl = ObjCClass("UISlider").alloc().init()
+        sl.setTranslatesAutoresizingMaskIntoConstraints_(True)
         self._apply(sl, props)
-        _apply_ios_layout(sl, props)
         return sl
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -610,7 +631,6 @@ _add_method.argtypes = [_ct.c_void_p, _ct.c_void_p, _ct.c_void_p, _ct.c_char_p]
 
 _objc_msgSend = _libobjc.objc_msgSend
 
-# Pre-register selectors used in the raw delegate path
 _SEL_ALLOC = _sel_reg(b"alloc")
 _SEL_INIT = _sel_reg(b"init")
 _SEL_RETAIN = _sel_reg(b"retain")
@@ -636,10 +656,8 @@ def _tabbar_did_select_imp(self_ptr: int, cmd_ptr: int, tabbar_ptr: int, item_pt
         pass
 
 
-# prevent GC of the C callback
 _tabbar_imp_ref = _DELEGATE_IMP_TYPE(_tabbar_did_select_imp)
 
-# Create and register a minimal ObjC class for the delegate
 _NS_OBJECT_CLS = _get_cls(b"NSObject")
 _PN_DELEGATE_CLS = _alloc_cls(_NS_OBJECT_CLS, b"_PNTabBarDelegateCTypes", 0)
 if _PN_DELEGATE_CLS:
@@ -670,26 +688,46 @@ def _ensure_tabbar_delegate(tab_bar: Any) -> None:
         _objc_msgSend(tab_bar_ptr, _SEL_SET_DELEGATE, _pn_tabbar_delegate_ptr)
 
 
-class TabBarHandler(ViewHandler):
+class TabBarHandler(IOSViewHandler):
     """Native tab bar using ``UITabBar``.
 
     Each tab is a ``UITabBarItem`` with a ``tag`` matching its index
-    in the items list.  A raw ctypes delegate forwards selection
+    in the items list. A raw ctypes delegate forwards selection
     events back to the Python ``on_tab_select`` callback.
     """
 
     def create(self, props: Dict[str, Any]) -> Any:
-        tab_bar = ObjCClass("UITabBar").alloc().initWithFrame_(((0, 0), (0, 49)))
+        from .. import platform_metrics
+
+        initial_h = platform_metrics.ios_tab_bar_height()
+        tab_bar = ObjCClass("UITabBar").alloc().initWithFrame_(((0, 0), (0, initial_h)))
+        tab_bar.setTranslatesAutoresizingMaskIntoConstraints_(True)
         tab_bar.retain()
         _pn_retained_views.append(tab_bar)
         self._apply_full(tab_bar, props)
-        _apply_ios_layout(tab_bar, props)
         return tab_bar
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply_partial(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_ios_layout(native_view, changed)
+
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        # ``UITabBar.sizeThatFits_`` is platform-version dependent and
+        # has historically returned 0 in some configurations. A
+        # constant matches the standard UIKit tab-bar height and keeps
+        # the layout deterministic at first paint. The bottom
+        # safe-area inset is added on top so the bar can reach the
+        # screen edge — without it the pill bar floats with an empty
+        # 34 pt gap below it on devices with a home indicator.
+        from .. import platform_metrics
+
+        w = max_width if math.isfinite(max_width) else 320.0
+        h = platform_metrics.ios_tab_bar_height()
+        return (w, h)
 
     def _apply_full(self, tab_bar: Any, props: Dict[str, Any]) -> None:
         items = props.get("items", [])
@@ -740,9 +778,10 @@ class TabBarHandler(ViewHandler):
         _ensure_tabbar_delegate(tab_bar)
 
 
-class PressableHandler(ViewHandler):
+class PressableHandler(IOSViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         v = ObjCClass("UIView").alloc().init()
+        v.setTranslatesAutoresizingMaskIntoConstraints_(True)
         v.setUserInteractionEnabled_(True)
         return v
 
@@ -750,6 +789,10 @@ class PressableHandler(ViewHandler):
         pass
 
     def add_child(self, parent: Any, child: Any) -> None:
+        try:
+            child.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        except Exception:
+            pass
         parent.addSubview_(child)
 
     def remove_child(self, parent: Any, child: Any) -> None:
@@ -782,3 +825,25 @@ def register_handlers(registry: Any) -> None:
     registry.register("Slider", SliderHandler())
     registry.register("TabBar", TabBarHandler())
     registry.register("Pressable", PressableHandler())
+
+
+__all__ = [
+    "IOSViewHandler",
+    "FlexContainerHandler",
+    "TextHandler",
+    "ButtonHandler",
+    "ScrollViewHandler",
+    "TextInputHandler",
+    "ImageHandler",
+    "SwitchHandler",
+    "ProgressBarHandler",
+    "ActivityIndicatorHandler",
+    "WebViewHandler",
+    "SpacerHandler",
+    "SafeAreaViewHandler",
+    "ModalHandler",
+    "SliderHandler",
+    "TabBarHandler",
+    "PressableHandler",
+    "register_handlers",
+]

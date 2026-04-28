@@ -2,11 +2,19 @@
 
 Provides the [`ViewHandler`][pythonnative.native_views.base.ViewHandler]
 protocol implemented by Android and iOS handlers, plus common helpers
-for color parsing, padding normalization, and flex-layout constants
-shared across platforms.
+for color parsing and padding normalization shared across platforms.
+
+Layout itself is *not* a handler responsibility. The pure-Python flex
+engine in ``pythonnative.layout`` owns sizing and positioning;
+handlers receive computed frames via
+[`set_frame`][pythonnative.native_views.base.ViewHandler.set_frame] and
+optionally expose an intrinsic-size hook via
+[`measure_intrinsic`][pythonnative.native_views.base.ViewHandler.measure_intrinsic]
+for content-sized leaves (text, buttons, images).
 """
 
-from typing import Any, Dict, Union
+import math
+from typing import Any, Dict, Tuple, Union
 
 
 class ViewHandler:
@@ -20,11 +28,18 @@ class ViewHandler:
     Subclasses must override [`create`][pythonnative.native_views.base.ViewHandler.create]
     and [`update`][pythonnative.native_views.base.ViewHandler.update].
     Container handlers override the child-management methods; leaf
-    handlers can leave them as no-ops.
+    handlers can leave them as no-ops. Handlers whose intrinsic size
+    depends on content (text, buttons, images) override
+    [`measure_intrinsic`][pythonnative.native_views.base.ViewHandler.measure_intrinsic].
     """
 
     def create(self, props: Dict[str, Any]) -> Any:
-        """Create a fresh native view and apply initial props.
+        """Create a fresh native view and apply initial *visual* props.
+
+        Layout-related props (``width``, ``height``, ``flex``, ``padding``,
+        etc.) are consumed by the layout engine and applied via
+        [`set_frame`][pythonnative.native_views.base.ViewHandler.set_frame],
+        so handlers should ignore them here.
 
         Args:
             props: Initial props dict.
@@ -38,7 +53,7 @@ class ViewHandler:
         raise NotImplementedError
 
     def update(self, native_view: Any, changed_props: Dict[str, Any]) -> None:
-        """Apply only the props that changed since the last render.
+        """Apply only the *visual* props that changed since the last render.
 
         Args:
             native_view: The platform-native view to mutate.
@@ -59,6 +74,49 @@ class ViewHandler:
     def insert_child(self, parent: Any, child: Any, index: int) -> None:
         """Insert `child` at `index`. Defaults to appending."""
         self.add_child(parent, child)
+
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        """Position and size ``native_view`` relative to its parent.
+
+        Coordinates are in points and relative to the parent's content
+        origin. Default no-op so handlers that don't need explicit
+        positioning (e.g., `Modal`) can opt out.
+
+        Args:
+            native_view: The platform-native view.
+            x: X-coordinate (points) of the view's top-left corner
+                relative to its parent's content origin.
+            y: Y-coordinate (points) of the view's top-left corner.
+            width: View width in points.
+            height: View height in points.
+        """
+
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        """Return the natural ``(width, height)`` of a content-sized view.
+
+        Used by the layout engine for leaves whose size depends on
+        their content (text, buttons, images). Either ``max_width`` or
+        ``max_height`` may be `math.inf` to indicate no constraint.
+
+        The default implementation returns ``(0, 0)``; override for
+        leaves whose size depends on their content. Container handlers
+        leave this alone — the engine sizes containers by laying out
+        their children.
+
+        Args:
+            native_view: The platform-native view to measure.
+            max_width: Maximum width in points (or `math.inf`).
+            max_height: Maximum height in points (or `math.inf`).
+
+        Returns:
+            ``(width, height)`` in points.
+        """
+        return (0.0, 0.0)
 
 
 # ======================================================================
@@ -93,12 +151,13 @@ def parse_color_int(color: Union[str, int]) -> int:
 
 
 # ======================================================================
-# Padding / margin helpers
+# Padding helper (kept for backwards-compat; now mostly used by
+# handlers that apply padding to native widgets, e.g., text inset).
 # ======================================================================
 
 
-def resolve_padding(padding: Any) -> tuple:
-    """Normalize a padding value to `(left, top, right, bottom)`.
+def resolve_padding(padding: Any) -> Tuple[int, int, int, int]:
+    """Normalize a padding value to ``(left, top, right, bottom)``.
 
     Accepts:
 
@@ -136,7 +195,9 @@ def resolve_padding(padding: Any) -> tuple:
 
 
 # ======================================================================
-# Flex layout constants
+# Backwards-compat constants (re-exports of layout engine constants).
+# Kept here so legacy imports of pythonnative.native_views.base still
+# resolve without modification.
 # ======================================================================
 
 FLEX_DIRECTION_COLUMN = "column"
@@ -169,39 +230,23 @@ def is_vertical(direction: str) -> bool:
     return direction in (FLEX_DIRECTION_COLUMN, FLEX_DIRECTION_COLUMN_REVERSE)
 
 
-# ======================================================================
-# Layout property keys
-# ======================================================================
-
-LAYOUT_KEYS = frozenset(
+# Visual prop keys handled by container handlers (subset of all props
+# they care about; layout-related keys are owned by the layout engine).
+CONTAINER_VISUAL_KEYS = frozenset(
     {
-        "width",
-        "height",
-        "flex",
-        "flex_grow",
-        "flex_shrink",
-        "margin",
-        "min_width",
-        "max_width",
-        "min_height",
-        "max_height",
-        "align_self",
-        "position",
-        "top",
-        "right",
-        "bottom",
-        "left",
-    }
-)
-
-CONTAINER_KEYS = frozenset(
-    {
-        "flex_direction",
-        "justify_content",
-        "align_items",
-        "overflow",
-        "spacing",
-        "padding",
         "background_color",
+        "overflow",
     }
 )
+
+
+# ======================================================================
+# Helpers shared by Android and iOS measure callbacks
+# ======================================================================
+
+
+def _safe_max(value: float, fallback: float = 1e6) -> float:
+    """Clamp ``math.inf`` to a large finite value for native measure calls."""
+    if not math.isfinite(value):
+        return fallback
+    return max(0.0, value)

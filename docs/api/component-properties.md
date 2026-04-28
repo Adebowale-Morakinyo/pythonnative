@@ -2,20 +2,57 @@
 
 All visual and layout properties are passed via the `style` dict (or list of dicts) to element functions. Behavioural properties (callbacks, data, content) remain as keyword arguments.
 
+> Layout is computed by PythonNative's pure-Python flexbox engine (see
+> [Layout engine](../concepts/layout.md)). The same `style` keys produce the
+> same frames on Android and iOS — every property listed below is honoured by
+> the engine and applied via `set_frame` on the underlying native view.
+
 ## Common layout properties (inside `style`)
 
 All components accept these layout properties in their `style` dict:
 
-- `width` — fixed width in dp (Android) / pt (iOS)
-- `height` — fixed height
-- `flex` — flex grow factor (shorthand for `flex_grow`)
-- `flex_grow` — how much a child grows to fill available space
-- `flex_shrink` — how much a child shrinks when space is limited
-- `margin` — outer spacing (int, float, or dict with `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`)
-- `min_width`, `max_width` — width constraints
-- `min_height`, `max_height` — height constraints
-- `align_self` — override parent alignment (`"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`)
-- `key` — stable identity for reconciliation (passed as a kwarg, not inside `style`)
+### Sizing
+
+- `width` — fixed width in dp (Android) / pt (iOS). Accepts an `int`/`float`,
+  or a percentage string like `"50%"` (resolved against the parent's content
+  width).
+- `height` — fixed height. Same number / percentage rules as `width`.
+- `min_width`, `max_width` — width constraints (numbers or `"%"` strings).
+- `min_height`, `max_height` — height constraints.
+- `aspect_ratio` — width / height ratio. When only one of `width` / `height`
+  is known, the other axis is derived from this ratio.
+
+### Flex
+
+- `flex` — shorthand. Setting `flex: N` is equivalent to
+  `flex_grow: N, flex_shrink: 1, flex_basis: 0`.
+- `flex_grow` — how much a child grows to fill remaining main-axis space.
+- `flex_shrink` — how much a child shrinks when its parent runs out of space.
+- `flex_basis` — initial main-axis size before grow / shrink is applied
+  (`"auto"`, a number, or a percentage string).
+- `align_self` — override parent alignment for this child (`"auto"`,
+  `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`).
+
+### Spacing
+
+- `margin` — outer spacing. Accepts a number (all sides), or a dict with any
+  of `horizontal`, `vertical`, `left`, `top`, `right`, `bottom`.
+- `padding` — inner spacing on container elements. Same shape as `margin`.
+- `spacing` — gap between children of a flex container (applied along the
+  main axis).
+- `gap` — alias for `spacing`.
+
+### Position
+
+- `position` — `"relative"` (default) or `"absolute"`. Absolute children are
+  removed from the normal flow and placed using `top` / `right` / `bottom` /
+  `left` (numbers or percentage strings).
+- `top`, `right`, `bottom`, `left` — offsets used when `position: "absolute"`.
+
+### Other
+
+- `key` — stable identity for reconciliation (passed as a kwarg, not inside
+  `style`).
 
 ## View
 
@@ -40,6 +77,18 @@ Flex container properties (inside `style`):
 - `align_items` — `"stretch"`, `"flex_start"`, `"center"`, `"flex_end"`
 - `overflow` — `"visible"` (default), `"hidden"`
 - `spacing`, `padding`, `background_color`
+
+Containers also fully support absolute positioning for their children:
+
+```python
+pn.View(
+    pn.View(style={"position": "absolute", "top": 0, "left": 0,
+                   "width": 40, "height": 40, "background_color": "#F00"}),
+    pn.View(style={"position": "absolute", "bottom": 8, "right": 8,
+                   "width": 40, "height": 40, "background_color": "#0A0"}),
+    style={"width": 200, "height": 200, "background_color": "#EEE"},
+)
+```
 
 ## Text
 

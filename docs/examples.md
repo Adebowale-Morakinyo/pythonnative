@@ -99,6 +99,34 @@ def Safe():
     )
 ```
 
+### Flex distribution and absolute positioning
+
+```python
+@pn.component
+def LayoutShowcase():
+    return pn.Column(
+        pn.Row(
+            pn.View(style={"flex": 1, "height": 60, "background_color": "#FAD"}),
+            pn.View(style={"flex": 2, "height": 60, "background_color": "#ADF"}),
+            pn.View(style={"flex": 1, "height": 60, "background_color": "#DFA"}),
+            style={"spacing": 8, "align_items": "stretch"},
+        ),
+        pn.View(
+            pn.View(style={"position": "absolute", "top": 8, "left": 8,
+                           "width": 32, "height": 32,
+                           "background_color": "#F00"}),
+            pn.View(style={"position": "absolute", "bottom": 8, "right": 8,
+                           "width": 32, "height": 32,
+                           "background_color": "#0A0"}),
+            style={"width": 200, "height": 120, "background_color": "#EEE"},
+        ),
+        style={"spacing": 12, "padding": 16},
+    )
+```
+
+See [Layout engine](concepts/layout.md) for the full set of supported
+flexbox features.
+
 ## Next steps
 
 - Walk through the smallest possible app: [Hello world](examples/hello-world.md).

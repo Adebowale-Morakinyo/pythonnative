@@ -72,6 +72,7 @@ nav:
     - Hooks: concepts/hooks.md
     - Lifecycle: concepts/lifecycle.md
     - Reconciliation: concepts/reconciliation.md
+    - Layout Engine: concepts/layout.md
     - Native Views: concepts/native-views.md
   - Guides:
     - Android: guides/android.md
@@ -96,6 +97,7 @@ nav:
     - Element: api/element.md
     - Page: api/page.md
     - Reconciler: api/reconciler.md
+    - Layout: api/layout.md
     - Style: api/style.md
     - Navigation: api/navigation.md
     - Native modules: api/native_modules.md

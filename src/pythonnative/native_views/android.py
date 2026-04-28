@@ -1,25 +1,33 @@
 """Android native-view handlers (Chaquopy / Java bridge).
 
 Each handler class maps a PythonNative element type to an Android
-widget, implementing view creation, property updates, and child
-management. Handlers are registered with the
+widget, implementing view creation, property updates, child management,
+and frame application. Handlers are registered with the
 [`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry] by
 [`register_handlers`][pythonnative.native_views.android.register_handlers].
+
+Layout is owned by the pure-Python flex engine in
+[`pythonnative.layout`][pythonnative.layout]: container handlers create
+plain `FrameLayout`s, the engine computes per-child frames, and
+[`set_frame`][pythonnative.native_views.android.AndroidViewHandler.set_frame]
+applies those frames via per-child `MarginLayoutParams`. Handlers
+therefore only deal with *visual* props — text, colors, callbacks — and
+ignore everything in
+[`pythonnative.layout.LAYOUT_STYLE_KEYS`][pythonnative.layout.LAYOUT_STYLE_KEYS].
 
 This module is only imported on Android at runtime. Desktop tests
 inject a mock registry via
 [`set_registry`][pythonnative.native_views.set_registry] and never
-trigger this import path. `dp` conversions assume the active
-`Resources` are available; values are cached the first time the
-density is queried.
+trigger this import path.
 """
 
-from typing import Any, Callable, Dict
+import math
+from typing import Any, Callable, Dict, Tuple
 
 from java import dynamic_proxy, jclass
 
 from ..utils import get_android_context
-from .base import CONTAINER_KEYS, LAYOUT_KEYS, ViewHandler, is_vertical, parse_color_int, resolve_padding
+from .base import ViewHandler, _safe_max, parse_color_int
 
 # ======================================================================
 # Shared helpers
@@ -35,71 +43,7 @@ def _density() -> float:
 
 
 def _dp(value: float) -> int:
-    return int(value * _density())
-
-
-def _apply_layout(view: Any, props: Dict[str, Any]) -> None:
-    """Apply common layout properties (child-level flex props) to an Android view."""
-    lp = view.getLayoutParams()
-    LayoutParams = jclass("android.widget.LinearLayout$LayoutParams")
-    ViewGroupLP = jclass("android.view.ViewGroup$LayoutParams")
-    Gravity = jclass("android.view.Gravity")
-    needs_set = False
-
-    if lp is None:
-        lp = LayoutParams(ViewGroupLP.WRAP_CONTENT, ViewGroupLP.WRAP_CONTENT)
-        needs_set = True
-
-    if "width" in props and props["width"] is not None:
-        lp.width = _dp(float(props["width"]))
-        needs_set = True
-    if "height" in props and props["height"] is not None:
-        lp.height = _dp(float(props["height"]))
-        needs_set = True
-
-    flex = props.get("flex")
-    flex_grow = props.get("flex_grow")
-    weight = None
-    if flex is not None:
-        weight = float(flex)
-    elif flex_grow is not None:
-        weight = float(flex_grow)
-    if weight is not None:
-        try:
-            lp.weight = weight
-            needs_set = True
-        except Exception:
-            pass
-
-    if "margin" in props and props["margin"] is not None:
-        left, top, right, bottom = resolve_padding(props["margin"])
-        try:
-            lp.setMargins(_dp(left), _dp(top), _dp(right), _dp(bottom))
-            needs_set = True
-        except Exception:
-            pass
-
-    if "align_self" in props and props["align_self"] is not None:
-        align_map = {
-            "flex_start": Gravity.START | Gravity.TOP,
-            "leading": Gravity.START | Gravity.TOP,
-            "center": Gravity.CENTER,
-            "flex_end": Gravity.END | Gravity.BOTTOM,
-            "trailing": Gravity.END | Gravity.BOTTOM,
-            "stretch": Gravity.FILL,
-        }
-        g = align_map.get(props["align_self"])
-        if g is not None:
-            lp.gravity = g
-            needs_set = True
-
-    if needs_set:
-        view.setLayoutParams(lp)
-
-    if "min_width" in props and props["min_width"] is not None:
-        view.setMinimumWidth(_dp(float(props["min_width"])))
-    if "min_height" in props and props["min_height"] is not None:
-        view.setMinimumHeight(_dp(float(props["min_height"])))
+    return int(round(value * _density()))
 
 
 def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
@@ -115,81 +59,76 @@ def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
             pass
 
 
-def _apply_flex_container(container: Any, props: Dict[str, Any]) -> None:
-    """Apply flex container properties to a LinearLayout.
+# ======================================================================
+# Base class with shared frame/measure implementations
+# ======================================================================
 
-    Handles spacing, padding, alignment, justification, background, and overflow.
+
+class AndroidViewHandler(ViewHandler):
+    """Base class providing the shared `set_frame` / measure contract.
+
+    All Android handlers go through `set_frame` to apply the layout
+    engine's computed frames as `MarginLayoutParams` mutations.
+    Container handlers inherit the default `add_child` /
+    `remove_child` implementations; leaves leave them as no-ops.
     """
-    LinearLayout = jclass("android.widget.LinearLayout")
-    Gravity = jclass("android.view.Gravity")
 
-    if "flex_direction" in props:
-        vertical = is_vertical(props["flex_direction"])
-        container.setOrientation(LinearLayout.VERTICAL if vertical else LinearLayout.HORIZONTAL)
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        if native_view is None:
+            return
+        try:
+            px_x = _dp(x)
+            px_y = _dp(y)
+            px_w = max(0, _dp(width))
+            px_h = max(0, _dp(height))
+            lp = native_view.getLayoutParams()
+            if lp is None:
+                FrameLP = jclass("android.widget.FrameLayout$LayoutParams")
+                lp = FrameLP(px_w, px_h)
+            else:
+                try:
+                    lp.width = px_w
+                    lp.height = px_h
+                except Exception:
+                    pass
+            try:
+                lp.leftMargin = px_x
+                lp.topMargin = px_y
+                lp.rightMargin = 0
+                lp.bottomMargin = 0
+            except Exception:
+                pass
+            native_view.setLayoutParams(lp)
+        except Exception:
+            pass
 
-    direction = props.get("flex_direction", "column")
-    vertical = is_vertical(direction)
-
-    if "spacing" in props and props["spacing"]:
-        px = _dp(float(props["spacing"]))
-        GradientDrawable = jclass("android.graphics.drawable.GradientDrawable")
-        d = GradientDrawable()
-        d.setColor(0x00000000)
-        d.setSize(1 if vertical else px, px if vertical else 1)
-        container.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE)
-        container.setDividerDrawable(d)
-
-    if "padding" in props:
-        left, top, right, bottom = resolve_padding(props["padding"])
-        container.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
-
-    gravity = 0
-    ai = props.get("align_items") or props.get("alignment")
-    if ai:
-        if vertical:
-            cross_map = {
-                "stretch": Gravity.FILL_HORIZONTAL,
-                "fill": Gravity.FILL_HORIZONTAL,
-                "flex_start": Gravity.START,
-                "leading": Gravity.START,
-                "start": Gravity.START,
-                "center": Gravity.CENTER_HORIZONTAL,
-                "flex_end": Gravity.END,
-                "trailing": Gravity.END,
-                "end": Gravity.END,
-            }
-        else:
-            cross_map = {
-                "stretch": Gravity.FILL_VERTICAL,
-                "fill": Gravity.FILL_VERTICAL,
-                "flex_start": Gravity.TOP,
-                "top": Gravity.TOP,
-                "center": Gravity.CENTER_VERTICAL,
-                "flex_end": Gravity.BOTTOM,
-                "bottom": Gravity.BOTTOM,
-            }
-        gravity |= cross_map.get(ai, 0)
-
-    jc = props.get("justify_content")
-    if jc:
-        if vertical:
-            main_map = {
-                "flex_start": Gravity.TOP,
-                "center": Gravity.CENTER_VERTICAL,
-                "flex_end": Gravity.BOTTOM,
-            }
-        else:
-            main_map = {
-                "flex_start": Gravity.START,
-                "center": Gravity.CENTER_HORIZONTAL,
-                "flex_end": Gravity.END,
-            }
-        gravity |= main_map.get(jc, 0)
-
-    if gravity:
-        container.setGravity(gravity)
-
-    _apply_common_visual(container, props)
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        try:
+            density = _density()
+            View = jclass("android.view.View")
+            MeasureSpec = View.MeasureSpec
+            w_spec = (
+                MeasureSpec.makeMeasureSpec(int(_safe_max(max_width) * density), MeasureSpec.AT_MOST)
+                if math.isfinite(max_width)
+                else MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            )
+            h_spec = (
+                MeasureSpec.makeMeasureSpec(int(_safe_max(max_height) * density), MeasureSpec.AT_MOST)
+                if math.isfinite(max_height)
+                else MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+            )
+            native_view.measure(w_spec, h_spec)
+            return (
+                native_view.getMeasuredWidth() / density,
+                native_view.getMeasuredHeight() / density,
+            )
+        except Exception:
+            return (0.0, 0.0)
 
 
 # ======================================================================
@@ -197,35 +136,40 @@ def _apply_flex_container(container: Any, props: Dict[str, Any]) -> None:
 # ======================================================================
 
 
-class FlexContainerHandler(ViewHandler):
-    """Unified handler for flex layout containers (Column, Row, View).
+class FlexContainerHandler(AndroidViewHandler):
+    """Container for flex layout — a bare `FrameLayout`.
 
-    All three element types use ``LinearLayout`` with orientation
-    determined by the ``flex_direction`` prop.
+    All flex semantics (direction, alignment, distribution, padding)
+    are computed by the layout engine and applied via
+    [`set_frame`][pythonnative.native_views.android.AndroidViewHandler.set_frame].
+    The container itself is just a positioning surface.
     """
 
     def create(self, props: Dict[str, Any]) -> Any:
-        ll = jclass("android.widget.LinearLayout")(_ctx())
-        direction = props.get("flex_direction", "column")
-        LinearLayout = jclass("android.widget.LinearLayout")
-        ll.setOrientation(LinearLayout.VERTICAL if is_vertical(direction) else LinearLayout.HORIZONTAL)
-        _apply_flex_container(ll, props)
-        _apply_layout(ll, props)
-        return ll
+        fl = jclass("android.widget.FrameLayout")(_ctx())
+        _apply_common_visual(fl, props)
+        return fl
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if changed.keys() & CONTAINER_KEYS:
-            _apply_flex_container(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
+        _apply_common_visual(native_view, changed)
 
     def add_child(self, parent: Any, child: Any) -> None:
+        FrameLP = jclass("android.widget.FrameLayout$LayoutParams")
+        lp = child.getLayoutParams()
+        if lp is None:
+            lp = FrameLP(0, 0)
+            child.setLayoutParams(lp)
         parent.addView(child)
 
     def remove_child(self, parent: Any, child: Any) -> None:
         parent.removeView(child)
 
     def insert_child(self, parent: Any, child: Any, index: int) -> None:
+        FrameLP = jclass("android.widget.FrameLayout$LayoutParams")
+        lp = child.getLayoutParams()
+        if lp is None:
+            lp = FrameLP(0, 0)
+            child.setLayoutParams(lp)
         parent.addView(child, index)
 
 
@@ -234,21 +178,18 @@ class FlexContainerHandler(ViewHandler):
 # ======================================================================
 
 
-class TextHandler(ViewHandler):
+class TextHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         tv = jclass("android.widget.TextView")(_ctx())
         self._apply(tv, props)
-        _apply_layout(tv, props)
         return tv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
 
     def _apply(self, tv: Any, props: Dict[str, Any]) -> None:
         if "text" in props:
-            tv.setText(str(props["text"]))
+            tv.setText(str(props["text"]) if props["text"] is not None else "")
         if "font_size" in props and props["font_size"] is not None:
             tv.setTextSize(float(props["font_size"]))
         if "color" in props and props["color"] is not None:
@@ -265,21 +206,18 @@ class TextHandler(ViewHandler):
             tv.setGravity(mapping.get(props["text_align"], Gravity.START))
 
 
-class ButtonHandler(ViewHandler):
+class ButtonHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         btn = jclass("android.widget.Button")(_ctx())
         self._apply(btn, props)
-        _apply_layout(btn, props)
         return btn
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
 
     def _apply(self, btn: Any, props: Dict[str, Any]) -> None:
         if "title" in props:
-            btn.setText(str(props["title"]))
+            btn.setText(str(props["title"]) if props["title"] is not None else "")
         if "font_size" in props and props["font_size"] is not None:
             btn.setTextSize(float(props["font_size"]))
         if "color" in props and props["color"] is not None:
@@ -305,19 +243,25 @@ class ButtonHandler(ViewHandler):
                 btn.setOnClickListener(None)
 
 
-class ScrollViewHandler(ViewHandler):
+class ScrollViewHandler(AndroidViewHandler):
+    """Scroll container — wraps a single child whose height is unbounded.
+
+    Only the *outer* `ScrollView` is positioned by the layout engine;
+    its child receives an unbounded main-axis available height during
+    layout (see
+    [`pythonnative.reconciler.Reconciler._build_layout_tree`][pythonnative.reconciler.Reconciler._build_layout_tree])
+    so the child can be taller than the visible viewport.
+    """
+
     def create(self, props: Dict[str, Any]) -> Any:
         sv = jclass("android.widget.ScrollView")(_ctx())
         if "background_color" in props and props["background_color"] is not None:
             sv.setBackgroundColor(parse_color_int(props["background_color"]))
-        _apply_layout(sv, props)
         return sv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         if "background_color" in changed and changed["background_color"] is not None:
             native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
 
     def add_child(self, parent: Any, child: Any) -> None:
         parent.addView(child)
@@ -326,23 +270,20 @@ class ScrollViewHandler(ViewHandler):
         parent.removeView(child)
 
 
-class TextInputHandler(ViewHandler):
+class TextInputHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         et = jclass("android.widget.EditText")(_ctx())
         self._apply(et, props)
-        _apply_layout(et, props)
         return et
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
 
     def _apply(self, et: Any, props: Dict[str, Any]) -> None:
         if "value" in props:
-            et.setText(str(props["value"]))
+            et.setText(str(props["value"]) if props["value"] is not None else "")
         if "placeholder" in props:
-            et.setHint(str(props["placeholder"]))
+            et.setHint(str(props["placeholder"]) if props["placeholder"] is not None else "")
         if "font_size" in props and props["font_size"] is not None:
             et.setTextSize(float(props["font_size"]))
         if "color" in props and props["color"] is not None:
@@ -374,17 +315,14 @@ class TextInputHandler(ViewHandler):
                 et.addTextChangedListener(ChangeProxy(cb))
 
 
-class ImageHandler(ViewHandler):
+class ImageHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         iv = jclass("android.widget.ImageView")(_ctx())
         self._apply(iv, props)
-        _apply_layout(iv, props)
         return iv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         self._apply(native_view, changed)
-        if changed.keys() & LAYOUT_KEYS:
-            _apply_layout(native_view, changed)
 
     def _apply(self, iv: Any, props: Dict[str, Any]) -> None:
         if "background_color" in props and props["background_color"] is not None:
@@ -454,11 +392,10 @@ class ImageHandler(ViewHandler):
             pass
 
 
-class SwitchHandler(ViewHandler):
+class SwitchHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         sw = jclass("android.widget.Switch")(_ctx())
         self._apply(sw, props)
-        _apply_layout(sw, props)
         return sw
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -481,13 +418,12 @@ class SwitchHandler(ViewHandler):
             sw.setOnCheckedChangeListener(CheckedProxy(cb))
 
 
-class ProgressBarHandler(ViewHandler):
+class ProgressBarHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         style = jclass("android.R$attr").progressBarStyleHorizontal
         pb = jclass("android.widget.ProgressBar")(_ctx(), None, 0, style)
         pb.setMax(1000)
         self._apply(pb, props)
-        _apply_layout(pb, props)
         return pb
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -498,12 +434,11 @@ class ProgressBarHandler(ViewHandler):
             pb.setProgress(int(float(props["value"]) * 1000))
 
 
-class ActivityIndicatorHandler(ViewHandler):
+class ActivityIndicatorHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         pb = jclass("android.widget.ProgressBar")(_ctx())
         if not props.get("animating", True):
             pb.setVisibility(jclass("android.view.View").GONE)
-        _apply_layout(pb, props)
         return pb
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -512,12 +447,11 @@ class ActivityIndicatorHandler(ViewHandler):
             native_view.setVisibility(View.VISIBLE if changed["animating"] else View.GONE)
 
 
-class WebViewHandler(ViewHandler):
+class WebViewHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         wv = jclass("android.webkit.WebView")(_ctx())
         if "url" in props and props["url"]:
             wv.loadUrl(str(props["url"]))
-        _apply_layout(wv, props)
         return wv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -525,29 +459,22 @@ class WebViewHandler(ViewHandler):
             native_view.loadUrl(str(changed["url"]))
 
 
-class SpacerHandler(ViewHandler):
+class SpacerHandler(AndroidViewHandler):
+    """Empty layout placeholder used as a flexible gap.
+
+    All sizing semantics now live in the layout engine — ``Spacer``
+    behaves identically to a `View` with the same style props (e.g.,
+    ``flex: 1`` for an expanding spacer, ``size`` for a fixed gap).
+    """
+
     def create(self, props: Dict[str, Any]) -> Any:
-        v = jclass("android.view.View")(_ctx())
-        if "size" in props and props["size"] is not None:
-            px = _dp(float(props["size"]))
-            lp = jclass("android.widget.LinearLayout$LayoutParams")(px, px)
-            v.setLayoutParams(lp)
-        if "flex" in props and props["flex"] is not None:
-            lp = v.getLayoutParams()
-            if lp is None:
-                lp = jclass("android.widget.LinearLayout$LayoutParams")(0, 0)
-            lp.weight = float(props["flex"])
-            v.setLayoutParams(lp)
-        return v
+        return jclass("android.view.View")(_ctx())
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if "size" in changed and changed["size"] is not None:
-            px = _dp(float(changed["size"]))
-            lp = jclass("android.widget.LinearLayout$LayoutParams")(px, px)
-            native_view.setLayoutParams(lp)
+        pass
 
 
-class SafeAreaViewHandler(ViewHandler):
+class SafeAreaViewHandler(AndroidViewHandler):
     """Safe-area container using FrameLayout with ``fitsSystemWindows``."""
 
     def create(self, props: Dict[str, Any]) -> Any:
@@ -555,9 +482,6 @@ class SafeAreaViewHandler(ViewHandler):
         fl.setFitsSystemWindows(True)
         if "background_color" in props and props["background_color"] is not None:
             fl.setBackgroundColor(parse_color_int(props["background_color"]))
-        if "padding" in props:
-            left, top, right, bottom = resolve_padding(props["padding"])
-            fl.setPadding(_dp(left), _dp(top), _dp(right), _dp(bottom))
         return fl
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -571,7 +495,7 @@ class SafeAreaViewHandler(ViewHandler):
         parent.removeView(child)
 
 
-class ModalHandler(ViewHandler):
+class ModalHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         placeholder = jclass("android.view.View")(_ctx())
         placeholder.setVisibility(jclass("android.view.View").GONE)
@@ -583,13 +507,16 @@ class ModalHandler(ViewHandler):
     def add_child(self, parent: Any, child: Any) -> None:
         pass
 
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        # Modal is a virtual placeholder; never gets a positioned frame.
+        return
 
-class SliderHandler(ViewHandler):
+
+class SliderHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         sb = jclass("android.widget.SeekBar")(_ctx())
         sb.setMax(1000)
         self._apply(sb, props)
-        _apply_layout(sb, props)
         return sb
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
@@ -628,11 +555,21 @@ class SliderHandler(ViewHandler):
 _android_tabbar_state: dict = {"callback": None, "items": []}
 
 
-class TabBarHandler(ViewHandler):
+class TabBarHandler(AndroidViewHandler):
     """Native tab bar using ``BottomNavigationView`` from Material Components.
 
     Falls back to a horizontal ``LinearLayout`` with ``Button`` children
     when Material Components is unavailable.
+
+    The intrinsic height is left to ``BottomNavigationView.measure(…)``
+    (inherited from
+    [`AndroidViewHandler`][pythonnative.native_views.android.AndroidViewHandler]).
+    Material 3 chooses the right height per item configuration —
+    56 dp for label-only, 80 dp for icon+label, etc. — and positions
+    the active-indicator pill against that height. Hard-coding our
+    own height was found to throw off the pill's geometry and to
+    interact badly with the late ``WindowInsets`` callback (the bar
+    grew on first tab tap), so we now defer entirely to the system.
     """
 
     _is_material: bool = True
@@ -641,10 +578,6 @@ class TabBarHandler(ViewHandler):
         try:
             bnv = jclass("com.google.android.material.bottomnavigation.BottomNavigationView")(_ctx())
             bnv.setBackgroundColor(parse_color_int("#FFFFFF"))
-            ViewGroupLP = jclass("android.view.ViewGroup$LayoutParams")
-            LayoutParams = jclass("android.widget.LinearLayout$LayoutParams")
-            lp = LayoutParams(ViewGroupLP.MATCH_PARENT, ViewGroupLP.WRAP_CONTENT)
-            bnv.setLayoutParams(lp)
             self._is_material = True
             self._apply_full(bnv, props)
             return bnv
@@ -767,7 +700,7 @@ class TabBarHandler(ViewHandler):
                 ll.addView(btn)
 
 
-class PressableHandler(ViewHandler):
+class PressableHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         fl = jclass("android.widget.FrameLayout")(_ctx())
         fl.setClickable(True)
@@ -837,3 +770,25 @@ def register_handlers(registry: Any) -> None:
     registry.register("Slider", SliderHandler())
     registry.register("TabBar", TabBarHandler())
     registry.register("Pressable", PressableHandler())
+
+
+__all__ = [
+    "AndroidViewHandler",
+    "FlexContainerHandler",
+    "TextHandler",
+    "ButtonHandler",
+    "ScrollViewHandler",
+    "TextInputHandler",
+    "ImageHandler",
+    "SwitchHandler",
+    "ProgressBarHandler",
+    "ActivityIndicatorHandler",
+    "WebViewHandler",
+    "SpacerHandler",
+    "SafeAreaViewHandler",
+    "ModalHandler",
+    "SliderHandler",
+    "TabBarHandler",
+    "PressableHandler",
+    "register_handlers",
+]

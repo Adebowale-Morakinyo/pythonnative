@@ -33,6 +33,7 @@ PythonNative is a cross-platform toolkit for building native Android and iOS app
 - **Declarative UI:** Describe *what* your UI should look like with element functions (`Text`, `Button`, `Column`, `Row`, etc.). PythonNative creates and updates native views automatically.
 - **Hooks and function components:** Manage state with `use_state`, side effects with `use_effect`, and navigation with `use_navigation`, all through one consistent pattern.
 - **`style` prop:** Pass all visual and layout properties through a single `style` dict, composable via `StyleSheet`.
+- **Cross-platform flexbox engine:** A pure-Python, Yoga-style layout engine computes frames once and applies them to native views, so `flex`, `padding`, `aspect_ratio`, and `position: "absolute"` produce the same geometry on Android and iOS.
 - **Virtual view tree + reconciler:** Element trees are diffed and patched with minimal native mutations, similar to React's reconciliation.
 - **Direct native bindings:** Python calls platform APIs directly through Chaquopy and rubicon-objc, with no JavaScript bridge.
 - **CLI scaffolding:** `pn init` creates a ready-to-run project; `pn run android` and `pn run ios` build and launch your app.

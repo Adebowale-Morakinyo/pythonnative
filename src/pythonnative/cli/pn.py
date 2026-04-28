@@ -354,6 +354,76 @@ def _start_android_log_stream() -> Optional[subprocess.Popen]:
     return proc
 
 
+def _booted_ios_udid() -> Optional[str]:
+    """Return a booted iOS Simulator's UDID, or `None` if none is booted.
+
+    Used by `_start_ios_log_stream` so the hot-reload path doesn't
+    need to thread the UDID through from the install step.
+    """
+    try:
+        result = subprocess.run(
+            ["xcrun", "simctl", "list", "devices", "booted", "--json"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except FileNotFoundError:
+        return None
+    try:
+        data = json.loads(result.stdout or "{}")
+    except json.JSONDecodeError:
+        return None
+    for _runtime, devices in (data.get("devices") or {}).items():
+        for device in devices or []:
+            if device.get("state") == "Booted":
+                udid = device.get("udid")
+                if udid:
+                    return str(udid)
+    return None
+
+
+def _start_ios_log_stream() -> Optional[subprocess.Popen]:
+    """Re-launch the iOS app with a console PTY so its stdio streams here.
+
+    Mirrors the approach `pn run ios` (without `--hot-reload`) takes:
+    ``xcrun simctl launch --console-pty`` attaches the parent
+    terminal to the app's stderr, which is where Python ``print()``
+    output is routed (see `pythonnative._ios_log`) and where Swift
+    ``NSLog`` calls land. Unlike ``log stream``, this *only*
+    surfaces what the app writes itself — none of UIKit's verbose
+    ``os_log`` chatter.
+
+    Returns:
+        The launched subprocess (output inherits the parent
+        terminal), or `None` when no simulator is booted or
+        `xcrun` is unavailable.
+    """
+    udid = _booted_ios_udid()
+    if udid is None:
+        print("Note: no booted iOS Simulator found; skipping log streaming.")
+        return None
+    sim_env = os.environ.copy()
+    sim_env["SIMCTL_CHILD_PYTHONUNBUFFERED"] = "1"
+    try:
+        proc = subprocess.Popen(
+            [
+                "xcrun",
+                "simctl",
+                "launch",
+                "--console-pty",
+                "--terminate-running-process",
+                udid,
+                IOS_BUNDLE_ID,
+            ],
+            env=sim_env,
+        )
+    except FileNotFoundError:
+        print("Note: 'xcrun' not found on PATH; skipping iOS log streaming.")
+        return None
+    print("Streaming iOS app logs from the simulator (Ctrl+C to stop)...")
+    return proc
+
+
 def _terminate_subprocess(proc: Optional[subprocess.Popen]) -> None:
     """Politely stop a subprocess, escalating to `SIGKILL` if needed.
 
@@ -947,14 +1017,15 @@ def run_project(args: argparse.Namespace) -> None:
                             capture_output=True,
                         )
                         print("Stopped log streaming.")
+                elif hot_reload:
+                    # Skip launching here; ``_run_hot_reload`` will
+                    # spawn the app via ``simctl launch --console-pty``
+                    # so its ``print()`` / ``NSLog`` output streams to
+                    # the parent terminal alongside the file watcher.
+                    pass
                 else:
                     subprocess.run(["xcrun", "simctl", "launch", udid, IOS_BUNDLE_ID], check=False)
                     print("Launched iOS app on Simulator (best-effort).")
-                    if show_logs and hot_reload:
-                        print(
-                            "Note: live Python log streaming on iOS is disabled while --hot-reload is active; "
-                            "use Console.app or Xcode to view logs."
-                        )
             except Exception:
                 print("Failed to auto-run on Simulator; open the project in Xcode to run.")
 
@@ -1000,13 +1071,16 @@ def _run_hot_reload(platform: str, project_dir: str, build_dir: str, show_logs: 
     watcher = FileWatcher(app_dir, on_change, interval=1.0)
     watcher.start()
 
-    logcat_proc: Optional[subprocess.Popen] = None
-    if show_logs and platform == "android":
-        logcat_proc = _start_android_log_stream()
+    log_proc: Optional[subprocess.Popen] = None
+    if show_logs:
+        if platform == "android":
+            log_proc = _start_android_log_stream()
+        elif platform == "ios":
+            log_proc = _start_ios_log_stream()
 
     try:
-        if logcat_proc is not None:
-            logcat_proc.wait()
+        if log_proc is not None:
+            log_proc.wait()
         else:
             import time
 
@@ -1015,7 +1089,7 @@ def _run_hot_reload(platform: str, project_dir: str, build_dir: str, show_logs: 
     except KeyboardInterrupt:
         pass
     finally:
-        _terminate_subprocess(logcat_proc)
+        _terminate_subprocess(log_proc)
         watcher.stop()
         print("\n[hot-reload] Stopped.")
 

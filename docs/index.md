@@ -25,9 +25,10 @@ def Counter(initial: int = 0):
 ```
 
 That same `Counter` mounts as a `UILabel` plus a `UIButton` inside a
-`UIStackView` on iOS, and as a `TextView` plus a `Button` inside a
-vertical `LinearLayout` on Android. Layouts use `flex` shorthands;
-visuals use a single `style` dict per element.
+`UIView` on iOS, and as a `TextView` plus a `Button` inside a
+`FrameLayout` on Android. PythonNative ships its own pure-Python
+flexbox engine, so the same `flex` / `padding` / `position` rules
+produce identical frames on both platforms.
 
 ## Why PythonNative?
 

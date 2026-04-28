@@ -136,15 +136,36 @@ class ViewController: UIViewController {
         #endif
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // The root view's safeAreaInsets are only valid after iOS has
+        // positioned the view in its window; forward every layout pass
+        // to Python so the reconciler can re-run layout against the
+        // correct viewport (initial mount, rotation, multitasking, etc.).
         #if canImport(PythonKit)
         if pythonReady {
             let ptr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
             do {
                 let pn = try Python.attemptImport("pythonnative.page")
-                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_resume"])
-            } catch {}
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptr, "on_layout"])
+            } catch {
+                NSLog("[PN] swift.viewDidLayoutSubviews -> on_layout failed: \(error)")
+            }
+        }
+        #endif
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        #if canImport(PythonKit)
+        if pythonReady {
+            let ptrAddr = UInt(bitPattern: Unmanaged.passUnretained(self).toOpaque())
+            do {
+                let pn = try Python.attemptImport("pythonnative.page")
+                _ = try pn.forward_lifecycle.throwing.dynamicallyCall(withArguments: [ptrAddr, "on_resume"])
+            } catch {
+                NSLog("[PN] swift.viewDidAppear -> on_resume failed: \(error)")
+            }
         }
         #endif
     }

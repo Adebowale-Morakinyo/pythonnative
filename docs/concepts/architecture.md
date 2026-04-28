@@ -132,8 +132,23 @@ component. App code does not call it directly.
 
 ## Layout
 
-PythonNative uses a **flexbox-inspired layout model** built on
-platform-native layout managers.
+PythonNative ships its own **pure-Python flexbox engine** (a small,
+React-Native-compatible re-implementation of Yoga's algorithm). All
+layout decisions are made in Python and then pushed to native views as
+absolute frames via `set_frame`. This means the *exact same* layout
+rules apply on Android and iOS — there is no platform drift between
+`LinearLayout` and `UIStackView`.
+
+The engine is implemented in `pythonnative.layout` and runs as a
+dedicated **layout pass** after every commit:
+
+```text
+render -> commit (create / update native views)
+      -> flush effects
+      -> build LayoutNode tree from VNodes
+      -> calculate_layout(viewport_w, viewport_h)
+      -> backend.set_frame(view, x, y, w, h) for every node
+```
 
 [`View`][pythonnative.View] is the **universal flex container** (like
 React Native's `View`). It defaults to `flex_direction: "column"`.
@@ -155,19 +170,32 @@ convenience wrappers that fix the direction.
 
 ### Child layout properties
 
-- `flex`: flex grow factor (shorthand).
-- `flex_grow`, `flex_shrink`: individual flex properties.
+- `flex`: shorthand for `flex_grow: N, flex_shrink: 1, flex_basis: 0`.
+- `flex_grow`, `flex_shrink`, `flex_basis`: individual flex properties.
 - `align_self`: override the parent's `align_items` for this child.
-- `width`, `height`: fixed dimensions.
-- `min_width`, `min_height`: minimum size constraints.
+- `width`, `height`: fixed dimensions (numbers or `"%"` strings).
+- `min_width`, `min_height`, `max_width`, `max_height`: size
+  constraints.
+- `aspect_ratio`: derive the unknown axis from the known one.
 - `margin`: outer spacing.
+- `position`: `"relative"` (default) or `"absolute"`. Absolute children
+  are removed from the flex flow and positioned via `top` / `right` /
+  `bottom` / `left`.
 
 Under the hood:
 
-- **Android**: `LinearLayout` with gravity, weights, and
-  divider-based spacing.
-- **iOS**: `UIStackView` with axis, alignment, distribution, and
-  layout margins.
+- **Layout**: `pythonnative.layout.calculate_layout` computes a frame
+  `(x, y, w, h)` for every node.
+- **Android**: every container is a `FrameLayout`; computed frames are
+  applied through `MarginLayoutParams` and `View.setX/setY/setLayoutParams`.
+- **iOS**: every container is a plain `UIView` with
+  `translatesAutoresizingMaskIntoConstraints = NO`; computed frames are
+  applied through `view.frame = CGRect(...)`.
+- **Intrinsic content size**: leaf widgets (`Text`, `Button`, `Image`,
+  `TextInput`, …) implement `measure_intrinsic` so the engine can ask
+  them how big they want to be when no explicit size is set.
+
+See the [Layout engine](layout.md) concept page for a full walkthrough.
 
 ## Native view handlers
 
@@ -177,16 +205,26 @@ submodules:
 
 - `native_views.base`: shared
   [`ViewHandler`][pythonnative.native_views.base.ViewHandler] protocol
-  and common utilities (color parsing, padding resolution, layout
-  keys, flex constants).
+  and common utilities (color parsing, padding resolution, container
+  visual keys).
 - `native_views.android`: Android handlers using Chaquopy's Java
   bridge (`jclass`, `dynamic_proxy`).
 - `native_views.ios`: iOS handlers using rubicon-objc
   (`ObjCClass`, `objc_method`).
 
+Every handler implements two layout-facing methods:
+
+- `set_frame(view, x, y, width, height)` — apply an absolute frame
+  computed by the layout engine.
+- `measure_intrinsic(view, max_width, max_height)` — return the
+  natural content size for leaf widgets (used as a hint by the layout
+  engine).
+
 `Column`, `Row`, and `View` share a single flex-container handler on
-each platform. The handler reads `flex_direction` from the element's
-props to configure the native layout container.
+each platform. Containers are simple `FrameLayout` (Android) /
+`UIView` (iOS) instances; all flex math lives in
+`pythonnative.layout`, so the handlers themselves contain no layout
+logic.
 
 Each handler class maps an element type name (e.g., `"Text"`,
 `"Button"`) to platform-native widget creation, property updates, and
@@ -200,8 +238,9 @@ package can be imported on any platform for testing.
 !!! note "Versus React Native"
     React Native uses JSX plus a JavaScript bridge (or JSI in newer
     versions) plus Yoga layout. PythonNative uses Python plus direct
-    native calls plus platform layout managers; no JS bridge, no
-    serialization overhead.
+    native calls plus a Python-implemented Yoga-style flex engine; no
+    JS bridge, no serialization overhead, and the same layout rules on
+    both platforms.
 
 !!! note "Versus NativeScript"
     NativeScript shares the philosophy of direct, synchronous native
@@ -287,5 +326,6 @@ See the [Navigation guide](../guides/navigation.md) for full details.
 - Read the [Mental model](mental-model.md) for the high-level
   comparisons.
 - Walk through the render loop in [Lifecycle](lifecycle.md).
+- Dive into the flexbox engine in [Layout engine](layout.md).
 - See the platform handlers up close in [Native views](native-views.md).
 - Browse the API: [Package overview](../api/pythonnative.md).

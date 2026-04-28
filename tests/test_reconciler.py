@@ -1,6 +1,6 @@
 """Unit tests for the reconciler using a mock native backend."""
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import pytest
 
@@ -24,6 +24,7 @@ class MockView:
         self.type_name = type_name
         self.props = dict(props)
         self.children: List["MockView"] = []
+        self.frame: Tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)
 
     def __repr__(self) -> str:
         return f"MockView({self.type_name}#{self.id})"
@@ -31,6 +32,15 @@ class MockView:
 
 class MockBackend:
     """Records operations for assertions."""
+
+    # Default intrinsic size for content-bearing leaves (Text, Button, etc.).
+    _LEAF_INTRINSIC = {
+        "Text": (60.0, 16.0),
+        "Button": (80.0, 32.0),
+        "Image": (40.0, 40.0),
+        "TextInput": (120.0, 32.0),
+        "TabBar": (320.0, 49.0),
+    }
 
     def __init__(self) -> None:
         self.ops: List[Any] = []
@@ -55,6 +65,27 @@ class MockBackend:
     def insert_child(self, parent: MockView, child: MockView, parent_type: str, index: int) -> None:
         parent.children.insert(index, child)
         self.ops.append(("insert_child", parent.id, child.id, index))
+
+    def set_frame(
+        self,
+        native_view: MockView,
+        type_name: str,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+    ) -> None:
+        native_view.frame = (x, y, width, height)
+        self.ops.append(("set_frame", native_view.id, x, y, width, height))
+
+    def measure_intrinsic(
+        self,
+        native_view: MockView,
+        type_name: str,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        return self._LEAF_INTRINSIC.get(type_name, (0.0, 0.0))
 
 
 # ======================================================================
@@ -562,3 +593,256 @@ def test_provider_child_native_view_swap() -> None:
     assert len(root.children) == 1
     assert root.children[0].props["text"] == "B"
     assert root.children[0].id != old_child_id
+
+
+# ======================================================================
+# Tests: layout pass
+# ======================================================================
+
+
+def test_layout_pass_runs_after_mount_when_viewport_set() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(320, 480)
+
+    el = Element(
+        "Column",
+        {"width": 320, "height": 480, "spacing": 4},
+        [
+            Element("View", {"height": 50}, []),
+            Element("View", {"height": 80}, []),
+        ],
+    )
+    rec.mount(el)
+
+    set_frame_ops = [op for op in backend.ops if op[0] == "set_frame"]
+    assert set_frame_ops, "Layout pass should emit set_frame ops"
+
+
+def test_layout_pass_skipped_when_no_viewport() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    el = Element("Column", {}, [Element("Text", {"text": "x"}, [])])
+    rec.mount(el)
+    set_frame_ops = [op for op in backend.ops if op[0] == "set_frame"]
+    assert set_frame_ops == []
+
+
+def test_layout_pass_positions_flex_children_in_row() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(300, 100)
+
+    el = Element(
+        "Row",
+        {"flex_direction": "row", "width": 300, "height": 100},
+        [
+            Element("View", {"width": 80, "height": 40}, []),
+            Element("View", {"flex": 1, "height": 40}, []),
+            Element("View", {"width": 60, "height": 40}, []),
+        ],
+    )
+    root = rec.mount(el)
+    # The root view's frame is owned by the page host (e.g., on iOS the root
+    # is positioned below the top safe-area inset by ``_sync_root_frame``);
+    # the layout engine intentionally leaves it untouched. Children are
+    # positioned relative to the root's local origin.
+    assert root.frame == (0.0, 0.0, 0.0, 0.0)
+    assert root.children[0].frame == (0.0, 0.0, 80.0, 40.0)
+    assert root.children[1].frame == (80.0, 0.0, 160.0, 40.0)
+    assert root.children[2].frame == (240.0, 0.0, 60.0, 40.0)
+
+
+def test_layout_pass_handles_absolute_positioning() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(400, 300)
+
+    el = Element(
+        "View",
+        {"width": 400, "height": 300},
+        [
+            Element("View", {"height": 60}, []),
+            Element(
+                "View",
+                {"position": "absolute", "top": 10, "right": 20, "width": 50, "height": 50},
+                [],
+            ),
+        ],
+    )
+    root = rec.mount(el)
+    flow_child, abs_child = root.children
+    assert flow_child.frame[1] == 0
+    assert abs_child.frame == (330.0, 10.0, 50.0, 50.0)
+
+
+def test_layout_pass_handles_padding_and_align_items() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(200, 100)
+
+    el = Element(
+        "Column",
+        {"width": 200, "height": 100, "padding": 8, "align_items": "center"},
+        [Element("View", {"width": 40, "height": 30}, [])],
+    )
+    root = rec.mount(el)
+    child = root.children[0]
+    # Available cross axis after padding = 200 - 16 = 184; centered child
+    # at x = 8 (pad_left) + (184 - 40) / 2 = 80
+    assert child.frame == (80.0, 8.0, 40.0, 30.0)
+
+
+def test_layout_pass_uses_intrinsic_text_size() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(300, 200)
+
+    el = Element(
+        "Column",
+        {"width": 300, "height": 200, "align_items": "flex_start"},
+        [Element("Text", {"text": "hi"}, [])],
+    )
+    root = rec.mount(el)
+    text_view = root.children[0]
+    # MockBackend.measure_intrinsic returns (60, 16) for Text.
+    assert text_view.frame == (0.0, 0.0, 60.0, 16.0)
+
+
+def test_layout_re_runs_on_reconcile() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(200, 100)
+
+    el1 = Element("Row", {"width": 200, "height": 100}, [Element("View", {"width": 50, "height": 50}, [])])
+    root = rec.mount(el1)
+    assert root.children[0].frame == (0.0, 0.0, 50.0, 50.0)
+
+    el2 = Element("Row", {"width": 200, "height": 100}, [Element("View", {"width": 100, "height": 60}, [])])
+    rec.reconcile(el2)
+    assert root.children[0].frame == (0.0, 0.0, 100.0, 60.0)
+
+
+def test_set_viewport_size_triggers_layout_when_tree_exists() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    el = Element("Column", {"width": 100, "height": 50}, [Element("View", {"width": 30, "height": 20}, [])])
+    rec.mount(el)
+    assert all(op[0] != "set_frame" for op in backend.ops)
+
+    rec.set_viewport_size(320, 480)
+    assert any(op[0] == "set_frame" for op in backend.ops)
+
+
+def test_set_viewport_size_idempotent() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(320, 480)
+    rec.mount(Element("Column", {"width": 100, "height": 50}, [Element("View", {"width": 30, "height": 20}, [])]))
+    n_frames_after_mount = sum(1 for op in backend.ops if op[0] == "set_frame")
+
+    rec.set_viewport_size(320, 480)
+    n_frames_after_dup = sum(1 for op in backend.ops if op[0] == "set_frame")
+    assert n_frames_after_mount == n_frames_after_dup
+
+
+def test_set_viewport_size_rejects_non_positive() -> None:
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(0, 0)
+    rec.set_viewport_size(-100, 100)
+    rec.mount(Element("Column", {"width": 100, "height": 50}, []))
+    assert all(op[0] != "set_frame" for op in backend.ops)
+
+
+def test_layout_pass_gives_tabbar_intrinsic_height() -> None:
+    """Regression: TabBar inside a flex:1 column must get its intrinsic height.
+
+    The hello-world tab navigator renders ``View(flex_direction=column,
+    flex=1)`` containing a ``View(flex=1)`` content area and a ``TabBar``
+    leaf. Without an intrinsic-size measure on TabBar the bar collapses
+    to height 0 and disappears from the screen.
+    """
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(320, 600)
+
+    el = Element(
+        "View",
+        {"flex_direction": "column", "flex": 1},
+        [
+            Element("View", {"flex": 1}, []),
+            Element("TabBar", {"items": [{"name": "a", "title": "A"}]}, []),
+        ],
+    )
+    root = rec.mount(el)
+    content_view, tab_bar = root.children
+    # MockBackend reports TabBar intrinsic = (320, 49); the bar must
+    # take that height and the content view must fill the rest.
+    assert tab_bar.frame[3] == 49.0, "TabBar must keep its intrinsic 49pt height"
+    assert tab_bar.frame[1] == 600.0 - 49.0, "TabBar must sit at the bottom of the viewport"
+    assert content_view.frame[3] == 600.0 - 49.0, "Content area must fill the rest"
+
+
+def test_layout_pass_uses_intrinsic_button_size() -> None:
+    """Regression: a Button with no explicit width/height must measure non-zero.
+
+    Mirrors the iOS ``UIButton`` issue where the buttons in the
+    hello-world card became invisible because their intrinsic size
+    came back as ``(0, 0)``.
+    """
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(320, 600)
+
+    el = Element(
+        "Column",
+        {"width": 320, "height": 200, "padding": 16, "align_items": "center"},
+        [
+            Element(
+                "Row",
+                {"flex_direction": "row", "spacing": 8},
+                [
+                    Element("Button", {"title": "Tap me"}, []),
+                    Element("Button", {"title": "Reset"}, []),
+                ],
+            )
+        ],
+    )
+    root = rec.mount(el)
+    row = root.children[0]
+    btn_a, btn_b = row.children
+    # MockBackend reports Button intrinsic = (80, 32).
+    assert btn_a.frame[2] > 0 and btn_a.frame[3] > 0, "Buttons must have non-zero size"
+    assert btn_a.frame[2:] == (80.0, 32.0)
+    assert btn_b.frame[2:] == (80.0, 32.0)
+
+
+def test_spacer_with_size_prop_takes_that_dimension() -> None:
+    """Regression: ``pn.Spacer(size=16)`` must reserve real space, not zero.
+
+    The component-level ``Spacer`` accepts a ``size`` kwarg that is
+    forwarded as a prop; the layout engine only knows ``width`` /
+    ``height``, so the factory must translate the prop. Without the
+    translation a fixed-size spacer collapses to 0 and any siblings
+    relying on it for visual separation get bunched together.
+    """
+    import pythonnative as pn
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec.set_viewport_size(320, 600)
+
+    el = Element(
+        "Row",
+        {"flex_direction": "row", "width": 320, "height": 50},
+        [
+            Element("View", {"width": 40, "height": 40}, []),
+            pn.Spacer(size=24),
+            Element("View", {"width": 40, "height": 40}, []),
+        ],
+    )
+    root = rec.mount(el)
+    a, spacer, b = root.children
+    assert spacer.frame[2] == 24.0, "Spacer(size=24) must take 24pt on the row's main axis"
+    assert b.frame[0] == a.frame[2] + spacer.frame[2], "Sibling sits after spacer"

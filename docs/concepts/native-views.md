@@ -15,7 +15,7 @@ registry used by `pytest`.
 
 Every native widget is implemented as a class that fulfils the
 [`ViewHandler`][pythonnative.native_views.base.ViewHandler] protocol.
-The five hot-path methods are:
+The hot-path methods are:
 
 | Method | When it's called |
 |---|---|
@@ -24,6 +24,8 @@ The five hot-path methods are:
 | `add_child(parent, child, index)` | When a new child appears in this slot. |
 | `remove_child(parent, child)` | When a child is removed from this slot. |
 | `insert_child(parent, child, index)` | When a child moves to a new slot (keyed reconciliation). |
+| `set_frame(view, x, y, width, height)` | After every commit, to apply the frame computed by `pythonnative.layout`. |
+| `measure_intrinsic(view, max_w, max_h)` | Called by the layout engine on leaf widgets that need a content-derived size. |
 
 The handler returns a native view object (a `UIView` on iOS, a
 `android.view.View` on Android). The reconciler holds onto that handle
@@ -40,7 +42,19 @@ class MyHandler(ViewHandler):
     def update_view(self, view, prev, next):
         if prev.get("text") != next.get("text"):
             view.setText(next.get("text", ""))
+
+    def set_frame(self, view, x, y, width, height):
+        view.setFrame(x, y, width, height)
+
+    def measure_intrinsic(self, view, max_w, max_h):
+        size = view.measure(max_w, max_h)
+        return (size.width, size.height)
 ```
+
+Handlers do **not** read flex / margin / padding props themselves —
+those are interpreted by `pythonnative.layout` and turned into
+`set_frame` calls. A handler only needs to apply the frame it is
+given.
 
 ## The registry
 
@@ -62,28 +76,38 @@ reconciler will pick it up.
 
 ## Layout and styling
 
-Both platform implementations agree on a small set of style keys:
+Layout-related style keys are interpreted by the central
+`pythonnative.layout` engine, *not* by the platform handlers. The
+full list (sizing, flex, position, margin, padding, spacing, …) is
+documented in [Component properties](../api/component-properties.md).
+The set of keys the layout engine consumes is exposed as
+`pythonnative.layout.LAYOUT_STYLE_KEYS`.
 
-- **Layout**: `width`, `height`, `flex`, `flex_grow`, `flex_shrink`,
-  `min_width`, `max_width`, `min_height`, `max_height`, `align_self`.
-- **Container**: `flex_direction`, `justify_content`, `align_items`,
-  `spacing`, `padding`, `margin`, `overflow`.
-- **Visual**: `background_color`, `border_*`, `corner_radius`,
-  `font_size`, `font_family`, `bold`, `italic`, `text_align`, `color`.
+Handlers only deal with **visual** properties — colours, fonts,
+borders, corner radii, image scaling, text content. The reconciler
+splits each element's style into "layout-only" keys (forwarded to the
+layout engine) and "visual" keys (forwarded to
+`update_view`). After each commit the reconciler runs the layout pass
+and calls `handler.set_frame(view, x, y, w, h)` for every node.
 
-The handler implementations translate these into:
+On each platform that boils down to:
 
-- **iOS**: `NSLayoutConstraint`s on a `UIView`, `UIStackView` axis
-  configuration for `Column`/`Row`, and `UILabel`/`UIButton`/`UIImage`
-  property assignments for visuals.
-- **Android**: `LinearLayout` orientation for `Column`/`Row`, padding
-  in `dp` (computed from `Resources.getDisplayMetrics().density`), and
-  direct property setters on `TextView`, `Button`, `ImageView`, etc.
+- **iOS**: every container is a plain `UIView` with
+  `translatesAutoresizingMaskIntoConstraints = NO`; `set_frame`
+  assigns `view.frame = CGRect(x, y, w, h)`. Leaf widgets implement
+  `measure_intrinsic` via `sizeThatFits_`. Visual props
+  (`background_color`, `corner_radius`, `font_*`, `color`, `text_align`,
+  …) are applied directly through UIKit setters.
+- **Android**: every container is a plain `FrameLayout`; `set_frame`
+  builds a `MarginLayoutParams` and sets `view.x` / `view.y`. Padding
+  in `dp` is computed from `Resources.getDisplayMetrics().density`. Leaf
+  widgets implement `measure_intrinsic` with `View.measure(...)` plus
+  `MeasureSpec`. Visual props are applied through `setBackgroundColor`,
+  `setTextColor`, `setTextSize`, etc.
 
-A subset of layout keys are **container-only** (`flex_direction`,
-`align_items`, `justify_content`, `spacing`) and another subset is
-**child-only** (`flex`, `flex_grow`, `align_self`). Mixing them up is
-silently ignored: the handler only consults the keys that apply.
+Because layout is centralised, the same `style` dict produces the same
+geometry on Android and iOS — there is no "container-only" vs
+"child-only" trap to fall into.
 
 ## Children
 
@@ -92,10 +116,10 @@ native view. The reconciler determines insertion order (and reorders
 on key change), but the handler is responsible for the actual native
 mutations:
 
-- iOS containers use `addArrangedSubview:` /
-  `insertArrangedSubview:atIndex:` on `UIStackView`.
+- iOS containers use `addSubview_` and
+  `insertSubview_atIndex_` on a plain `UIView`.
 - Android containers use `addView(child, index)` /
-  `removeView(child)` on `LinearLayout`.
+  `removeView(child)` on a `FrameLayout`.
 
 For non-container elements (e.g., `Image`), the registry simply doesn't
 register `add_child` / `remove_child`, and the reconciler raises if
@@ -112,14 +136,29 @@ creating real widgets:
 from pythonnative.native_views import set_registry, NativeViewRegistry
 
 class _MockHandler:
-    def create_view(self, props): return {"props": props, "children": []}
-    def update_view(self, v, p, n): v["props"] = n
-    def add_child(self, p, c, i): p["children"].insert(i, c)
-    def remove_child(self, p, c): p["children"].remove(c)
-    def insert_child(self, p, c, i): p["children"].insert(i, c)
+    def create_view(self, props):
+        return {"props": props, "children": [], "frame": (0, 0, 0, 0)}
+
+    def update_view(self, v, p, n):
+        v["props"] = n
+
+    def add_child(self, p, c, i):
+        p["children"].insert(i, c)
+
+    def remove_child(self, p, c):
+        p["children"].remove(c)
+
+    def insert_child(self, p, c, i):
+        p["children"].insert(i, c)
+
+    def set_frame(self, v, x, y, w, h):
+        v["frame"] = (x, y, w, h)
+
+    def measure_intrinsic(self, v, max_w, max_h):
+        return (0.0, 0.0)
 
 mock = NativeViewRegistry()
-for ty in ("Text", "Button", "Column", "Row"):
+for ty in ("Text", "Button", "View", "Column", "Row"):
     mock.register(ty, _MockHandler())
 set_registry(mock)
 ```
@@ -159,5 +198,7 @@ The reconciler treats `Rating` like any other element after that.
 ## Next steps
 
 - Browse the API: [Native views](../api/native_views.md).
+- Read the [Layout engine](layout.md) concept page to understand how
+  `set_frame` calls are produced.
 - See how the reconciler drives handlers: [Reconciliation](reconciliation.md).
 - Wrap a device API instead of a widget: [Native modules guide](../guides/native-modules.md).

@@ -23,7 +23,7 @@ A mock registry can be installed via
 reconciler with no real native views.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from .base import ViewHandler
 
@@ -33,8 +33,8 @@ class NativeViewRegistry:
 
     The reconciler depends only on this protocol:
     `create_view`, `update_view`, `add_child`, `remove_child`,
-    `insert_child`. Implementations may be real (Android/iOS) or
-    mocked for tests.
+    `insert_child`, `set_frame`, `measure_intrinsic`. Implementations
+    may be real (Android/iOS) or mocked for tests.
     """
 
     def __init__(self) -> None:
@@ -120,6 +120,42 @@ class NativeViewRegistry:
         handler = self._handlers.get(parent_type)
         if handler is not None:
             handler.insert_child(parent, child, index)
+
+    def set_frame(
+        self,
+        native_view: Any,
+        type_name: str,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+    ) -> None:
+        """Position and size a native view via the appropriate handler.
+
+        Called by the reconciler's layout pass after every commit, with
+        coordinates computed by ``pythonnative.layout`` in points
+        relative to the parent's content origin.
+        """
+        handler = self._handlers.get(type_name)
+        if handler is not None:
+            handler.set_frame(native_view, x, y, width, height)
+
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        type_name: str,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        """Return the natural ``(width, height)`` of a content-sized view.
+
+        Used by the layout engine for leaves whose intrinsic size
+        depends on their content (text, buttons, images).
+        """
+        handler = self._handlers.get(type_name)
+        if handler is None:
+            return (0.0, 0.0)
+        return handler.measure_intrinsic(native_view, max_width, max_height)
 
 
 # ======================================================================

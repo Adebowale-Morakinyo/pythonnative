@@ -6,14 +6,13 @@ require their respective runtime environments; they are exercised by
 E2E tests on device.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 import pytest
 
+from pythonnative.layout import LAYOUT_STYLE_KEYS
 from pythonnative.native_views import NativeViewRegistry, set_registry
 from pythonnative.native_views.base import (
-    CONTAINER_KEYS,
-    LAYOUT_KEYS,
     ViewHandler,
     is_vertical,
     parse_color_int,
@@ -55,7 +54,7 @@ def test_parse_color_with_whitespace() -> None:
 
 
 # ======================================================================
-# resolve_padding
+# resolve_padding (legacy helper retained for handlers that still need it)
 # ======================================================================
 
 
@@ -112,43 +111,35 @@ def test_is_vertical_row_reverse() -> None:
 
 
 # ======================================================================
-# LAYOUT_KEYS / CONTAINER_KEYS
+# Layout-engine ownership
 # ======================================================================
 
 
-def test_layout_keys_contains_expected() -> None:
-    expected = {
+def test_layout_style_keys_includes_flex_props() -> None:
+    """All flex / sizing props are owned by the layout engine, not handlers."""
+    for key in (
         "width",
         "height",
         "flex",
         "flex_grow",
         "flex_shrink",
-        "margin",
-        "min_width",
-        "max_width",
-        "min_height",
-        "max_height",
+        "flex_basis",
+        "flex_direction",
+        "justify_content",
+        "align_items",
         "align_self",
+        "padding",
+        "margin",
+        "spacing",
+        "gap",
         "position",
         "top",
         "right",
         "bottom",
         "left",
-    }
-    assert expected == LAYOUT_KEYS
-
-
-def test_container_keys_contains_expected() -> None:
-    expected = {
-        "flex_direction",
-        "justify_content",
-        "align_items",
-        "overflow",
-        "spacing",
-        "padding",
-        "background_color",
-    }
-    assert expected == CONTAINER_KEYS
+        "aspect_ratio",
+    ):
+        assert key in LAYOUT_STYLE_KEYS
 
 
 # ======================================================================
@@ -190,6 +181,18 @@ def test_view_handler_insert_child_delegates() -> None:
     assert calls == [("add", "parent", "child")]
 
 
+def test_view_handler_set_frame_default_noop() -> None:
+    """Default ``set_frame`` is a no-op so virtual nodes can opt out."""
+    handler = ViewHandler()
+    handler.set_frame(None, 0, 0, 100, 50)
+
+
+def test_view_handler_measure_intrinsic_default_zero() -> None:
+    """Default ``measure_intrinsic`` returns ``(0, 0)`` for handlers without intrinsic size."""
+    handler = ViewHandler()
+    assert handler.measure_intrinsic(None, 100.0, 100.0) == (0.0, 0.0)
+
+
 # ======================================================================
 # NativeViewRegistry
 # ======================================================================
@@ -199,6 +202,7 @@ class StubView:
     def __init__(self, type_name: str, props: Dict[str, Any]) -> None:
         self.type_name = type_name
         self.props = dict(props)
+        self.frame: Tuple[float, float, float, float] = (0.0, 0.0, 0.0, 0.0)
 
 
 class StubHandler(ViewHandler):
@@ -207,6 +211,13 @@ class StubHandler(ViewHandler):
 
     def update(self, native_view: Any, changed_props: Dict[str, Any]) -> None:
         native_view.props.update(changed_props)
+
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        native_view.frame = (x, y, width, height)
+
+    def measure_intrinsic(self, native_view: Any, max_width: float, max_height: float) -> Tuple[float, float]:
+        # Pretend the stub view is 40x10 plus its content length.
+        return (min(40.0 + len(native_view.props.get("text", "")), max_width), 10.0)
 
 
 def test_registry_create_view() -> None:
@@ -241,6 +252,33 @@ def test_registry_child_ops_unknown_type_noop() -> None:
     reg.add_child(None, None, "Unknown")
     reg.remove_child(None, None, "Unknown")
     reg.insert_child(None, None, "Unknown", 0)
+
+
+def test_registry_set_frame_dispatches_to_handler() -> None:
+    reg = NativeViewRegistry()
+    reg.register("Text", StubHandler())
+    view = reg.create_view("Text", {"text": "x"})
+    reg.set_frame(view, "Text", 5.0, 10.0, 100.0, 50.0)
+    assert view.frame == (5.0, 10.0, 100.0, 50.0)
+
+
+def test_registry_set_frame_unknown_type_noop() -> None:
+    reg = NativeViewRegistry()
+    reg.set_frame(None, "Unknown", 0, 0, 100, 50)
+
+
+def test_registry_measure_intrinsic_dispatches() -> None:
+    reg = NativeViewRegistry()
+    reg.register("Text", StubHandler())
+    view = reg.create_view("Text", {"text": "abc"})
+    w, h = reg.measure_intrinsic(view, "Text", 1000.0, 1000.0)
+    assert w == 43.0  # 40 + 3
+    assert h == 10.0
+
+
+def test_registry_measure_intrinsic_unknown_type_zero() -> None:
+    reg = NativeViewRegistry()
+    assert reg.measure_intrinsic(None, "Unknown", 1000.0, 1000.0) == (0.0, 0.0)
 
 
 def test_set_registry_injects() -> None:

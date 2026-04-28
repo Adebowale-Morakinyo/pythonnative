@@ -83,6 +83,17 @@ need to build them locally.
 Don't put `pythonnative` itself in `requirements.txt`; the CLI
 bundles the installed copy directly.
 
+## Where do `flex`, `padding`, and `position: "absolute"` actually run?
+
+In Python. PythonNative ships its own pure-Python flexbox engine
+(`pythonnative.layout`) and runs it after every commit. The engine produces an absolute frame for every element, and
+the reconciler hands those frames to the platform handlers via
+`set_frame`. Containers on both platforms are simple
+`UIView` / `FrameLayout` instances — there is no `UIStackView` or
+`LinearLayout` in the picture, so there is no platform drift between
+the two backends. See [Layout engine](../concepts/layout.md) for
+details.
+
 ## How is state shared across screens?
 
 Two main options:

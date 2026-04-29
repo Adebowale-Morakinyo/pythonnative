@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.11.0 (2026-04-29)
+
+### Features
+
+- **layout**: Add pure-Python flexbox engine; rewrite native containers
+  ([`4247386`](https://github.com/pythonnative/pythonnative/commit/42473866ee7c2380e6c38f4e42966c64ca3c2bb8))
+
+
 ## v0.10.0 (2026-04-27)
 
 ### Documentation

@@ -515,6 +515,8 @@
       
         
       
+        
+      
     
     
     
@@ -717,6 +719,34 @@
     
   
     Reconciliation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout Engine
   
 
     
@@ -1348,6 +1378,8 @@
       
         
       
+        
+      
     
     
     
@@ -1550,6 +1582,34 @@
     
   
     Reconciler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout
   
 
     
@@ -2052,6 +2112,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#where-do-flex-padding-and-position-absolute-actually-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where do flex, padding, and position: "absolute" actually run?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-is-state-shared-across-screens" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2315,6 +2386,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#where-do-flex-padding-and-position-absolute-actually-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where do flex, padding, and position: "absolute" actually run?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-is-state-shared-across-screens" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2517,6 +2599,15 @@ extensions (numpy, Pillow) have no upstream iOS wheels yet, so you'd
 need to build them locally.</p>
 <p>Don't put <code>pythonnative</code> itself in <code>requirements.txt</code>; the CLI
 bundles the installed copy directly.</p>
+<h2 id="where-do-flex-padding-and-position-absolute-actually-run">Where do <code>flex</code>, <code>padding</code>, and <code>position: "absolute"</code> actually run?<a class="headerlink" href="#where-do-flex-padding-and-position-absolute-actually-run" title="Permanent link">&para;</a></h2>
+<p>In Python. PythonNative ships its own pure-Python flexbox engine
+(<code>pythonnative.layout</code>) and runs it after every commit. The engine produces an absolute frame for every element, and
+the reconciler hands those frames to the platform handlers via
+<code>set_frame</code>. Containers on both platforms are simple
+<code>UIView</code> / <code>FrameLayout</code> instances — there is no <code>UIStackView</code> or
+<code>LinearLayout</code> in the picture, so there is no platform drift between
+the two backends. See <a href="../../concepts/layout/">Layout engine</a> for
+details.</p>
 <h2 id="how-is-state-shared-across-screens">How is state shared across screens?<a class="headerlink" href="#how-is-state-shared-across-screens" title="Permanent link">&para;</a></h2>
 <p>Two main options:</p>
 <ul>

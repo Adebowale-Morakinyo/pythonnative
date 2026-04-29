@@ -18,7 +18,7 @@
         <link rel="prev" href="../page/">
       
       
-        <link rel="next" href="../style/">
+        <link rel="next" href="../layout/">
       
       
         
@@ -515,6 +515,8 @@
       
         
       
+        
+      
     
     
     
@@ -717,6 +719,34 @@
     
   
     Reconciliation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout Engine
   
 
     
@@ -1350,6 +1380,8 @@
       
         
       
+        
+      
     
     
     
@@ -1649,6 +1681,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.set_viewport_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;set_viewport_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.compute_layout_for_test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;compute_layout_for_test
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1669,6 +1723,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2189,6 +2271,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.set_viewport_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;set_viewport_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.compute_layout_for_test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;compute_layout_for_test
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2272,6 +2376,13 @@ native mutations.</p>
   re-renders.</li>
 <li><strong>Post-render effect flushing</strong>. After each mount or reconcile pass,
   all queued effects are executed so they see the committed native tree.</li>
+<li><strong>Layout pass</strong>: after every commit, a parallel
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="../layout/#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> tree is built from
+  the committed VNodes and fed through
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt;" href="../layout/#pythonnative.layout.calculate_layout"><code>calculate_layout</code></a>; the
+  resulting per-node frames are applied via the backend's
+  <code>set_frame</code>. The viewport size is supplied by the page host via
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_viewport_size&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.set_viewport_size"><code>set_viewport_size</code></a>.</li>
 </ul>
 
 
@@ -2532,6 +2643,22 @@ an iOS backend; tests can pass a mock.</p>
                 </div>
               </td>
             </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_viewport_size&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.set_viewport_size&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.set_viewport_size">set_viewport_size</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Update the viewport size and re-run layout if it changed.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compute_layout_for_test&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.compute_layout_for_test&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.compute_layout_for_test">compute_layout_for_test</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Build and compute a layout tree without touching the backend.</p>
+                </div>
+              </td>
+            </tr>
       </tbody>
     </table>
 
@@ -2703,6 +2830,101 @@ an iOS backend; tests can pass a mock.</p>
           </tr>
       </tbody>
     </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.set_viewport_size" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">set_viewport_size</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.set_viewport_size" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_viewport_size</span><span class="p">(</span><span class="n">width</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Update the viewport size and re-run layout if it changed.</p>
+<p>Called by the page host whenever the platform reports a new
+container size (Android: <code>onLayoutChange</code>; iOS:
+<code>viewDidLayoutSubviews</code>). The first call after mount
+triggers the initial layout pass; subsequent identical
+sizes are no-ops.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>width</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Viewport width in points.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>height</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Viewport height in points.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.compute_layout_for_test" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">compute_layout_for_test</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.compute_layout_for_test" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">compute_layout_for_test</span><span class="p">(</span><span class="n">viewport_width</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n">viewport_height</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt; (&lt;code&gt;pythonnative.layout.LayoutNode&lt;/code&gt;)" href="../layout/#pythonnative.layout.LayoutNode">LayoutNode</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Build and compute a layout tree without touching the backend.</p>
+<p>Test helper that returns the synthetic viewport <code>LayoutNode</code>
+with all descendants positioned. Returns <code>None</code> if no tree
+has been mounted yet.</p>
 
 
     </div>

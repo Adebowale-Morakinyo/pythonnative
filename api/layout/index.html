@@ -12,13 +12,13 @@
         <meta name="author" content="Owen Carey">
       
       
-        <link rel="canonical" href="https://docs.pythonnative.com/concepts/lifecycle/">
+        <link rel="canonical" href="https://docs.pythonnative.com/api/layout/">
       
       
-        <link rel="prev" href="../hooks/">
+        <link rel="prev" href="../reconciler/">
       
       
-        <link rel="next" href="../reconciliation/">
+        <link rel="next" href="../style/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Lifecycle - PythonNative</title>
+        <title>Layout - PythonNative</title>
       
     
     
@@ -67,17 +67,17 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Lifecycle - PythonNative" />
+<meta property="og:title" content="Layout - PythonNative" />
 <meta property="og:description" content="Cross-platform native UI toolkit for Android and iOS" />
-<meta property="og:image" content="https://docs.pythonnative.com/assets/images/social/concepts/lifecycle.png" />
+<meta property="og:image" content="https://docs.pythonnative.com/assets/images/social/api/layout.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.pythonnative.com/concepts/lifecycle/" />
+<meta property="og:url" content="https://docs.pythonnative.com/api/layout/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Lifecycle - PythonNative" />
+<meta property="twitter:title" content="Layout - PythonNative" />
 <meta property="twitter:description" content="Cross-platform native UI toolkit for Android and iOS" />
-<meta property="twitter:image" content="https://docs.pythonnative.com/assets/images/social/concepts/lifecycle.png" />
+<meta property="twitter:image" content="https://docs.pythonnative.com/assets/images/social/api/layout.png" />
 </head>
   
   
@@ -97,7 +97,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lifecycle" class="md-skip">
+        <a href="#layout" class="md-skip">
           Skip to content
         </a>
       
@@ -132,7 +132,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lifecycle
+              Layout
             
           </span>
         </div>
@@ -280,13 +280,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../mental-model/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../concepts/mental-model/" class="md-tabs__link">
           
   
   
@@ -348,11 +346,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../api/pythonnative/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../pythonnative/" class="md-tabs__link">
           
   
   
@@ -496,10 +496,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -523,22 +521,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -556,7 +553,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -574,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mental-model/" class="md-nav__link">
+      <a href="../../concepts/mental-model/" class="md-nav__link">
         
   
   
@@ -602,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture/" class="md-nav__link">
+      <a href="../../concepts/architecture/" class="md-nav__link">
         
   
   
@@ -630,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../components/" class="md-nav__link">
+      <a href="../../concepts/components/" class="md-nav__link">
         
   
   
@@ -658,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hooks/" class="md-nav__link">
+      <a href="../../concepts/hooks/" class="md-nav__link">
         
   
   
@@ -683,37 +680,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Lifecycle
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../concepts/lifecycle/" class="md-nav__link">
         
   
   
@@ -729,103 +699,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#a-single-render-pass" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A single render pass
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#effects-vs-focus-effects" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Effects vs focus effects
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mount-update-unmount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mount, update, unmount
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#navigation-lifecycle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Navigation lifecycle
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#app-lifecycle-android-ios" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        App lifecycle (Android / iOS)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#putting-it-together-a-subscription" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Putting it together: a subscription
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -838,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reconciliation/" class="md-nav__link">
+      <a href="../../concepts/reconciliation/" class="md-nav__link">
         
   
   
@@ -866,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../layout/" class="md-nav__link">
+      <a href="../../concepts/layout/" class="md-nav__link">
         
   
   
@@ -894,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../native-views/" class="md-nav__link">
+      <a href="../../concepts/native-views/" class="md-nav__link">
         
   
   
@@ -1472,8 +1345,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -1511,21 +1386,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
             
   
   
@@ -1543,7 +1419,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1561,7 +1437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/pythonnative/" class="md-nav__link">
+      <a href="../pythonnative/" class="md-nav__link">
         
   
   
@@ -1589,7 +1465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/components/" class="md-nav__link">
+      <a href="../components/" class="md-nav__link">
         
   
   
@@ -1617,7 +1493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/hooks/" class="md-nav__link">
+      <a href="../hooks/" class="md-nav__link">
         
   
   
@@ -1645,7 +1521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/element/" class="md-nav__link">
+      <a href="../element/" class="md-nav__link">
         
   
   
@@ -1673,7 +1549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../page/" class="md-nav__link">
         
   
   
@@ -1701,7 +1577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/reconciler/" class="md-nav__link">
+      <a href="../reconciler/" class="md-nav__link">
         
   
   
@@ -1726,10 +1602,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../api/layout/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1745,6 +1648,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.layout.LAYOUT_STYLE_KEYS" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;LAYOUT_STYLE_KEYS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.layout.LayoutNode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LayoutNode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.layout.calculate_layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;calculate_layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.layout.extract_layout_style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;extract_layout_style
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1757,7 +1735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/style/" class="md-nav__link">
+      <a href="../style/" class="md-nav__link">
         
   
   
@@ -1785,7 +1763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/navigation/" class="md-nav__link">
+      <a href="../navigation/" class="md-nav__link">
         
   
   
@@ -1813,7 +1791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/native_modules/" class="md-nav__link">
+      <a href="../native_modules/" class="md-nav__link">
         
   
   
@@ -1841,7 +1819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/native_views/" class="md-nav__link">
+      <a href="../native_views/" class="md-nav__link">
         
   
   
@@ -1869,7 +1847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/hot_reload/" class="md-nav__link">
+      <a href="../hot_reload/" class="md-nav__link">
         
   
   
@@ -1897,7 +1875,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/utils/" class="md-nav__link">
+      <a href="../utils/" class="md-nav__link">
         
   
   
@@ -1925,7 +1903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/cli/" class="md-nav__link">
+      <a href="../cli/" class="md-nav__link">
         
   
   
@@ -1953,7 +1931,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/component-properties/" class="md-nav__link">
+      <a href="../component-properties/" class="md-nav__link">
         
   
   
@@ -2221,10 +2199,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#a-single-render-pass" class="md-nav__link">
+  <a href="#pythonnative.layout.LAYOUT_STYLE_KEYS" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A single render pass
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;LAYOUT_STYLE_KEYS
       
     </span>
   </a>
@@ -2232,10 +2210,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#effects-vs-focus-effects" class="md-nav__link">
+  <a href="#pythonnative.layout.LayoutNode" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Effects vs focus effects
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;LayoutNode
       
     </span>
   </a>
@@ -2243,10 +2221,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mount-update-unmount" class="md-nav__link">
+  <a href="#pythonnative.layout.calculate_layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mount, update, unmount
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;calculate_layout
       
     </span>
   </a>
@@ -2254,32 +2232,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigation-lifecycle" class="md-nav__link">
+  <a href="#pythonnative.layout.extract_layout_style" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Navigation lifecycle
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#app-lifecycle-android-ios" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        App lifecycle (Android / iOS)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#putting-it-together-a-subscription" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Putting it together: a subscription
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;extract_layout_style
       
     </span>
   </a>
@@ -2314,7 +2270,7 @@
 
 
   
-    <a href="https://github.com/pythonnative/pythonnative/edit/main/docs/concepts/lifecycle.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/pythonnative/pythonnative/edit/main/docs/api/layout.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -2323,157 +2279,512 @@
     
       
     
-    <a href="https://github.com/pythonnative/pythonnative/raw/main/docs/concepts/lifecycle.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/pythonnative/pythonnative/raw/main/docs/api/layout.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="lifecycle">Lifecycle<a class="headerlink" href="#lifecycle" title="Permanent link">&para;</a></h1>
-<p>PythonNative drives the UI through a small, predictable cycle:
-<strong>render</strong>, <strong>commit</strong>, <strong>effects</strong>, and an optional <strong>drain</strong>. This
-page walks through what happens at each step, how navigation changes
-fold into it, and where you can hook in.</p>
-<h2 id="a-single-render-pass">A single render pass<a class="headerlink" href="#a-single-render-pass" title="Permanent link">&para;</a></h2>
-<p>A render pass is triggered by:</p>
-<ul>
-<li>Initial mount via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a>.</li>
-<li>A setter from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_state"><code>use_state</code></a> or a <code>dispatch</code>
-  from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_reducer&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_reducer"><code>use_reducer</code></a>.</li>
-<li>A navigation event (<code>navigate</code>, <code>go_back</code>, <code>replace</code>).</li>
-<li>A hot-reload module swap (see <a href="../../guides/hot-reload/">Hot reload guide</a>).</li>
-</ul>
-<p>The phases:</p>
+<h1 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h1>
+<p>The pure-Python flexbox engine that computes a frame
+<code>(x, y, width, height)</code> for every node in the rendered tree. The
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> runs
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt;" href="#pythonnative.layout.calculate_layout"><code>calculate_layout</code></a> after every
+commit and forwards the resulting frames to the platform handlers via
+<code>set_frame</code>.</p>
+<p>For a conceptual overview, see <a href="../../concepts/layout/">Layout engine</a>.</p>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Pure-Python flexbox layout engine.</p>
+<p>Computes absolute positions and sizes for every node in a layout tree
+based on CSS flexbox-inspired style properties. Inspired by Facebook's
+Yoga and React Native's layout system, but implemented entirely in
+Python so PythonNative does not depend on a native layout library.</p>
+<p>The engine is invoked by the reconciler after each commit pass:</p>
 <ol>
-<li><strong>Render</strong>. Your <code>@component</code> function runs. Hooks register state,
-   queue effects, and capture closures. No native widgets change yet,
-   so this phase is cheap and pure (modulo <code>use_state</code> updates).</li>
-<li><strong>Commit</strong>. The
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> diffs the new
-   tree against the previous one and applies the smallest set of
-   native mutations through the registered
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a>s.</li>
-<li><strong>Effects</strong>. Cleanup callbacks from the <em>previous</em> render run
-   first; new <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> callbacks run
-   after, in depth-first order so children commit before parents.</li>
-<li><strong>Drain</strong>. If any effect set state, another render pass is queued
-   immediately. The page host caps the loop to prevent runaway
-   re-renders.</li>
+<li>The reconciler walks the committed VNode tree and builds a parallel
+   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> tree, copying the
+   layout-relevant style props onto each node and attaching a
+   <code>measure</code> callback to leaves whose natural size depends on their
+   content (text, images).</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt;" href="#pythonnative.layout.calculate_layout"><code>calculate_layout</code></a> is called
+   with the viewport size; it recursively determines each node's
+   <code>(x, y, width, height)</code> relative to its parent's coordinate space.</li>
+<li>The reconciler walks the tree again and applies each computed frame
+   to the corresponding native view via the backend's
+   <code>set_frame</code> method.</li>
 </ol>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[render] -&gt; [commit] -&gt; [effects] -&gt; drain? -&gt; [render] ...
+<p>The algorithm supports:</p>
+<ul>
+<li><strong>Flex containers</strong>: <code>flex_direction</code> (<code>row</code>/<code>column</code> and their
+  reverse variants), <code>justify_content</code> (<code>flex_start</code> / <code>center</code> /
+  <code>flex_end</code> / <code>space_between</code> / <code>space_around</code> / <code>space_evenly</code>),
+  <code>align_items</code> (<code>stretch</code> / <code>flex_start</code> / <code>center</code> /
+  <code>flex_end</code>), and <code>align_self</code> overrides per child.</li>
+<li><strong>Sizing</strong>: explicit <code>width</code> / <code>height</code> (numbers or percentages),
+  <code>min_width</code> / <code>max_width</code> / <code>min_height</code> / <code>max_height</code>
+  constraints, <code>aspect_ratio</code>, and content-based sizing via the
+  optional <code>measure</code> callback.</li>
+<li><strong>Flex distribution</strong>: <code>flex</code> (RN shorthand for grow factor with
+  <code>flex_basis: 0</code>), <code>flex_grow</code>, <code>flex_shrink</code>, <code>flex_basis</code>.</li>
+<li><strong>Absolute positioning</strong>: <code>position: "absolute"</code> with <code>top</code>,
+  <code>right</code>, <code>bottom</code>, <code>left</code> insets (numbers or percentages).
+  Absolute children are positioned relative to the parent's padding box
+  and do not participate in flex distribution.</li>
+<li><strong>Spacing</strong>: <code>padding</code> (scalar, dict with <code>horizontal</code> /
+  <code>vertical</code> / <code>all</code> / per-edge keys, or per-edge keys directly),
+  <code>margin</code> (same shape as <code>padding</code>), and inter-child <code>spacing</code>
+  (alias: <code>gap</code>).</li>
+</ul>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.layout</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutNode</span><span class="p">,</span> <span class="n">calculate_layout</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">root</span> <span class="o">=</span> <span class="n">LayoutNode</span><span class="p">(</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex_direction&quot;</span><span class="p">:</span> <span class="s2">&quot;row&quot;</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">LayoutNode</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">}),</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">LayoutNode</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">}),</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">LayoutNode</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">}),</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">],</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">calculate_layout</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># root.children[0].x == 8, .width == 80</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># root.children[1].x == 92, .width == 156  (filled by flex: 1)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1"># root.children[2].x == 252, .width == 60</span>
 </span></code></pre></div>
-<h2 id="effects-vs-focus-effects">Effects vs focus effects<a class="headerlink" href="#effects-vs-focus-effects" title="Permanent link">&para;</a></h2>
-<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect(fn, deps)</code></a> fires after each
-commit when its <code>deps</code> list changes (or every commit if <code>deps</code> is
-omitted). This is right for subscriptions, timers, and synchronization
-with mutable globals.</p>
-<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_focus_effect&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.use_focus_effect"><code>use_focus_effect(fn, deps)</code></a> is
-identical in shape but only fires when the screen is focused (and its
-cleanup runs when the screen is blurred). Use it for camera streams,
-GPS subscriptions, and anything that should be released as soon as the
-user navigates away.</p>
-<div class="admonition warning">
-<p class="admonition-title">Effects are not awaitable</p>
-<p>Returning an awaitable from an effect doesn't await it. Schedule
-async work explicitly (e.g., via <code>asyncio.create_task</code>) and store
-the resulting cancellation handle in the effect's cleanup
-closure.</p>
+</details>
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Classes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt; (&lt;code&gt;pythonnative.layout.LayoutNode&lt;/code&gt;)" href="#pythonnative.layout.LayoutNode">LayoutNode</a></code></td>
+            <td>
+              <div class="doc-md-description">
+                <p>A node in the layout tree.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt; (&lt;code&gt;pythonnative.layout.calculate_layout&lt;/code&gt;)" href="#pythonnative.layout.calculate_layout">calculate_layout</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Compute layout for <code>node</code> and all descendants, in place.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;extract_layout_style&lt;/span&gt; (&lt;code&gt;pythonnative.layout.extract_layout_style&lt;/code&gt;)" href="#pythonnative.layout.extract_layout_style">extract_layout_style</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return a dict of the layout-relevant entries in <code>props</code>.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+
+
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;LAYOUT_STYLE_KEYS&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.layout.LAYOUT_STYLE_KEYS&lt;/code&gt;)" href="#pythonnative.layout.LAYOUT_STYLE_KEYS">LAYOUT_STYLE_KEYS</a></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Style keys that affect layout (and are consumed by the layout engine).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="pythonnative.layout.LAYOUT_STYLE_KEYS" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">LAYOUT_STYLE_KEYS</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#pythonnative.layout.LAYOUT_STYLE_KEYS" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">LAYOUT_STYLE_KEYS</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#frozenset">frozenset</a></span><span class="p">({</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;min_width&#39;</span><span class="p">,</span> <span class="s1">&#39;max_width&#39;</span><span class="p">,</span> <span class="s1">&#39;min_height&#39;</span><span class="p">,</span> <span class="s1">&#39;max_height&#39;</span><span class="p">,</span> <span class="s1">&#39;flex&#39;</span><span class="p">,</span> <span class="s1">&#39;flex_grow&#39;</span><span class="p">,</span> <span class="s1">&#39;flex_shrink&#39;</span><span class="p">,</span> <span class="s1">&#39;flex_basis&#39;</span><span class="p">,</span> <span class="s1">&#39;align_self&#39;</span><span class="p">,</span> <span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;margin&#39;</span><span class="p">,</span> <span class="s1">&#39;margin_top&#39;</span><span class="p">,</span> <span class="s1">&#39;margin_bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;margin_left&#39;</span><span class="p">,</span> <span class="s1">&#39;margin_right&#39;</span><span class="p">,</span> <span class="s1">&#39;margin_horizontal&#39;</span><span class="p">,</span> <span class="s1">&#39;margin_vertical&#39;</span><span class="p">,</span> <span class="s1">&#39;padding&#39;</span><span class="p">,</span> <span class="s1">&#39;padding_top&#39;</span><span class="p">,</span> <span class="s1">&#39;padding_bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;padding_left&#39;</span><span class="p">,</span> <span class="s1">&#39;padding_right&#39;</span><span class="p">,</span> <span class="s1">&#39;padding_horizontal&#39;</span><span class="p">,</span> <span class="s1">&#39;padding_vertical&#39;</span><span class="p">,</span> <span class="s1">&#39;flex_direction&#39;</span><span class="p">,</span> <span class="s1">&#39;justify_content&#39;</span><span class="p">,</span> <span class="s1">&#39;align_items&#39;</span><span class="p">,</span> <span class="s1">&#39;spacing&#39;</span><span class="p">,</span> <span class="s1">&#39;gap&#39;</span><span class="p">,</span> <span class="s1">&#39;aspect_ratio&#39;</span><span class="p">})</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Style keys that affect layout (and are consumed by the layout engine).</p>
+
+    </div>
+
 </div>
-<h2 id="mount-update-unmount">Mount, update, unmount<a class="headerlink" href="#mount-update-unmount" title="Permanent link">&para;</a></h2>
-<p>For a class-component-style mental model:</p>
-<table>
-<thead>
-<tr>
-<th>Class lifecycle</th>
-<th>PythonNative equivalent</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>componentDidMount</code></td>
-<td><code>use_effect(fn, deps=[])</code></td>
-</tr>
-<tr>
-<td><code>componentDidUpdate</code></td>
-<td><code>use_effect(fn, deps=[a, b])</code></td>
-</tr>
-<tr>
-<td><code>componentWillUnmount</code></td>
-<td>the cleanup function returned from <code>use_effect</code></td>
-</tr>
-<tr>
-<td><code>getDerivedStateFromProps</code></td>
-<td>a plain expression at the top of the component</td>
-</tr>
-<tr>
-<td><code>getSnapshotBeforeUpdate</code></td>
-<td>not exposed; handle in commit-time platform APIs if needed</td>
-</tr>
-</tbody>
-</table>
-<h2 id="navigation-lifecycle">Navigation lifecycle<a class="headerlink" href="#navigation-lifecycle" title="Permanent link">&para;</a></h2>
-<p>When a screen mounts inside a navigator (stack, tab, or drawer):</p>
-<ol>
-<li>The navigator builds the screen's element tree.</li>
-<li>The reconciler commits it (phase 2 above).</li>
-<li>Effects run; <code>use_focus_effect</code> callbacks fire because the screen
-   is focused.</li>
-</ol>
-<p>When the user navigates away:</p>
-<ol>
-<li><code>use_focus_effect</code> cleanups run.</li>
-<li>If the screen is unmounted (e.g., popped from a stack), each
-   <code>use_effect</code> cleanup runs as well.</li>
-<li>If the screen is kept alive (a previous tab, for example), only
-   the focus cleanup runs; effect state is preserved.</li>
-</ol>
-<h2 id="app-lifecycle-android-ios">App lifecycle (Android / iOS)<a class="headerlink" href="#app-lifecycle-android-ios" title="Permanent link">&para;</a></h2>
-<p>The page host forwards the platform's app-level lifecycle to navigators
-and effects:</p>
-<ul>
-<li><strong>Resume / <code>viewWillAppear</code></strong>: the active screen's <code>use_focus_effect</code>
-  is re-armed.</li>
-<li><strong>Pause / <code>viewWillDisappear</code></strong>: focus cleanups run.</li>
-<li><strong>Destroy / <code>dealloc</code></strong>: every effect cleanup runs and the
-  reconciler tears down its native tree.</li>
-</ul>
-<p>You can opt into these directly in app code by writing an effect that
-checks the navigation handle's <code>is_focused()</code> state, but most apps
-should reach for the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_focus_effect&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.use_focus_effect"><code>use_focus_effect</code></a>
-hook instead.</p>
-<h2 id="putting-it-together-a-subscription">Putting it together: a subscription<a class="headerlink" href="#putting-it-together-a-subscription" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">LiveClock</span><span class="p">():</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">now</span><span class="p">,</span> <span class="n">set_now</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;--:--&quot;</span><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">start_clock</span><span class="p">():</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tick</span><span class="p">():</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>                <span class="n">set_now</span><span class="p">(</span><span class="n">_format_now</span><span class="p">())</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">tick</span><span class="p">())</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">return</span> <span class="n">task</span><span class="o">.</span><span class="n">cancel</span>  <span class="c1"># cleanup</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">use_focus_effect</span><span class="p">(</span><span class="n">start_clock</span><span class="p">,</span> <span class="n">deps</span><span class="o">=</span><span class="p">[])</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">48</span><span class="p">})</span>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pythonnative.layout.LayoutNode" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">LayoutNode</span>
+
+
+<a href="#pythonnative.layout.LayoutNode" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">LayoutNode</span><span class="p">(</span><span class="n">style</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">children</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.List&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.List">List</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt; (&lt;code&gt;pythonnative.layout.LayoutNode&lt;/code&gt;)" href="#pythonnative.layout.LayoutNode">LayoutNode</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">measure</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><span title="pythonnative.layout.MeasureFn">MeasureFn</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">user_data</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>A node in the layout tree.</p>
+<p>Holds the layout-relevant style props, child layout nodes, and the
+computed output (<code>x</code>, <code>y</code>, <code>width</code>, <code>height</code> in points
+relative to the parent's coordinate space).</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.style">style</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Dict of layout-relevant style props (a subset of the
+element's full props; usually filtered through
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;LAYOUT_STYLE_KEYS&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="#pythonnative.layout.LAYOUT_STYLE_KEYS"><code>LAYOUT_STYLE_KEYS</code></a>).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.children">children</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Ordered list of child <code>LayoutNode</code>s.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.measure">measure</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional measure callback for leaf nodes whose natural
+size depends on their content (e.g., text). Receives
+<code>(max_width, max_height)</code> and returns <code>(width, height)</code>.
+Either argument may be <code>math.inf</code>.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.user_data">user_data</span></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Free-form attribute the caller may use to associate
+each layout node with the corresponding native view; the
+engine itself does not inspect it.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.x">x</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Computed x-coordinate relative to the parent's coordinate
+space.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.y">y</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Computed y-coordinate relative to the parent's coordinate
+space.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.width">width</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Computed width in points.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.layout.LayoutNode.height">height</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Computed height in points.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.layout.calculate_layout" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">calculate_layout</span>
+
+
+<a href="#pythonnative.layout.calculate_layout" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">calculate_layout</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt; (&lt;code&gt;pythonnative.layout.LayoutNode&lt;/code&gt;)" href="#pythonnative.layout.LayoutNode">LayoutNode</a></span><span class="p">,</span> <span class="n">available_width</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n">available_height</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Compute layout for <code>node</code> and all descendants, in place.</p>
+<p>Sizes the root from its own style and content. Callers that want
+the root to fill its viewport should wrap it in a synthetic outer
+node with explicit <code>width</code> / <code>height</code> (the
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> does this when
+running the layout pass after a commit).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>node</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt; (&lt;code&gt;pythonnative.layout.LayoutNode&lt;/code&gt;)" href="#pythonnative.layout.LayoutNode">LayoutNode</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Root of the layout tree.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>available_width</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Available width in points. Pass
+<code>math.inf</code> for unbounded (e.g., horizontal scroll).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>available_height</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Available height in points. Pass
+<code>math.inf</code> for unbounded (e.g., vertical scroll).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.layout.extract_layout_style" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">extract_layout_style</span>
+
+
+<a href="#pythonnative.layout.extract_layout_style" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">extract_layout_style</span><span class="p">(</span><span class="n">props</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return a dict of the layout-relevant entries in <code>props</code>.</p>
+<p>Used by the reconciler when building a <code>LayoutNode</code> from an element
+so the layout engine doesn't have to scan unrelated visual props.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The clock starts only while <code>LiveClock</code> is on the focused screen.</li>
-<li>Navigating away cancels the task because the focus cleanup runs
-  immediately.</li>
-<li>Returning to the screen restarts a fresh task; the user never sees
-  the previous, stale state because <code>use_state</code> resets on remount.</li>
-</ul>
-<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Build a feature that uses focus-aware effects: <a href="../../guides/native-modules/">Native modules guide</a>.</li>
-<li>See how the reconciler chooses what to mount: <a href="../reconciliation/">Reconciliation</a>.</li>
-<li>Wrap risky subtrees: <a href="../../guides/error-boundaries/">Error boundaries guide</a>.</li>
+<li>Browse the supported style keys:
+  <a href="../component-properties/">Component properties</a>.</li>
+<li>See how leaf widgets contribute their intrinsic size:
+  <a href="../native_views/">Native views</a>.</li>
+<li>Read the conceptual walkthrough:
+  <a href="../../concepts/layout/">Layout engine</a>.</li>
 </ul>
 
 

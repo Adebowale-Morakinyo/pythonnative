@@ -626,6 +626,8 @@
       
         
       
+        
+      
     
     
     
@@ -828,6 +830,34 @@
     
   
     Reconciliation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="concepts/layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout Engine
   
 
     
@@ -1459,6 +1489,8 @@
       
         
       
+        
+      
     
     
     
@@ -1661,6 +1693,34 @@
     
   
     Reconciler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout
   
 
     
@@ -2265,9 +2325,10 @@ no JavaScript bridge.</p>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p>That same <code>Counter</code> mounts as a <code>UILabel</code> plus a <code>UIButton</code> inside a
-<code>UIStackView</code> on iOS, and as a <code>TextView</code> plus a <code>Button</code> inside a
-vertical <code>LinearLayout</code> on Android. Layouts use <code>flex</code> shorthands;
-visuals use a single <code>style</code> dict per element.</p>
+<code>UIView</code> on iOS, and as a <code>TextView</code> plus a <code>Button</code> inside a
+<code>FrameLayout</code> on Android. PythonNative ships its own pure-Python
+flexbox engine, so the same <code>flex</code> / <code>padding</code> / <code>position</code> rules
+produce identical frames on both platforms.</p>
 <h2 id="why-pythonnative">Why PythonNative?<a class="headerlink" href="#why-pythonnative" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Real native widgets</strong>, not a custom renderer. Accessibility,

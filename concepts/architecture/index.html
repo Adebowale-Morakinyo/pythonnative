@@ -517,6 +517,8 @@
       
         
       
+        
+      
     
     
     
@@ -955,6 +957,34 @@
     
   
     Reconciliation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout Engine
   
 
     
@@ -1586,6 +1616,8 @@
       
         
       
+        
+      
     
     
     
@@ -1788,6 +1820,34 @@
     
   
     Reconciler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout
   
 
     
@@ -2628,8 +2688,20 @@ component. App code does not call it directly.</p>
   values through the tree.</li>
 </ul>
 <h2 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h2>
-<p>PythonNative uses a <strong>flexbox-inspired layout model</strong> built on
-platform-native layout managers.</p>
+<p>PythonNative ships its own <strong>pure-Python flexbox engine</strong> (a small,
+React-Native-compatible re-implementation of Yoga's algorithm). All
+layout decisions are made in Python and then pushed to native views as
+absolute frames via <code>set_frame</code>. This means the <em>exact same</em> layout
+rules apply on Android and iOS — there is no platform drift between
+<code>LinearLayout</code> and <code>UIStackView</code>.</p>
+<p>The engine is implemented in <code>pythonnative.layout</code> and runs as a
+dedicated <strong>layout pass</strong> after every commit:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>render -&gt; commit (create / update native views)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>      -&gt; flush effects
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>      -&gt; build LayoutNode tree from VNodes
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>      -&gt; calculate_layout(viewport_w, viewport_h)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      -&gt; backend.set_frame(view, x, y, w, h) for every node
+</span></code></pre></div>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;View&lt;/span&gt;" href="../../api/components/#pythonnative.components.View"><code>View</code></a> is the <strong>universal flex container</strong> (like
 React Native's <code>View</code>). It defaults to <code>flex_direction: "column"</code>.
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Column&lt;/span&gt;" href="../../api/components/#pythonnative.components.Column"><code>Column</code></a> and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Row&lt;/span&gt;" href="../../api/components/#pythonnative.components.Row"><code>Row</code></a> are
@@ -2649,20 +2721,32 @@ convenience wrappers that fix the direction.</p>
 </ul>
 <h3 id="child-layout-properties">Child layout properties<a class="headerlink" href="#child-layout-properties" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>flex</code>: flex grow factor (shorthand).</li>
-<li><code>flex_grow</code>, <code>flex_shrink</code>: individual flex properties.</li>
+<li><code>flex</code>: shorthand for <code>flex_grow: N, flex_shrink: 1, flex_basis: 0</code>.</li>
+<li><code>flex_grow</code>, <code>flex_shrink</code>, <code>flex_basis</code>: individual flex properties.</li>
 <li><code>align_self</code>: override the parent's <code>align_items</code> for this child.</li>
-<li><code>width</code>, <code>height</code>: fixed dimensions.</li>
-<li><code>min_width</code>, <code>min_height</code>: minimum size constraints.</li>
+<li><code>width</code>, <code>height</code>: fixed dimensions (numbers or <code>"%"</code> strings).</li>
+<li><code>min_width</code>, <code>min_height</code>, <code>max_width</code>, <code>max_height</code>: size
+  constraints.</li>
+<li><code>aspect_ratio</code>: derive the unknown axis from the known one.</li>
 <li><code>margin</code>: outer spacing.</li>
+<li><code>position</code>: <code>"relative"</code> (default) or <code>"absolute"</code>. Absolute children
+  are removed from the flex flow and positioned via <code>top</code> / <code>right</code> /
+  <code>bottom</code> / <code>left</code>.</li>
 </ul>
 <p>Under the hood:</p>
 <ul>
-<li><strong>Android</strong>: <code>LinearLayout</code> with gravity, weights, and
-  divider-based spacing.</li>
-<li><strong>iOS</strong>: <code>UIStackView</code> with axis, alignment, distribution, and
-  layout margins.</li>
+<li><strong>Layout</strong>: <code>pythonnative.layout.calculate_layout</code> computes a frame
+  <code>(x, y, w, h)</code> for every node.</li>
+<li><strong>Android</strong>: every container is a <code>FrameLayout</code>; computed frames are
+  applied through <code>MarginLayoutParams</code> and <code>View.setX/setY/setLayoutParams</code>.</li>
+<li><strong>iOS</strong>: every container is a plain <code>UIView</code> with
+  <code>translatesAutoresizingMaskIntoConstraints = NO</code>; computed frames are
+  applied through <code>view.frame = CGRect(...)</code>.</li>
+<li><strong>Intrinsic content size</strong>: leaf widgets (<code>Text</code>, <code>Button</code>, <code>Image</code>,
+  <code>TextInput</code>, …) implement <code>measure_intrinsic</code> so the engine can ask
+  them how big they want to be when no explicit size is set.</li>
 </ul>
+<p>See the <a href="../layout/">Layout engine</a> concept page for a full walkthrough.</p>
 <h2 id="native-view-handlers">Native view handlers<a class="headerlink" href="#native-view-handlers" title="Permanent link">&para;</a></h2>
 <p>Platform-specific rendering logic lives in the
 <code>pythonnative.native_views</code> package, organized into dedicated
@@ -2670,16 +2754,26 @@ submodules:</p>
 <ul>
 <li><code>native_views.base</code>: shared
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a> protocol
-  and common utilities (color parsing, padding resolution, layout
-  keys, flex constants).</li>
+  and common utilities (color parsing, padding resolution, container
+  visual keys).</li>
 <li><code>native_views.android</code>: Android handlers using Chaquopy's Java
   bridge (<code>jclass</code>, <code>dynamic_proxy</code>).</li>
 <li><code>native_views.ios</code>: iOS handlers using rubicon-objc
   (<code>ObjCClass</code>, <code>objc_method</code>).</li>
 </ul>
+<p>Every handler implements two layout-facing methods:</p>
+<ul>
+<li><code>set_frame(view, x, y, width, height)</code> — apply an absolute frame
+  computed by the layout engine.</li>
+<li><code>measure_intrinsic(view, max_width, max_height)</code> — return the
+  natural content size for leaf widgets (used as a hint by the layout
+  engine).</li>
+</ul>
 <p><code>Column</code>, <code>Row</code>, and <code>View</code> share a single flex-container handler on
-each platform. The handler reads <code>flex_direction</code> from the element's
-props to configure the native layout container.</p>
+each platform. Containers are simple <code>FrameLayout</code> (Android) /
+<code>UIView</code> (iOS) instances; all flex math lives in
+<code>pythonnative.layout</code>, so the handlers themselves contain no layout
+logic.</p>
 <p>Each handler class maps an element type name (e.g., <code>"Text"</code>,
 <code>"Button"</code>) to platform-native widget creation, property updates, and
 child management. The
@@ -2691,8 +2785,9 @@ package can be imported on any platform for testing.</p>
 <p class="admonition-title">Versus React Native</p>
 <p>React Native uses JSX plus a JavaScript bridge (or JSI in newer
 versions) plus Yoga layout. PythonNative uses Python plus direct
-native calls plus platform layout managers; no JS bridge, no
-serialization overhead.</p>
+native calls plus a Python-implemented Yoga-style flex engine; no
+JS bridge, no serialization overhead, and the same layout rules on
+both platforms.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Versus NativeScript</p>
@@ -2772,6 +2867,7 @@ provided via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;d
 <li>Read the <a href="../mental-model/">Mental model</a> for the high-level
   comparisons.</li>
 <li>Walk through the render loop in <a href="../lifecycle/">Lifecycle</a>.</li>
+<li>Dive into the flexbox engine in <a href="../layout/">Layout engine</a>.</li>
 <li>See the platform handlers up close in <a href="../native-views/">Native views</a>.</li>
 <li>Browse the API: <a href="../../api/pythonnative/">Package overview</a>.</li>
 </ul>

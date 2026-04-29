@@ -12,13 +12,13 @@
         <meta name="author" content="Owen Carey">
       
       
-        <link rel="canonical" href="https://docs.pythonnative.com/concepts/lifecycle/">
+        <link rel="canonical" href="https://docs.pythonnative.com/concepts/layout/">
       
       
-        <link rel="prev" href="../hooks/">
+        <link rel="prev" href="../reconciliation/">
       
       
-        <link rel="next" href="../reconciliation/">
+        <link rel="next" href="../native-views/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Lifecycle - PythonNative</title>
+        <title>Layout Engine - PythonNative</title>
       
     
     
@@ -67,17 +67,17 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Lifecycle - PythonNative" />
+<meta property="og:title" content="Layout Engine - PythonNative" />
 <meta property="og:description" content="Cross-platform native UI toolkit for Android and iOS" />
-<meta property="og:image" content="https://docs.pythonnative.com/assets/images/social/concepts/lifecycle.png" />
+<meta property="og:image" content="https://docs.pythonnative.com/assets/images/social/concepts/layout.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.pythonnative.com/concepts/lifecycle/" />
+<meta property="og:url" content="https://docs.pythonnative.com/concepts/layout/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Lifecycle - PythonNative" />
+<meta property="twitter:title" content="Layout Engine - PythonNative" />
 <meta property="twitter:description" content="Cross-platform native UI toolkit for Android and iOS" />
-<meta property="twitter:image" content="https://docs.pythonnative.com/assets/images/social/concepts/lifecycle.png" />
+<meta property="twitter:image" content="https://docs.pythonnative.com/assets/images/social/concepts/layout.png" />
 </head>
   
   
@@ -97,7 +97,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lifecycle" class="md-skip">
+        <a href="#layout-engine" class="md-skip">
           Skip to content
         </a>
       
@@ -132,7 +132,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lifecycle
+              Layout Engine
             
           </span>
         </div>
@@ -683,37 +683,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Lifecycle
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../lifecycle/" class="md-nav__link">
         
   
   
@@ -729,103 +702,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#a-single-render-pass" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A single render pass
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#effects-vs-focus-effects" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Effects vs focus effects
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mount-update-unmount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mount, update, unmount
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#navigation-lifecycle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Navigation lifecycle
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#app-lifecycle-android-ios" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        App lifecycle (Android / iOS)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#putting-it-together-a-subscription" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Putting it together: a subscription
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -863,10 +739,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../layout/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layout Engine
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -882,6 +785,125 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-a-python-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why a Python engine?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-it-sits-in-the-render-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where it sits in the render loop
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-layoutnode-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The LayoutNode tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#style-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Style keys
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intrinsic-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intrinsic measurement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#absolute-positioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute positioning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-layouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing layouts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2221,10 +2243,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#a-single-render-pass" class="md-nav__link">
+  <a href="#why-a-python-engine" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A single render pass
+        Why a Python engine?
       
     </span>
   </a>
@@ -2232,10 +2254,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#effects-vs-focus-effects" class="md-nav__link">
+  <a href="#where-it-sits-in-the-render-loop" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Effects vs focus effects
+        Where it sits in the render loop
       
     </span>
   </a>
@@ -2243,10 +2265,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mount-update-unmount" class="md-nav__link">
+  <a href="#the-layoutnode-tree" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mount, update, unmount
+        The LayoutNode tree
       
     </span>
   </a>
@@ -2254,10 +2276,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigation-lifecycle" class="md-nav__link">
+  <a href="#style-keys" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Navigation lifecycle
+        Style keys
       
     </span>
   </a>
@@ -2265,10 +2287,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#app-lifecycle-android-ios" class="md-nav__link">
+  <a href="#intrinsic-measurement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        App lifecycle (Android / iOS)
+        Intrinsic measurement
       
     </span>
   </a>
@@ -2276,10 +2298,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#putting-it-together-a-subscription" class="md-nav__link">
+  <a href="#absolute-positioning" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Putting it together: a subscription
+        Absolute positioning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-layouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing layouts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
       
     </span>
   </a>
@@ -2314,7 +2358,7 @@
 
 
   
-    <a href="https://github.com/pythonnative/pythonnative/edit/main/docs/concepts/lifecycle.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/pythonnative/pythonnative/edit/main/docs/concepts/layout.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -2323,157 +2367,198 @@
     
       
     
-    <a href="https://github.com/pythonnative/pythonnative/raw/main/docs/concepts/lifecycle.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/pythonnative/pythonnative/raw/main/docs/concepts/layout.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="lifecycle">Lifecycle<a class="headerlink" href="#lifecycle" title="Permanent link">&para;</a></h1>
-<p>PythonNative drives the UI through a small, predictable cycle:
-<strong>render</strong>, <strong>commit</strong>, <strong>effects</strong>, and an optional <strong>drain</strong>. This
-page walks through what happens at each step, how navigation changes
-fold into it, and where you can hook in.</p>
-<h2 id="a-single-render-pass">A single render pass<a class="headerlink" href="#a-single-render-pass" title="Permanent link">&para;</a></h2>
-<p>A render pass is triggered by:</p>
-<ul>
-<li>Initial mount via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a>.</li>
-<li>A setter from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_state"><code>use_state</code></a> or a <code>dispatch</code>
-  from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_reducer&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_reducer"><code>use_reducer</code></a>.</li>
-<li>A navigation event (<code>navigate</code>, <code>go_back</code>, <code>replace</code>).</li>
-<li>A hot-reload module swap (see <a href="../../guides/hot-reload/">Hot reload guide</a>).</li>
-</ul>
-<p>The phases:</p>
+<h1 id="layout-engine">Layout engine<a class="headerlink" href="#layout-engine" title="Permanent link">&para;</a></h1>
+<p>PythonNative ships its own pure-Python flexbox engine. It is a small,
+React-Native-compatible re-implementation of the subset of the
+<a href="https://www.yogalayout.com/">Yoga</a> algorithm that real apps use.
+Every screen on every platform is sized and positioned by the same
+Python code; the native handlers only get told <em>what frame to apply</em>.</p>
+<p>This page covers what the engine does, where it sits in the render
+pipeline, what <code>style</code> keys it understands, and how to test layouts
+without a device.</p>
+<h2 id="why-a-python-engine">Why a Python engine?<a class="headerlink" href="#why-a-python-engine" title="Permanent link">&para;</a></h2>
+<p>The handlers used to delegate to <code>LinearLayout</code> (Android) and
+<code>UIStackView</code> (iOS), which made <code>View</code> / <code>Column</code> / <code>Row</code> look right
+"on average" but came with three problems:</p>
 <ol>
-<li><strong>Render</strong>. Your <code>@component</code> function runs. Hooks register state,
-   queue effects, and capture closures. No native widgets change yet,
-   so this phase is cheap and pure (modulo <code>use_state</code> updates).</li>
-<li><strong>Commit</strong>. The
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> diffs the new
-   tree against the previous one and applies the smallest set of
-   native mutations through the registered
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a>s.</li>
-<li><strong>Effects</strong>. Cleanup callbacks from the <em>previous</em> render run
-   first; new <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> callbacks run
-   after, in depth-first order so children commit before parents.</li>
-<li><strong>Drain</strong>. If any effect set state, another render pass is queued
-   immediately. The page host caps the loop to prevent runaway
-   re-renders.</li>
+<li><strong>Platform drift.</strong> The two stacks have subtly different alignment
+   semantics, padding handling, and weight rules. A layout that looked
+   correct on iOS could be off by a few points on Android.</li>
+<li><strong>No <code>position: "absolute"</code>.</strong> Neither container natively supports
+   removing a child from the flow and pinning it by edge offsets.</li>
+<li><strong>Limited expressiveness.</strong> <code>flex_basis</code>, <code>aspect_ratio</code>,
+   percentage sizes, <code>min_*</code> / <code>max_*</code> constraints, and <code>align_self</code>
+   were either missing or partial.</li>
 </ol>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[render] -&gt; [commit] -&gt; [effects] -&gt; drain? -&gt; [render] ...
+<p>Centralising layout in Python fixes all three: the rules are written
+once, exercised by unit tests, and produce identical frames on Android
+and iOS.</p>
+<h2 id="where-it-sits-in-the-render-loop">Where it sits in the render loop<a class="headerlink" href="#where-it-sits-in-the-render-loop" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>render -&gt; commit (create / update native views via handlers)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>      -&gt; flush effects
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>      -&gt; build LayoutNode tree from VNodes
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>      -&gt; calculate_layout(viewport_w, viewport_h)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>      -&gt; backend.set_frame(view, x, y, w, h) for every node
 </span></code></pre></div>
-<h2 id="effects-vs-focus-effects">Effects vs focus effects<a class="headerlink" href="#effects-vs-focus-effects" title="Permanent link">&para;</a></h2>
-<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect(fn, deps)</code></a> fires after each
-commit when its <code>deps</code> list changes (or every commit if <code>deps</code> is
-omitted). This is right for subscriptions, timers, and synchronization
-with mutable globals.</p>
-<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_focus_effect&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.use_focus_effect"><code>use_focus_effect(fn, deps)</code></a> is
-identical in shape but only fires when the screen is focused (and its
-cleanup runs when the screen is blurred). Use it for camera streams,
-GPS subscriptions, and anything that should be released as soon as the
-user navigates away.</p>
-<div class="admonition warning">
-<p class="admonition-title">Effects are not awaitable</p>
-<p>Returning an awaitable from an effect doesn't await it. Schedule
-async work explicitly (e.g., via <code>asyncio.create_task</code>) and store
-the resulting cancellation handle in the effect's cleanup
-closure.</p>
-</div>
-<h2 id="mount-update-unmount">Mount, update, unmount<a class="headerlink" href="#mount-update-unmount" title="Permanent link">&para;</a></h2>
-<p>For a class-component-style mental model:</p>
+<p>The layout pass runs after the commit and effect phases, so by the
+time it executes:</p>
+<ul>
+<li>All native views exist.</li>
+<li>All visual props are up to date.</li>
+<li>All effects have run (including any that may set state and trigger
+  another render).</li>
+</ul>
+<p>A render that does not change the tree still triggers a layout pass
+when the viewport size changes (e.g., on rotation).</p>
+<h2 id="the-layoutnode-tree">The <code>LayoutNode</code> tree<a class="headerlink" href="#the-layoutnode-tree" title="Permanent link">&para;</a></h2>
+<p>The reconciler walks the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.VNode"><code>VNode</code></a>
+tree and builds a parallel tree of
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="../../api/layout/#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> objects. Each node
+carries:</p>
+<ul>
+<li>The element <code>type</code> and the resolved <code>style</code> dict.</li>
+<li>A reference back to the <code>VNode</code> (so frames can be applied to its
+  native handle).</li>
+<li>An optional <code>measure</code> callback for leaf widgets that need to ask
+  their handler for an intrinsic content size.</li>
+</ul>
+<p>The reconciler always wraps the user's root in a synthetic
+<em>viewport node</em> sized to the current screen so that <code>flex: 1</code> / <code>100%</code>
+at the top level "just work".</p>
+<h2 id="style-keys">Style keys<a class="headerlink" href="#style-keys" title="Permanent link">&para;</a></h2>
+<p>The engine recognises (and the reconciler routes to it) the following
+style keys, listed as <code>pythonnative.layout.LAYOUT_STYLE_KEYS</code>:</p>
 <table>
 <thead>
 <tr>
-<th>Class lifecycle</th>
-<th>PythonNative equivalent</th>
+<th>Group</th>
+<th>Keys</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>componentDidMount</code></td>
-<td><code>use_effect(fn, deps=[])</code></td>
+<td>Sizing</td>
+<td><code>width</code>, <code>height</code>, <code>min_width</code>, <code>max_width</code>, <code>min_height</code>, <code>max_height</code>, <code>aspect_ratio</code></td>
 </tr>
 <tr>
-<td><code>componentDidUpdate</code></td>
-<td><code>use_effect(fn, deps=[a, b])</code></td>
+<td>Flex</td>
+<td><code>flex</code>, <code>flex_grow</code>, <code>flex_shrink</code>, <code>flex_basis</code>, <code>align_self</code></td>
 </tr>
 <tr>
-<td><code>componentWillUnmount</code></td>
-<td>the cleanup function returned from <code>use_effect</code></td>
+<td>Container</td>
+<td><code>flex_direction</code>, <code>justify_content</code>, <code>align_items</code>, <code>spacing</code>, <code>gap</code></td>
 </tr>
 <tr>
-<td><code>getDerivedStateFromProps</code></td>
-<td>a plain expression at the top of the component</td>
+<td>Spacing</td>
+<td><code>margin</code>, <code>padding</code></td>
 </tr>
 <tr>
-<td><code>getSnapshotBeforeUpdate</code></td>
-<td>not exposed; handle in commit-time platform APIs if needed</td>
+<td>Position</td>
+<td><code>position</code>, <code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="navigation-lifecycle">Navigation lifecycle<a class="headerlink" href="#navigation-lifecycle" title="Permanent link">&para;</a></h2>
-<p>When a screen mounts inside a navigator (stack, tab, or drawer):</p>
-<ol>
-<li>The navigator builds the screen's element tree.</li>
-<li>The reconciler commits it (phase 2 above).</li>
-<li>Effects run; <code>use_focus_effect</code> callbacks fire because the screen
-   is focused.</li>
-</ol>
-<p>When the user navigates away:</p>
-<ol>
-<li><code>use_focus_effect</code> cleanups run.</li>
-<li>If the screen is unmounted (e.g., popped from a stack), each
-   <code>use_effect</code> cleanup runs as well.</li>
-<li>If the screen is kept alive (a previous tab, for example), only
-   the focus cleanup runs; effect state is preserved.</li>
-</ol>
-<h2 id="app-lifecycle-android-ios">App lifecycle (Android / iOS)<a class="headerlink" href="#app-lifecycle-android-ios" title="Permanent link">&para;</a></h2>
-<p>The page host forwards the platform's app-level lifecycle to navigators
-and effects:</p>
+<p>Numbers are interpreted as dp (Android) / pt (iOS). Percentage
+strings (<code>"50%"</code>, <code>"100%"</code>) are resolved against the parent's
+content box.</p>
+<p><code>flex: N</code> is shorthand for <code>flex_grow: N</code>, <code>flex_shrink: 1</code>,
+<code>flex_basis: 0</code> (matching React Native semantics).</p>
+<p><code>margin</code> and <code>padding</code> accept either a number (applied to all sides)
+or a dict with any of <code>horizontal</code>, <code>vertical</code>, <code>left</code>, <code>top</code>,
+<code>right</code>, <code>bottom</code>.</p>
+<h2 id="intrinsic-measurement">Intrinsic measurement<a class="headerlink" href="#intrinsic-measurement" title="Permanent link">&para;</a></h2>
+<p>Leaf widgets (<code>Text</code>, <code>Button</code>, <code>Image</code>, <code>TextInput</code>, <code>Switch</code>,
+<code>Slider</code>, <code>ProgressBar</code>, <code>ActivityIndicator</code>) ask their backend for
+an intrinsic size when neither dimension is fixed. The handler
+implements <code>measure_intrinsic(view, max_w, max_h)</code>:</p>
 <ul>
-<li><strong>Resume / <code>viewWillAppear</code></strong>: the active screen's <code>use_focus_effect</code>
-  is re-armed.</li>
-<li><strong>Pause / <code>viewWillDisappear</code></strong>: focus cleanups run.</li>
-<li><strong>Destroy / <code>dealloc</code></strong>: every effect cleanup runs and the
-  reconciler tears down its native tree.</li>
+<li>iOS uses <code>UIView.sizeThatFits_(CGSize(max_w, max_h))</code>.</li>
+<li>Android wraps <code>View.measure(...)</code> with <code>MeasureSpec.AT_MOST</code> /
+  <code>UNSPECIFIED</code>.</li>
 </ul>
-<p>You can opt into these directly in app code by writing an effect that
-checks the navigation handle's <code>is_focused()</code> state, but most apps
-should reach for the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_focus_effect&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.use_focus_effect"><code>use_focus_effect</code></a>
-hook instead.</p>
-<h2 id="putting-it-together-a-subscription">Putting it together: a subscription<a class="headerlink" href="#putting-it-together-a-subscription" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">LiveClock</span><span class="p">():</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">now</span><span class="p">,</span> <span class="n">set_now</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;--:--&quot;</span><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">start_clock</span><span class="p">():</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tick</span><span class="p">():</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>                <span class="n">set_now</span><span class="p">(</span><span class="n">_format_now</span><span class="p">())</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">tick</span><span class="p">())</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">return</span> <span class="n">task</span><span class="o">.</span><span class="n">cancel</span>  <span class="c1"># cleanup</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">use_focus_effect</span><span class="p">(</span><span class="n">start_clock</span><span class="p">,</span> <span class="n">deps</span><span class="o">=</span><span class="p">[])</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">48</span><span class="p">})</span>
+<p>The engine respects whatever size the widget returns, then clamps it
+to the active <code>min_*</code> / <code>max_*</code> constraints.</p>
+<p><code>ScrollView</code> is a special case: the engine deliberately makes the
+scroll axis unbounded so that children can be larger than the
+viewport, and the wrapper itself is clipped to the available space.</p>
+<h2 id="absolute-positioning">Absolute positioning<a class="headerlink" href="#absolute-positioning" title="Permanent link">&para;</a></h2>
+<p>Setting <code>position: "absolute"</code> on a child takes it out of the flex
+flow. Its size and position come from a combination of <code>top</code> /
+<code>right</code> / <code>bottom</code> / <code>left</code> and explicit <code>width</code> / <code>height</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;absolute&quot;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>        <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="s2">&quot;background_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#F00&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="p">}),</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;absolute&quot;</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="s2">&quot;background_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#0A0&quot;</span><span class="p">,</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="p">}),</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span>  <span class="c1"># centered, sized by both edges</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;absolute&quot;</span><span class="p">,</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>        <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="s2">&quot;25%&quot;</span><span class="p">,</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="s2">&quot;25%&quot;</span><span class="p">,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>        <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="s2">&quot;25%&quot;</span><span class="p">,</span> <span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="s2">&quot;25%&quot;</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>        <span class="s2">&quot;background_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#00F&quot;</span><span class="p">,</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="p">}),</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;background_color&quot;</span><span class="p">:</span> <span class="s2">&quot;#EEE&quot;</span><span class="p">},</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="p">)</span>
 </span></code></pre></div>
+<p>Absolute children are still constrained by the parent's padding box;
+edge offsets are measured from the inside of the padding, just like
+in CSS.</p>
+<h2 id="testing-layouts">Testing layouts<a class="headerlink" href="#testing-layouts" title="Permanent link">&para;</a></h2>
+<p>The layout engine is pure Python, so it is trivial to test in
+isolation:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.layout</span><span class="w"> </span><span class="kn">import</span> <span class="n">LayoutNode</span><span class="p">,</span> <span class="n">calculate_layout</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">root</span> <span class="o">=</span> <span class="n">LayoutNode</span><span class="p">(</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex_direction&quot;</span><span class="p">:</span> <span class="s2">&quot;row&quot;</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>           <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">children</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="n">LayoutNode</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}),</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="n">LayoutNode</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flex&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}),</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">],</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">calculate_layout</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">assert</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">10</span>  <span class="c1"># padding-left</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="k">assert</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">65</span>  <span class="c1"># 10 + 50 + 5</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">assert</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">width</span> <span class="o">==</span> <span class="mi">125</span>  <span class="c1"># 200 - 10 - 10 - 50 - 5</span>
+</span></code></pre></div>
+<p>The reconciler also exposes
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compute_layout_for_test&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler.compute_layout_for_test"><code>Reconciler.compute_layout_for_test</code></a>
+so you can render a real component tree (with the mock registry) and
+inspect the computed <code>LayoutNode</code> tree without having to dig into
+private attributes.</p>
+<h2 id="limits">Limits<a class="headerlink" href="#limits" title="Permanent link">&para;</a></h2>
+<p>The engine intentionally does <strong>not</strong> implement:</p>
 <ul>
-<li>The clock starts only while <code>LiveClock</code> is on the focused screen.</li>
-<li>Navigating away cancels the task because the focus cleanup runs
-  immediately.</li>
-<li>Returning to the screen restarts a fresh task; the user never sees
-  the previous, stale state because <code>use_state</code> resets on remount.</li>
+<li><code>position: "fixed"</code>.</li>
+<li><code>wrap</code> / <code>flex_wrap</code> (single-line flex only for now).</li>
+<li>RTL flipping (use <code>row_reverse</code> / <code>column_reverse</code> explicitly).</li>
+<li>Float / inline / table / grid layouts.</li>
 </ul>
+<p>Everything else from the React Native flexbox cheat-sheet is
+supported.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Build a feature that uses focus-aware effects: <a href="../../guides/native-modules/">Native modules guide</a>.</li>
-<li>See how the reconciler chooses what to mount: <a href="../reconciliation/">Reconciliation</a>.</li>
-<li>Wrap risky subtrees: <a href="../../guides/error-boundaries/">Error boundaries guide</a>.</li>
+<li>Browse the <code>style</code> keys you can use:
+  <a href="../../api/component-properties/">Component properties</a>.</li>
+<li>Read about how the engine is wired in:
+  <a href="../reconciliation/">Reconciliation</a>.</li>
+<li>See the platform side of <code>set_frame</code> /
+  <code>measure_intrinsic</code>: <a href="../native-views/">Native views</a>.</li>
 </ul>
 
 

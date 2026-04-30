@@ -12,6 +12,21 @@ slot across renders.
       members_order: source
       filters: ["!^_"]
 
+## Platform-metric hooks
+
+These hooks subscribe to values published by
+`pythonnative.platform_metrics` and re-render the component when they
+change. The page host is the only code that updates the underlying
+values; user code consumes them.
+
+- [`use_window_dimensions`][pythonnative.use_window_dimensions] — viewport size.
+- [`use_safe_area_insets`][pythonnative.use_safe_area_insets] — top/bottom/left/right insets.
+- [`use_keyboard_height`][pythonnative.use_keyboard_height] — software keyboard height.
+
+For most apps the dedicated
+[`KeyboardAvoidingView`][pythonnative.KeyboardAvoidingView] component
+is preferable to consuming `use_keyboard_height` directly.
+
 ## Next steps
 
 - Compose hooks into a screen: [Components](components.md).
@@ -21,3 +36,5 @@ slot across renders.
 - Share state across the tree with
   [`create_context`][pythonnative.create_context] and
   [`Provider`][pythonnative.Provider].
+- Animate without re-rendering using [`use_ref`][pythonnative.use_ref]
+  + `Animated`; see the [Animations guide](../guides/animations.md).

@@ -23,6 +23,8 @@ Key building blocks:
   factories.
 - **Styling** uses a single ``style`` dict per element (or a list of
   dicts), composable via [`StyleSheet`][pythonnative.StyleSheet].
+- **Animations** use the ``Animated`` namespace, modeled on React
+  Native's animation API.
 
 Example:
     ```python
@@ -41,6 +43,8 @@ Example:
 
 __version__ = "0.11.0"
 
+from .alerts import Alert
+from .animated import Animated, AnimatedValue
 from .components import (
     ActivityIndicator,
     Button,
@@ -48,14 +52,19 @@ from .components import (
     ErrorBoundary,
     FlatList,
     Image,
+    KeyboardAvoidingView,
     Modal,
+    Picker,
     Pressable,
     ProgressBar,
+    RefreshControl,
     Row,
     SafeAreaView,
     ScrollView,
+    SectionList,
     Slider,
     Spacer,
+    StatusBar,
     Switch,
     Text,
     TextInput,
@@ -71,12 +80,16 @@ from .hooks import (
     use_callback,
     use_context,
     use_effect,
+    use_keyboard_height,
     use_memo,
     use_navigation,
     use_reducer,
     use_ref,
+    use_safe_area_insets,
     use_state,
+    use_window_dimensions,
 )
+from .native_modules import Camera, FileSystem, Location, Notifications
 from .navigation import (
     NavigationContainer,
     create_drawer_navigator,
@@ -86,6 +99,7 @@ from .navigation import (
     use_route,
 )
 from .page import create_page
+from .platform import Platform
 from .style import StyleSheet, ThemeContext
 
 __all__ = [
@@ -96,14 +110,19 @@ __all__ = [
     "ErrorBoundary",
     "FlatList",
     "Image",
+    "KeyboardAvoidingView",
     "Modal",
+    "Picker",
     "Pressable",
     "ProgressBar",
+    "RefreshControl",
     "Row",
     "SafeAreaView",
     "ScrollView",
+    "SectionList",
     "Slider",
     "Spacer",
+    "StatusBar",
     "Switch",
     "Text",
     "TextInput",
@@ -120,12 +139,15 @@ __all__ = [
     "use_context",
     "use_effect",
     "use_focus_effect",
+    "use_keyboard_height",
     "use_memo",
     "use_navigation",
     "use_reducer",
     "use_ref",
     "use_route",
+    "use_safe_area_insets",
     "use_state",
+    "use_window_dimensions",
     "Provider",
     # Navigation
     "NavigationContainer",
@@ -135,4 +157,16 @@ __all__ = [
     # Styling
     "StyleSheet",
     "ThemeContext",
+    # Animation
+    "Animated",
+    "AnimatedValue",
+    # Imperative
+    "Alert",
+    # Native modules
+    "Camera",
+    "FileSystem",
+    "Location",
+    "Notifications",
+    # Platform
+    "Platform",
 ]

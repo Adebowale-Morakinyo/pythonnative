@@ -69,6 +69,10 @@ class HookState:
         "memos",
         "refs",
         "hook_index",
+        "state_index",
+        "effect_index",
+        "memo_index",
+        "ref_index",
         "_trigger_render",
         "_pending_effects",
     )
@@ -78,16 +82,31 @@ class HookState:
         self.effects: List[Tuple[Any, Any]] = []
         self.memos: List[Tuple[Any, Any]] = []
         self.refs: List[dict] = []
+        # ``hook_index`` is retained for backwards compatibility with
+        # any external code that still reads it; the per-hook cursors
+        # below are what each hook function actually uses so that
+        # ``use_state`` and ``use_effect`` can coexist in the same
+        # component without colliding on a shared counter.
         self.hook_index: int = 0
+        self.state_index: int = 0
+        self.effect_index: int = 0
+        self.memo_index: int = 0
+        self.ref_index: int = 0
         self._trigger_render: Optional[Callable[[], None]] = None
         self._pending_effects: List[Tuple[int, Callable, Any]] = []
 
     def reset_index(self) -> None:
-        """Reset the hook cursor to the start of the slot list.
+        """Reset every per-hook cursor to ``0``.
 
-        Called by the reconciler at the beginning of every render pass.
+        Called by the reconciler at the start of every render pass so
+        the next render reads slots in the same order they were
+        written.
         """
         self.hook_index = 0
+        self.state_index = 0
+        self.effect_index = 0
+        self.memo_index = 0
+        self.ref_index = 0
 
     def flush_pending_effects(self) -> None:
         """Run effects queued during render, after native commit.
@@ -239,7 +258,8 @@ def use_state(initial: Any = None) -> Tuple[Any, Callable]:
     if ctx is None:
         raise RuntimeError("use_state must be called inside a @component function")
 
-    idx = ctx.hook_index
+    idx = ctx.state_index
+    ctx.state_index += 1
     ctx.hook_index += 1
 
     if idx >= len(ctx.states):
@@ -306,7 +326,8 @@ def use_reducer(reducer: Callable[[Any, Any], Any], initial_state: Any) -> Tuple
     if ctx is None:
         raise RuntimeError("use_reducer must be called inside a @component function")
 
-    idx = ctx.hook_index
+    idx = ctx.state_index
+    ctx.state_index += 1
     ctx.hook_index += 1
 
     if idx >= len(ctx.states):
@@ -372,7 +393,8 @@ def use_effect(effect: Callable, deps: Optional[list] = None) -> None:
     if ctx is None:
         raise RuntimeError("use_effect must be called inside a @component function")
 
-    idx = ctx.hook_index
+    idx = ctx.effect_index
+    ctx.effect_index += 1
     ctx.hook_index += 1
 
     if idx >= len(ctx.effects):
@@ -407,7 +429,8 @@ def use_memo(factory: Callable[[], T], deps: list) -> T:
     if ctx is None:
         raise RuntimeError("use_memo must be called inside a @component function")
 
-    idx = ctx.hook_index
+    idx = ctx.memo_index
+    ctx.memo_index += 1
     ctx.hook_index += 1
 
     if idx >= len(ctx.memos):
@@ -447,6 +470,12 @@ def use_ref(initial: Any = None) -> dict:
     Refs are useful for storing values that must survive renders without
     triggering them: timers, last-seen values, native handles, and so on.
 
+    The ``current`` key is also populated by the reconciler with the
+    underlying native view (`UIView` on iOS, `android.view.View` on
+    Android) when the ref is passed via the ``ref=`` prop on a built-in
+    element. This is how ``Animated.View`` obtains a handle to the
+    native view it animates without going through the reconciler.
+
     Args:
         initial: Value placed at `ref["current"]` on first render.
 
@@ -461,7 +490,8 @@ def use_ref(initial: Any = None) -> dict:
     if ctx is None:
         raise RuntimeError("use_ref must be called inside a @component function")
 
-    idx = ctx.hook_index
+    idx = ctx.ref_index
+    ctx.ref_index += 1
     ctx.hook_index += 1
 
     if idx >= len(ctx.refs):
@@ -470,6 +500,114 @@ def use_ref(initial: Any = None) -> dict:
         return ref
 
     return ctx.refs[idx]
+
+
+# ======================================================================
+# Platform-metric hooks (window dimensions, safe-area insets, keyboard)
+# ======================================================================
+
+
+def use_window_dimensions() -> Dict[str, float]:
+    """Return the current viewport size and re-render when it changes.
+
+    Equivalent to React Native's ``useWindowDimensions``. The values
+    are pushed by the page host whenever the platform reports a new
+    size (initial layout, rotation, multitasking split-view).
+
+    Returns:
+        A dict with ``"width"`` and ``"height"`` floats in layout
+        units (pt on iOS, dp on Android). Both are ``0.0`` until the
+        page host has run its first layout pass.
+
+    Raises:
+        RuntimeError: If called outside a `@component` function.
+
+    Example:
+        ```python
+        import pythonnative as pn
+
+        @pn.component
+        def MyView():
+            dims = pn.use_window_dimensions()
+            return pn.Text(f"{dims['width']:.0f} x {dims['height']:.0f}")
+        ```
+    """
+    from . import platform_metrics
+
+    ctx = _get_hook_state()
+    if ctx is None:
+        raise RuntimeError("use_window_dimensions must be called inside a @component function")
+
+    _, set_tick = use_state(0)
+
+    def subscribe() -> Callable[[], None]:
+        return platform_metrics.subscribe(lambda: set_tick(lambda n: n + 1))
+
+    use_effect(subscribe, [])
+
+    dims = platform_metrics.get_window_dimensions()
+    return {"width": dims.width, "height": dims.height}
+
+
+def use_safe_area_insets() -> Dict[str, float]:
+    """Return the current safe-area insets and re-render on change.
+
+    Mirrors ``react-native-safe-area-context``'s ``useSafeAreaInsets``.
+
+    Returns:
+        A dict with ``"top"``, ``"bottom"``, ``"left"``, and ``"right"``
+        floats in layout units (pt on iOS, dp on Android).
+
+    Raises:
+        RuntimeError: If called outside a `@component` function.
+    """
+    from . import platform_metrics
+
+    ctx = _get_hook_state()
+    if ctx is None:
+        raise RuntimeError("use_safe_area_insets must be called inside a @component function")
+
+    _, set_tick = use_state(0)
+
+    def subscribe() -> Callable[[], None]:
+        return platform_metrics.subscribe(lambda: set_tick(lambda n: n + 1))
+
+    use_effect(subscribe, [])
+
+    insets = platform_metrics.get_safe_area_insets()
+    return {
+        "top": insets.top,
+        "bottom": insets.bottom,
+        "left": insets.left,
+        "right": insets.right,
+    }
+
+
+def use_keyboard_height() -> float:
+    """Return the on-screen keyboard height (or 0) and re-render on change.
+
+    Useful for custom layout that needs to react to keyboard
+    show/hide events. Most apps should use
+    [`KeyboardAvoidingView`][pythonnative.KeyboardAvoidingView] instead
+    of reading this directly.
+
+    Raises:
+        RuntimeError: If called outside a `@component` function.
+    """
+    from . import platform_metrics
+
+    ctx = _get_hook_state()
+    if ctx is None:
+        raise RuntimeError("use_keyboard_height must be called inside a @component function")
+
+    _, set_tick = use_state(0)
+
+    def subscribe() -> Callable[[], None]:
+        return platform_metrics.subscribe(lambda: set_tick(lambda n: n + 1))
+
+    use_effect(subscribe, [])
+
+    return platform_metrics.get_keyboard_height()
 
 
 # ======================================================================

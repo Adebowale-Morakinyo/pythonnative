@@ -76,12 +76,87 @@ pn.Button("Tap", style={"background_color": "#FF1E88E5", "color": "#FFFFFF"})
 
 ## Text styling
 
-`Text` and `Button` accept `font_size`, `color`, `bold`, and `text_align` inside `style`:
+`Text` accepts the full typography surface inside `style`:
+
+| Prop | Value | Notes |
+|---|---|---|
+| `font_size` | number | In pt (iOS) / sp (Android) |
+| `color` | hex string | `#RRGGBB` or `#AARRGGBB` |
+| `bold` | bool | Shorthand for `font_weight: "bold"` |
+| `font_weight` | `"normal"`, `"bold"`, `"100"`–`"900"` | |
+| `font_family` | string | System font name |
+| `italic` | bool | |
+| `text_align` | `"left"`, `"center"`, `"right"`, `"justify"` | |
+| `letter_spacing` | number | Tracking in points |
+| `line_height` | number | Multiple of font size |
+| `text_decoration` | `"underline"`, `"line_through"`, or `None` | |
+| `max_lines` | int | Truncate after N lines |
 
 ```python
-pn.Text("Title", style={"font_size": 24, "bold": True, "text_align": "center"})
-pn.Text("Subtitle", style={"font_size": 14, "color": "#666666"})
+pn.Text(
+    "Headline",
+    style={
+        "font_size": 28,
+        "font_weight": "700",
+        "letter_spacing": -0.5,
+        "line_height": 32,
+        "color": "#0F172A",
+    },
+)
 ```
+
+## Borders, shadows, and shape
+
+Every element accepts these visual props in `style`:
+
+| Prop | Value |
+|---|---|
+| `border_radius` | number (uniform) |
+| `border_width` | number (in pt / dp) |
+| `border_color` | hex string |
+| `shadow_color` | hex string |
+| `shadow_offset` | `{"width": x, "height": y}` |
+| `shadow_opacity` | 0.0 – 1.0 |
+| `shadow_radius` | number (blur radius) |
+| `elevation` | number (Android Material shadow shorthand) |
+| `opacity` | 0.0 – 1.0 |
+| `tint_color` | hex string (Image only) |
+
+```python
+pn.View(
+    pn.Text("Card"),
+    style={
+        "padding": 20,
+        "background_color": "#FFFFFF",
+        "border_radius": 16,
+        "border_width": 1,
+        "border_color": "#E5E7EB",
+        "shadow_color": "#000000",
+        "shadow_offset": {"width": 0, "height": 4},
+        "shadow_opacity": 0.08,
+        "shadow_radius": 12,
+        "elevation": 4,
+    },
+)
+```
+
+## Transforms
+
+`transform` is either a 6-element CGAffineTransform-style array or a
+shorthand mapping:
+
+```python
+pn.View(
+    pn.Text("Tilted"),
+    style={
+        "transform": {"rotate": 15, "scale": 1.1, "translate_x": 10},
+    },
+)
+```
+
+Supported keys: `rotate` (degrees), `scale`, `scale_x`, `scale_y`,
+`translate_x`, `translate_y`. For animated transforms, see
+[Animations](animations.md).
 
 ## Flex layout
 

@@ -96,6 +96,18 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
             "PageFragment.kt",
         )
         assert os.path.isfile(page_fragment)
+        virtual_list_helper = os.path.join(
+            android_root,
+            "app",
+            "src",
+            "main",
+            "java",
+            "com",
+            "pythonnative",
+            "android_template",
+            "PNVirtualListView.java",
+        )
+        assert os.path.isfile(virtual_list_helper)
         nav_graph = os.path.join(
             android_root,
             "app",

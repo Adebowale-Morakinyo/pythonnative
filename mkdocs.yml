@@ -79,6 +79,9 @@ nav:
     - iOS: guides/ios.md
     - Navigation: guides/navigation.md
     - Styling: guides/styling.md
+    - Animations: guides/animations.md
+    - Lists: guides/lists.md
+    - Platform & Accessibility: guides/platform-accessibility.md
     - Native Modules: guides/native-modules.md
     - Hot Reload: guides/hot-reload.md
     - Error Boundaries: guides/error-boundaries.md
@@ -94,6 +97,9 @@ nav:
     - Package: api/pythonnative.md
     - Components: api/components.md
     - Hooks: api/hooks.md
+    - Animated: api/animated.md
+    - Alerts: api/alerts.md
+    - Platform: api/platform.md
     - Element: api/element.md
     - Page: api/page.md
     - Reconciler: api/reconciler.md

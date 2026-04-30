@@ -201,17 +201,88 @@ def LayoutTab() -> pn.Element:
 
 @pn.component
 def SettingsTab() -> pn.Element:
-    """Settings tab — simple placeholder content."""
+    """Settings tab — Platform info, alerts, and a virtualized FlatList."""
+    nav = pn.use_navigation()
+    dims = pn.use_window_dimensions()
+
+    def _show_alert() -> None:
+        pn.Alert.show(
+            title="Hello!",
+            message="This is a native alert dialog.",
+            buttons=[
+                {"label": "OK", "style": "default"},
+            ],
+        )
+
+    def _confirm_destructive() -> None:
+        pn.Alert.confirm(
+            title="Delete item?",
+            message="This action cannot be undone.",
+            confirm_label="Delete",
+            cancel_label="Keep",
+            on_confirm=lambda: print("[SettingsTab] confirmed"),
+            on_cancel=lambda: print("[SettingsTab] cancelled"),
+        )
+
+    def _go_to_showcase() -> None:
+        nav.navigate("app.second_page.SecondPage", params={"message": "Visual showcase"})
+
     return pn.ScrollView(
         pn.Column(
+            pn.StatusBar(style="dark"),
             pn.Text("Settings", style=styles["title"]),
-            pn.Text("App version: 0.7.0", style=styles["subtitle"]),
+            pn.Text(f"PythonNative v{pn.__version__}", style=styles["subtitle"]),
             pn.Text(
-                "This tab uses a native UITabBar on iOS " "and BottomNavigationView on Android.",
+                f"Running on {pn.Platform.OS} {pn.Platform.Version}",
                 style=styles["subtitle"],
             ),
+            pn.Text(
+                f"Window: {dims['width']:.0f} × {dims['height']:.0f}",
+                style=styles["subtitle"],
+            ),
+            pn.Button("Show alert", on_click=_show_alert),
+            pn.Button("Confirm destructive", on_click=_confirm_destructive),
+            pn.Button("Visual showcase", on_click=_go_to_showcase),
             style=styles["section"],
         )
+    )
+
+
+@pn.component
+def ListTab() -> pn.Element:
+    """Demonstrates virtualized FlatList with native row recycling."""
+    items = [{"id": i, "title": f"Row {i + 1}", "subtitle": f"Lorem ipsum #{i}"} for i in range(500)]
+
+    def render_row(item: dict, index: int) -> pn.Element:
+        return pn.View(
+            pn.Text(item["title"], style={"font_size": 16, "font_weight": "600"}),
+            pn.Text(item["subtitle"], style={"font_size": 13, "color": "#6B7280"}),
+            style={
+                "padding": 12,
+                "spacing": 4,
+                "background_color": "#FFFFFF",
+                "border_radius": 8,
+            },
+        )
+
+    return pn.Column(
+        pn.View(
+            pn.Text(
+                "Virtualized FlatList — 500 rows backed by UITableView / RecyclerView",
+                style={"font_size": 13, "color": "#6B7280"},
+            ),
+            style={"padding": 16, "background_color": "#F9FAFB"},
+        ),
+        pn.FlatList(
+            data=items,
+            item_height=64,
+            separator_height=8,
+            render_item=render_row,
+            key_extractor=lambda item, _: str(item["id"]),
+            on_item_press=lambda i: print(f"[ListTab] tapped row {i}"),
+            style={"flex": 1, "background_color": "#F3F4F6"},
+        ),
+        style={"flex": 1},
     )
 
 
@@ -221,6 +292,7 @@ def MainPage() -> pn.Element:
         Tab.Navigator(
             Tab.Screen("Home", component=HomeTab, options={"title": "Home"}),
             Tab.Screen("Layout", component=LayoutTab, options={"title": "Layout"}),
+            Tab.Screen("List", component=ListTab, options={"title": "List"}),
             Tab.Screen("Settings", component=SettingsTab, options={"title": "Settings"}),
         )
     )

@@ -35,6 +35,12 @@ from typing import Any, List, Optional, Tuple
 from .element import Element
 from .layout import LayoutNode, calculate_layout, extract_layout_style
 
+# Props the reconciler consumes itself (i.e., never forwards to the
+# native handler). ``ref`` is one such prop: components pass a dict
+# from ``use_ref()`` and the reconciler populates ``ref["current"]``
+# with the underlying native view, mirroring React's ``ref`` semantics.
+_RECONCILER_OWNED_PROPS = frozenset({"ref"})
+
 
 class VNode:
     """A mounted [`Element`][pythonnative.Element] plus its native view.
@@ -284,12 +290,14 @@ class Reconciler:
             f"_create_tree: native start type={element.type!r} props={self._props_debug(element.props)} "
             f"children={len(element.children)}"
         )
+        handler_props = self._strip_reconciler_props(element.props)
         try:
-            native_view = self.backend.create_view(element.type, element.props)
+            native_view = self.backend.create_view(element.type, handler_props)
         except Exception as e:
             self._log_viewport(f"_create_tree: BACKEND.create_view({element.type!r}) RAISED {type(e).__name__}: {e!r}")
             raise
         self._log_viewport(f"_create_tree: native created type={element.type!r} view={self._obj_debug(native_view)}")
+        self._attach_ref(element, native_view)
         children: List[VNode] = []
         for i, child_el in enumerate(element.children):
             child_type = self._type_label(child_el.type)
@@ -407,6 +415,19 @@ class Reconciler:
             self._log_viewport(f"_reconcile_node: native update done type={old.element.type!r}")
         else:
             self._log_viewport(f"_reconcile_node: native unchanged type={old.element.type!r}")
+
+        # Re-attach the ref if the ref dict identity changed (so we
+        # never leave a stale ref pointing at a destroyed view, and so
+        # a freshly-supplied ref gets ``current`` populated on update).
+        old_ref = old.element.props.get("ref") if old.element.props else None
+        new_ref = new_el.props.get("ref") if new_el.props else None
+        if old_ref is not new_ref:
+            if isinstance(old_ref, dict):
+                try:
+                    old_ref["current"] = None
+                except Exception:
+                    pass
+            self._attach_ref(new_el, old.native_view)
 
         self._log_viewport(
             f"_reconcile_node: reconcile children parent={old.element.type!r} new_children={len(new_el.children)}"
@@ -540,9 +561,46 @@ class Reconciler:
     def _destroy_tree(self, node: VNode) -> None:
         if node.hook_state is not None:
             node.hook_state.cleanup_all_effects()
+        if node.element is not None:
+            self._detach_ref(node.element)
         for child in node.children:
             self._destroy_tree(child)
         node.children = []
+
+    @staticmethod
+    def _strip_reconciler_props(props: dict) -> dict:
+        """Return ``props`` with reconciler-owned keys removed.
+
+        Reconciler-owned keys (``ref``, internal ``__*__`` keys) are
+        consumed by the reconciler itself and must never reach the
+        native handler — handlers don't know what to do with them and
+        would incorrectly forward them to the underlying view.
+        """
+        if not props:
+            return props
+        stripped = {}
+        for key, value in props.items():
+            if key in _RECONCILER_OWNED_PROPS or key.startswith("__"):
+                continue
+            stripped[key] = value
+        return stripped
+
+    @staticmethod
+    def _attach_ref(element: Element, native_view: Any) -> None:
+        """Set ``ref["current"]`` if the element carries a ``ref`` prop."""
+        ref = element.props.get("ref") if element.props else None
+        if isinstance(ref, dict):
+            ref["current"] = native_view
+
+    @staticmethod
+    def _detach_ref(element: Element) -> None:
+        """Clear ``ref["current"]`` so consumers don't hold a stale handle."""
+        ref = element.props.get("ref") if element.props else None
+        if isinstance(ref, dict):
+            try:
+                ref["current"] = None
+            except Exception:
+                pass
 
     @staticmethod
     def _same_type(old_el: Element, new_el: Element) -> bool:
@@ -558,16 +616,19 @@ class Reconciler:
         closures cheaply, and event handlers are usually fresh on every
         render). Internal `__*__` props are skipped because they are
         consumed by the reconciler itself, not the native handler.
+        Reconciler-owned props (``ref``) are also skipped because they
+        are managed via ``_attach_ref`` / ``_detach_ref`` and never
+        forwarded to the native handler.
         """
         changed = {}
         for key, new_val in new.items():
-            if key.startswith("__"):
+            if key.startswith("__") or key in _RECONCILER_OWNED_PROPS:
                 continue
             old_val = old.get(key)
             if callable(new_val) or old_val != new_val:
                 changed[key] = new_val
         for key in old:
-            if key.startswith("__"):
+            if key.startswith("__") or key in _RECONCILER_OWNED_PROPS:
                 continue
             if key not in new:
                 changed[key] = None

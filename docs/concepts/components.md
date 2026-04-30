@@ -77,8 +77,39 @@ pn.Column(
 
 **Lists:**
 
-- [`FlatList(data, render_item, key_extractor, separator_height)`][pythonnative.FlatList]:
-  scrollable data list.
+- [`FlatList(data, render_item, key_extractor, item_height, ...)`][pythonnative.FlatList]:
+  scrollable data list. Pass `item_height=` to enable native
+  virtualization (`UITableView` / `RecyclerView`); rows are mounted
+  lazily as they scroll into view.
+- [`SectionList(sections, render_item, render_section_header, item_height, ...)`][pythonnative.SectionList]:
+  virtualized list with section headers.
+
+**Platform UI:**
+
+- [`StatusBar(style, background_color, hidden)`][pythonnative.StatusBar]:
+  configure the device's status bar (light/dark icons, color, hidden).
+- [`KeyboardAvoidingView(*children, behavior)`][pythonnative.KeyboardAvoidingView]:
+  shift content up when the software keyboard appears.
+- [`RefreshControl(refreshing, on_refresh)`][pythonnative.RefreshControl]:
+  pull-to-refresh spec for `ScrollView` and `FlatList` (passed via
+  the `refresh_control=` prop).
+- [`Picker(value, items, on_change, placeholder)`][pythonnative.Picker]:
+  select / dropdown widget backed by an action sheet.
+
+**Imperative APIs:**
+
+- [`Alert.show(title, message, buttons, style)`][pythonnative.Alert]:
+  present a native alert dialog or action sheet.
+- [`Alert.confirm(title, on_confirm, on_cancel)`][pythonnative.alerts.Alert.confirm]:
+  two-button confirm/cancel.
+
+**Animations:**
+
+- `Animated.View` / `Animated.Text` / `Animated.Image`: components
+  whose `style` accepts [`AnimatedValue`][pythonnative.AnimatedValue]
+  instances. Drive animations with `Animated.timing`,
+  `Animated.spring`, or `Animated.decay`. See the
+  [Animations guide](../guides/animations.md).
 
 ### Flex layout model
 
@@ -214,7 +245,9 @@ hook state.
 - [`use_callback(fn, deps)`][pythonnative.use_callback]: stable
   function references.
 - [`use_ref(initial)`][pythonnative.use_ref]: mutable ref that
-  persists across renders.
+  persists across renders. When passed via the `ref=` prop, the
+  reconciler populates `ref["current"]` with the underlying native
+  view.
 - [`use_context(context)`][pythonnative.use_context]: read from a
   context provider.
 - [`use_navigation()`][pythonnative.use_navigation]: navigation
@@ -223,6 +256,12 @@ hook state.
   current route params.
 - [`use_focus_effect(effect, deps)`][pythonnative.use_focus_effect]:
   like `use_effect` but only runs when the screen is focused.
+- [`use_window_dimensions()`][pythonnative.use_window_dimensions]:
+  reactive viewport size.
+- [`use_safe_area_insets()`][pythonnative.use_safe_area_insets]:
+  reactive safe-area insets.
+- [`use_keyboard_height()`][pythonnative.use_keyboard_height]:
+  reactive software-keyboard height.
 
 ### Custom hooks
 
@@ -257,14 +296,21 @@ def MyComponent():
 
 ## Platform detection
 
-Use `utils.IS_ANDROID` / `utils.IS_IOS` when you need
-platform-specific logic:
+The recommended way to write platform-aware code is via
+[`Platform`][pythonnative.Platform]:
 
 ```python
-from pythonnative.utils import IS_ANDROID
+import pythonnative as pn
 
-title = "Android App" if IS_ANDROID else "iOS App"
+title = pn.Platform.select({"ios": "iOS App", "android": "Android App"})
+
+if pn.Platform.is_ios:
+    margin = 16
 ```
+
+`pn.Platform.OS` is `"ios"`, `"android"`, or `"test"` (the latter
+when running off-device, e.g., in unit tests). The lower-level
+`utils.IS_ANDROID` / `utils.IS_IOS` constants are still available.
 
 ## Next steps
 

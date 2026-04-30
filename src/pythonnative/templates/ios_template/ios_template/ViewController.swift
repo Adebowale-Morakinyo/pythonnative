@@ -15,6 +15,26 @@ import PythonKit
 import Python
 #endif
 
+#if canImport(PythonKit)
+private func drainPythonNativeScheduledRenders() {
+    do {
+        let pn = try Python.attemptImport("pythonnative.page")
+        _ = try pn.drain_ios_scheduled_renders.throwing.dynamicallyCall(withArguments: [])
+    } catch {
+        NSLog("[PN] swift.renderScheduler -> drain_ios_scheduled_renders failed: \(error)")
+    }
+}
+#endif
+
+@_cdecl("pn_schedule_render_drain")
+public func pn_schedule_render_drain() {
+    DispatchQueue.main.async {
+        #if canImport(PythonKit)
+        drainPythonNativeScheduledRenders()
+        #endif
+    }
+}
+
 class ViewController: UIViewController {
     // Ensure Python.framework is configured only once per process
     private static var hasInitializedPython: Bool = false

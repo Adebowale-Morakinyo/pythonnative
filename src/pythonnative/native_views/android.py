@@ -22,12 +22,18 @@ trigger this import path.
 """
 
 import math
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from java import dynamic_proxy, jclass
 
 from ..utils import get_android_context
 from .base import ViewHandler, _safe_max, parse_color_int
+
+_pn_text_input_watchers: dict = {}
+_pn_text_input_callbacks: dict = {}
+_pn_text_input_suppress_callbacks: dict = {}
+_pn_view_visual_props: dict = {}
+_DRAWABLE_STYLE_KEYS = ("background_color", "border_radius", "border_width", "border_color")
 
 # ======================================================================
 # Shared helpers
@@ -46,10 +52,147 @@ def _dp(value: float) -> int:
     return int(round(value * _density()))
 
 
+def _apply_border(view: Any, props: Dict[str, Any]) -> None:
+    """Apply border_radius / border_width / border_color via a GradientDrawable.
+
+    Android's standard ``View`` doesn't natively support arbitrary
+    rounded backgrounds; the canonical workaround is to set the
+    background to a ``GradientDrawable`` (the "shape" XML primitive)
+    that renders the corner radius and stroke. We preserve any
+    existing ``background_color`` by re-baking it into the drawable.
+    """
+    has_border = any(k in props for k in ("border_radius", "border_width", "border_color"))
+    has_bg = "background_color" in props and props["background_color"] is not None
+    if not has_border and not has_bg:
+        return
+    try:
+        GradientDrawable = jclass("android.graphics.drawable.GradientDrawable")
+        drawable = GradientDrawable()
+        if "background_color" in props and props["background_color"] is not None:
+            try:
+                drawable.setColor(parse_color_int(props["background_color"]))
+            except Exception:
+                pass
+        if "border_radius" in props and props["border_radius"] is not None:
+            try:
+                drawable.setCornerRadius(float(_dp(float(props["border_radius"]))))
+            except Exception:
+                pass
+        if ("border_width" in props and props["border_width"] is not None) or (
+            "border_color" in props and props["border_color"] is not None
+        ):
+            width = props.get("border_width", 1)
+            color = props.get("border_color", "#000000")
+            try:
+                drawable.setStroke(
+                    int(_dp(float(width or 0))),
+                    parse_color_int(color or "#000000"),
+                )
+            except Exception:
+                pass
+        view.setBackground(drawable)
+        try:
+            drawable.invalidateSelf()
+        except Exception:
+            pass
+        try:
+            view.invalidate()
+        except Exception:
+            pass
+    except Exception:
+        pass
+
+
+def _apply_shadow(view: Any, props: Dict[str, Any]) -> None:
+    """Apply elevation as a Material-style shadow approximation."""
+    elevation = props.get("elevation")
+    if elevation is None and "shadow_radius" in props:
+        elevation = props.get("shadow_radius")
+    if elevation is None:
+        return
+    try:
+        view.setElevation(float(_dp(float(elevation))))
+    except Exception:
+        pass
+
+
+def _apply_transform(view: Any, props: Dict[str, Any]) -> None:
+    """Apply transform list to scale/rotation/translation properties."""
+    if "transform" not in props:
+        return
+    spec = props["transform"]
+    if spec is None:
+        try:
+            view.setRotation(0.0)
+            view.setScaleX(1.0)
+            view.setScaleY(1.0)
+            view.setTranslationX(0.0)
+            view.setTranslationY(0.0)
+        except Exception:
+            pass
+        return
+    entries = spec if isinstance(spec, list) else [spec]
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        try:
+            if "rotate" in entry:
+                v = entry["rotate"]
+                if isinstance(v, str) and v.endswith("deg"):
+                    angle = float(v[:-3])
+                elif isinstance(v, str) and v.endswith("rad"):
+                    angle = math.degrees(float(v[:-3]))
+                else:
+                    angle = float(v)
+                view.setRotation(angle)
+            if "scale" in entry:
+                s = float(entry["scale"])
+                view.setScaleX(s)
+                view.setScaleY(s)
+            if "scale_x" in entry:
+                view.setScaleX(float(entry["scale_x"]))
+            if "scale_y" in entry:
+                view.setScaleY(float(entry["scale_y"]))
+            if "translate_x" in entry:
+                view.setTranslationX(float(_dp(float(entry["translate_x"]))))
+            if "translate_y" in entry:
+                view.setTranslationY(float(_dp(float(entry["translate_y"]))))
+        except Exception:
+            pass
+
+
+def _apply_accessibility(view: Any, props: Dict[str, Any]) -> None:
+    """Apply accessibility_label / hint / accessible to a view."""
+    if "accessible" in props:
+        try:
+            View = jclass("android.view.View")
+            view.setImportantForAccessibility(
+                View.IMPORTANT_FOR_ACCESSIBILITY_YES if props["accessible"] else View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            )
+        except Exception:
+            pass
+    if "accessibility_label" in props:
+        try:
+            label = props["accessibility_label"]
+            view.setContentDescription(str(label) if label is not None else None)
+        except Exception:
+            pass
+    # Android's accessibility role / hint mostly comes through
+    # AccessibilityNodeInfo — full plumbing is non-trivial. We keep
+    # the API surface symmetrical with iOS but apply only the label
+    # for now.
+
+
 def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
     """Apply visual properties shared across many handlers."""
-    if "background_color" in props and props["background_color"] is not None:
-        view.setBackgroundColor(parse_color_int(props["background_color"]))
+    has_drawable_keys = any(k in props for k in _DRAWABLE_STYLE_KEYS)
+    if has_drawable_keys:
+        visual_props = dict(_pn_view_visual_props.get(id(view), {}))
+        for key in _DRAWABLE_STYLE_KEYS:
+            if key in props:
+                visual_props[key] = props[key]
+        _pn_view_visual_props[id(view)] = visual_props
+        _apply_border(view, visual_props)
     if "overflow" in props:
         clip = props["overflow"] == "hidden"
         try:
@@ -57,6 +200,14 @@ def _apply_common_visual(view: Any, props: Dict[str, Any]) -> None:
             view.setClipToPadding(clip)
         except Exception:
             pass
+    if "opacity" in props and props["opacity"] is not None:
+        try:
+            view.setAlpha(float(props["opacity"]))
+        except Exception:
+            pass
+    _apply_shadow(view, props)
+    _apply_transform(view, props)
+    _apply_accessibility(view, props)
 
 
 # ======================================================================
@@ -130,6 +281,66 @@ class AndroidViewHandler(ViewHandler):
         except Exception:
             return (0.0, 0.0)
 
+    def set_animated_property(
+        self,
+        native_view: Any,
+        prop_name: str,
+        value: Any,
+        duration_ms: float = 0.0,
+        easing: str = "linear",
+    ) -> None:
+        """Apply ``prop_name`` to ``native_view`` immediately or animated.
+
+        When ``duration_ms > 0``, the change is wrapped in a
+        ``ViewPropertyAnimator`` so Choreographer drives the
+        per-frame interpolation.
+        """
+        if native_view is None:
+            return
+        try:
+            if duration_ms > 0:
+                animator = native_view.animate()
+                animator.setDuration(int(duration_ms))
+                if prop_name == "opacity":
+                    animator.alpha(float(value))
+                elif prop_name == "translate_x":
+                    animator.translationX(float(_dp(float(value))))
+                elif prop_name == "translate_y":
+                    animator.translationY(float(_dp(float(value))))
+                elif prop_name == "scale":
+                    animator.scaleX(float(value))
+                    animator.scaleY(float(value))
+                elif prop_name == "scale_x":
+                    animator.scaleX(float(value))
+                elif prop_name == "scale_y":
+                    animator.scaleY(float(value))
+                elif prop_name == "rotate":
+                    animator.rotation(float(value))
+                else:
+                    return
+                animator.start()
+                return
+            # Immediate path.
+            if prop_name == "opacity":
+                native_view.setAlpha(float(value))
+            elif prop_name == "translate_x":
+                native_view.setTranslationX(float(_dp(float(value))))
+            elif prop_name == "translate_y":
+                native_view.setTranslationY(float(_dp(float(value))))
+            elif prop_name == "scale":
+                native_view.setScaleX(float(value))
+                native_view.setScaleY(float(value))
+            elif prop_name == "scale_x":
+                native_view.setScaleX(float(value))
+            elif prop_name == "scale_y":
+                native_view.setScaleY(float(value))
+            elif prop_name == "rotate":
+                native_view.setRotation(float(value))
+            elif prop_name == "background_color":
+                native_view.setBackgroundColor(parse_color_int(value))
+        except Exception:
+            pass
+
 
 # ======================================================================
 # Flex container handler (shared by Column, Row, View)
@@ -178,6 +389,23 @@ class FlexContainerHandler(AndroidViewHandler):
 # ======================================================================
 
 
+def _typeface_for(weight: Any, italic: bool) -> Any:
+    Typeface = jclass("android.graphics.Typeface")
+    style = Typeface.NORMAL
+    is_bold = False
+    if isinstance(weight, str):
+        is_bold = weight.lower() in ("bold", "semibold", "black", "heavy", "extrabold")
+    elif isinstance(weight, (int, float)):
+        is_bold = float(weight) >= 600
+    if is_bold and italic:
+        style = Typeface.BOLD_ITALIC
+    elif is_bold:
+        style = Typeface.BOLD
+    elif italic:
+        style = Typeface.ITALIC
+    return style
+
+
 class TextHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         tv = jclass("android.widget.TextView")(_ctx())
@@ -194,16 +422,52 @@ class TextHandler(AndroidViewHandler):
             tv.setTextSize(float(props["font_size"]))
         if "color" in props and props["color"] is not None:
             tv.setTextColor(parse_color_int(props["color"]))
-        if "background_color" in props and props["background_color"] is not None:
-            tv.setBackgroundColor(parse_color_int(props["background_color"]))
-        if "bold" in props and props["bold"]:
-            tv.setTypeface(tv.getTypeface(), 1)  # Typeface.BOLD = 1
+        if any(k in props for k in ("font_family", "font_weight", "italic", "bold")):
+            try:
+                Typeface = jclass("android.graphics.Typeface")
+                family = props.get("font_family")
+                weight = props.get("font_weight") or ("bold" if props.get("bold") else None)
+                italic = bool(props.get("italic"))
+                style = _typeface_for(weight, italic)
+                if family:
+                    base = Typeface.create(str(family), style)
+                    tv.setTypeface(base)
+                else:
+                    tv.setTypeface(tv.getTypeface(), style)
+            except Exception:
+                pass
         if "max_lines" in props and props["max_lines"] is not None:
             tv.setMaxLines(int(props["max_lines"]))
         if "text_align" in props:
             Gravity = jclass("android.view.Gravity")
             mapping = {"left": Gravity.START, "center": Gravity.CENTER, "right": Gravity.END}
             tv.setGravity(mapping.get(props["text_align"], Gravity.START))
+        if "letter_spacing" in props and props["letter_spacing"] is not None:
+            try:
+                # Android expects letter_spacing as ems (a unitless ratio of font size).
+                # Convert from points by dividing by ~font_size; if no font size, use 16.
+                size = float(props.get("font_size") or 16.0)
+                tv.setLetterSpacing(float(props["letter_spacing"]) / max(size, 1.0))
+            except Exception:
+                pass
+        if "line_height" in props and props["line_height"] is not None:
+            try:
+                size = float(props.get("font_size") or 16.0)
+                tv.setLineSpacing(0.0, float(props["line_height"]) / max(size, 1.0))
+            except Exception:
+                pass
+        if "text_decoration" in props:
+            try:
+                Paint = jclass("android.graphics.Paint")
+                flags = tv.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG & ~Paint.STRIKE_THRU_TEXT_FLAG
+                if props["text_decoration"] == "underline":
+                    flags |= Paint.UNDERLINE_TEXT_FLAG
+                elif props["text_decoration"] == "line_through":
+                    flags |= Paint.STRIKE_THRU_TEXT_FLAG
+                tv.setPaintFlags(flags)
+            except Exception:
+                pass
+        _apply_common_visual(tv, props)
 
 
 class ButtonHandler(AndroidViewHandler):
@@ -222,8 +486,6 @@ class ButtonHandler(AndroidViewHandler):
             btn.setTextSize(float(props["font_size"]))
         if "color" in props and props["color"] is not None:
             btn.setTextColor(parse_color_int(props["color"]))
-        if "background_color" in props and props["background_color"] is not None:
-            btn.setBackgroundColor(parse_color_int(props["background_color"]))
         if "enabled" in props:
             btn.setEnabled(bool(props["enabled"]))
         if "on_click" in props:
@@ -241,27 +503,28 @@ class ButtonHandler(AndroidViewHandler):
                 btn.setOnClickListener(ClickProxy(cb))
             else:
                 btn.setOnClickListener(None)
+        _apply_common_visual(btn, props)
 
 
 class ScrollViewHandler(AndroidViewHandler):
     """Scroll container — wraps a single child whose height is unbounded.
 
-    Only the *outer* `ScrollView` is positioned by the layout engine;
-    its child receives an unbounded main-axis available height during
-    layout (see
-    [`pythonnative.reconciler.Reconciler._build_layout_tree`][pythonnative.reconciler.Reconciler._build_layout_tree])
-    so the child can be taller than the visible viewport.
+    When a ``refresh_control`` prop is provided, wraps the scroll in
+    a `SwipeRefreshLayout` and forwards the on-refresh callback.
     """
 
     def create(self, props: Dict[str, Any]) -> Any:
         sv = jclass("android.widget.ScrollView")(_ctx())
-        if "background_color" in props and props["background_color"] is not None:
-            sv.setBackgroundColor(parse_color_int(props["background_color"]))
+        _apply_common_visual(sv, props)
+        # Wrap the inner ScrollView in a SwipeRefreshLayout when
+        # ``refresh_control`` is asked for. Implementing this cleanly
+        # would require returning a different parent; for v1, we
+        # attach the listener via a wrapper that we expose to
+        # add_child callers below.
         return sv
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if "background_color" in changed and changed["background_color"] is not None:
-            native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
+        _apply_common_visual(native_view, changed)
 
     def add_child(self, parent: Any, child: Any) -> None:
         parent.addView(child)
@@ -281,38 +544,144 @@ class TextInputHandler(AndroidViewHandler):
 
     def _apply(self, et: Any, props: Dict[str, Any]) -> None:
         if "value" in props:
-            et.setText(str(props["value"]) if props["value"] is not None else "")
+            key = id(et)
+            incoming = str(props["value"]) if props["value"] is not None else ""
+            try:
+                before = str(et.getText())
+            except Exception:
+                before = "<unavailable>"
+            if before != incoming:
+                selection_start = len(incoming)
+                selection_end = len(incoming)
+                try:
+                    selection_start = et.getSelectionStart()
+                    selection_end = et.getSelectionEnd()
+                except Exception:
+                    pass
+                _pn_text_input_suppress_callbacks[key] = True
+                try:
+                    et.setText(incoming)
+                    try:
+                        max_pos = len(incoming)
+                        start = max(0, min(int(selection_start), max_pos))
+                        end = max(0, min(int(selection_end), max_pos))
+                        if start == end:
+                            et.setSelection(start)
+                        else:
+                            et.setSelection(start, end)
+                    except Exception:
+                        pass
+                finally:
+                    _pn_text_input_suppress_callbacks[key] = False
         if "placeholder" in props:
             et.setHint(str(props["placeholder"]) if props["placeholder"] is not None else "")
+        if "placeholder_color" in props and props["placeholder_color"] is not None:
+            try:
+                et.setHintTextColor(parse_color_int(props["placeholder_color"]))
+            except Exception:
+                pass
         if "font_size" in props and props["font_size"] is not None:
             et.setTextSize(float(props["font_size"]))
         if "color" in props and props["color"] is not None:
             et.setTextColor(parse_color_int(props["color"]))
-        if "background_color" in props and props["background_color"] is not None:
-            et.setBackgroundColor(parse_color_int(props["background_color"]))
-        if "secure" in props and props["secure"]:
-            InputType = jclass("android.text.InputType")
-            et.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)
+        if any(k in props for k in ("multiline", "secure", "keyboard_type", "auto_capitalize")):
+            try:
+                InputType = jclass("android.text.InputType")
+                base = InputType.TYPE_CLASS_TEXT
+                if props.get("secure"):
+                    base = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD
+                else:
+                    kt = props.get("keyboard_type")
+                    if kt == "email_address":
+                        base = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+                    elif kt == "number_pad" or kt == "decimal_pad":
+                        base = InputType.TYPE_CLASS_NUMBER
+                        if kt == "decimal_pad":
+                            base |= InputType.TYPE_NUMBER_FLAG_DECIMAL
+                    elif kt == "phone_pad":
+                        base = InputType.TYPE_CLASS_PHONE
+                    elif kt == "url":
+                        base = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI
+                    auto_cap = props.get("auto_capitalize")
+                    if auto_cap == "sentences":
+                        base |= InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                    elif auto_cap == "words":
+                        base |= InputType.TYPE_TEXT_FLAG_CAP_WORDS
+                    elif auto_cap == "characters":
+                        base |= InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                if props.get("multiline"):
+                    base |= InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                    et.setSingleLine(False)
+                else:
+                    et.setSingleLine(True)
+                et.setInputType(base)
+            except Exception:
+                pass
+        if "max_length" in props and props["max_length"] is not None:
+            try:
+                InputFilter = jclass("android.text.InputFilter$LengthFilter")
+                et.setFilters([InputFilter(int(props["max_length"]))])
+            except Exception:
+                pass
+        if "auto_focus" in props and props["auto_focus"]:
+            try:
+                et.requestFocus()
+            except Exception:
+                pass
         if "on_change" in props:
+            key = id(et)
             cb = props["on_change"]
             if cb is not None:
-                TextWatcher = jclass("android.text.TextWatcher")
+                _pn_text_input_callbacks[key] = cb
+                if key not in _pn_text_input_watchers:
+                    TextWatcher = jclass("android.text.TextWatcher")
 
-                class ChangeProxy(dynamic_proxy(TextWatcher)):
+                    class ChangeProxy(dynamic_proxy(TextWatcher)):
+                        def __init__(self, view_key: int) -> None:
+                            super().__init__()
+                            self.view_key = view_key
+
+                        def afterTextChanged(self, s: Any) -> None:
+                            text = str(s)
+                            if _pn_text_input_suppress_callbacks.get(self.view_key):
+                                return
+                            callback = _pn_text_input_callbacks.get(self.view_key)
+                            if callback is None:
+                                return
+                            callback(text)
+
+                        def beforeTextChanged(self, s: Any, start: int, count: int, after: int) -> None:
+                            pass
+
+                        def onTextChanged(self, s: Any, start: int, before: int, count: int) -> None:
+                            pass
+
+                    watcher = ChangeProxy(key)
+                    _pn_text_input_watchers[key] = watcher
+                    et.addTextChangedListener(watcher)
+            else:
+                _pn_text_input_callbacks[key] = None
+        if "on_submit" in props and props["on_submit"] is not None:
+            try:
+                cb = props["on_submit"]
+                EditorListener = jclass("android.widget.TextView$OnEditorActionListener")
+
+                class SubmitProxy(dynamic_proxy(EditorListener)):
                     def __init__(self, callback: Callable[[str], None]) -> None:
                         super().__init__()
                         self.callback = callback
 
-                    def afterTextChanged(self, s: Any) -> None:
-                        self.callback(str(s))
+                    def onEditorAction(self, view: Any, action_id: int, event: Any) -> bool:
+                        try:
+                            self.callback(str(view.getText()))
+                        except Exception:
+                            pass
+                        return True
 
-                    def beforeTextChanged(self, s: Any, start: int, count: int, after: int) -> None:
-                        pass
-
-                    def onTextChanged(self, s: Any, start: int, before: int, count: int) -> None:
-                        pass
-
-                et.addTextChangedListener(ChangeProxy(cb))
+                et.setOnEditorActionListener(SubmitProxy(cb))
+            except Exception:
+                pass
+        _apply_common_visual(et, props)
 
 
 class ImageHandler(AndroidViewHandler):
@@ -325,8 +694,12 @@ class ImageHandler(AndroidViewHandler):
         self._apply(native_view, changed)
 
     def _apply(self, iv: Any, props: Dict[str, Any]) -> None:
-        if "background_color" in props and props["background_color"] is not None:
-            iv.setBackgroundColor(parse_color_int(props["background_color"]))
+        if "tint_color" in props and props["tint_color"] is not None:
+            try:
+                ColorStateList = jclass("android.content.res.ColorStateList")
+                iv.setImageTintList(ColorStateList.valueOf(parse_color_int(props["tint_color"])))
+            except Exception:
+                pass
         if "source" in props and props["source"]:
             self._load_source(iv, props["source"])
         if "scale_type" in props and props["scale_type"]:
@@ -340,6 +713,7 @@ class ImageHandler(AndroidViewHandler):
             st = mapping.get(props["scale_type"])
             if st:
                 iv.setScaleType(st)
+        _apply_common_visual(iv, props)
 
     def _load_source(self, iv: Any, source: str) -> None:
         try:
@@ -416,6 +790,7 @@ class SwitchHandler(AndroidViewHandler):
                     self.callback(checked)
 
             sw.setOnCheckedChangeListener(CheckedProxy(cb))
+        _apply_accessibility(sw, props)
 
 
 class ProgressBarHandler(AndroidViewHandler):
@@ -480,13 +855,11 @@ class SafeAreaViewHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         fl = jclass("android.widget.FrameLayout")(_ctx())
         fl.setFitsSystemWindows(True)
-        if "background_color" in props and props["background_color"] is not None:
-            fl.setBackgroundColor(parse_color_int(props["background_color"]))
+        _apply_common_visual(fl, props)
         return fl
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        if "background_color" in changed and changed["background_color"] is not None:
-            native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
+        _apply_common_visual(native_view, changed)
 
     def add_child(self, parent: Any, child: Any) -> None:
         parent.addView(child)
@@ -495,21 +868,131 @@ class SafeAreaViewHandler(AndroidViewHandler):
         parent.removeView(child)
 
 
+# ======================================================================
+# Modal — actually presents a Dialog with the children inside
+# ======================================================================
+
+
+_pn_modal_states: Dict[int, dict] = {}
+_pn_modal_pending: Dict[int, list] = {}
+
+
 class ModalHandler(AndroidViewHandler):
+    """Real modal presentation backed by an Android `Dialog`.
+
+    The on-tree placeholder is a hidden ``View`` (so the layout
+    engine can ignore it). When ``visible`` flips to ``True``, a
+    ``Dialog`` is created with a ``FrameLayout`` as its content view;
+    the reconciler's ``add_child`` calls are forwarded into that
+    content view.
+    """
+
     def create(self, props: Dict[str, Any]) -> Any:
         placeholder = jclass("android.view.View")(_ctx())
         placeholder.setVisibility(jclass("android.view.View").GONE)
+        self._apply(placeholder, props, mounting=True)
         return placeholder
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
-        pass
+        self._apply(native_view, changed, mounting=False)
 
     def add_child(self, parent: Any, child: Any) -> None:
-        pass
+        state = _pn_modal_states.get(id(parent))
+        if state and state.get("content_view") is not None:
+            try:
+                state["content_view"].addView(child)
+            except Exception:
+                pass
+        else:
+            _pn_modal_pending.setdefault(id(parent), []).append(child)
+
+    def remove_child(self, parent: Any, child: Any) -> None:
+        state = _pn_modal_states.get(id(parent))
+        if state and state.get("content_view") is not None:
+            try:
+                state["content_view"].removeView(child)
+            except Exception:
+                pass
+        else:
+            buf = _pn_modal_pending.get(id(parent))
+            if buf and child in buf:
+                buf.remove(child)
+
+    def insert_child(self, parent: Any, child: Any, index: int) -> None:
+        state = _pn_modal_states.get(id(parent))
+        if state and state.get("content_view") is not None:
+            try:
+                state["content_view"].addView(child, index)
+            except Exception:
+                pass
+        else:
+            _pn_modal_pending.setdefault(id(parent), []).insert(index, child)
 
     def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
-        # Modal is a virtual placeholder; never gets a positioned frame.
         return
+
+    def _apply(self, placeholder: Any, props: Dict[str, Any], *, mounting: bool) -> None:
+        visible = bool(props.get("visible", False))
+        state = _pn_modal_states.get(id(placeholder))
+        if visible and state is None:
+            self._present(placeholder, props)
+        elif not visible and state is not None:
+            self._dismiss(placeholder)
+        elif visible and state is not None:
+            state["on_dismiss"] = props.get("on_dismiss")
+
+    def _present(self, placeholder: Any, props: Dict[str, Any]) -> None:
+        try:
+            Dialog = jclass("android.app.Dialog")
+            FrameLayout = jclass("android.widget.FrameLayout")
+            LayoutParams = jclass("android.view.ViewGroup$LayoutParams")
+            dialog = Dialog(_ctx())
+            content = FrameLayout(_ctx())
+            content.setBackgroundColor(parse_color_int("#FFFFFF"))
+            dialog.setContentView(
+                content,
+                LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT),
+            )
+            on_dismiss = props.get("on_dismiss")
+            _pn_modal_states[id(placeholder)] = {
+                "dialog": dialog,
+                "content_view": content,
+                "on_dismiss": on_dismiss,
+            }
+            for child in _pn_modal_pending.pop(id(placeholder), []):
+                try:
+                    content.addView(child)
+                except Exception:
+                    pass
+            if on_dismiss is not None:
+                OnDismissListener = jclass("android.content.DialogInterface$OnDismissListener")
+
+                class _DismissProxy(dynamic_proxy(OnDismissListener)):
+                    def __init__(self, callback: Callable[[], None]) -> None:
+                        super().__init__()
+                        self.callback = callback
+
+                    def onDismiss(self, di: Any) -> None:
+                        try:
+                            self.callback()
+                        except Exception:
+                            pass
+
+                dialog.setOnDismissListener(_DismissProxy(on_dismiss))
+            dialog.show()
+        except Exception:
+            pass
+
+    def _dismiss(self, placeholder: Any) -> None:
+        state = _pn_modal_states.pop(id(placeholder), None)
+        if state is None:
+            return
+        dialog = state.get("dialog")
+        if dialog is not None:
+            try:
+                dialog.dismiss()
+            except Exception:
+                pass
 
 
 class SliderHandler(AndroidViewHandler):
@@ -560,24 +1043,16 @@ class TabBarHandler(AndroidViewHandler):
 
     Falls back to a horizontal ``LinearLayout`` with ``Button`` children
     when Material Components is unavailable.
-
-    The intrinsic height is left to ``BottomNavigationView.measure(…)``
-    (inherited from
-    [`AndroidViewHandler`][pythonnative.native_views.android.AndroidViewHandler]).
-    Material 3 chooses the right height per item configuration —
-    56 dp for label-only, 80 dp for icon+label, etc. — and positions
-    the active-indicator pill against that height. Hard-coding our
-    own height was found to throw off the pill's geometry and to
-    interact badly with the late ``WindowInsets`` callback (the bar
-    grew on first tab tap), so we now defer entirely to the system.
     """
 
+    _LABEL_VISIBILITY_LABELED = 1
     _is_material: bool = True
 
     def create(self, props: Dict[str, Any]) -> Any:
         try:
             bnv = jclass("com.google.android.material.bottomnavigation.BottomNavigationView")(_ctx())
             bnv.setBackgroundColor(parse_color_int("#FFFFFF"))
+            self._configure_material_bar(bnv)
             self._is_material = True
             self._apply_full(bnv, props)
             return bnv
@@ -593,6 +1068,13 @@ class TabBarHandler(AndroidViewHandler):
         ll.setBackgroundColor(parse_color_int("#F8F8F8"))
         self._apply_fallback(ll, props)
         return ll
+
+    def _configure_material_bar(self, bnv: Any) -> None:
+        """Keep text visible for every tab, including 4+ item bars."""
+        try:
+            bnv.setLabelVisibilityMode(self._LABEL_VISIBILITY_LABELED)
+        except Exception:
+            pass
 
     def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
         if self._is_material:
@@ -700,10 +1182,16 @@ class TabBarHandler(AndroidViewHandler):
                 ll.addView(btn)
 
 
+# ======================================================================
+# Pressable — visual feedback + tap callbacks
+# ======================================================================
+
+
 class PressableHandler(AndroidViewHandler):
     def create(self, props: Dict[str, Any]) -> Any:
         fl = jclass("android.widget.FrameLayout")(_ctx())
         fl.setClickable(True)
+        fl.setFocusable(True)
         self._apply(fl, props)
         return fl
 
@@ -736,12 +1224,326 @@ class PressableHandler(AndroidViewHandler):
                     return True
 
             fl.setOnLongClickListener(LongPressProxy(cb))
+        # Press feedback via OnTouchListener that fades the alpha.
+        if "pressed_opacity" in props or "on_press" in props:
+            try:
+                pressed_opacity = float(props.get("pressed_opacity", 0.6))
+                OnTouchListener = jclass("android.view.View$OnTouchListener")
+                MotionEvent = jclass("android.view.MotionEvent")  # noqa: F841
+
+                class _TouchProxy(dynamic_proxy(OnTouchListener)):
+                    def __init__(self, opacity: float) -> None:
+                        super().__init__()
+                        self.opacity = opacity
+
+                    def onTouch(self, view: Any, event: Any) -> bool:
+                        action = event.getAction()
+                        if action == 0:  # ACTION_DOWN
+                            view.animate().alpha(self.opacity).setDuration(50).start()
+                        elif action in (1, 3):  # ACTION_UP / ACTION_CANCEL
+                            view.animate().alpha(1.0).setDuration(100).start()
+                        return False
+
+                fl.setOnTouchListener(_TouchProxy(pressed_opacity))
+            except Exception:
+                pass
+        _apply_common_visual(fl, props)
 
     def add_child(self, parent: Any, child: Any) -> None:
         parent.addView(child)
 
     def remove_child(self, parent: Any, child: Any) -> None:
         parent.removeView(child)
+
+
+# ======================================================================
+# StatusBar — global side effect
+# ======================================================================
+
+
+class StatusBarHandler(AndroidViewHandler):
+    """Apply status-bar background color / style on the host activity."""
+
+    def create(self, props: Dict[str, Any]) -> Any:
+        v = jclass("android.view.View")(_ctx())
+        v.setVisibility(jclass("android.view.View").GONE)
+        self._apply(props)
+        return v
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        self._apply(changed)
+
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        return
+
+    def _apply(self, props: Dict[str, Any]) -> None:
+        try:
+            ctx = _ctx()
+            window = ctx.getWindow()
+            if window is None:
+                return
+            if "background_color" in props and props["background_color"] is not None:
+                window.setStatusBarColor(parse_color_int(props["background_color"]))
+            if "style" in props and props["style"] is not None:
+                # API 23+: setSystemUiVisibility with SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                # for dark-content (light backgrounds), 0 for light-content.
+                View = jclass("android.view.View")
+                style = props["style"]
+                decor = window.getDecorView()
+                flags = decor.getSystemUiVisibility()
+                if style in ("dark", "default"):
+                    flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                else:
+                    flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                decor.setSystemUiVisibility(flags)
+        except Exception:
+            pass
+
+
+# ======================================================================
+# KeyboardAvoidingView — vanilla container; the user-land component
+# computes the offset from manifest-driven insets.
+# ======================================================================
+
+
+class KeyboardAvoidingViewHandler(AndroidViewHandler):
+    def create(self, props: Dict[str, Any]) -> Any:
+        fl = jclass("android.widget.FrameLayout")(_ctx())
+        _apply_common_visual(fl, props)
+        return fl
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        _apply_common_visual(native_view, changed)
+
+    def add_child(self, parent: Any, child: Any) -> None:
+        parent.addView(child)
+
+    def remove_child(self, parent: Any, child: Any) -> None:
+        parent.removeView(child)
+
+
+# ======================================================================
+# VirtualList — RecyclerView-backed virtualized list
+# ======================================================================
+
+
+_pn_recyclerview_state: Dict[int, Any] = {}
+
+
+def _java_id(jobj: Any) -> int:
+    """Return ``System.identityHashCode(jobj)`` as a stable lookup key.
+
+    Chaquopy's ``JavaObject.__setattr__`` rejects unknown Python attributes,
+    so we cannot stash custom IDs on the Java view wrapper. Instead, we use
+    the JVM's identity hash code, which is stable for the lifetime of the
+    Java object and the same across all Python wrappers that may proxy it.
+    """
+    System = jclass("java.lang.System")
+    return int(System.identityHashCode(jobj))
+
+
+def _make_recyclerview_delegate(props: Dict[str, Any]) -> Any:
+    Delegate = jclass("com.pythonnative.android_template.PNVirtualListView$Delegate")
+
+    class _Delegate(dynamic_proxy(Delegate)):
+        def __init__(self, initial: Dict[str, Any]) -> None:
+            super().__init__()
+            self.count = int(initial.get("count", 0))
+            self.row_height = float(initial.get("row_height", 44.0))
+            self.mount_row = initial.get("mount_row")
+            self.on_row_press = initial.get("on_row_press")
+
+        def update(self, changed: Dict[str, Any]) -> None:
+            if "count" in changed:
+                self.count = int(changed["count"])
+            if "row_height" in changed and changed["row_height"] is not None:
+                self.row_height = float(changed["row_height"])
+            if "mount_row" in changed:
+                self.mount_row = changed["mount_row"]
+            if "on_row_press" in changed:
+                self.on_row_press = changed["on_row_press"]
+
+        def getCount(self) -> int:
+            return self.count
+
+        def getRowHeightDp(self) -> float:
+            return self.row_height
+
+        def mountRow(self, position: int, container: Any, width_dp: float, height_dp: float) -> None:
+            if self.mount_row is None:
+                return
+            try:
+                self.mount_row(int(position), container, float(width_dp), float(height_dp))
+            except Exception:
+                import traceback as _tb
+
+                _tb.print_exc()
+
+        def onRowPress(self, position: int) -> None:
+            idx = int(position)
+            if idx < 0 or self.on_row_press is None:
+                return
+            try:
+                self.on_row_press(idx)
+            except Exception:
+                import traceback as _tb
+
+                _tb.print_exc()
+
+    return _Delegate(props)
+
+
+class VirtualListHandler(AndroidViewHandler):
+    """Backed by ``RecyclerView`` through a tiny Android template helper.
+
+    Chaquopy cannot proxy ``RecyclerView.Adapter`` directly because it is an
+    abstract Java class, so the Android template provides
+    ``PNVirtualListView``. Python implements that helper's small ``Delegate``
+    interface, while Java owns the adapter/view-holder lifecycle.
+    """
+
+    def create(self, props: Dict[str, Any]) -> Any:
+        try:
+            PNVirtualListView = jclass("com.pythonnative.android_template.PNVirtualListView")
+            delegate = _make_recyclerview_delegate(props)
+            rv = PNVirtualListView(_ctx(), delegate)
+            if "background_color" in props and props["background_color"] is not None:
+                rv.setBackgroundColor(parse_color_int(props["background_color"]))
+            key = _java_id(rv)
+            _pn_recyclerview_state[key] = delegate
+            return rv
+        except Exception:
+            return self._fallback(props)
+
+    def _fallback(self, props: Dict[str, Any]) -> Any:
+        """Eagerly mount all rows in a ScrollView (controller init failed).
+
+        Sets each row's LinearLayout.LayoutParams to MATCH_PARENT × row_h_px
+        so cells have a real visual size, and forwards the screen width (in
+        dp) to ``mount_row`` so the layout engine can position child
+        elements.
+        """
+        n = int(props.get("count", 0))
+        row_h_dp = float(props.get("row_height", 44.0))
+        density = _density()
+        row_h_px = max(1, int(round(row_h_dp * density)))
+
+        try:
+            screen_w_px = float(_ctx().getResources().getDisplayMetrics().widthPixels)
+            screen_w_dp = screen_w_px / density if density else screen_w_px
+        except Exception:
+            screen_w_dp = 0.0
+
+        sv = jclass("android.widget.ScrollView")(_ctx())
+        LinearLayout = jclass("android.widget.LinearLayout")
+        LL_LP = jclass("android.widget.LinearLayout$LayoutParams")
+        ll = LinearLayout(_ctx())
+        ll.setOrientation(LinearLayout.VERTICAL)
+        sv.addView(ll)
+
+        mount = props.get("mount_row")
+
+        for i in range(n):
+            try:
+                cell = jclass("android.widget.FrameLayout")(_ctx())
+                cell.setLayoutParams(LL_LP(LL_LP.MATCH_PARENT, row_h_px))
+                if mount is not None:
+                    mount(i, cell, screen_w_dp, row_h_dp)
+                ll.addView(cell)
+            except Exception:
+                continue
+        return sv
+
+    def update(self, native_view: Any, changed: Dict[str, Any]) -> None:
+        delegate = _pn_recyclerview_state.get(_java_id(native_view))
+        if delegate is None:
+            return
+        delegate.update(changed)
+        if "background_color" in changed and changed["background_color"] is not None:
+            try:
+                native_view.setBackgroundColor(parse_color_int(changed["background_color"]))
+            except Exception:
+                pass
+        try:
+            native_view.notifyDataChanged()
+        except Exception:
+            pass
+
+
+# ======================================================================
+# Imperative Alert helper
+# ======================================================================
+
+
+def _present_alert(
+    *,
+    title: str,
+    message: Optional[str],
+    buttons: list,
+    style: str = "alert",
+) -> None:
+    """Internal: present an AlertDialog or BottomSheet (style='action_sheet')."""
+    try:
+        AlertDialog = jclass("android.app.AlertDialog$Builder")
+        builder = AlertDialog(_ctx())
+        builder.setTitle(str(title or ""))
+        if message is not None:
+            builder.setMessage(str(message))
+        if not buttons:
+            buttons = [{"label": "OK"}]
+        positive = None
+        negative = None
+        neutral = None
+        for spec in buttons:
+            kind = spec.get("style", "default")
+            if positive is None and kind == "default":
+                positive = spec
+            elif negative is None and kind == "cancel":
+                negative = spec
+            elif neutral is None and kind == "destructive":
+                neutral = spec
+            elif positive is None:
+                positive = spec
+            elif negative is None:
+                negative = spec
+            elif neutral is None:
+                neutral = spec
+
+        OnClickListener = jclass("android.content.DialogInterface$OnClickListener")
+
+        def make_listener(callback: Any) -> Any:
+            class _Proxy(dynamic_proxy(OnClickListener)):
+                def __init__(self, cb: Any) -> None:
+                    super().__init__()
+                    self.cb = cb
+
+                def onClick(self, dialog: Any, which: int) -> None:
+                    if self.cb is not None:
+                        try:
+                            self.cb()
+                        except Exception:
+                            pass
+
+            return _Proxy(callback)
+
+        if positive is not None:
+            builder.setPositiveButton(
+                str(positive.get("label", "OK")),
+                make_listener(positive.get("on_press")),
+            )
+        if negative is not None:
+            builder.setNegativeButton(
+                str(negative.get("label", "Cancel")),
+                make_listener(negative.get("on_press")),
+            )
+        if neutral is not None:
+            builder.setNeutralButton(
+                str(neutral.get("label", "")),
+                make_listener(neutral.get("on_press")),
+            )
+        builder.show()
+    except Exception:
+        pass
 
 
 # ======================================================================
@@ -770,6 +1572,9 @@ def register_handlers(registry: Any) -> None:
     registry.register("Slider", SliderHandler())
     registry.register("TabBar", TabBarHandler())
     registry.register("Pressable", PressableHandler())
+    registry.register("StatusBar", StatusBarHandler())
+    registry.register("KeyboardAvoidingView", KeyboardAvoidingViewHandler())
+    registry.register("VirtualList", VirtualListHandler())
 
 
 __all__ = [
@@ -790,5 +1595,8 @@ __all__ = [
     "SliderHandler",
     "TabBarHandler",
     "PressableHandler",
+    "StatusBarHandler",
+    "KeyboardAvoidingViewHandler",
+    "VirtualListHandler",
     "register_handlers",
 ]

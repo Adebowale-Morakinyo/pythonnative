@@ -47,6 +47,7 @@ import importlib
 import json
 import os
 import sys
+import threading
 from typing import Any, Dict, Optional, Sequence
 
 from .utils import IS_ANDROID, IS_IOS, set_android_context
@@ -119,13 +120,22 @@ def _push_viewport_size(host: Any, width: float, height: float) -> None:
     Called by the native template (or our injected layout listener
     on Android, or `_attach_root` on iOS) whenever the page
     container's bounds change. Coordinates must be in points (not
-    raw pixels).
+    raw pixels). Also publishes the new dimensions to
+    `pythonnative.platform_metrics` so the
+    [`use_window_dimensions`][pythonnative.use_window_dimensions]
+    hook re-renders subscribers.
     """
     if host._reconciler is None:
         return
     if width <= 0 or height <= 0:
         return
     host._reconciler.set_viewport_size(float(width), float(height))
+    try:
+        from . import platform_metrics
+
+        platform_metrics.set_window_dimensions(float(width), float(height))
+    except Exception:
+        pass
 
 
 def _get_component(host: Any) -> Any:
@@ -344,6 +354,57 @@ def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> 
 
 if IS_ANDROID:
     from java import dynamic_proxy, jclass
+
+    _ANDROID_SCHEDULED_RENDER_HOSTS: Dict[int, Any] = {}
+    _android_render_scheduler_handler: Any = None
+    _android_render_scheduler_runnable: Any = None
+    _android_main_looper: Any = None
+
+    def _is_android_main_thread() -> bool:
+        """Return True when running on Android's main looper thread."""
+        global _android_main_looper
+        try:
+            Looper = jclass("android.os.Looper")
+            if _android_main_looper is None:
+                _android_main_looper = Looper.getMainLooper()
+            return Looper.myLooper() == _android_main_looper
+        except Exception:
+            return threading.current_thread() is threading.main_thread()
+
+    def _flush_android_scheduled_renders() -> None:
+        hosts = list(_ANDROID_SCHEDULED_RENDER_HOSTS.values())
+        _ANDROID_SCHEDULED_RENDER_HOSTS.clear()
+        _flush_scheduled_renders(hosts)
+
+    def _schedule_render_async(host: Any) -> bool:
+        global _android_render_scheduler_handler, _android_render_scheduler_runnable
+        if not IS_ANDROID:
+            return False
+        if getattr(host, "_render_scheduled", False):
+            return True
+        if _is_android_main_thread():
+            return False
+
+        host._render_scheduled = True
+        _ANDROID_SCHEDULED_RENDER_HOSTS[id(host)] = host
+        try:
+            if _android_render_scheduler_handler is None:
+                Handler = jclass("android.os.Handler")
+                Looper = jclass("android.os.Looper")
+                Runnable = jclass("java.lang.Runnable")
+                _android_render_scheduler_handler = Handler(Looper.getMainLooper())
+
+                class _PNRenderRunnable(dynamic_proxy(Runnable)):  # type: ignore[misc]
+                    def run(self) -> None:
+                        _flush_android_scheduled_renders()
+
+                _android_render_scheduler_runnable = _PNRenderRunnable()
+            _android_render_scheduler_handler.post(_android_render_scheduler_runnable)
+            return True
+        except Exception:
+            host._render_scheduled = False
+            _ANDROID_SCHEDULED_RENDER_HOSTS.pop(id(host), None)
+            return False
 
     def _android_publish_window_insets(view: Any) -> None:
         """Read system-bar insets from *view* and publish them to platform_metrics.
@@ -607,6 +668,7 @@ else:
     _IOS_PAGE_REGISTRY: _Dict[int, Any] = {}
     _IOS_SCHEDULED_RENDER_HOSTS: _Dict[int, Any] = {}
     _ios_render_scheduler_target: Any = None
+    _ios_native_render_scheduler: Any = None
 
     def _objc_addr(obj: Any) -> Optional[int]:
         """Return the underlying address of an ``ObjCInstance`` as an int.
@@ -675,6 +737,27 @@ else:
             _log_pn(f"render_scheduler: flushing {len(hosts)} host(s)")
         _flush_scheduled_renders(hosts)
 
+    def drain_ios_scheduled_renders() -> None:
+        """Entry point used by the iOS template to drain pending renders."""
+        _flush_ios_scheduled_renders()
+
+    def _schedule_ios_native_render_drain() -> bool:
+        """Wake the iOS template so it drains renders on the main thread."""
+        global _ios_native_render_scheduler
+        try:
+            if _ios_native_render_scheduler is None:
+                import ctypes as _ct
+
+                scheduler = _ct.CDLL(None).pn_schedule_render_drain
+                scheduler.restype = None
+                scheduler.argtypes = []
+                _ios_native_render_scheduler = scheduler
+            _ios_native_render_scheduler()
+            return True
+        except Exception as exc:
+            _log_pn(f"render_scheduler: native iOS wake failed: {exc!r}")
+            return False
+
     def forward_lifecycle(native_addr: int, event: str) -> None:
         """Forward a Swift `UIViewController` lifecycle event to its host.
 
@@ -732,11 +815,17 @@ else:
             if getattr(host, "_render_scheduled", False):
                 return True
 
+            host._render_scheduled = True
+            _IOS_SCHEDULED_RENDER_HOSTS[id(host)] = host
+            if threading.current_thread() is not threading.main_thread():
+                if _schedule_ios_native_render_drain():
+                    _log_pn("_request_render: deferred iOS render via native scheduler")
+                    return True
+                _log_pn("_request_render: native iOS scheduler unavailable; render remains queued")
+                return True
             try:
                 NSTimer = ObjCClass("NSTimer")
                 target = _ensure_ios_render_scheduler_target()
-                host._render_scheduled = True
-                _IOS_SCHEDULED_RENDER_HOSTS[id(host)] = host
                 NSTimer.scheduledTimerWithTimeInterval_target_selector_userInfo_repeats_(
                     0.0,
                     target,
@@ -877,9 +966,7 @@ else:
                 safe-area inset so a tab bar can reach the home
                 indicator (otherwise it floats with an empty 34 pt
                 gap below it). The bottom inset itself is published
-                via
-                [`pythonnative.platform_metrics`][pythonnative.platform_metrics]
-                so handlers like
+                via `pythonnative.platform_metrics` so handlers like
                 [`TabBarHandler`][pythonnative.native_views.ios.TabBarHandler]
                 can absorb it into their intrinsic height. Apps that
                 render content directly at the bottom (no tab bar)

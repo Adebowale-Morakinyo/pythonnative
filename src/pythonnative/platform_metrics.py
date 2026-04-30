@@ -35,7 +35,8 @@ Example:
 
 from __future__ import annotations
 
-from typing import NamedTuple
+import threading
+from typing import Callable, List, NamedTuple
 
 
 class SafeAreaInsets(NamedTuple):
@@ -47,7 +48,60 @@ class SafeAreaInsets(NamedTuple):
     right: float
 
 
+class WindowDimensions(NamedTuple):
+    """Viewport size in layout units (pt on iOS, dp on Android)."""
+
+    width: float
+    height: float
+
+
 _safe_area_insets: SafeAreaInsets = SafeAreaInsets(0.0, 0.0, 0.0, 0.0)
+_window_dimensions: WindowDimensions = WindowDimensions(0.0, 0.0)
+_keyboard_height: float = 0.0
+
+_subscribers: List[Callable[[], None]] = []
+_subscribers_lock = threading.Lock()
+
+
+def _notify_subscribers() -> None:
+    """Invoke every registered subscriber, swallowing exceptions.
+
+    Called from every metric setter so subscriber callbacks (the React
+    hooks ``use_window_dimensions``/``use_safe_area_insets``/
+    ``use_keyboard_height`` for example) can re-render in response to
+    any metric change. Subscribers are called serially in registration
+    order; any callback that raises is logged-and-skipped so a single
+    misbehaving subscriber can't take down the whole notification
+    cycle.
+    """
+    with _subscribers_lock:
+        callbacks = list(_subscribers)
+    for cb in callbacks:
+        try:
+            cb()
+        except Exception:
+            pass
+
+
+def subscribe(callback: Callable[[], None]) -> Callable[[], None]:
+    """Register *callback* to fire whenever any metric changes.
+
+    Returns an unsubscribe function. Hooks pass a state setter so a
+    component re-renders whenever the platform reports a new value.
+    Threadsafe — multiple subscribers may register/unregister
+    concurrently.
+    """
+    with _subscribers_lock:
+        _subscribers.append(callback)
+
+    def _unsub() -> None:
+        with _subscribers_lock:
+            try:
+                _subscribers.remove(callback)
+            except ValueError:
+                pass
+
+    return _unsub
 
 
 def set_safe_area_insets(top: float, left: float, bottom: float, right: float) -> None:
@@ -69,12 +123,16 @@ def set_safe_area_insets(top: float, left: float, bottom: float, right: float) -
         right: Inset from the right edge.
     """
     global _safe_area_insets
-    _safe_area_insets = SafeAreaInsets(
+    new_insets = SafeAreaInsets(
         max(0.0, float(top)),
         max(0.0, float(left)),
         max(0.0, float(bottom)),
         max(0.0, float(right)),
     )
+    if new_insets == _safe_area_insets:
+        return
+    _safe_area_insets = new_insets
+    _notify_subscribers()
 
 
 def get_safe_area_insets() -> SafeAreaInsets:
@@ -97,6 +155,58 @@ def reset_safe_area_insets() -> None:
     """
     global _safe_area_insets
     _safe_area_insets = SafeAreaInsets(0.0, 0.0, 0.0, 0.0)
+
+
+def set_window_dimensions(width: float, height: float) -> None:
+    """Publish the viewport size in layout units.
+
+    Called by the page host on initial layout, rotation, and split-
+    view changes. Notifies subscribers (and therefore re-renders
+    components using ``use_window_dimensions``) only when the size
+    actually changes.
+    """
+    global _window_dimensions
+    new_dims = WindowDimensions(max(0.0, float(width)), max(0.0, float(height)))
+    if new_dims == _window_dimensions:
+        return
+    _window_dimensions = new_dims
+    _notify_subscribers()
+
+
+def get_window_dimensions() -> WindowDimensions:
+    """Return the current viewport size, or ``(0, 0)`` before first layout."""
+    return _window_dimensions
+
+
+def reset_window_dimensions() -> None:
+    """Reset window dimensions back to ``(0, 0)``. Intended for tests."""
+    global _window_dimensions
+    _window_dimensions = WindowDimensions(0.0, 0.0)
+
+
+def set_keyboard_height(height: float) -> None:
+    """Publish the on-screen keyboard height in layout units.
+
+    Negative inputs are clamped to ``0.0``. Notifies subscribers only
+    when the value actually changes.
+    """
+    global _keyboard_height
+    new_h = max(0.0, float(height))
+    if new_h == _keyboard_height:
+        return
+    _keyboard_height = new_h
+    _notify_subscribers()
+
+
+def get_keyboard_height() -> float:
+    """Return the current on-screen keyboard height, or ``0.0`` if hidden."""
+    return _keyboard_height
+
+
+def reset_keyboard_height() -> None:
+    """Reset the keyboard height back to ``0.0``. Intended for tests."""
+    global _keyboard_height
+    _keyboard_height = 0.0
 
 
 # ======================================================================

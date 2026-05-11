@@ -820,6 +820,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -966,6 +972,90 @@
     
   
     Styling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/animations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/lists/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lists
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/platform-accessibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform & Accessibility
   
 
     
@@ -1382,6 +1472,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1501,6 +1597,90 @@
     
   
     Hooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../animated/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alerts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alerts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
   
 
     
@@ -2050,6 +2230,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.camera.deliver_android_activity_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;deliver_android_activity_result
+      
+    </span>
+  </a>
   
 </li>
       
@@ -3014,6 +3205,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.camera.deliver_android_activity_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;deliver_android_activity_result
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#location" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3469,8 +3671,8 @@ informative <code>RuntimeError</code> instances when called.</p>
 
         <p>Camera and image-picker interface.</p>
 <p>All methods are static. They dispatch to the Android or iOS
-implementation at call time based on <code>IS_ANDROID</code> (from
-<code>pythonnative.utils</code>).</p>
+implementation at call time based on the runtime platform
+detected in <code>pythonnative.utils</code>.</p>
 
 
 
@@ -3578,7 +3780,7 @@ implementation at call time based on <code>IS_ANDROID</code> (from
             <td>
               <div class="doc-md-description">
                 <p>Callable invoked with the saved image path, or
-<code>None</code> if the user cancelled.</p>
+<code>None</code> if the user cancelled / permission was denied.</p>
               </div>
             </td>
             <td>
@@ -5371,8 +5573,10 @@ to target this notification.</p>
         <p>Cross-platform camera and gallery access.</p>
 <p>Provides static methods for capturing a photo or picking an image from
 the device gallery. The platform implementation is selected at call
-time and uses Android's <code>Intent</code>/<code>MediaStore</code> APIs or iOS's
-<code>UIImagePickerController</code>.</p>
+time and uses Android's <code>Intent</code>/<code>MediaStore</code> APIs (with an
+<code>ActivityResultLauncher</code> for the callback) or iOS's
+<code>UIImagePickerController</code> (with a strongly retained delegate that
+forwards the result back to Python).</p>
 <p>All methods accept an <code>on_result</code> callback that receives either the
 saved image path (a <code>str</code>) or <code>None</code> if the user cancels.</p>
 
@@ -5419,6 +5623,27 @@ saved image path (a <code>str</code>) or <code>None</code> if the user cancels.<
 
 
 
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;deliver_android_activity_result&lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.camera.deliver_android_activity_result&lt;/code&gt;)" href="#pythonnative.native_modules.camera.deliver_android_activity_result">deliver_android_activity_result</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Forward an Activity result to the registered camera callback.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+
+
 
 
 
@@ -5449,8 +5674,8 @@ saved image path (a <code>str</code>) or <code>None</code> if the user cancels.<
 
         <p>Camera and image-picker interface.</p>
 <p>All methods are static. They dispatch to the Android or iOS
-implementation at call time based on <code>IS_ANDROID</code> (from
-<code>pythonnative.utils</code>).</p>
+implementation at call time based on the runtime platform
+detected in <code>pythonnative.utils</code>.</p>
 
 
 
@@ -5558,7 +5783,7 @@ implementation at call time based on <code>IS_ANDROID</code> (from
             <td>
               <div class="doc-md-description">
                 <p>Callable invoked with the saved image path, or
-<code>None</code> if the user cancelled.</p>
+<code>None</code> if the user cancelled / permission was denied.</p>
               </div>
             </td>
             <td>
@@ -5672,6 +5897,30 @@ will land here.</p>
 </div>
 
 
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.native_modules.camera.deliver_android_activity_result" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">deliver_android_activity_result</span>
+
+
+<a href="#pythonnative.native_modules.camera.deliver_android_activity_result" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">deliver_android_activity_result</span><span class="p">(</span><span class="n">request_code</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">result_code</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Forward an Activity result to the registered camera callback.</p>
+<p>The host Activity should call this from <code>onActivityResult</code> so the
+pending <code>Camera.take_photo</code> / <code>Camera.pick_from_gallery</code>
+callback receives a path. Returns <code>True</code> if a Python callback
+was invoked (so the host can short-circuit further handlers).</p>
+
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -5690,11 +5939,13 @@ will land here.</p>
 
         <p>Cross-platform location / GPS access.</p>
 <p>Provides static methods for requesting the device's current
-coordinates. Uses Android's <code>LocationManager</code> or iOS's
-<code>CLLocationManager</code>. Permission prompts are triggered by the system the
-first time a location-using API is called; ensure the appropriate
-manifest entries (<code>android.permission.ACCESS_FINE_LOCATION</code>) and
-Info.plist keys (<code>NSLocationWhenInUseUsageDescription</code>) are present.</p>
+coordinates. Uses Android's <code>LocationManager</code> (with a transient
+<code>LocationListener</code>) or iOS's <code>CLLocationManager</code> (with a strongly
+retained <code>CLLocationManagerDelegate</code>). Permission prompts are
+triggered the first time a location-using API is called; ensure the
+appropriate manifest entries (<code>android.permission.ACCESS_FINE_LOCATION</code>)
+and Info.plist keys (<code>NSLocationWhenInUseUsageDescription</code>) are
+present.</p>
 
 
 <details class="example" open>

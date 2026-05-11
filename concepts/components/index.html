@@ -1053,6 +1053,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1199,6 +1205,90 @@
     
   
     Styling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/animations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/lists/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lists
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/platform-accessibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform & Accessibility
   
 
     
@@ -1613,6 +1703,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1731,6 +1827,90 @@
     
   
     Hooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/animated/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/alerts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alerts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/platform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform
   
 
     
@@ -2614,8 +2794,44 @@ objects are created until the
 </ul>
 <p><strong>Lists:</strong></p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;FlatList&lt;/span&gt;" href="../../api/components/#pythonnative.components.FlatList"><code>FlatList(data, render_item, key_extractor, separator_height)</code></a>:
-  scrollable data list.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;FlatList&lt;/span&gt;" href="../../api/components/#pythonnative.components.FlatList"><code>FlatList(data, render_item, key_extractor, item_height, ...)</code></a>:
+  scrollable data list. Pass <code>item_height=</code> to enable native
+  virtualization (<code>UITableView</code> / <code>RecyclerView</code>); rows are mounted
+  lazily as they scroll into view.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;SectionList&lt;/span&gt;" href="../../api/components/#pythonnative.components.SectionList"><code>SectionList(sections, render_item, render_section_header, item_height, ...)</code></a>:
+  virtualized list with section headers.</li>
+</ul>
+<p><strong>Platform UI:</strong></p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;StatusBar&lt;/span&gt;" href="../../api/components/#pythonnative.components.StatusBar"><code>StatusBar(style, background_color, hidden)</code></a>:
+  configure the device's status bar (light/dark icons, color, hidden).</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;KeyboardAvoidingView&lt;/span&gt;" href="../../api/components/#pythonnative.components.KeyboardAvoidingView"><code>KeyboardAvoidingView(*children, behavior)</code></a>:
+  shift content up when the software keyboard appears.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;RefreshControl&lt;/span&gt;" href="../../api/components/#pythonnative.components.RefreshControl"><code>RefreshControl(refreshing, on_refresh)</code></a>:
+  pull-to-refresh spec for <code>ScrollView</code> and <code>FlatList</code> (passed via
+  the <code>refresh_control=</code> prop).</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Picker&lt;/span&gt;" href="../../api/components/#pythonnative.components.Picker"><code>Picker(value, items, on_change, placeholder)</code></a>:
+  select / dropdown widget backed by an action sheet.</li>
+</ul>
+<p><strong>Imperative APIs:</strong></p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Alert&lt;/span&gt;" href="../../api/alerts/#pythonnative.alerts.Alert"><code>Alert.show(title, message, buttons, style)</code></a>:
+  present a native alert dialog or action sheet.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;confirm&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/alerts/#pythonnative.alerts.Alert.confirm"><code>Alert.confirm(title, on_confirm, on_cancel)</code></a>:
+  two-button confirm/cancel.</li>
+</ul>
+<p><strong>Animations:</strong></p>
+<ul>
+<li><code>Animated.View</code> / <code>Animated.Text</code> / <code>Animated.Image</code>: components
+  whose <code>style</code> accepts <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="../../api/animated/#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a>
+  instances. Drive animations with <code>Animated.timing</code>,
+  <code>Animated.spring</code>, or <code>Animated.decay</code>. See the
+  <a href="../../guides/animations/">Animations guide</a>.</li>
 </ul>
 <h3 id="flex-layout-model">Flex layout model<a class="headerlink" href="#flex-layout-model" title="Permanent link">&para;</a></h3>
 <p>PythonNative uses a <strong>flexbox-inspired layout model</strong>. <code>View</code> is the
@@ -2728,7 +2944,9 @@ hook state.</p>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_callback&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_callback"><code>use_callback(fn, deps)</code></a>: stable
   function references.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_ref&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_ref"><code>use_ref(initial)</code></a>: mutable ref that
-  persists across renders.</li>
+  persists across renders. When passed via the <code>ref=</code> prop, the
+  reconciler populates <code>ref["current"]</code> with the underlying native
+  view.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_context&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_context"><code>use_context(context)</code></a>: read from a
   context provider.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_navigation"><code>use_navigation()</code></a>: navigation
@@ -2737,6 +2955,12 @@ hook state.</p>
   current route params.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_focus_effect&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.use_focus_effect"><code>use_focus_effect(effect, deps)</code></a>:
   like <code>use_effect</code> but only runs when the screen is focused.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_window_dimensions&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_window_dimensions"><code>use_window_dimensions()</code></a>:
+  reactive viewport size.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_safe_area_insets&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_safe_area_insets"><code>use_safe_area_insets()</code></a>:
+  reactive safe-area insets.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_keyboard_height&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_keyboard_height"><code>use_keyboard_height()</code></a>:
+  reactive software-keyboard height.</li>
 </ul>
 <h3 id="custom-hooks">Custom hooks<a class="headerlink" href="#custom-hooks" title="Permanent link">&para;</a></h3>
 <p>Extract reusable stateful logic into plain functions:</p>
@@ -2762,12 +2986,18 @@ hook state.</p>
 </span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Click&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]})</span>
 </span></code></pre></div>
 <h2 id="platform-detection">Platform detection<a class="headerlink" href="#platform-detection" title="Permanent link">&para;</a></h2>
-<p>Use <code>utils.IS_ANDROID</code> / <code>utils.IS_IOS</code> when you need
-platform-specific logic:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">IS_ANDROID</span>
+<p>The recommended way to write platform-aware code is via
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Platform&lt;/span&gt;" href="../../api/platform/#pythonnative.platform.Platform"><code>Platform</code></a>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Android App&quot;</span> <span class="k">if</span> <span class="n">IS_ANDROID</span> <span class="k">else</span> <span class="s2">&quot;iOS App&quot;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">title</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">select</span><span class="p">({</span><span class="s2">&quot;ios&quot;</span><span class="p">:</span> <span class="s2">&quot;iOS App&quot;</span><span class="p">,</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span> <span class="s2">&quot;Android App&quot;</span><span class="p">})</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">is_ios</span><span class="p">:</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">margin</span> <span class="o">=</span> <span class="mi">16</span>
 </span></code></pre></div>
+<p><code>pn.Platform.OS</code> is <code>"ios"</code>, <code>"android"</code>, or <code>"test"</code> (the latter
+when running off-device, e.g., in unit tests). The lower-level
+<code>utils.IS_ANDROID</code> / <code>utils.IS_IOS</code> constants are still available.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Learn the renderer underneath: <a href="../architecture/">Architecture</a>.</li>

@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.12.0 (2026-05-11)
+
+### Features
+
+- **components,hooks,native_views**: Add native UI primitives
+  ([`186bba6`](https://github.com/pythonnative/pythonnative/commit/186bba6dcc1956cccb1433e004e4fb9b436736ce))
+
+
 ## v0.11.0 (2026-04-29)
 
 ### Features

@@ -1729,14 +1729,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../page/" class="md-nav__link">
+      <a href="../screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2102,10 +2102,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pythonnative.hot_reload.ModuleReloader.reload_page" class="md-nav__link">
+  <a href="#pythonnative.hot_reload.ModuleReloader.reload_screen" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;reload_page
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;reload_screen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.find_replacement_function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;find_replacement_function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.build_replacement_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;build_replacement_map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.swap_components_in_tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;swap_components_in_tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.refresh_in_place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;refresh_in_place
       
     </span>
   </a>
@@ -2618,10 +2662,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pythonnative.hot_reload.ModuleReloader.reload_page" class="md-nav__link">
+  <a href="#pythonnative.hot_reload.ModuleReloader.reload_screen" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;reload_page
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;reload_screen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.find_replacement_function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;find_replacement_function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.build_replacement_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;build_replacement_map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.swap_components_in_tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;swap_components_in_tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.hot_reload.ModuleReloader.refresh_in_place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;refresh_in_place
       
     </span>
   </a>
@@ -2733,8 +2821,22 @@ page. Both are wired up automatically by <code>pn run --hot-reload</code>.</p>
   <code>simctl</code> file copy on iOS).</li>
 <li><strong>Device-side</strong>:
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ModuleReloader&lt;/span&gt;" href="#pythonnative.hot_reload.ModuleReloader"><code>ModuleReloader</code></a> reloads
-  changed Python modules using <code>importlib.reload</code> and asks the page
-  host to re-render the current tree.</li>
+  changed Python modules using <code>importlib</code> and asks the screen
+  host to re-render its current tree.</li>
+</ul>
+<p>Two strategies share the device-side surface:</p>
+<ul>
+<li><strong>Fast Refresh</strong> (default): after reloading the changed modules
+  the reconciler tree is walked and every component function whose
+  module was reloaded is swapped in place. Hook state, navigation
+  state, and even scroll positions survive because the underlying
+  <code>VNode</code> objects are reused — the next render simply calls the
+  new function bodies through the old slots.</li>
+<li><strong>Full remount</strong>: when the in-place swap fails (e.g. the new
+  module raised at import time, or a render exception bubbled out
+  while running the new function), the host falls back to building
+  a brand-new reconciler tree. State is lost but the app keeps
+  running.</li>
 </ul>
 
 
@@ -3252,15 +3354,67 @@ static.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reload_page&lt;/span&gt;
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reload_screen&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
       &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt; (&lt;code&gt;pythonnative.hot_reload.ModuleReloader.reload_page&lt;/code&gt;)" href="#pythonnative.hot_reload.ModuleReloader.reload_page">reload_page</a></code></td>
+  &lt;/span&gt; (&lt;code&gt;pythonnative.hot_reload.ModuleReloader.reload_screen&lt;/code&gt;)" href="#pythonnative.hot_reload.ModuleReloader.reload_screen">reload_screen</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Force a page re-render after a module reload.</p>
+                  <p>Force a screen re-render after a module reload.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;find_replacement_function&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.hot_reload.ModuleReloader.find_replacement_function&lt;/code&gt;)" href="#pythonnative.hot_reload.ModuleReloader.find_replacement_function">find_replacement_function</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Locate a function's post-reload counterpart by qualname.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;build_replacement_map&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.hot_reload.ModuleReloader.build_replacement_map&lt;/code&gt;)" href="#pythonnative.hot_reload.ModuleReloader.build_replacement_map">build_replacement_map</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Compute <code>{old_function: new_function}</code> for one tree.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;swap_components_in_tree&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.hot_reload.ModuleReloader.swap_components_in_tree&lt;/code&gt;)" href="#pythonnative.hot_reload.ModuleReloader.swap_components_in_tree">swap_components_in_tree</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Apply a <code>{old: new}</code> map to every node in the reconciler tree.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;refresh_in_place&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.hot_reload.ModuleReloader.refresh_in_place&lt;/code&gt;)" href="#pythonnative.hot_reload.ModuleReloader.refresh_in_place">refresh_in_place</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Try a state-preserving Fast Refresh for one reconciler.</p>
                 </div>
               </td>
             </tr>
@@ -3336,7 +3490,7 @@ static.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Dotted module name (e.g., <code>"app.main_page"</code>).</p>
+                <p>Dotted module name (e.g., <code>"app.main"</code>).</p>
               </div>
             </td>
             <td>
@@ -3545,7 +3699,7 @@ If empty, <code>file_path</code> is treated as already relative.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The dotted module name (e.g., <code>"app.pages.home"</code>), or</p>
+                <p>The dotted module name (e.g., <code>"app.screens.home"</code>), or</p>
               </div>
             </td>
           </tr>
@@ -3594,21 +3748,21 @@ If empty, <code>file_path</code> is treated as already relative.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="pythonnative.hot_reload.ModuleReloader.reload_page" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">reload_page</span>
+<h3 id="pythonnative.hot_reload.ModuleReloader.reload_screen" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">reload_screen</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
   </span>
 
-<a href="#pythonnative.hot_reload.ModuleReloader.reload_page" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reload_page</span><span class="p">(</span><span class="n">page_instance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">module_names</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Sequence&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<a href="#pythonnative.hot_reload.ModuleReloader.reload_screen" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reload_screen</span><span class="p">(</span><span class="n">screen_instance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">module_names</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Sequence&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Force a page re-render after a module reload.</p>
+        <p>Force a screen re-render after a module reload.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3624,14 +3778,14 @@ If empty, <code>file_path</code> is treated as already relative.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>page_instance</code>
+                <code>screen_instance</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An <code>_AppHost</code> instance (or duck-typed
+                <p>A <code>_ScreenHost</code> instance (or duck-typed
 equivalent) that exposes a <code>_reconciler</code> attribute.</p>
               </div>
             </td>
@@ -3649,11 +3803,378 @@ equivalent) that exposes a <code>_reconciler</code> attribute.</p>
             <td>
               <div class="doc-md-description">
                 <p>Optional modules that changed. Reload-aware
-page hosts use this to refresh imports before re-render.</p>
+screen hosts use this to refresh imports before re-render.</p>
               </div>
             </td>
             <td>
                   <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.hot_reload.ModuleReloader.find_replacement_function" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">find_replacement_function</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#pythonnative.hot_reload.ModuleReloader.find_replacement_function" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">find_replacement_function</span><span class="p">(</span><span class="n">old_fn</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Locate a function's post-reload counterpart by qualname.</p>
+<p>Functions decorated with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;component&lt;/span&gt;" href="../hooks/#pythonnative.hooks.component"><code>component</code></a>
+store the user's original function on the wrapper's
+<code>__wrapped__</code> attribute and forward <code>__module__</code> /
+<code>__qualname__</code> so that the reconciler's stored
+<code>element.type</code> (the unwrapped function) still has the
+information needed to re-resolve after a module reload.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>old_fn</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The function captured in an
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a>'s <code>type</code> slot.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The reloaded module's matching function, <code>None</code> if no</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>replacement was found, or the original function itself</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>when the module has not been reloaded (so callers can</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>skip the swap).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.hot_reload.ModuleReloader.build_replacement_map" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">build_replacement_map</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#pythonnative.hot_reload.ModuleReloader.build_replacement_map" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">build_replacement_map</span><span class="p">(</span><span class="n">reconciler</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">reloaded_modules</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Iterable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Compute <code>{old_function: new_function}</code> for one tree.</p>
+<p>The reconciler's stored tree references the <em>pre-reload</em>
+component functions through <code>VNode.element.type</code>. This
+method walks the tree, collects every callable type whose
+<code>__module__</code> was just reloaded, and asks
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;find_replacement_function&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="#pythonnative.hot_reload.ModuleReloader.find_replacement_function"><code>find_replacement_function</code></a>
+for its successor.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>reconciler</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The reconciler whose
+<code>_tree</code> should be inspected.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>reloaded_modules</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Iterable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Set of module names that were just
+reloaded (only callables from these modules are
+considered).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A mapping suitable for passing to</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;swap_components_in_tree&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="#pythonnative.hot_reload.ModuleReloader.swap_components_in_tree"><code>swap_components_in_tree</code></a>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.hot_reload.ModuleReloader.swap_components_in_tree" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">swap_components_in_tree</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#pythonnative.hot_reload.ModuleReloader.swap_components_in_tree" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">swap_components_in_tree</span><span class="p">(</span><span class="n">reconciler</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">replacement_map</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Apply a <code>{old: new}</code> map to every node in the reconciler tree.</p>
+<p>Mutates <code>vnode.element.type</code> directly so the NEXT diff sees
+identical types and reuses VNodes (preserving hook state).
+Pending <code>Element</code> trees stored on <code>vnode._rendered</code> are
+rewritten too because the reconciler reads from them when
+comparing keys across renders.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of element type references that were rewritten.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.hot_reload.ModuleReloader.refresh_in_place" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">refresh_in_place</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#pythonnative.hot_reload.ModuleReloader.refresh_in_place" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">refresh_in_place</span><span class="p">(</span><span class="n">reconciler</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">reloaded_modules</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Iterable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Try a state-preserving Fast Refresh for one reconciler.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if any component function was replaced (callers</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>should then trigger a re-render). <code>False</code> means the</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>tree already references the latest functions (or has no</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>nodes from the reloaded modules at all).</p>
+              </div>
             </td>
           </tr>
       </tbody>
@@ -3676,7 +4197,7 @@ page hosts use this to refresh imports before re-render.</p>
   </span>
 
 <a href="#pythonnative.hot_reload.ModuleReloader.reload_from_manifest" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reload_from_manifest</span><span class="p">(</span><span class="n">page_instance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">manifest_path</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">last_version</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reload_from_manifest</span><span class="p">(</span><span class="n">screen_instance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">manifest_path</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">last_version</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3697,14 +4218,14 @@ page hosts use this to refresh imports before re-render.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>page_instance</code>
+                <code>screen_instance</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Page host to refresh.</p>
+                <p>Screen host to refresh.</p>
               </div>
             </td>
             <td>
@@ -3736,7 +4257,7 @@ page hosts use this to refresh imports before re-render.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Version already applied by this page host.</p>
+                <p>Version already applied by this screen host.</p>
               </div>
             </td>
             <td>
@@ -3808,7 +4329,7 @@ page hosts use this to refresh imports before re-render.</p>
 
         <p>Create and prioritize the writable hot-reload source overlay.</p>
 <p>The returned directory is inserted at the front of <code>sys.path</code>, so a
-pushed <code>app/main_page.py</code> shadows the copy bundled into the native
+pushed <code>app/main.py</code> shadows the copy bundled into the native
 application. Templates call this before importing user code.</p>
 
 

@@ -806,10 +806,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hot-reload" class="md-nav__link">
+  <a href="#hot-reload-fast-refresh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hot reload
+        Hot reload (Fast Refresh)
       
     </span>
   </a>
@@ -1964,14 +1964,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2656,10 +2656,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hot-reload" class="md-nav__link">
+  <a href="#hot-reload-fast-refresh" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hot reload
+        Hot reload (Fast Refresh)
       
     </span>
   </a>
@@ -2779,9 +2779,16 @@ platform APIs synchronously from Python.</p>
      the JNI bridge.</li>
 <li><strong>Thin native bootstrap.</strong> The host app remains native (Android
    <code>Activity</code> or iOS <code>UIViewController</code>). It calls
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a> internally to bootstrap
+   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a> internally to bootstrap
    your Python component, and the reconciler drives the UI from
    there.</li>
+<li><strong><code>App</code> entry point.</strong> The user's app module (<code>app/main.py</code>)
+    defines a top-level component named <code>App</code>. Native templates
+    import that module by path (<code>"app.main"</code>) and look up its <code>App</code>
+    attribute, so users never write a separate registration step.
+    Components with other names can still be loaded by passing an
+    explicit dotted path like <code>"app.main.RootScreen"</code> to the
+    template.</li>
 </ol>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>@pn.component fn   ---&gt;   Element tree   ---&gt;   Reconciler   ---&gt;   Native views
@@ -2836,7 +2843,7 @@ decorated with <code>@pn.component</code>.</p>
 <li>Has its own hook state per call site (each instance gets its own
   slot table).</li>
 </ul>
-<p>The entry point <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a> is called
+<p>The entry point <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a> is called
 internally by the bundled native templates to bootstrap your root
 component. App code does not call it directly.</p>
 <h2 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h2>
@@ -2979,7 +2986,7 @@ React-like hooks that NativeScript does not have by default.</p>
 <h2 id="ios-flow-rubicon-objc">iOS flow (rubicon-objc)<a class="headerlink" href="#ios-flow-rubicon-objc" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The iOS template (Swift plus PythonKit) boots Python and calls
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a> internally with the
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a> internally with the
   current <code>UIViewController</code> pointer.</li>
 <li>The reconciler creates UIKit views and attaches them to the
   controller's view.</li>
@@ -2990,16 +2997,29 @@ React-like hooks that NativeScript does not have by default.</p>
 <ul>
 <li>The Android template (Kotlin plus Chaquopy) initializes Python in
   <code>MainActivity</code> and passes the <code>Activity</code> to Python.</li>
-<li><code>PageFragment</code> calls <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a>
+<li><code>ScreenFragment</code> calls <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a>
   internally, which renders the root component and attaches views to
   the fragment container.</li>
 <li>State changes trigger re-render; the reconciler patches Android
   views in place.</li>
 </ul>
-<h2 id="hot-reload">Hot reload<a class="headerlink" href="#hot-reload" title="Permanent link">&para;</a></h2>
+<h2 id="hot-reload-fast-refresh">Hot reload (Fast Refresh)<a class="headerlink" href="#hot-reload-fast-refresh" title="Permanent link">&para;</a></h2>
 <p>During development, <code>pn run --hot-reload</code> watches <code>app/</code> for file
 changes and pushes updated Python files to the running app, enabling
-near-instant UI updates without full rebuilds. See
+near-instant UI updates without full rebuilds.</p>
+<p>PythonNative uses a <strong>Fast Refresh</strong> strategy:</p>
+<ol>
+<li>Reload the changed module(s) on the device.</li>
+<li>For every active screen host, walk the VNode tree and collect every
+   component function defined in a reloaded module.</li>
+<li>Match each one to its replacement by <code>__module__</code> +
+   <code>__qualname__</code> and rewrite <code>Element.type</code> in place.</li>
+<li>Trigger one reconcile pass. Because the VNode and its <code>HookState</code>
+   are reused, component state (<code>use_state</code>, <code>use_reducer</code>, refs) is
+   preserved across the edit.</li>
+</ol>
+<p>If Fast Refresh can't produce a clean swap, the host falls back to a
+<strong>full remount</strong> of its root component. See
 <a href="../../guides/hot-reload/">Hot reload guide</a>.</p>
 <h2 id="native-api-modules">Native API modules<a class="headerlink" href="#native-api-modules" title="Permanent link">&para;</a></h2>
 <p>PythonNative provides cross-platform modules for common device APIs:</p>
@@ -3015,32 +3035,40 @@ near-instant UI updates without full rebuilds. See
 </ul>
 <p>See <a href="../../guides/native-modules/">Native modules guide</a>.</p>
 <h2 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h2>
-<p>PythonNative provides two navigation approaches:</p>
+<p>PythonNative navigation is <strong>declarative</strong> and <strong>native-backed</strong>:</p>
 <ul>
-<li><strong>Declarative navigators</strong> (recommended):
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;NavigationContainer&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.NavigationContainer"><code>NavigationContainer</code></a> with
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.create_stack_navigator"><code>create_stack_navigator</code></a>,
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_tab_navigator&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.create_tab_navigator"><code>create_tab_navigator</code></a>, and
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_drawer_navigator&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.create_drawer_navigator"><code>create_drawer_navigator</code></a>.
-  Navigation state is managed in Python as component state, and
-  navigators are composable; you can nest tabs inside stacks, and so
-  on.</li>
-<li><strong>Page-level navigation</strong>:
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_navigation"><code>use_navigation</code></a> returns a
-  navigation handle with <code>.navigate()</code>, <code>.go_back()</code>, and
-  <code>.get_params()</code>, delegating to native platform navigation when
-  running on device.</li>
+<li>The user describes their app as a tree of navigators
+  (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.create_stack_navigator"><code>create_stack_navigator</code></a>,
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_tab_navigator&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.create_tab_navigator"><code>create_tab_navigator</code></a>,
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_drawer_navigator&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.create_drawer_navigator"><code>create_drawer_navigator</code></a>)
+  wrapped in
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;NavigationContainer&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.NavigationContainer"><code>NavigationContainer</code></a>, and
+  names the root component <code>App</code> so the native templates can find
+  it.</li>
+<li>The outermost <code>Stack.Navigator</code> delegates <code>navigate(...)</code>,
+  <code>go_back()</code>, and <code>reset(...)</code> to the platform's native navigation
+  controller — <code>UINavigationController</code> on iOS and the AndroidX
+  Navigation Component on Android. Nested navigators (tabs inside a
+  stack, stacks inside tabs) stay in Python and reuse the existing
+  reconciler.</li>
+<li>Each pushed native screen is a fresh host with its own reconciler
+  and <code>_ScreenHost</code>. Initial routes are forwarded via host arguments
+  (<code>__pn_initial_route__</code> / <code>__pn_initial_params__</code>), so a pushed
+  screen knows which <code>Stack.Screen</code> to render on its first frame.</li>
+<li>Inside any screen, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_navigation"><code>use_navigation</code></a>
+  returns a <code>NavigationHandle</code>; <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_route&lt;/span&gt;" href="../../api/navigation/#pythonnative.navigation.use_route"><code>use_route</code></a>
+  returns the current route name and params. Both are the same
+  hooks regardless of whether the active navigator is native-backed
+  or pure-Python.</li>
 </ul>
-<p>Both approaches are supported. The declarative system uses the
-existing reconciler pipeline; navigators are function components that
-render the active screen via <code>use_state</code>, and navigation context is
-provided via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Provider&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.Provider"><code>Provider</code></a>.</p>
-<p>See the <a href="../../guides/navigation/">Navigation guide</a> for full details.</p>
+<p>See the <a href="../../guides/navigation/">Navigation guide</a> for the full
+walkthrough, including how <code>options={"title": ...}</code> flows into the
+native navigation bar.</p>
 <ul>
 <li>iOS: one host <code>UIViewController</code> class, many instances pushed on a
   <code>UINavigationController</code>.</li>
 <li>Android: single host <code>Activity</code> with a <code>NavHostFragment</code> and a
-  stack of generic <code>PageFragment</code>s driven by a navigation graph.</li>
+  stack of generic <code>ScreenFragment</code>s driven by a navigation graph.</li>
 </ul>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>

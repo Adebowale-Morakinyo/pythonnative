@@ -1875,14 +1875,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2616,7 +2616,7 @@ much more from manual smoke tests.</p>
 a session-scoped fixture, or as a fixture parameterized on the
 component under test.</p>
 <h2 id="rendering-a-component-in-a-test">Rendering a component in a test<a class="headerlink" href="#rendering-a-component-in-a-test" title="Permanent link">&para;</a></h2>
-<p><code>create_page</code> boots an <code>_AppHost</code> which is the same shape used at
+<p><code>create_screen</code> boots an <code>_ScreenHost</code> which is the same shape used at
 runtime. For tests we want a more direct path: invoke the reconciler
 with a known root and read its output.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
@@ -2629,7 +2629,7 @@ with a known root and read its output.</p>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">rec</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="k">return</span> <span class="n">rec</span><span class="o">.</span><span class="n">root_view</span>  <span class="c1"># the mock dict for the root element</span>
 </span></code></pre></div>
-<p>(For a longer-running test (effects, navigation), use <code>create_page</code> so
+<p>(For a longer-running test (effects, navigation), use <code>create_screen</code> so
 you get the full lifecycle plumbing.)</p>
 <h2 id="asserting-on-rendered-output">Asserting on rendered output<a class="headerlink" href="#asserting-on-rendered-output" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_counter_increments</span><span class="p">():</span>

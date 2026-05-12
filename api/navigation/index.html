@@ -1729,14 +1729,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../page/" class="md-nav__link">
+      <a href="../screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2528,15 +2528,16 @@ route with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc
 
         <p>Declarative navigation for PythonNative.</p>
 <p>Provides a component-based navigation system inspired by React
-Navigation. Navigators manage screen state in Python and render the
-active screen's component through the standard reconciler pipeline, so
-hooks (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_state"><code>use_state</code></a>,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a>, etc.) and providers continue
-to work inside navigated screens.</p>
+Navigation. Navigators manage screen state in Python and the
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="#pythonnative.navigation.create_stack_navigator"><code>Stack</code></a> navigator pushes real
+native screen containers (<code>UIViewController</code> on iOS,
+<code>Fragment</code> on Android) so users get system-grade transitions and
+swipe-back gestures for free.</p>
 <p>Three navigator factories are provided out of the box:</p>
 <ul>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="#pythonnative.navigation.create_stack_navigator"><code>create_stack_navigator</code></a>: push
-  and pop screens.</li>
+  and pop screens with native transitions when the navigator is mounted
+  at the root of an app host.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_tab_navigator&lt;/span&gt;" href="#pythonnative.navigation.create_tab_navigator"><code>create_tab_navigator</code></a>: switch
   between sibling tabs (with a tab bar).</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_drawer_navigator&lt;/span&gt;" href="#pythonnative.navigation.create_drawer_navigator"><code>create_drawer_navigator</code></a>:
@@ -2544,23 +2545,29 @@ to work inside navigated screens.</p>
 </ul>
 <p>Navigators may be nested arbitrarily; nested handles forward unknown
 routes and root-level <code>go_back</code> calls to their parent.</p>
+<p>Stack navigators rendered as the root of an app host (i.e. the parent
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_navigation"><code>use_navigation</code></a> handle is the host's
+own handle) talk to the platform via that host's <code>_push</code> / <code>_pop</code>
+methods, so the back stack matches what UIKit / AndroidX maintain.
+Nested stacks (e.g. a stack inside a tab) fall back to in-Python
+state — there is no second native navigation controller to push
+onto in that case.</p>
 
 
 <details class="example" open>
   <summary>Example</summary>
   <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.navigation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NavigationContainer</span><span class="p">,</span> <span class="n">create_stack_navigator</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">Stack</span> <span class="o">=</span> <span class="n">create_stack_navigator</span><span class="p">()</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">return</span> <span class="n">NavigationContainer</span><span class="p">(</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="n">Stack</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>            <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">HomeScreen</span><span class="p">),</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>            <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Detail&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">DetailScreen</span><span class="p">),</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="p">)</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">Stack</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">create_stack_navigator</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">NavigationContainer</span><span class="p">(</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">Stack</span><span class="o">.</span><span class="n">Navigator</span><span class="p">(</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>            <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Home&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">HomeScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Home&quot;</span><span class="p">}),</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>            <span class="n">Stack</span><span class="o">.</span><span class="n">Screen</span><span class="p">(</span><span class="s2">&quot;Detail&quot;</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="n">DetailScreen</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Detail&quot;</span><span class="p">}),</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="p">)</span>
 </span></code></pre></div>
 </details>
 

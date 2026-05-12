@@ -2074,14 +2074,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../page/" class="md-nav__link">
+      <a href="../screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -3513,8 +3513,13 @@ via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 
 
         <p>Handle returned by <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="#pythonnative.hooks.use_navigation"><code>use_navigation</code></a>.</p>
-<p>Wraps the host's push/pop primitives so screens can navigate without
-knowing the underlying native navigation stack.</p>
+<p>Wraps the host's push/pop primitives so screens can navigate
+without knowing the underlying native navigation stack. The
+typical user-facing surface is the declarative handle returned by
+a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_stack_navigator"><code>Stack</code></a> — this class is
+the lower-level fallback used when no navigator is rendered (and
+as the bridge that declarative navigators delegate to when they
+need to push real native screens).</p>
 
 
 <details class="example" open>
@@ -3526,7 +3531,7 @@ knowing the underlying native navigation stack.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">nav</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_navigation</span><span class="p">()</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="s2">&quot;Open Detail&quot;</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">navigate</span><span class="p">(</span><span class="n">DetailScreen</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}),</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">nav</span><span class="o">.</span><span class="n">navigate</span><span class="p">(</span><span class="s2">&quot;Detail&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}),</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">)</span>
 </span></code></pre></div>
 </details>
@@ -3554,7 +3559,7 @@ knowing the underlying native navigation stack.</p>
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;navigate&lt;/span&gt; (&lt;code&gt;pythonnative.hooks.NavigationHandle.navigate&lt;/code&gt;)" href="#pythonnative.hooks.NavigationHandle.navigate">navigate</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Push <code>page</code> onto the navigation stack.</p>
+                  <p>Push <code>component</code> onto the navigation stack.</p>
                 </div>
               </td>
             </tr>
@@ -3601,12 +3606,12 @@ knowing the underlying native navigation stack.</p>
 
 
 <a href="#pythonnative.hooks.NavigationHandle.navigate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">navigate</span><span class="p">(</span><span class="n">page</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">navigate</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Push <code>page</code> onto the navigation stack.</p>
+        <p>Push <code>component</code> onto the navigation stack.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3622,15 +3627,19 @@ knowing the underlying native navigation stack.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>page</code>
+                <code>component</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Either a <code>@component</code> function or a dotted Python
-path (e.g., <code>"app.detail.DetailScreen"</code>).</p>
+                <p>A <code>@component</code> function or a dotted Python
+path (e.g. <code>"app.detail.DetailScreen"</code>). When a
+Stack navigator is the root of the app, prefer the
+declarative <code>nav.navigate("Detail", params)</code> form
+returned by <code>use_navigation()</code> (it pushes by route
+name and the host re-uses its own <code>App</code> component).</p>
               </div>
             </td>
             <td>
@@ -4558,7 +4567,7 @@ native view it animates without going through the reconciler.</p>
 
         <p>Return the current viewport size and re-render when it changes.</p>
 <p>Equivalent to React Native's <code>useWindowDimensions</code>. The values
-are pushed by the page host whenever the platform reports a new
+are pushed by the screen host whenever the platform reports a new
 size (initial layout, rotation, multitasking split-view).</p>
 
 
@@ -4597,7 +4606,7 @@ size (initial layout, rotation, multitasking split-view).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>page host has run its first layout pass.</p>
+                <p>screen host has run its first layout pass.</p>
               </div>
             </td>
           </tr>
@@ -5133,7 +5142,7 @@ when there is no enclosing
             <td>
               <div class="doc-md-description">
                 <p>If called outside a component rendered via
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../page/#pythonnative.page.create_page"><code>create_page</code></a>.</p>
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../screen/#pythonnative.screen.create_screen"><code>create_screen</code></a>.</p>
               </div>
             </td>
           </tr>
@@ -5255,7 +5264,7 @@ instead become the special <code>children</code> prop.</p>
 </div><h2 id="platform-metric-hooks">Platform-metric hooks<a class="headerlink" href="#platform-metric-hooks" title="Permanent link">&para;</a></h2>
 <p>These hooks subscribe to values published by
 <code>pythonnative.platform_metrics</code> and re-render the component when they
-change. The page host is the only code that updates the underlying
+change. The screen host is the only code that updates the underlying
 values; user code consumes them.</p>
 <ul>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_window_dimensions&lt;/span&gt;" href="#pythonnative.hooks.use_window_dimensions"><code>use_window_dimensions</code></a> — viewport size.</li>

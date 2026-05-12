@@ -1959,14 +1959,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2880,14 +2880,15 @@ that fix the direction.</p>
 components. Each screen is a function component that returns an
 element tree:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">MainPage</span><span class="p">():</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">name</span><span class="p">,</span> <span class="n">set_name</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">)</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
 </span></code></pre></div>
-<p>The entry point <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a> is called
+<p>The entry point <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a> is called
 internally by native templates to bootstrap your root component. You
-don't call it directly; just export your component and configure the
-entry point in <code>pythonnative.json</code>.</p>
+don't call it directly: name your top-level component <code>App</code> (so the
+templates can find it by convention) and <code>pythonnative.json</code> points
+at the module that defines it.</p>
 <h2 id="state-and-re-rendering">State and re-rendering<a class="headerlink" href="#state-and-re-rendering" title="Permanent link">&para;</a></h2>
 <p>Use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_state"><code>use_state(initial)</code></a> to create local
 component state. Call the setter to update; the framework automatically
@@ -2922,7 +2923,7 @@ Each instance has <strong>independent state</strong>:</p>
 </span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
 </span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>
 </span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="k">def</span><span class="w"> </span><span class="nf">MainPage</span><span class="p">():</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
 </span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
 </span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>        <span class="n">Counter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Apples&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
 </span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>        <span class="n">Counter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Oranges&quot;</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>

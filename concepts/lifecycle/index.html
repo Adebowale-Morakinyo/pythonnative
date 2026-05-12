@@ -1853,14 +1853,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2518,7 +2518,7 @@ fold into it, and where you can hook in.</p>
 <h2 id="a-single-render-pass">A single render pass<a class="headerlink" href="#a-single-render-pass" title="Permanent link">&para;</a></h2>
 <p>A render pass is triggered by:</p>
 <ul>
-<li>Initial mount via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../../api/page/#pythonnative.page.create_page"><code>create_page</code></a>.</li>
+<li>Initial mount via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a>.</li>
 <li>A setter from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_state"><code>use_state</code></a> or a <code>dispatch</code>
   from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_reducer&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_reducer"><code>use_reducer</code></a>.</li>
 <li>A navigation event (<code>navigate</code>, <code>go_back</code>, <code>replace</code>).</li>
@@ -2538,7 +2538,7 @@ fold into it, and where you can hook in.</p>
    first; new <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> callbacks run
    after, in depth-first order so children commit before parents.</li>
 <li><strong>Drain</strong>. If any effect set state, another render pass is queued
-   immediately. The page host caps the loop to prevent runaway
+   immediately. The screen host caps the loop to prevent runaway
    re-renders.</li>
 </ol>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>[render] -&gt; [commit] -&gt; [effects] -&gt; drain? -&gt; [render] ...
@@ -2609,7 +2609,7 @@ closure.</p>
    the focus cleanup runs; effect state is preserved.</li>
 </ol>
 <h2 id="app-lifecycle-android-ios">App lifecycle (Android / iOS)<a class="headerlink" href="#app-lifecycle-android-ios" title="Permanent link">&para;</a></h2>
-<p>The page host forwards the platform's app-level lifecycle to navigators
+<p>The screen host forwards the platform's app-level lifecycle to navigators
 and effects:</p>
 <ul>
 <li><strong>Resume / <code>viewWillAppear</code></strong>: the active screen's <code>use_focus_effect</code>

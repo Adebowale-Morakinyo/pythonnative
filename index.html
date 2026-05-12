@@ -1837,14 +1837,14 @@
   
   
     <li class="md-nav__item">
-      <a href="api/page/" class="md-nav__link">
+      <a href="api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2518,8 +2518,14 @@ produce identical frames on both platforms.</p>
 <li><strong>No JS bridge, no transpiler.</strong> The reconciler runs synchronously
   in Python on the platform's main thread; native API calls are
   direct method calls.</li>
-<li><strong>Hot reload built in.</strong> <code>pn run --hot-reload</code> watches <code>app/</code> and
-  patches changes into the running app.</li>
+<li><strong>Native-backed navigation.</strong> The root <code>Stack.Navigator</code> drives
+  the platform's real navigation controller — Android Navigation
+  Component fragments on Android, <code>UINavigationController</code> on iOS —
+  so transitions, back gestures, and state preservation are exactly
+  what users expect from a first-class native app.</li>
+<li><strong>Fast Refresh hot reload.</strong> <code>pn run --hot-reload</code> watches <code>app/</code>
+  and patches the running app in place, preserving component state
+  across most edits.</li>
 <li><strong>A small surface.</strong> A handful of element factories, a handful of
   hooks, and one navigation primitive.</li>
 </ul>

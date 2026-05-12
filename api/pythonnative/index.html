@@ -1593,6 +1593,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#entry-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entry point
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#where-to-look-next" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1798,14 +1809,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../page/" class="md-nav__link">
+      <a href="../screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2346,6 +2357,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#entry-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entry point
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#where-to-look-next" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2405,6 +2427,20 @@
 <code>pythonnative/__init__.py</code>. Most user code only ever touches the names
 in this overview; deeper internals (<code>reconciler</code>, <code>native_views</code>,
 <code>page</code>) are documented for contributors and integrators.</p>
+<h2 id="entry-point">Entry point<a class="headerlink" href="#entry-point" title="Permanent link">&para;</a></h2>
+<p>Your app module defines a top-level component named <code>App</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">NavigationContainer</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The bundled Android <code>ScreenFragment</code> and iOS <code>ViewController</code> load
+your app by <strong>module path</strong> (<code>"app.main"</code>) and look up the
+module's top-level <code>App</code> attribute. There is no registration step
+or imperative bootstrap call. If you need to expose a
+differently-named root component, configure the templates to load
+an explicit dotted path like <code>"app.main.RootScreen"</code> instead.</p>
 
 
 <div class="doc doc-object doc-module">
@@ -2544,9 +2580,9 @@ rubicon-objc on iOS (Objective-C). There is no JavaScript bridge.</p>
 <td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a></td>
 </tr>
 <tr>
-<td>Page host</td>
-<td><a href="../page/">Page</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_page&lt;/span&gt;" href="../page/#pythonnative.page.create_page"><code>create_page</code></a></td>
+<td>Screen host</td>
+<td><a href="../screen/">Screen</a></td>
+<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../screen/#pythonnative.screen.create_screen"><code>create_screen</code></a></td>
 </tr>
 <tr>
 <td>Reconciler</td>

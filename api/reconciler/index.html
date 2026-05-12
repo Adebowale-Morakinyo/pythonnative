@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://docs.pythonnative.com/api/reconciler/">
       
       
-        <link rel="prev" href="../page/">
+        <link rel="prev" href="../screen/">
       
       
         <link rel="next" href="../layout/">
@@ -1729,14 +1729,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../page/" class="md-nav__link">
+      <a href="../screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2561,7 +2561,7 @@ native mutations.</p>
   the committed VNodes and fed through
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt;" href="../layout/#pythonnative.layout.calculate_layout"><code>calculate_layout</code></a>; the
   resulting per-node frames are applied via the backend's
-  <code>set_frame</code>. The viewport size is supplied by the page host via
+  <code>set_frame</code>. The viewport size is supplied by the screen host via
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_viewport_size&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.set_viewport_size"><code>set_viewport_size</code></a>.</li>
 </ul>
 
@@ -3030,7 +3030,7 @@ an iOS backend; tests can pass a mock.</p>
     <div class="doc doc-contents ">
 
         <p>Update the viewport size and re-run layout if it changed.</p>
-<p>Called by the page host whenever the platform reports a new
+<p>Called by the screen host whenever the platform reports a new
 container size (Android: <code>onLayoutChange</code>; iOS:
 <code>viewDidLayoutSubviews</code>). The first call after mount
 triggers the initial layout pass; subsequent identical

@@ -1864,14 +1864,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2536,7 +2536,7 @@
 <p>Hot reload turns your edit-save-rebuild loop into edit-save-see. The
 <code>pn</code> CLI watches <code>app/</code> for changes and pushes the modified files
 straight to the running app, where a small device-side helper reloads
-the affected modules and asks the page host to re-render.</p>
+the affected modules and asks the screen host to re-render.</p>
 <h2 id="turn-it-on">Turn it on<a class="headerlink" href="#turn-it-on" title="Permanent link">&para;</a></h2>
 <p>Add <code>--hot-reload</code> to your <code>pn run</code> invocation:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--hot-reload
@@ -2569,18 +2569,41 @@ on <code>sys.path</code>.</p>
 </ul>
 <p>After the files are in place, the CLI writes <code>reload.json</code>. The
 Android and iOS templates poll that manifest on the platform main
-thread and call the page host's reload hook. The host re-imports the
+thread and call the screen host's reload hook. The host re-imports the
 root component by dotted path, resets hook/navigation state for the
 page, and mounts the refreshed tree.</p>
 <h2 id="what-gets-reloaded">What gets reloaded<a class="headerlink" href="#what-gets-reloaded" title="Permanent link">&para;</a></h2>
 <p>PythonNative reloads any <code>.py</code> file under <code>app/</code>. The device-side
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ModuleReloader&lt;/span&gt;" href="../../api/hot_reload/#pythonnative.hot_reload.ModuleReloader"><code>ModuleReloader</code></a> resolves
 the file to a dotted module name (e.g., <code>app/pages/home.py</code> becomes
-<code>app.pages.home</code>) and calls <code>importlib.reload</code> on it.</p>
-<p>After reloading, the page host remounts the active page. Hook state for
-the affected page is <strong>reset</strong> on reload. This is intentionally more
-conservative than React Native Fast Refresh, but it avoids stale Python
-closures while the runtime is still young.</p>
+<code>app.pages.home</code>) and re-imports it from disk.</p>
+<p>After reloading, every active screen host runs <strong>Fast Refresh</strong> in
+place:</p>
+<ol>
+<li>Walk the live VNode tree and collect every component function
+   defined in a reloaded module.</li>
+<li>Look up each function's replacement by <code>__module__</code> +
+   <code>__qualname__</code> in the freshly reloaded module (unwrapping the
+   <code>@pn.component</code> decorator).</li>
+<li>Rewrite the <code>Element.type</code> references on every VNode in place —
+   the next reconcile sees the new function with the same
+   <code>HookState</code>, so state survives.</li>
+</ol>
+<p>The next render runs through
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reconcile&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler.reconcile"><code>Reconciler.reconcile</code></a>
+just like a normal re-render, so layout and native views are
+updated incrementally. Component state (<code>use_state</code>, <code>use_reducer</code>,
+refs) is preserved across the swap.</p>
+<p>If Fast Refresh can't find a clean swap — for example, a
+component's <code>__qualname__</code> changed, a new module was added that the
+tree doesn't reference yet, or the swap raises — the host
+<strong>falls back</strong> to a full remount of its root component so you never
+get stuck with a stale tree. Hook state is reset in that case.</p>
+<p>Per-screen scope: each native screen (UIViewController on iOS,
+ScreenFragment on Android) runs its own host, so Fast Refresh
+operates independently per host. Two pushed screens both running
+Fast Refresh for the same changed module each swap their own
+references.</p>
 <h2 id="what-doesnt-reload">What doesn't reload<a class="headerlink" href="#what-doesnt-reload" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Native template files (anything under <code>android_template/</code> or
@@ -2602,17 +2625,28 @@ reload. Idempotent registration is fine; non-idempotent setup
 <div class="admonition warning">
 <p class="admonition-title">References across modules</p>
 <p>If module <code>a</code> does <code>from b import Foo</code> and only <code>b.py</code> changes,
-module <code>a</code> may still hold the <em>old</em> <code>Foo</code>. The page host always
-reloads the root page module after changed modules so common
+module <code>a</code> may still hold the <em>old</em> <code>Foo</code>. The screen host always
+reloads the root screen module after changed modules so common
 component imports update, but long-lived references (e.g., stashed
 in a global) can drift. When in doubt, restart the app.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Hook signature changes</p>
 <p>Adding or removing a hook in a component changes the slot layout.
-The reload picks up the new code, but existing component instances
-can't safely keep their old state. Closing and reopening the
-affected screen (or restarting the app) clears the slate.</p>
+Fast Refresh will swap the function in place but the next render
+can read the wrong slots, so the host falls back to a full
+remount when it detects the swap raises. If you see suspicious
+state after a hook-shape edit, close and reopen the affected
+screen (or restart the app) to clear the slate.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Renaming a component</p>
+<p>Fast Refresh keys on each function's <code>__qualname__</code>. Renaming a
+component changes the key, so the live VNode keeps its old
+function until the parent re-renders with the new name. In
+practice this means you may need to trigger one navigation or
+state change for the renamed component to take effect; closing
+and reopening the screen always works.</p>
 </div>
 <h2 id="working-without-hot-reload">Working without <code>--hot-reload</code><a class="headerlink" href="#working-without-hot-reload" title="Permanent link">&para;</a></h2>
 <p>Hot reload is opt-in. If you'd rather rebuild on every change (more

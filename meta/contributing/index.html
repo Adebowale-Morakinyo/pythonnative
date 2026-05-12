@@ -1726,14 +1726,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/page/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Page
+    Screen
   
 
     
@@ -2810,8 +2810,8 @@ The contents are included below so the docs site stays in sync.</p>
 <li><code>native_modules</code> – native API modules for device capabilities (<code>native_modules/</code>)</li>
 <li><code>native_views</code> – platform-specific native view creation and updates (<code>native_views/</code>)</li>
 <li><code>package</code> – <code>src/pythonnative/__init__.py</code> exports and package boundary</li>
-<li><code>page</code> – Page component, lifecycle, and reactive state (<code>page.py</code>)</li>
 <li><code>reconciler</code> – virtual view tree diffing and reconciliation (<code>reconciler.py</code>)</li>
+<li><code>screen</code> – screen host, native lifecycle bridge, and render scheduling (<code>screen.py</code>)</li>
 <li><code>style</code> – StyleSheet and theming (<code>style.py</code>)</li>
 <li>
 <p><code>utils</code> – shared utilities (<code>utils.py</code>)</p>
@@ -2849,7 +2849,7 @@ The contents are included below so the docs site stays in sync.</p>
 <ul>
 <li>Use <code>!</code> after the type/scope or a <code>BREAKING CHANGE:</code> footer.</li>
 </ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>feat(core)!: rename Page.set_root_view to set_root
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>feat(screen)!: rename create_page to create_screen
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>BREAKING CHANGE: API renamed; update app code and templates.
 </span></code></pre></div>
@@ -2966,7 +2966,7 @@ The contents are included below so the docs site stays in sync.</p>
 </span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>pn<span class="w"> </span>run<span class="w"> </span>ios
 </span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>maestro<span class="w"> </span>--platform<span class="w"> </span>ios<span class="w"> </span><span class="nb">test</span><span class="w"> </span>../../tests/e2e/ios.yaml
 </span></code></pre></div>
-<p>Test flows live in <code>tests/e2e/flows/</code> and cover main page rendering, counter interaction, and multi-page navigation. The <code>e2e.yml</code> workflow runs these automatically on pushes to <code>main</code> and PRs.</p>
+<p>Test flows live in <code>tests/e2e/flows/</code> and cover the main screen rendering, counter interaction, and multi-screen navigation. The <code>e2e.yml</code> workflow runs these automatically on pushes to <code>main</code> and PRs.</p>
 <h3 id="ci">CI<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>CI</strong> (<code>ci.yml</code>): runs formatter, linter, type checker, and tests on every push and PR.</li>

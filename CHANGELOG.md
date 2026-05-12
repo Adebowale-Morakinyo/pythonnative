@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.13.1 (2026-05-12)
+
+### Bug Fixes
+
+- **hot_reload,native_views**: Dedupe per-host reloads; clamp NaN frames
+  ([`796ec70`](https://github.com/pythonnative/pythonnative/commit/796ec70936a3ba127c42aaa2eafdc3f0362690b9))
+
+
 ## v0.13.0 (2026-05-12)
 
 ### Features

@@ -32,9 +32,9 @@ from typing import Any, Dict, List, Optional
 def init_project(args: argparse.Namespace) -> None:
     """Scaffold a new PythonNative project in the current directory.
 
-    Creates `app/main_page.py`, `pythonnative.json`,
-    `requirements.txt`, and `.gitignore`. Refuses to overwrite
-    existing files unless `--force` is passed.
+    Creates `app/main.py`, `pythonnative.json`, `requirements.txt`,
+    and `.gitignore`. Refuses to overwrite existing files unless
+    `--force` is passed.
 
     Args:
         args: The parsed argparse namespace. Recognized attributes:
@@ -68,21 +68,46 @@ def init_project(args: argparse.Namespace) -> None:
 
     os.makedirs(app_dir, exist_ok=True)
 
-    main_page_py = os.path.join(app_dir, "main_page.py")
-    if not os.path.exists(main_page_py) or args.force:
-        with open(main_page_py, "w", encoding="utf-8") as f:
+    main_py = os.path.join(app_dir, "main.py")
+    if not os.path.exists(main_py) or args.force:
+        with open(main_py, "w", encoding="utf-8") as f:
             f.write("""import pythonnative as pn
+
+Stack = pn.create_stack_navigator()
 
 
 @pn.component
-def MainPage():
+def HomeScreen():
     count, set_count = pn.use_state(0)
+    nav = pn.use_navigation()
     return pn.ScrollView(
         pn.Column(
             pn.Text("Hello from PythonNative!", style={"font_size": 24, "bold": True}),
             pn.Text(f"Tapped {count} times"),
             pn.Button("Tap me", on_click=lambda: set_count(count + 1)),
+            pn.Button("Open detail", on_click=lambda: nav.navigate("Detail", {"count": count})),
             style={"spacing": 12, "padding": 16, "align_items": "stretch"},
+        )
+    )
+
+
+@pn.component
+def DetailScreen():
+    nav = pn.use_navigation()
+    params = pn.use_route()
+    return pn.Column(
+        pn.Text(f"Detail: count was {params.get('count', 0)}", style={"font_size": 20}),
+        pn.Button("Back", on_click=nav.go_back),
+        style={"spacing": 12, "padding": 16},
+    )
+
+
+@pn.component
+def App():
+    return pn.NavigationContainer(
+        Stack.Navigator(
+            Stack.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Stack.Screen("Detail", component=DetailScreen, options={"title": "Detail"}),
         )
     )
 """)
@@ -91,7 +116,7 @@ def MainPage():
     config = {
         "name": project_name,
         "appId": "com.example." + project_name.replace(" ", "").lower(),
-        "entryPoint": "app/main_page.py",
+        "entryPoint": "app/main.py",
         "pythonVersion": "3.11",
         "ios": {},
         "android": {},
@@ -319,7 +344,7 @@ ANDROID_LOGCAT_FILTERS: list[str] = [
     "python.stdout:V",
     "python.stderr:V",
     "MainActivity:V",
-    "PageFragment:V",
+    "ScreenFragment:V",
     "Navigator:V",
     "PythonNative:V",
     "AndroidRuntime:E",

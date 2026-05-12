@@ -1,11 +1,11 @@
-"""Page host: the bridge between native lifecycle and function components.
+"""Screen host: the bridge between native lifecycle and function components.
 
-Users do not subclass `Page`. Instead they write `@component` functions
-and the native template calls
-[`create_page`][pythonnative.create_page] to obtain a host that manages
-the reconciler and lifecycle.
+Users do not write screen classes by hand. Instead they write
+``@component`` functions and the native template calls
+[`create_screen`][pythonnative.create_screen] to obtain a host that
+manages the reconciler and lifecycle for that screen.
 
-The page host owns:
+The screen host owns:
 
 - A [`Reconciler`][pythonnative.reconciler.Reconciler] backed by the
   platform's native-view registry.
@@ -17,13 +17,13 @@ The page host owns:
   per user gesture.
 
 Example:
-    User code defines a top-level component:
+    User code defines a top-level component named ``App``:
 
     ```python
     import pythonnative as pn
 
     @pn.component
-    def MainPage():
+    def App():
         count, set_count = pn.use_state(0)
         return pn.Column(
             pn.Text(f"Count: {count}", style={"font_size": 24}),
@@ -35,8 +35,8 @@ Example:
     The native template wires it in:
 
     ```python
-    host = pythonnative.page.create_page(
-        "app.main_page.MainPage",
+    host = pythonnative.screen.create_screen(
+        "app.main",
         native_instance,
     )
     host.on_create()
@@ -75,23 +75,76 @@ def _log_pn(msg: str) -> None:
 # ======================================================================
 
 
-def _resolve_component_path(page_ref: Any) -> str:
+def _resolve_component_path(component_ref: Any) -> str:
     """Resolve a component function or string into a `module.name` path."""
-    if isinstance(page_ref, str):
-        return page_ref
-    func = getattr(page_ref, "__wrapped__", page_ref)
+    if isinstance(component_ref, str):
+        return component_ref
+    func = getattr(component_ref, "__wrapped__", component_ref)
     module = getattr(func, "__module__", None)
     name = getattr(func, "__name__", None)
     if module and name:
         return f"{module}.{name}"
-    raise ValueError(f"Cannot resolve component path for {page_ref!r}")
+    raise ValueError(f"Cannot resolve component path for {component_ref!r}")
 
 
 def _import_component(component_path: str) -> Any:
-    """Import and return the component function from a dotted path."""
-    module_path, component_name = component_path.rsplit(".", 1)
-    module = importlib.import_module(module_path)
-    return getattr(module, component_name)
+    """Import a component by module or dotted-attribute path.
+
+    PythonNative's entry-point convention is "define a function named
+    ``App`` at the top of your module, and the native templates will
+    find it". So the templates pass a *module path* like
+    ``"app.main"`` and this helper imports the module and returns its
+    ``App`` attribute.
+
+    A dotted ``module.Attribute`` path is also accepted as an escape
+    hatch (e.g. ``"app.main.RootScreen"``) for users who want to
+    expose a differently-named component without renaming it to
+    ``App``.
+
+    Resolution order:
+
+    1. If ``component_path`` resolves cleanly as a module, return its
+       ``App`` attribute.
+    2. Otherwise split on the final ``.``: import the parent module
+       and return the named attribute.
+
+    Args:
+        component_path: Either ``"app.main"`` (module path with an
+            ``App`` attribute) or ``"app.main.SomeComponent"`` (dotted
+            path to a specific component).
+
+    Returns:
+        The resolved component callable.
+
+    Raises:
+        ImportError: If neither resolution path succeeds.
+    """
+    try:
+        module = importlib.import_module(component_path)
+    except ModuleNotFoundError:
+        module = None
+    if module is not None:
+        component = getattr(module, "App", None)
+        if component is not None:
+            return component
+
+    if "." in component_path:
+        module_path, attr = component_path.rsplit(".", 1)
+        try:
+            parent = importlib.import_module(module_path)
+        except ModuleNotFoundError:
+            parent = None
+        if parent is not None:
+            component = getattr(parent, attr, None)
+            if component is not None:
+                return component
+
+    raise ImportError(
+        f"Could not resolve component {component_path!r}. "
+        "Define a top-level `App` function in the module (e.g. "
+        "`app/main.py`) or pass an explicit dotted path like "
+        "`app.main.RootScreen`."
+    )
 
 
 # ======================================================================
@@ -118,7 +171,7 @@ def _push_viewport_size(host: Any, width: float, height: float) -> None:
     """Forward a viewport-size change to the reconciler.
 
     Called by the native template (or our injected layout listener
-    on Android, or `_attach_root` on iOS) whenever the page
+    on Android, or `_attach_root` on iOS) whenever the screen
     container's bounds change. Coordinates must be in points (not
     raw pixels). Also publishes the new dimensions to
     `pythonnative.platform_metrics` so the
@@ -154,7 +207,7 @@ def _new_reconciler(host: Any) -> Any:
     from .reconciler import Reconciler
 
     reconciler = Reconciler(get_registry())
-    reconciler._page_re_render = lambda: _request_render(host)
+    reconciler._screen_re_render = lambda: _request_render(host)
     return reconciler
 
 
@@ -304,19 +357,96 @@ def _hot_reload_tick(host: Any) -> bool:
 
 
 def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> None:
-    from .hooks import NavigationHandle, Provider, _NavigationContext
+    """Reload modules and refresh the host's reconciler tree.
+
+    Tries **Fast Refresh** first: the changed modules are reloaded
+    and every ``element.type`` reference in the current ``VNode``
+    tree is rewritten to point at the new module's functions. The
+    next render then runs the new bodies through the existing hook
+    slots, so component state survives.
+
+    If Fast Refresh fails (the new module raised at import time, no
+    replacements could be located, or the next render itself
+    threw), the host falls back to a full remount: a brand-new
+    reconciler tree is mounted into the same native root. State is
+    lost but the app keeps running so the developer can fix the
+    error and try again.
+    """
     from .hot_reload import ModuleReloader
 
     modules = list(changed_modules or [])
-    root_module = host._component_path.rsplit(".", 1)[0]
+    root_module = host._component_path.rsplit(".", 1)[0] if "." in host._component_path else host._component_path
     if root_module not in modules:
         modules.append(root_module)
 
-    ModuleReloader.reload_modules(modules)
-    host._component = _import_component(host._component_path)
+    reloaded = ModuleReloader.reload_modules(modules)
+    if not reloaded:
+        _log_pn(f"_reload_host: no modules could be reloaded from {modules!r}; aborting")
+        return
+
+    try:
+        new_component = _import_component(host._component_path)
+    except Exception as e:
+        _log_pn(f"_reload_host: re-import failed: {e!r}; aborting reload")
+        return
+    host._component = new_component
 
     if host._reconciler is None:
         return
+
+    if _try_fast_refresh(host, reloaded):
+        print(f"[hot-reload] Fast Refresh: {', '.join(reloaded)}", file=sys.stderr)
+        return
+
+    _full_remount(host, reloaded)
+
+
+def _try_fast_refresh(host: Any, reloaded_modules: Sequence[str]) -> bool:
+    """Attempt an in-place component swap + re-render.
+
+    Returns ``True`` only if the swap happened and the subsequent
+    render completed without raising. On exception we restore the
+    pre-render reconciler state so the caller can fall back to a
+    full remount.
+    """
+    from .hooks import Provider, _NavigationContext
+    from .hot_reload import ModuleReloader
+
+    reconciler = host._reconciler
+    if reconciler is None or reconciler._tree is None:
+        return False
+
+    rewrote = ModuleReloader.refresh_in_place(reconciler, reloaded_modules)
+    if not rewrote:
+        return False
+
+    host._is_rendering = True
+    try:
+        app_element = _render_app(host)
+        provider_element = Provider(_NavigationContext, host._nav_handle, app_element)
+        new_root = reconciler.reconcile(provider_element)
+        if new_root is not host._root_native_view:
+            host._detach_root(host._root_native_view)
+            host._root_native_view = new_root
+            host._attach_root(new_root)
+    except Exception as e:
+        _log_pn(f"_try_fast_refresh: render failed after swap: {e!r}; falling back to remount")
+        return False
+    finally:
+        host._is_rendering = False
+
+    _drain_renders(host)
+    return True
+
+
+def _full_remount(host: Any, reloaded_modules: Sequence[str]) -> None:
+    """Destroy the existing tree and mount a fresh one.
+
+    Used by [`_reload_host`][pythonnative.screen._reload_host] as the
+    fallback path when Fast Refresh cannot apply (e.g. the user
+    deleted a component that was on screen).
+    """
+    from .hooks import NavigationHandle, Provider, _NavigationContext
 
     old_reconciler = host._reconciler
     old_root = host._root_native_view
@@ -345,7 +475,7 @@ def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> 
     host._root_native_view = new_root
     host._attach_root(new_root)
     _drain_renders(host)
-    print(f"[hot-reload] Reloaded {', '.join(modules)}", file=sys.stderr)
+    print(f"[hot-reload] Remounted: {', '.join(reloaded_modules)}", file=sys.stderr)
 
 
 # ======================================================================
@@ -422,7 +552,7 @@ if IS_ANDROID:
         ``getInsets(systemBars())`` API, and very old phones may
         not expose ``getRootWindowInsets`` at all. All branches are
         wrapped in ``try/except`` because diagnostics here must
-        never crash a page host.
+        never crash a screen host.
         """
         try:
             from . import platform_metrics
@@ -526,10 +656,10 @@ if IS_ANDROID:
         except Exception:
             pass
 
-    class _AppHost:
+    class _ScreenHost:
         """Android host backed by an `Activity` and fragment-based navigation.
 
-        Owned by the page fragment template. Bridges Android lifecycle
+        Owned by the screen fragment template. Bridges Android lifecycle
         callbacks (`onCreate`, `onPause`, etc.) to the reconciler and
         the function component.
         """
@@ -588,11 +718,11 @@ if IS_ANDROID:
         def _get_nav_args(self) -> Dict[str, Any]:
             return self._args
 
-        def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
-            page_path = _resolve_component_path(page)
+        def _push(self, component: Any, args: Optional[Dict[str, Any]] = None) -> None:
+            screen_path = _resolve_component_path(component)
             Navigator = jclass(f"{self.native_instance.getPackageName()}.Navigator")
             args_json = json.dumps(args) if args else None
-            Navigator.push(self.native_instance, page_path, args_json)
+            Navigator.push(self.native_instance, screen_path, args_json)
 
         def _pop(self) -> None:
             try:
@@ -600,6 +730,26 @@ if IS_ANDROID:
                 Navigator.pop(self.native_instance)
             except Exception:
                 self.native_instance.finish()
+
+        def _reset_to_root(self) -> None:
+            """Pop everything above the root view-controller (best-effort)."""
+            try:
+                Navigator = jclass(f"{self.native_instance.getPackageName()}.Navigator")
+                reset_fn = getattr(Navigator, "popToRoot", None)
+                if reset_fn is not None:
+                    reset_fn(self.native_instance)
+            except Exception:
+                pass
+
+        def _set_screen_options(self, options: Dict[str, Any]) -> None:
+            """Bind screen options (title, etc.) to the native action bar."""
+            title = options.get("title") if isinstance(options, dict) else None
+            try:
+                activity = self.native_instance
+                if hasattr(activity, "setTitle") and title:
+                    activity.setTitle(title)
+            except Exception:
+                pass
 
         def _attach_root(self, native_view: Any) -> None:
             container = None
@@ -652,8 +802,8 @@ else:
 
     # Redirect Python's stdout/stderr through fd 2 so ``print()`` output is
     # visible via ``xcrun simctl launch --console-pty``. This runs at
-    # ``pythonnative.page`` import time, i.e. before any user page module
-    # (e.g. ``app.main_page``) is imported, so their top-level ``print()``
+    # ``pythonnative.screen`` import time, i.e. before any user app module
+    # (e.g. ``app.main``) is imported, so their top-level ``print()``
     # calls are captured too. Gated on ``IS_IOS`` rather than rubicon-objc
     # being importable, so installing the ``[ios]`` extra on macOS does
     # not silently swap ``sys.stdout`` on a dev machine.
@@ -665,7 +815,7 @@ else:
         except Exception:
             pass
 
-    _IOS_PAGE_REGISTRY: _Dict[int, Any] = {}
+    _IOS_SCREEN_REGISTRY: _Dict[int, Any] = {}
     _IOS_SCHEDULED_RENDER_HOSTS: _Dict[int, Any] = {}
     _ios_render_scheduler_target: Any = None
     _ios_native_render_scheduler: Any = None
@@ -684,7 +834,7 @@ else:
         - Pure-Python integers also occur (e.g., when the caller has
           already converted).
 
-        This helper covers all three so the page-host registry is
+        This helper covers all three so the screen-host registry is
         keyed under the same integer Swift sends back via
         ``forward_lifecycle``. Returns ``None`` only if every conversion
         path fails, in which case the caller logs a diagnostic.
@@ -716,19 +866,19 @@ else:
         except Exception:
             pass
 
-    def _ios_register_page(vc_instance: Any, host_obj: Any) -> None:
+    def _ios_register_screen(vc_instance: Any, host_obj: Any) -> None:
         ptr = _objc_addr(vc_instance)
         if ptr is None:
-            _log_pn(f"register_page: could not extract address from {type(vc_instance).__name__}")
+            _log_pn(f"register_screen: could not extract address from {type(vc_instance).__name__}")
             return
-        _IOS_PAGE_REGISTRY[ptr] = host_obj
-        _log_pn(f"register_page: addr={ptr} (registry size={len(_IOS_PAGE_REGISTRY)})")
+        _IOS_SCREEN_REGISTRY[ptr] = host_obj
+        _log_pn(f"register_screen: addr={ptr} (registry size={len(_IOS_SCREEN_REGISTRY)})")
 
-    def _ios_unregister_page(vc_instance: Any) -> None:
+    def _ios_unregister_screen(vc_instance: Any) -> None:
         ptr = _objc_addr(vc_instance)
         if ptr is None:
             return
-        _IOS_PAGE_REGISTRY.pop(ptr, None)
+        _IOS_SCREEN_REGISTRY.pop(ptr, None)
 
     def _flush_ios_scheduled_renders() -> None:
         hosts = list(_IOS_SCHEDULED_RENDER_HOSTS.values())
@@ -772,12 +922,12 @@ else:
         except Exception as e:
             _log_pn(f"forward_lifecycle: bad native_addr={native_addr!r}: {e!r}")
             return
-        host = _IOS_PAGE_REGISTRY.get(key)
+        host = _IOS_SCREEN_REGISTRY.get(key)
         if host is None:
             _log_pn(
                 f"forward_lifecycle: NO HOST for event={event!r} addr={key} "
-                f"(registry has {len(_IOS_PAGE_REGISTRY)} entry(ies): "
-                f"{list(_IOS_PAGE_REGISTRY.keys())})"
+                f"(registry has {len(_IOS_SCREEN_REGISTRY)} entry(ies): "
+                f"{list(_IOS_SCREEN_REGISTRY.keys())})"
             )
             return
         handler = getattr(host, event, None)
@@ -841,10 +991,10 @@ else:
                 _log_pn(f"_request_render: iOS defer failed ({e!r}); rendering synchronously")
                 return False
 
-        class _AppHost:
+        class _ScreenHost:
             """iOS host backed by a `UIViewController`.
 
-            Owned by the page view-controller template. Bridges iOS
+            Owned by the screen view-controller template. Bridges iOS
             lifecycle callbacks (`viewDidLoad`, `viewWillDisappear`,
             etc.) to the reconciler and the function component.
             """
@@ -858,7 +1008,7 @@ else:
                 self.native_instance = native_instance
                 _init_host_common(self, component_path, component_func)
                 if self.native_instance is not None:
-                    _ios_register_page(self.native_instance, self)
+                    _ios_register_screen(self.native_instance, self)
 
             def on_create(self) -> None:
                 _on_create(self)
@@ -874,7 +1024,7 @@ else:
 
             def on_destroy(self) -> None:
                 if self.native_instance is not None:
-                    _ios_unregister_page(self.native_instance)
+                    _ios_unregister_screen(self.native_instance)
 
             def enable_hot_reload(self, manifest_path: str, source_root: Optional[str] = None) -> None:
                 _enable_hot_reload(self, manifest_path)
@@ -900,8 +1050,8 @@ else:
             def _get_nav_args(self) -> Dict[str, Any]:
                 return self._args
 
-            def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
-                page_path = _resolve_component_path(page)
+            def _push(self, component: Any, args: Optional[Dict[str, Any]] = None) -> None:
+                screen_path = _resolve_component_path(component)
                 ViewController = None
                 try:
                     ViewController = ObjCClass("ViewController")
@@ -922,9 +1072,9 @@ else:
 
                 next_vc = ViewController.alloc().init()
                 try:
-                    next_vc.setValue_forKey_(page_path, "requestedPagePath")
+                    next_vc.setValue_forKey_(screen_path, "requestedScreenPath")
                     if args:
-                        next_vc.setValue_forKey_(json.dumps(args), "requestedPageArgsJSON")
+                        next_vc.setValue_forKey_(json.dumps(args), "requestedScreenArgsJSON")
                 except Exception:
                     pass
                 nav = getattr(self.native_instance, "navigationController", None)
@@ -938,6 +1088,31 @@ else:
                 nav = getattr(self.native_instance, "navigationController", None)
                 if nav is not None:
                     nav.popViewControllerAnimated_(True)
+
+            def _reset_to_root(self) -> None:
+                """Pop everything above the root view-controller."""
+                nav = getattr(self.native_instance, "navigationController", None)
+                if nav is not None:
+                    try:
+                        nav.popToRootViewControllerAnimated_(True)
+                    except Exception:
+                        pass
+
+            def _set_screen_options(self, options: Dict[str, Any]) -> None:
+                """Bind screen options (e.g. title) to the native nav bar.
+
+                Setting ``UIViewController.title`` propagates to the
+                view controller's ``navigationItem.title`` so the
+                surrounding ``UINavigationController`` picks up the
+                new title on its next layout pass.
+                """
+                title = options.get("title") if isinstance(options, dict) else None
+                if title is None or self.native_instance is None:
+                    return
+                try:
+                    self.native_instance.setTitle_(str(title))
+                except Exception as e:
+                    _log_pn(f"_set_screen_options: setTitle failed: {e!r}")
 
             def _attach_root(self, native_view: Any) -> None:
                 root_view = self.native_instance.view
@@ -1070,7 +1245,7 @@ else:
 
     else:
 
-        class _AppHost:
+        class _ScreenHost:
             """Desktop stub used when no native runtime is available.
 
             Fully functional for unit tests when a mock backend is
@@ -1134,11 +1309,18 @@ else:
             def _get_nav_args(self) -> Dict[str, Any]:
                 return self._args
 
-            def _push(self, page: Any, args: Optional[Dict[str, Any]] = None) -> None:
+            def _push(self, component: Any, args: Optional[Dict[str, Any]] = None) -> None:
                 raise RuntimeError("navigate() requires a native runtime (iOS or Android)")
 
             def _pop(self) -> None:
                 raise RuntimeError("go_back() requires a native runtime (iOS or Android)")
+
+            def _reset_to_root(self) -> None:
+                pass
+
+            def _set_screen_options(self, options: Dict[str, Any]) -> None:
+                """No-op on desktop; native hosts override this."""
+                return
 
             def _attach_root(self, native_view: Any) -> None:
                 pass
@@ -1152,34 +1334,36 @@ else:
 # ======================================================================
 
 
-def create_page(
+def create_screen(
     component_path: str,
     native_instance: Any = None,
     args_json: Optional[str] = None,
-) -> _AppHost:
-    """Create a page host for a function component.
+) -> _ScreenHost:
+    """Create a screen host for a function component.
 
-    Called by native templates (`PageFragment.kt` on Android,
+    Called by native templates (`ScreenFragment.kt` on Android,
     `ViewController.swift` on iOS) to bridge the native lifecycle to a
     [`@component`][pythonnative.component] function.
 
     Args:
-        component_path: Dotted Python path to the component, e.g.,
-            `"app.main_page.MainPage"`. The function is imported lazily
-            so user modules can be reloaded by the dev server.
+        component_path: Either a module path like `"app.main"` (the
+            module's top-level ``App`` attribute is used) or a dotted
+            attribute path like `"app.main.RootScreen"`. The function
+            is imported lazily so user modules can be reloaded by the
+            dev server.
         native_instance: The native `Activity` (Android) or
-            `UIViewController` (iOS) pointer that owns this page.
+            `UIViewController` (iOS) pointer that owns this screen.
         args_json: Optional JSON string of navigation arguments to pass
             to the component on first render.
 
     Returns:
-        An `_AppHost` ready to receive lifecycle callbacks (`on_create`,
+        A `_ScreenHost` ready to receive lifecycle callbacks (`on_create`,
         `on_pause`, etc.) from the platform.
 
     Example:
         ```python
-        host = pythonnative.page.create_page(
-            "app.main_page.MainPage",
+        host = pythonnative.screen.create_screen(
+            "app.main",
             native_instance,
             args_json='{"id": 42}',
         )
@@ -1187,7 +1371,7 @@ def create_page(
         ```
     """
     component_func = _import_component(component_path)
-    host = _AppHost(native_instance, component_path, component_func)
+    host = _ScreenHost(native_instance, component_path, component_func)
     if args_json:
         _set_args(host, args_json)
     return host

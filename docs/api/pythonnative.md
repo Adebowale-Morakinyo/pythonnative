@@ -5,6 +5,25 @@ PythonNative re-exports a small public surface from
 in this overview; deeper internals (`reconciler`, `native_views`,
 `page`) are documented for contributors and integrators.
 
+## Entry point
+
+Your app module defines a top-level component named `App`:
+
+```python
+import pythonnative as pn
+
+@pn.component
+def App():
+    return pn.NavigationContainer(...)
+```
+
+The bundled Android `ScreenFragment` and iOS `ViewController` load
+your app by **module path** (`"app.main"`) and look up the
+module's top-level `App` attribute. There is no registration step
+or imperative bootstrap call. If you need to expose a
+differently-named root component, configure the templates to load
+an explicit dotted path like `"app.main.RootScreen"` instead.
+
 ::: pythonnative
     options:
       show_root_heading: false
@@ -25,7 +44,7 @@ The reference is split per module so each page stays scannable:
 | Navigation | [Navigation](navigation.md) | [`NavigationContainer`][pythonnative.NavigationContainer], [`create_stack_navigator`][pythonnative.create_stack_navigator], [`create_tab_navigator`][pythonnative.create_tab_navigator], [`create_drawer_navigator`][pythonnative.create_drawer_navigator], [`use_navigation`][pythonnative.use_navigation] |
 | Styling | [Style](style.md) | [`StyleSheet`][pythonnative.StyleSheet], [`ThemeContext`][pythonnative.style.ThemeContext] |
 | Element descriptor | [Element](element.md) | [`Element`][pythonnative.Element] |
-| Page host | [Page](page.md) | [`create_page`][pythonnative.create_page] |
+| Screen host | [Screen](screen.md) | [`create_screen`][pythonnative.create_screen] |
 | Reconciler | [Reconciler](reconciler.md) | [`Reconciler`][pythonnative.reconciler.Reconciler] |
 | Native modules | [Native modules](native_modules.md) | `Camera`, `Location`, `FileSystem`, `Notifications` |
 | Native views | [Native views](native_views.md) | [`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry], [`ViewHandler`][pythonnative.native_views.base.ViewHandler] |

@@ -3,16 +3,30 @@
 Two cooperating pieces:
 
 - **Host-side**: [`FileWatcher`][pythonnative.hot_reload.FileWatcher]
-  polls the developer's `app/` directory for `.py` changes and
-  triggers a callback (typically `adb push` on Android or a
-  `simctl` file copy on iOS).
+  polls the developer's ``app/`` directory for ``.py`` changes and
+  triggers a callback (typically ``adb push`` on Android or a
+  ``simctl`` file copy on iOS).
 - **Device-side**:
   [`ModuleReloader`][pythonnative.hot_reload.ModuleReloader] reloads
-  changed Python modules using `importlib.reload` and asks the page
-  host to re-render the current tree.
+  changed Python modules using ``importlib`` and asks the screen
+  host to re-render its current tree.
+
+Two strategies share the device-side surface:
+
+- **Fast Refresh** (default): after reloading the changed modules
+  the reconciler tree is walked and every component function whose
+  module was reloaded is swapped in place. Hook state, navigation
+  state, and even scroll positions survive because the underlying
+  ``VNode`` objects are reused — the next render simply calls the
+  new function bodies through the old slots.
+- **Full remount**: when the in-place swap fails (e.g. the new
+  module raised at import time, or a render exception bubbled out
+  while running the new function), the host falls back to building
+  a brand-new reconciler tree. State is lost but the app keeps
+  running.
 
 Example:
-    Integrated into `pn run --hot-reload`:
+    Integrated into ``pn run --hot-reload``:
 
     ```python
     from pythonnative.hot_reload import FileWatcher
@@ -33,7 +47,7 @@ import os
 import sys
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Set
 
 DEV_ROOT_DIR = "pythonnative_dev"
 """Name of the writable on-device directory that shadows bundled app code."""
@@ -46,7 +60,7 @@ def configure_dev_environment(writable_root: str) -> str:
     """Create and prioritize the writable hot-reload source overlay.
 
     The returned directory is inserted at the front of `sys.path`, so a
-    pushed `app/main_page.py` shadows the copy bundled into the native
+    pushed `app/main.py` shadows the copy bundled into the native
     application. Templates call this before importing user code.
 
     Args:
@@ -191,7 +205,7 @@ class ModuleReloader:
         """Reload a single module by its dotted name.
 
         Args:
-            module_name: Dotted module name (e.g., `"app.main_page"`).
+            module_name: Dotted module name (e.g., `"app.main"`).
 
         Returns:
             `True` if the module imported successfully from the current
@@ -250,7 +264,7 @@ class ModuleReloader:
                 If empty, `file_path` is treated as already relative.
 
         Returns:
-            The dotted module name (e.g., `"app.pages.home"`), or
+            The dotted module name (e.g., `"app.screens.home"`), or
             `None` for an empty path.
         """
         rel = os.path.relpath(file_path, base_dir) if base_dir else file_path
@@ -273,28 +287,180 @@ class ModuleReloader:
         return modules
 
     @staticmethod
-    def reload_page(page_instance: Any, module_names: Optional[Sequence[str]] = None) -> None:
-        """Force a page re-render after a module reload.
+    def reload_screen(screen_instance: Any, module_names: Optional[Sequence[str]] = None) -> None:
+        """Force a screen re-render after a module reload.
 
         Args:
-            page_instance: An `_AppHost` instance (or duck-typed
+            screen_instance: A `_ScreenHost` instance (or duck-typed
                 equivalent) that exposes a `_reconciler` attribute.
             module_names: Optional modules that changed. Reload-aware
-                page hosts use this to refresh imports before re-render.
+                screen hosts use this to refresh imports before re-render.
         """
-        reload_fn = getattr(page_instance, "reload", None)
+        reload_fn = getattr(screen_instance, "reload", None)
         if callable(reload_fn):
             reload_fn(list(module_names or []))
             return
 
-        from .page import _request_render
+        from .screen import _request_render
 
-        if hasattr(page_instance, "_reconciler") and page_instance._reconciler is not None:
-            _request_render(page_instance)
+        if hasattr(screen_instance, "_reconciler") and screen_instance._reconciler is not None:
+            _request_render(screen_instance)
+
+    @staticmethod
+    def find_replacement_function(old_fn: Any) -> Optional[Any]:
+        """Locate a function's post-reload counterpart by qualname.
+
+        Functions decorated with [`component`][pythonnative.component]
+        store the user's original function on the wrapper's
+        ``__wrapped__`` attribute and forward ``__module__`` /
+        ``__qualname__`` so that the reconciler's stored
+        ``element.type`` (the unwrapped function) still has the
+        information needed to re-resolve after a module reload.
+
+        Args:
+            old_fn: The function captured in an
+                [`Element`][pythonnative.Element]'s ``type`` slot.
+
+        Returns:
+            The reloaded module's matching function, ``None`` if no
+            replacement was found, or the original function itself
+            when the module has not been reloaded (so callers can
+            skip the swap).
+        """
+        module_name = getattr(old_fn, "__module__", None)
+        qualname = getattr(old_fn, "__qualname__", None) or getattr(old_fn, "__name__", None)
+        if not module_name or not qualname:
+            return None
+        if "<locals>" in qualname:
+            return None  # nested functions are not addressable from the module surface
+
+        module = sys.modules.get(module_name)
+        if module is None:
+            return None
+
+        obj: Any = module
+        for part in qualname.split("."):
+            obj = getattr(obj, part, None)
+            if obj is None:
+                return None
+
+        if getattr(obj, "_pn_component", False):
+            obj = getattr(obj, "__wrapped__", obj)
+
+        if obj is old_fn:
+            return None
+        return obj
+
+    @staticmethod
+    def build_replacement_map(reconciler: Any, reloaded_modules: Iterable[str]) -> Dict[Any, Any]:
+        """Compute ``{old_function: new_function}`` for one tree.
+
+        The reconciler's stored tree references the *pre-reload*
+        component functions through ``VNode.element.type``. This
+        method walks the tree, collects every callable type whose
+        ``__module__`` was just reloaded, and asks
+        [`find_replacement_function`][pythonnative.hot_reload.ModuleReloader.find_replacement_function]
+        for its successor.
+
+        Args:
+            reconciler: The reconciler whose
+                ``_tree`` should be inspected.
+            reloaded_modules: Set of module names that were just
+                reloaded (only callables from these modules are
+                considered).
+
+        Returns:
+            A mapping suitable for passing to
+            [`swap_components_in_tree`][pythonnative.hot_reload.ModuleReloader.swap_components_in_tree].
+        """
+        modules: Set[str] = {m for m in reloaded_modules if m}
+        if not modules or reconciler is None or getattr(reconciler, "_tree", None) is None:
+            return {}
+
+        seen: Set[int] = set()
+        mapping: Dict[Any, Any] = {}
+
+        def visit(vnode: Any) -> None:
+            if vnode is None:
+                return
+            elem = getattr(vnode, "element", None)
+            if elem is not None and callable(elem.type):
+                fn = elem.type
+                fn_id = id(fn)
+                if fn_id not in seen:
+                    seen.add(fn_id)
+                    if getattr(fn, "__module__", None) in modules:
+                        replacement = ModuleReloader.find_replacement_function(fn)
+                        if replacement is not None and replacement is not fn:
+                            mapping[fn] = replacement
+            for child in getattr(vnode, "children", []) or []:
+                visit(child)
+
+        visit(reconciler._tree)
+        return mapping
+
+    @staticmethod
+    def swap_components_in_tree(reconciler: Any, replacement_map: Dict[Any, Any]) -> int:
+        """Apply a ``{old: new}`` map to every node in the reconciler tree.
+
+        Mutates ``vnode.element.type`` directly so the NEXT diff sees
+        identical types and reuses VNodes (preserving hook state).
+        Pending ``Element`` trees stored on ``vnode._rendered`` are
+        rewritten too because the reconciler reads from them when
+        comparing keys across renders.
+
+        Returns:
+            The number of element type references that were rewritten.
+        """
+        if not replacement_map or reconciler is None or getattr(reconciler, "_tree", None) is None:
+            return 0
+
+        rewrites = 0
+
+        def rewrite_element_tree(element: Any) -> None:
+            nonlocal rewrites
+            if element is None:
+                return
+            new_type = replacement_map.get(element.type)
+            if new_type is not None:
+                element.type = new_type
+                rewrites += 1
+            for child in element.children or []:
+                rewrite_element_tree(child)
+
+        def visit(vnode: Any) -> None:
+            if vnode is None:
+                return
+            if getattr(vnode, "element", None) is not None:
+                rewrite_element_tree(vnode.element)
+            rendered = getattr(vnode, "_rendered", None)
+            if rendered is not None:
+                rewrite_element_tree(rendered)
+            for child in getattr(vnode, "children", []) or []:
+                visit(child)
+
+        visit(reconciler._tree)
+        return rewrites
+
+    @staticmethod
+    def refresh_in_place(reconciler: Any, reloaded_modules: Iterable[str]) -> bool:
+        """Try a state-preserving Fast Refresh for one reconciler.
+
+        Returns:
+            ``True`` if any component function was replaced (callers
+            should then trigger a re-render). ``False`` means the
+            tree already references the latest functions (or has no
+            nodes from the reloaded modules at all).
+        """
+        replacement_map = ModuleReloader.build_replacement_map(reconciler, reloaded_modules)
+        if not replacement_map:
+            return False
+        rewrites = ModuleReloader.swap_components_in_tree(reconciler, replacement_map)
+        return rewrites > 0
 
     @staticmethod
     def reload_from_manifest(
-        page_instance: Any,
+        screen_instance: Any,
         manifest_path: str,
         *,
         last_version: Optional[str] = None,
@@ -302,9 +468,9 @@ class ModuleReloader:
         """Apply a reload manifest if it is newer than `last_version`.
 
         Args:
-            page_instance: Page host to refresh.
+            screen_instance: Screen host to refresh.
             manifest_path: JSON manifest written by the CLI.
-            last_version: Version already applied by this page host.
+            last_version: Version already applied by this screen host.
 
         Returns:
             The manifest version after applying, or `last_version` when
@@ -325,5 +491,5 @@ class ModuleReloader:
             files = manifest.get("files", [])
             modules = ModuleReloader.modules_from_files(files if isinstance(files, list) else [])
 
-        ModuleReloader.reload_page(page_instance, [str(module) for module in modules])
+        ModuleReloader.reload_screen(screen_instance, [str(module) for module in modules])
         return version

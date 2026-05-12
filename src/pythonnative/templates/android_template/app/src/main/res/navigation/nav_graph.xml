@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/pageFragment">
+    app:startDestination="@id/screenFragment">
 
     <fragment
-        android:id="@+id/pageFragment"
-        android:name="com.pythonnative.android_template.PageFragment"
-        android:label="PageFragment">
+        android:id="@+id/screenFragment"
+        android:name="com.pythonnative.android_template.ScreenFragment"
+        android:label="ScreenFragment">
         <argument
-            android:name="page_path"
+            android:name="screen_path"
             app:argType="string"
-            android:defaultValue="app.main_page.MainPage" />
+            android:defaultValue="app.main" />
         <argument
             android:name="args_json"
             app:argType="string"

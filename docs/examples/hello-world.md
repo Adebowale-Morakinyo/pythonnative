@@ -9,14 +9,14 @@ The smallest possible PythonNative app. You'll learn how to:
 
 ## The code
 
-Save this as `app/main_page.py`:
+Save this as `app/main.py`:
 
 ```python
 import pythonnative as pn
 
 
 @pn.component
-def MainPage():
+def App():
     count, set_count = pn.use_state(0)
     return pn.Column(
         pn.Text(f"Count: {count}", style={"font_size": 24, "bold": True}),
@@ -27,11 +27,11 @@ def MainPage():
 
 ## What's happening
 
-- `@pn.component` registers `MainPage` as a function component. Hooks
+- `@pn.component` registers `App` as a function component. Hooks
   (like `use_state`) work because the decorator establishes a hook
   context for each call.
 - `pn.use_state(0)` returns `(value, setter)`. The setter triggers a
-  re-render scheduled by the page host.
+  re-render scheduled by the screen host.
 - `pn.Column(*children, style=...)` returns a vertical container
   element. Both the children and the style are read on every render;
   the reconciler diffs them against the previous render and updates

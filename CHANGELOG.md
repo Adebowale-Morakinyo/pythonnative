@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.13.0 (2026-05-12)
+
+### Features
+
+- **screen,hot_reload**: Add native stack navigation and Fast Refresh
+  ([#1](https://github.com/pythonnative/pythonnative/pull/1),
+  [`042f411`](https://github.com/pythonnative/pythonnative/commit/042f4116f0342b90c7a6ee0f9a28bf8c075507c3))
+
+
 ## v0.12.0 (2026-05-11)
 
 ### Features

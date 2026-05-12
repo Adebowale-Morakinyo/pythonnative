@@ -107,6 +107,7 @@ ignore = ["D107", "D105", "D203", "D213"]
 "tests/**/*.py" = ["D"]
 "examples/**/*.py" = ["D"]
 "src/pythonnative/templates/**/*.py" = ["D"]
+"snippets/**/*.py" = ["D"]
 "setup.py" = ["D"]
 "conftest.py" = ["D"]
 # Platform handler subclasses implement the ViewHandler ABC defined in

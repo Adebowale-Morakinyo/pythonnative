@@ -101,6 +101,243 @@ def test_reload_module_imports_from_prioritized_sys_path(
 
 
 # ======================================================================
+# expand_reload_targets
+# ======================================================================
+
+
+def _register_modules(monkeypatch: pytest.MonkeyPatch, *names: str) -> None:
+    """Register stub modules in ``sys.modules`` for the lifetime of a test."""
+    import types
+
+    for name in names:
+        if name in sys.modules:
+            continue
+        monkeypatch.setitem(sys.modules, name, types.ModuleType(name))
+
+
+def test_expand_reload_targets_appends_entry_point_after_changed_modules(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _register_modules(monkeypatch, "app", "app.main", "app.screens", "app.screens.home")
+
+    targets = ModuleReloader.expand_reload_targets(["app.screens.home"], "app.main")
+
+    assert targets[0] == "app.screens.home"
+    assert targets[-1] == "app.main"
+
+
+def test_expand_reload_targets_orders_other_app_modules_deepest_first(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _register_modules(
+        monkeypatch,
+        "app",
+        "app.main",
+        "app.theme",
+        "app.screens",
+        "app.screens.home",
+        "app.screens.forms",
+    )
+
+    targets = ModuleReloader.expand_reload_targets(["app.screens.home"], "app.main")
+
+    assert targets[0] == "app.screens.home"
+    assert targets[-1] == "app.main"
+    forms_idx = targets.index("app.screens.forms")
+    theme_idx = targets.index("app.theme")
+    pkg_idx = targets.index("app")
+    assert forms_idx < theme_idx < pkg_idx
+
+
+def test_expand_reload_targets_moves_entry_point_to_end_when_changed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _register_modules(monkeypatch, "app", "app.main", "app.screens", "app.screens.home")
+
+    targets = ModuleReloader.expand_reload_targets(["app.main"], "app.main")
+
+    assert targets[-1] == "app.main"
+    assert targets.count("app.main") == 1
+
+
+def test_expand_reload_targets_supports_dotted_attribute_path(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _register_modules(monkeypatch, "app", "app.main", "app.screens", "app.screens.home")
+
+    targets = ModuleReloader.expand_reload_targets(["app.screens.home"], "app.main.RootScreen")
+
+    assert targets[-1] == "app.main"
+
+
+def test_expand_reload_targets_excludes_modules_outside_app_prefix(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _register_modules(
+        monkeypatch,
+        "app",
+        "app.main",
+        "app.screens.home",
+        "pythonnative",
+        "pythonnative.navigation",
+    )
+
+    targets = ModuleReloader.expand_reload_targets(["app.screens.home"], "app.main")
+
+    assert "pythonnative" not in targets
+    assert "pythonnative.navigation" not in targets
+
+
+def test_expand_reload_targets_returns_only_changed_when_entry_point_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # No entry module in sys.modules; should fall back to just the changed list.
+    monkeypatch.delitem(sys.modules, "app.main", raising=False)
+    monkeypatch.delitem(sys.modules, "app", raising=False)
+
+    targets = ModuleReloader.expand_reload_targets(["totally_unrelated.module"], "app.main")
+
+    assert targets == ["totally_unrelated.module"]
+
+
+# ======================================================================
+# reload_modules_for_version (cross-host dedup)
+# ======================================================================
+
+
+@pytest.fixture
+def _reset_reloaded_version(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Isolate `ModuleReloader._last_reloaded_version` per test."""
+    monkeypatch.setattr(ModuleReloader, "_last_reloaded_version", None, raising=False)
+
+
+def _make_reloadable_pkg(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, value: str) -> str:
+    """Create a package with one module that can be reloaded; returns the dotted name."""
+    pkg = tmp_path / "dedup_pkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "comp.py").write_text(f"VALUE = {value!r}\n", encoding="utf-8")
+    monkeypatch.syspath_prepend(os.fspath(tmp_path))
+    monkeypatch.setattr(sys, "dont_write_bytecode", True)
+    sys.modules.pop("dedup_pkg.comp", None)
+    sys.modules.pop("dedup_pkg", None)
+    importlib.import_module("dedup_pkg.comp")
+    return "dedup_pkg.comp"
+
+
+def test_reload_modules_for_version_reloads_first_call(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _reset_reloaded_version: None,
+) -> None:
+    module_name = _make_reloadable_pkg(tmp_path, monkeypatch, "v1")
+    first_module = sys.modules[module_name]
+
+    # Edit the file and reload through the version-aware API.
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v2'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+
+    reloaded = ModuleReloader.reload_modules_for_version([module_name], version="1")
+
+    assert reloaded == [module_name]
+    assert sys.modules[module_name] is not first_module
+    assert sys.modules[module_name].VALUE == "v2"
+    assert ModuleReloader._last_reloaded_version == "1"
+
+
+def test_reload_modules_for_version_skips_second_call_for_same_version(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _reset_reloaded_version: None,
+) -> None:
+    """A second host on the same version must reuse already-loaded modules."""
+    module_name = _make_reloadable_pkg(tmp_path, monkeypatch, "v1")
+
+    # First host reloads against the new source.
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v2'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+    ModuleReloader.reload_modules_for_version([module_name], version="1")
+    after_first = sys.modules[module_name]
+    assert after_first.VALUE == "v2"
+
+    # Simulate another host calling for the same version. The source on disk has
+    # advanced (would be a v3 if reloaded), but the dedup must keep the v2 object.
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v3'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+    reloaded = ModuleReloader.reload_modules_for_version([module_name], version="1")
+
+    assert reloaded == [module_name]
+    assert sys.modules[module_name] is after_first
+    assert sys.modules[module_name].VALUE == "v2"
+
+
+def test_reload_modules_for_version_reloads_again_when_version_changes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _reset_reloaded_version: None,
+) -> None:
+    """A bumped manifest version must trigger a fresh reload."""
+    module_name = _make_reloadable_pkg(tmp_path, monkeypatch, "v1")
+
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v2'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+    ModuleReloader.reload_modules_for_version([module_name], version="1")
+
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v3'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+    ModuleReloader.reload_modules_for_version([module_name], version="2")
+
+    assert sys.modules[module_name].VALUE == "v3"
+    assert ModuleReloader._last_reloaded_version == "2"
+
+
+def test_reload_modules_for_version_without_version_always_reloads(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    _reset_reloaded_version: None,
+) -> None:
+    """``version=None`` falls back to unconditional ``reload_modules``."""
+    module_name = _make_reloadable_pkg(tmp_path, monkeypatch, "v1")
+
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v2'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+    ModuleReloader.reload_modules_for_version([module_name], version=None)
+    assert sys.modules[module_name].VALUE == "v2"
+    assert ModuleReloader._last_reloaded_version is None
+
+    (tmp_path / "dedup_pkg" / "comp.py").write_text("VALUE = 'v3'\n", encoding="utf-8")
+    os.utime(tmp_path / "dedup_pkg" / "comp.py")
+    ModuleReloader.reload_modules_for_version([module_name], version=None)
+    assert sys.modules[module_name].VALUE == "v3"
+
+
+def test_reload_from_manifest_stashes_version_on_screen_instance(
+    tmp_path: Path,
+    _reset_reloaded_version: None,
+) -> None:
+    """``reload_from_manifest`` must surface the version to ``host.reload`` via
+    ``_hot_reload_pending_version`` so the host can dedupe ``reload_modules``."""
+    writable_root = os.fspath(tmp_path)
+    dev_root = configure_dev_environment(writable_root)
+    manifest_path = manifest_path_for(dev_root)
+    observed: list[str | None] = []
+
+    class _Host:
+        def reload(self, module_names: list[str]) -> None:
+            observed.append(getattr(self, "_hot_reload_pending_version", None))
+
+    with open(manifest_path, "w", encoding="utf-8") as f:
+        json.dump({"version": "abc-123", "modules": ["app.main"]}, f)
+
+    host = _Host()
+    ModuleReloader.reload_from_manifest(host, manifest_path)
+
+    assert observed == ["abc-123"]
+    # The attribute is restored to its previous value (``None``) after the call.
+    assert getattr(host, "_hot_reload_pending_version", "missing") is None
+
+
+# ======================================================================
 # Fast Refresh: find_replacement_function / refresh_in_place
 # ======================================================================
 
@@ -143,9 +380,7 @@ def test_find_replacement_function_returns_new_function_for_reloaded_module(
     pkg.mkdir()
     (pkg / "__init__.py").write_text("", encoding="utf-8")
     (pkg / "comp.py").write_text(
-        "from pythonnative.element import Element\n\n"
-        "def Screen():\n"
-        "    return Element('Text', {'text': 'v1'}, [])\n",
+        "from pythonnative.element import Element\n\ndef Screen():\n    return Element('Text', {'text': 'v1'}, [])\n",
         encoding="utf-8",
     )
     monkeypatch.syspath_prepend(os.fspath(tmp_path))
@@ -157,9 +392,7 @@ def test_find_replacement_function_returns_new_function_for_reloaded_module(
 
     # Rewrite and reload.
     (pkg / "comp.py").write_text(
-        "from pythonnative.element import Element\n\n"
-        "def Screen():\n"
-        "    return Element('Text', {'text': 'v2'}, [])\n",
+        "from pythonnative.element import Element\n\ndef Screen():\n    return Element('Text', {'text': 'v2'}, [])\n",
         encoding="utf-8",
     )
     assert ModuleReloader.reload_module("refresh_pkg.comp") is True

@@ -28,7 +28,27 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from rubicon.objc import SEL, ObjCClass, objc_method
 
+from . import _tripwire_log
 from .base import ViewHandler, _safe_max, parse_color_int
+
+
+def _safe_finite(value: Any, default: float = 0.0) -> float:
+    """Coerce ``value`` to a finite float, falling back to ``default``.
+
+    Used as a defensive guard around every call into UIKit that takes a
+    geometry value. Without this, a single NaN or inf produced upstream
+    (layout edge case, stale prop during a reload, etc.) crashes the
+    process via `CALayerInvalidGeometry`. Clamping to ``default``
+    converts that into a recoverable visual glitch and lets the
+    `[set_frame:nan]` / `[set_transform:nan]` tripwire logs surface
+    where the bad value came from.
+    """
+    try:
+        f = float(value)
+    except (TypeError, ValueError):
+        return default
+    return f if math.isfinite(f) else default
+
 
 NSObject = ObjCClass("NSObject")
 UIColor = ObjCClass("UIColor")
@@ -350,8 +370,32 @@ def _apply_transform(view: Any, props: Dict[str, Any]) -> None:
         return
     try:
         transform = _make_transform(spec)
+        a = float(transform.a)
+        b = float(transform.b)
+        c = float(transform.c)
+        d = float(transform.d)
+        tx = float(transform.tx)
+        ty = float(transform.ty)
+        if not (
+            math.isfinite(a)
+            and math.isfinite(b)
+            and math.isfinite(c)
+            and math.isfinite(d)
+            and math.isfinite(tx)
+            and math.isfinite(ty)
+        ):
+            # Tripwire: a NaN/inf transform crashes UIKit. Log
+            # (rate-limited to avoid 60 Hz spam from stuck Animated
+            # values) and fall back to identity so the app keeps
+            # running.
+            _tripwire_log(
+                "set_transform:nan",
+                f"[set_transform:nan] spec={spec!r} -> " f"(a={a!r}, b={b!r}, c={c!r}, d={d!r}, tx={tx!r}, ty={ty!r})",
+            )
+            view.setTransform_((1.0, 0.0, 0.0, 1.0, 0.0, 0.0))
+            return
         # rubicon-objc accepts the C struct as a tuple of its fields.
-        view.setTransform_((transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty))
+        view.setTransform_((a, b, c, d, tx, ty))
     except Exception:
         pass
 
@@ -450,10 +494,10 @@ class IOSViewHandler(ViewHandler):
         if native_view is None:
             return
         try:
-            frame_x = float(x)
-            frame_y = float(y)
-            frame_w = float(max(0.0, width))
-            frame_h = float(max(0.0, height))
+            frame_x = _safe_finite(x, 0.0)
+            frame_y = _safe_finite(y, 0.0)
+            frame_w = max(0.0, _safe_finite(width, 0.0))
+            frame_h = max(0.0, _safe_finite(height, 0.0))
             native_view.setTranslatesAutoresizingMaskIntoConstraints_(True)
             native_view.setFrame_(((frame_x, frame_y), (frame_w, frame_h)))
             _clamp_view_corner_radius(native_view, frame_w, frame_h)

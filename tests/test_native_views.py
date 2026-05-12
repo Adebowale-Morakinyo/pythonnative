@@ -288,3 +288,98 @@ def test_set_registry_injects() -> None:
 
     assert _registry is reg
     set_registry(None)
+
+
+# ======================================================================
+# _tripwire_log rate limiter
+# ======================================================================
+
+
+@pytest.fixture
+def _tripwire_state() -> Any:
+    """Reset the per-label tripwire state before each test."""
+    import pythonnative.native_views as nv
+
+    nv._TRIPWIRE_LAST_LOG_TIME.clear()
+    nv._TRIPWIRE_SUPPRESSED_COUNT.clear()
+    yield nv
+    nv._TRIPWIRE_LAST_LOG_TIME.clear()
+    nv._TRIPWIRE_SUPPRESSED_COUNT.clear()
+
+
+def test_tripwire_log_first_call_emits(capsys: pytest.CaptureFixture[str], _tripwire_state: Any) -> None:
+    _tripwire_state._tripwire_log("test:basic", "first message")
+    captured = capsys.readouterr()
+    assert "first message" in captured.err
+
+
+def test_tripwire_log_subsequent_within_window_suppressed(
+    capsys: pytest.CaptureFixture[str], _tripwire_state: Any
+) -> None:
+    _tripwire_state._tripwire_log("test:burst", "first")
+    capsys.readouterr()
+    _tripwire_state._tripwire_log("test:burst", "second")
+    _tripwire_state._tripwire_log("test:burst", "third")
+    captured = capsys.readouterr()
+    assert captured.err == ""
+    assert _tripwire_state._TRIPWIRE_SUPPRESSED_COUNT["test:burst"] == 2
+
+
+def test_tripwire_log_after_window_emits_with_summary(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    _tripwire_state: Any,
+) -> None:
+    """After the window expires, the next emit includes a ``+N similar`` suffix."""
+    import time as _time
+
+    monkeypatch.setattr(_tripwire_state, "_TRIPWIRE_RATE_LIMIT_S", 0.05)
+    _tripwire_state._tripwire_log("test:summary", "first sample")
+    capsys.readouterr()
+    _tripwire_state._tripwire_log("test:summary", "suppressed-A")
+    _tripwire_state._tripwire_log("test:summary", "suppressed-B")
+    _time.sleep(0.06)
+    _tripwire_state._tripwire_log("test:summary", "third sample")
+    captured = capsys.readouterr()
+    assert "third sample" in captured.err
+    assert "+2 similar" in captured.err
+    assert _tripwire_state._TRIPWIRE_SUPPRESSED_COUNT["test:summary"] == 0
+
+
+def test_tripwire_log_distinct_labels_independent(capsys: pytest.CaptureFixture[str], _tripwire_state: Any) -> None:
+    """A burst on one label must not silence a different label's first emit."""
+    _tripwire_state._tripwire_log("test:a", "from a")
+    _tripwire_state._tripwire_log("test:a", "still a, suppressed")
+    _tripwire_state._tripwire_log("test:b", "from b")
+    captured = capsys.readouterr()
+    assert "from a" in captured.err
+    assert "from b" in captured.err
+    assert "still a" not in captured.err
+
+
+def test_tripwire_log_suffix_omitted_when_zero_suppressed(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    _tripwire_state: Any,
+) -> None:
+    """The ``+N similar`` suffix only appears when at least one was suppressed."""
+    import time as _time
+
+    monkeypatch.setattr(_tripwire_state, "_TRIPWIRE_RATE_LIMIT_S", 0.01)
+    _tripwire_state._tripwire_log("test:nosuffix", "alpha")
+    _time.sleep(0.02)
+    _tripwire_state._tripwire_log("test:nosuffix", "beta")
+    captured = capsys.readouterr()
+    assert "beta" in captured.err
+    assert "similar" not in captured.err
+
+
+def test_registry_set_frame_nan_emits_tripwire(capsys: pytest.CaptureFixture[str], _tripwire_state: Any) -> None:
+    """``set_frame`` with a NaN dimension fires the rate-limited tripwire."""
+    reg = NativeViewRegistry()
+    reg.register("Text", StubHandler())
+    view = reg.create_view("Text", {"text": "x"})
+    reg.set_frame(view, "Text", 0.0, 0.0, float("nan"), 50.0)
+    captured = capsys.readouterr()
+    assert "[set_frame:nan]" in captured.err
+    assert "type='Text'" in captured.err

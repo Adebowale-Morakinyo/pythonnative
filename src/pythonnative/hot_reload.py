@@ -196,9 +196,18 @@ class ModuleReloader:
     """Reload changed Python modules on device and trigger a re-render.
 
     Designed to be invoked from device-side glue when a hot-reload
-    push completes. The class itself holds no state; all methods are
-    static.
+    push completes. All public methods are static; the class holds a
+    single piece of process-wide state — the manifest version that
+    has most recently been applied to ``sys.modules`` — so that
+    multiple screen hosts polling the same manifest do not each
+    re-execute the user-app modules. The first host to see a new
+    version pays the ``reload_modules`` cost; subsequent hosts on the
+    same version refresh only their own reconciler tree against the
+    already-fresh modules.
     """
+
+    _last_reloaded_version: Optional[str] = None
+    _reload_lock = threading.Lock()
 
     @staticmethod
     def reload_module(module_name: str) -> bool:
@@ -253,6 +262,139 @@ class ModuleReloader:
             if ModuleReloader.reload_module(module_name):
                 reloaded.append(module_name)
         return reloaded
+
+    @staticmethod
+    def reload_modules_for_version(
+        module_names: Sequence[str],
+        version: Optional[str],
+    ) -> List[str]:
+        """Reload ``module_names`` for ``version``, deduping across hosts.
+
+        Each native screen host on iOS / Android runs its own poll
+        loop and would otherwise call
+        [`reload_modules`][pythonnative.hot_reload.ModuleReloader.reload_modules]
+        independently for the same manifest version. That re-executes
+        every user-app module N times (once per host) per file change,
+        producing N different generations of the same function objects
+        in ``sys.modules`` and leaving each host's reconciler tree
+        pointing at a different generation. Beyond the wasted work,
+        the inconsistent state has been observed to crash UIKit on iOS
+        with ``CALayerInvalidGeometry`` (NaN values fed into ``setFrame_:``
+        during the interleaved renders).
+
+        This helper serializes on
+        [`_reload_lock`][pythonnative.hot_reload.ModuleReloader] and uses
+        [`_last_reloaded_version`][pythonnative.hot_reload.ModuleReloader]
+        to ensure only the *first* host to see a given ``version``
+        actually re-executes the modules. Subsequent hosts on the same
+        version get back the already-fresh entries from ``sys.modules``
+        so their own
+        [`refresh_in_place`][pythonnative.hot_reload.ModuleReloader.refresh_in_place]
+        pass can still rewrite their tree against the same generation.
+
+        Args:
+            module_names: Dotted module names to reload.
+            version: Manifest version this reload is processing. When
+                ``None`` (e.g. tests calling reload directly) the call
+                falls back to the unconditional
+                [`reload_modules`][pythonnative.hot_reload.ModuleReloader.reload_modules]
+                behavior.
+
+        Returns:
+            The list of module names that are currently fresh in
+            ``sys.modules`` — either freshly reloaded by this call, or
+            already reloaded by an earlier host for the same version.
+        """
+        with ModuleReloader._reload_lock:
+            if version is not None and version == ModuleReloader._last_reloaded_version:
+                return [name for name in module_names if name in sys.modules]
+            reloaded = ModuleReloader.reload_modules(module_names)
+            if reloaded and version is not None:
+                ModuleReloader._last_reloaded_version = version
+            return reloaded
+
+    @staticmethod
+    def expand_reload_targets(changed_modules: Sequence[str], component_path: str) -> List[str]:
+        """Expand a manifest of changed modules into the full reload order.
+
+        When a user edits ``app/screens/home.py``, only that file is in
+        the manifest. But the entry-point module ``app.main`` has
+        bindings like ``from app.screens.home import HomeScreen`` that
+        need to be re-evaluated against the freshly-loaded
+        ``app.screens.home``; likewise other user-app modules may carry
+        transitive bindings (e.g. through a shared ``app/theme.py``)
+        that go stale if only the changed file is reloaded.
+
+        This helper computes the full ordered reload list:
+
+        1. Explicitly changed modules first (in the order given), so
+           their fresh source replaces the cached version in
+           ``sys.modules`` before any dependent modules re-execute.
+        2. All other currently-imported modules under the entry-point's
+           top-level package, deepest first. The depth heuristic biases
+           toward leaves so re-executing a screen file picks up the
+           newest shared utilities before the file that imports it does.
+        3. The entry-point module itself, last, so its
+           ``from ... import`` bindings rebind against everything that
+           was refreshed in steps 1 and 2.
+
+        Modules outside the entry-point's top-level package
+        (``pythonnative.*``, stdlib, third-party) are never included;
+        framework code is not reloaded.
+
+        Args:
+            changed_modules: Modules reported as changed by the host
+                file-watcher (already in dotted form).
+            component_path: The host's entry-point identifier, either a
+                module path (``"app.main"``) or a dotted attribute path
+                (``"app.main.RootScreen"``).
+
+        Returns:
+            The ordered list of modules to feed to
+            [`reload_modules`][pythonnative.hot_reload.ModuleReloader.reload_modules].
+        """
+        entry_module: Optional[str] = None
+        if component_path in sys.modules:
+            entry_module = component_path
+        elif "." in component_path:
+            parent = component_path.rsplit(".", 1)[0]
+            if parent in sys.modules:
+                entry_module = parent
+
+        app_prefix: Optional[str] = None
+        if entry_module:
+            app_prefix = entry_module.split(".")[0]
+        else:
+            for m in changed_modules:
+                if m:
+                    app_prefix = m.split(".")[0]
+                    break
+
+        app_modules: Set[str] = set()
+        if app_prefix:
+            for name in list(sys.modules):
+                if name == app_prefix or name.startswith(app_prefix + "."):
+                    app_modules.add(name)
+
+        ordered: List[str] = []
+        seen: Set[str] = set()
+        for m in changed_modules:
+            if m and m not in seen:
+                ordered.append(m)
+                seen.add(m)
+
+        others = [m for m in app_modules if m not in seen and m != entry_module]
+        others.sort(key=lambda m: (-m.count("."), m))
+        for m in others:
+            ordered.append(m)
+            seen.add(m)
+
+        if entry_module:
+            if entry_module in seen:
+                ordered.remove(entry_module)
+            ordered.append(entry_module)
+
+        return ordered
 
     @staticmethod
     def file_to_module(file_path: str, base_dir: str = "") -> Optional[str]:
@@ -491,5 +633,13 @@ class ModuleReloader:
             files = manifest.get("files", [])
             modules = ModuleReloader.modules_from_files(files if isinstance(files, list) else [])
 
-        ModuleReloader.reload_screen(screen_instance, [str(module) for module in modules])
+        # Stash the version on the host so `_reload_host` can dedupe
+        # `reload_modules` across multiple hosts polling the same
+        # manifest. See `reload_modules_for_version`.
+        previous_pending = getattr(screen_instance, "_hot_reload_pending_version", None)
+        try:
+            screen_instance._hot_reload_pending_version = version
+            ModuleReloader.reload_screen(screen_instance, [str(module) for module in modules])
+        finally:
+            screen_instance._hot_reload_pending_version = previous_pending
         return version

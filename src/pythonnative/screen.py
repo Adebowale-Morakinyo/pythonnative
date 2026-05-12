@@ -341,6 +341,25 @@ def _hot_reload_tick(host: Any) -> bool:
     if not manifest_exists and last is None:
         return False
 
+    # The iOS template polls every 0.5s per UIViewController, so this
+    # tick fires several times per second per host. The per-tick log is
+    # gated behind ``PYTHONNATIVE_DEBUG`` to keep normal output quiet
+    # while preserving the breadcrumb when investigating reload races.
+    if _debug_enabled():
+        manifest_version: Optional[str] = None
+        if manifest_exists:
+            try:
+                with open(manifest_path, encoding="utf-8") as f:
+                    raw_version = json.load(f).get("version", "")
+                manifest_version = str(raw_version) if raw_version else None
+            except Exception:
+                manifest_version = None
+        action = "reload" if (manifest_version is not None and manifest_version != last) else "skip"
+        _log_pn(
+            f"_hot_reload_tick: host=0x{id(host):x} component={host._component_path} "
+            f"last={last!r} manifest={manifest_version!r} action={action}"
+        )
+
     next_version = ModuleReloader.reload_from_manifest(
         host,
         manifest_path,
@@ -348,10 +367,6 @@ def _hot_reload_tick(host: Any) -> bool:
     )
     if next_version == last:
         return False
-    _log_pn(
-        f"_hot_reload_tick: triggered reload "
-        f"(manifest_exists={manifest_exists}, last={last!r}, next={next_version!r})"
-    )
     host._hot_reload_last_version = next_version
     return True
 
@@ -365,6 +380,19 @@ def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> 
     next render then runs the new bodies through the existing hook
     slots, so component state survives.
 
+    The reload set is **expanded** to include every currently-imported
+    module under the entry-point's top-level package (see
+    [`expand_reload_targets`][pythonnative.hot_reload.ModuleReloader.expand_reload_targets]).
+    This catches transitive ``from ... import`` bindings that would
+    otherwise remain stale: if ``app/main.py`` does
+    ``from app.screens.home import HomeScreen`` and the user edits
+    ``home.py``, reloading just ``app.screens.home`` leaves
+    ``app.main.HomeScreen`` pointing at the pre-edit function, so the
+    new render emits stale element types and the reconciler is forced
+    to unmount and remount the screen (losing state and showing old
+    code). Reloading every user-app module in dependency-friendly
+    order, with the entry-point last, keeps every binding fresh.
+
     If Fast Refresh fails (the new module raised at import time, no
     replacements could be located, or the next render itself
     threw), the host falls back to a full remount: a brand-new
@@ -374,14 +402,20 @@ def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> 
     """
     from .hot_reload import ModuleReloader
 
-    modules = list(changed_modules or [])
-    root_module = host._component_path.rsplit(".", 1)[0] if "." in host._component_path else host._component_path
-    if root_module not in modules:
-        modules.append(root_module)
+    requested = list(changed_modules or [])
+    targets = ModuleReloader.expand_reload_targets(requested, host._component_path)
 
-    reloaded = ModuleReloader.reload_modules(modules)
+    pending_version = getattr(host, "_hot_reload_pending_version", None)
+    already_loaded = pending_version is not None and pending_version == ModuleReloader._last_reloaded_version
+    _log_pn(
+        f"_reload_host: host=0x{id(host):x} component={host._component_path} "
+        f"requested={requested!r} targets={len(targets)} version={pending_version!r} "
+        f"action={'reuse_modules' if already_loaded else 'reload_modules'}"
+    )
+
+    reloaded = ModuleReloader.reload_modules_for_version(targets, pending_version)
     if not reloaded:
-        _log_pn(f"_reload_host: no modules could be reloaded from {modules!r}; aborting")
+        _log_pn(f"_reload_host: no modules could be reloaded from {targets!r}; aborting")
         return
 
     try:
@@ -392,10 +426,11 @@ def _reload_host(host: Any, changed_modules: Optional[Sequence[str]] = None) -> 
     host._component = new_component
 
     if host._reconciler is None:
+        _log_pn(f"_reload_host: host=0x{id(host):x} reconciler=None; skipping refresh")
         return
 
     if _try_fast_refresh(host, reloaded):
-        print(f"[hot-reload] Fast Refresh: {', '.join(reloaded)}", file=sys.stderr)
+        print(f"[hot-reload] Fast Refresh: {', '.join(requested) or ', '.join(reloaded)}", file=sys.stderr)
         return
 
     _full_remount(host, reloaded)
@@ -1080,7 +1115,7 @@ else:
                 nav = getattr(self.native_instance, "navigationController", None)
                 if nav is None:
                     raise RuntimeError(
-                        "No UINavigationController available; " "ensure template embeds root in navigation controller"
+                        "No UINavigationController available; ensure template embeds root in navigation controller"
                     )
                 nav.pushViewController_animated_(next_vc, True)
 

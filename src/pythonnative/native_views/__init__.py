@@ -23,9 +23,66 @@ A mock registry can be installed via
 reconciler with no real native views.
 """
 
+import math
+import sys
+import threading
+import time
 from typing import Any, Dict, Optional, Tuple
 
 from .base import ViewHandler
+
+# ======================================================================
+# Tripwire log rate limiter
+# ======================================================================
+#
+# Defensive NaN/Inf guards in ``set_frame`` and ``_apply_transform`` log
+# a single line per occurrence. That's fine for one-off events, but
+# ``Animated.View`` drives transforms at ~60 Hz; once an
+# ``Animated.Value`` enters a stuck NaN state (e.g., a spring tick
+# corrupted across a Fast Refresh), the tripwire would otherwise emit
+# thousands of identical lines per second and drown the dev console.
+#
+# We instead log the first occurrence immediately, then suppress
+# further messages with the same ``label`` for
+# ``_TRIPWIRE_RATE_LIMIT_S`` seconds, and append a
+# ``(+N similar in last Xs)`` suffix to the next message that escapes
+# the window. The first sample plus a count is enough to diagnose; the
+# bounded log keeps the dev console usable.
+
+_TRIPWIRE_RATE_LIMIT_S: float = 1.0
+_TRIPWIRE_LOG_LOCK = threading.Lock()
+_TRIPWIRE_LAST_LOG_TIME: Dict[str, float] = {}
+_TRIPWIRE_SUPPRESSED_COUNT: Dict[str, int] = {}
+
+
+def _tripwire_log(label: str, message: str) -> None:
+    """Emit ``message`` to stderr, rate-limited per ``label``.
+
+    The first call for a given ``label`` always emits. Calls within
+    ``_TRIPWIRE_RATE_LIMIT_S`` seconds are silently counted. The next
+    call after the window appends ``(+N similar in last Xs)`` and
+    resets the counter.
+    """
+    now = time.monotonic()
+    write = False
+    suppressed = 0
+    with _TRIPWIRE_LOG_LOCK:
+        last = _TRIPWIRE_LAST_LOG_TIME.get(label)
+        if last is None or now - last >= _TRIPWIRE_RATE_LIMIT_S:
+            write = True
+            suppressed = _TRIPWIRE_SUPPRESSED_COUNT.get(label, 0)
+            _TRIPWIRE_SUPPRESSED_COUNT[label] = 0
+            _TRIPWIRE_LAST_LOG_TIME[label] = now
+        else:
+            _TRIPWIRE_SUPPRESSED_COUNT[label] = _TRIPWIRE_SUPPRESSED_COUNT.get(label, 0) + 1
+    if not write:
+        return
+    if suppressed > 0:
+        message = f"{message} (+{suppressed} similar in last {_TRIPWIRE_RATE_LIMIT_S:g}s)"
+    try:
+        print(message, file=sys.stderr, flush=True)
+    except Exception:
+        pass
 
 
 class NativeViewRegistry:
@@ -136,6 +193,21 @@ class NativeViewRegistry:
         coordinates computed by ``pythonnative.layout`` in points
         relative to the parent's content origin.
         """
+        # Tripwire: log non-finite layout values so we can diagnose
+        # crashes like iOS `CALayerInvalidGeometry` without losing the
+        # repro. Handlers are responsible for clamping before applying.
+        # Rate-limited via ``_tripwire_log`` to avoid 60 Hz floods when
+        # an animated value is stuck at NaN.
+        try:
+            finite = math.isfinite(x) and math.isfinite(y) and math.isfinite(width) and math.isfinite(height)
+        except (TypeError, ValueError):
+            finite = False
+        if not finite:
+            _tripwire_log(
+                "set_frame:nan",
+                f"[set_frame:nan] type={type_name!r} " f"x={x!r} y={y!r} w={width!r} h={height!r}",
+            )
+
         handler = self._handlers.get(type_name)
         if handler is not None:
             handler.set_frame(native_view, x, y, width, height)

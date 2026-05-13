@@ -48,7 +48,7 @@ def MainTabs() -> pn.Element:
             component=HomeScreen,
             options={
                 "title": "Home",
-                "tab_bar_icon": {"ios": "house.fill", "android": "ic_menu_home"},
+                "tab_bar_icon": {"ios": "house.fill", "android": "ic_menu_compass"},
             },
         ),
         Tab.Screen(
@@ -56,7 +56,7 @@ def MainTabs() -> pn.Element:
             component=LayoutScreen,
             options={
                 "title": "Layout",
-                "tab_bar_icon": {"ios": "square.grid.2x2.fill", "android": "ic_menu_view"},
+                "tab_bar_icon": {"ios": "square.grid.2x2.fill", "android": "ic_menu_gallery"},
             },
         ),
         Tab.Screen(

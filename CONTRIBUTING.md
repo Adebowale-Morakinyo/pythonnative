@@ -7,21 +7,14 @@ Thanks for your interest in contributing. This repository contains the PythonNat
 Development uses Python ≥ 3.10.
 
 ```bash
-# create and activate a venv (recommended)
-python3 -m venv .venv && source .venv/bin/activate
+# one-shot: creates .venv, syncs CI deps, runs every CI check
+# (requires uv: https://docs.astral.sh/uv/getting-started/installation/)
+./scripts/check.sh
 
-# install dev tools (lint/format/test)
-pip install -e ".[dev]"
-
-# install library (editable) and CLI
-pip install -e .
-
-# run tests
+# Run individual steps if you only want one
 pytest -q
-
-# format and lint
-black src examples tests || true
 ruff check .
+black src examples tests
 ```
 
 Common library and CLI entry points:
@@ -63,6 +56,7 @@ cd examples/hello-world && pn run android
 Common commands:
 
 ```bash
+./scripts/check.sh            # run all CI checks (mirrors ci.yml)
 pytest -q                     # run tests
 ruff check .                  # lint
 black src examples tests      # format
@@ -127,6 +121,7 @@ Recommended scopes (choose the smallest, most accurate unit; prefer module/direc
   - `mkdocs` – documentation site (MkDocs/Material) configuration and content under `docs/`
   - `pyproject` – `pyproject.toml` packaging/build metadata
   - `repo` – repository metadata and top‑level files (`README.md`, `CONTRIBUTING.md`, `.gitignore`, licenses)
+  - `scripts` – developer scripts under `scripts/` (e.g., `check.sh`)
   - `templates` – Android/iOS project templates under `src/pythonnative/templates/`
   - `tests` – unit/integration/E2E tests under `tests/`
   - `workflows` – CI pipelines under `.github/workflows/`

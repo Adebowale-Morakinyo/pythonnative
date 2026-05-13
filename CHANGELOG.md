@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.14.0 (2026-05-13)
+
+### Chores
+
+- **examples**: Use existing AOSP drawable names for Android tab icons
+  ([`0767170`](https://github.com/pythonnative/pythonnative/commit/0767170f937eef675b1e6328ec4ef828354ef2f3))
+
+### Documentation
+
+- **repo**: Add missing module scopes to CONTRIBUTING
+  ([`5a02f04`](https://github.com/pythonnative/pythonnative/commit/5a02f045e91a6f5fb6569e63f4a1081616a3e52c))
+
+### Features
+
+- **navigation**: Add tab_bar_icon option for native system icons
+  ([`baf6d58`](https://github.com/pythonnative/pythonnative/commit/baf6d58e90783953304d5cba8c05d5878bee1a57))
+
+
 ## v0.13.1 (2026-05-12)
 
 ### Bug Fixes

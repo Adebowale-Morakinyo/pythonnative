@@ -41,7 +41,7 @@ Example:
     ```
 """
 
-__version__ = "0.13.1"
+__version__ = "0.14.0"
 
 from .alerts import Alert
 from .animated import Animated, AnimatedValue

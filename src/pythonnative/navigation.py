@@ -570,10 +570,14 @@ def _tab_navigator_impl(screens: Any = None, initial_route: Optional[str] = None
     if screen_def is None:
         screen_def = screen_map[screen_list[0].name]
 
-    tab_items: List[Dict[str, str]] = []
+    tab_items: List[Dict[str, Any]] = []
     for s in screen_list:
         if isinstance(s, _ScreenDef):
-            tab_items.append({"name": s.name, "title": s.options.get("title", s.name)})
+            item: Dict[str, Any] = {"name": s.name, "title": s.options.get("title", s.name)}
+            icon = s.options.get("tab_bar_icon")
+            if icon is not None:
+                item["icon"] = icon
+            tab_items.append(item)
 
     def on_tab_select(name: str) -> None:
         switch_tab(name)
@@ -639,8 +643,17 @@ def create_tab_navigator() -> Any:
                 name: Route name and default tab title.
                 component: A `@component` function rendered when this
                     tab is active.
-                options: Optional per-screen settings (e.g.,
-                    `{"title": "..."}`).
+                options: Optional per-screen settings. Recognized keys:
+
+                    - `title` (str): Tab label.
+                    - `tab_bar_icon` (str | dict): Native system icon
+                      identifier. A string is used on every platform; a
+                      dict like `{"ios": "house.fill", "android":
+                      "ic_menu_home"}` selects per platform. iOS values
+                      are resolved via SF Symbols
+                      (`UIImage.systemImageNamed_`); Android values are
+                      resolved against `android.R.drawable.<name>`.
+                      Names that don't resolve fall back to text-only.
 
             Returns:
                 A `_ScreenDef` consumed by `Navigator(...)`.

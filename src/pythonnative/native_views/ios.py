@@ -2345,12 +2345,37 @@ class TabBarHandler(IOSViewHandler):
 
     def _set_bar_items(self, tab_bar: Any, items: list) -> None:
         UITabBarItem = ObjCClass("UITabBarItem")
+        UIImage = ObjCClass("UIImage")
         bar_items = []
         for i, item in enumerate(items):
             title = item.get("title", item.get("name", ""))
-            bar_item = UITabBarItem.alloc().initWithTitle_image_tag_(str(title), None, i)
+            image = self._resolve_icon(UIImage, item.get("icon"))
+            bar_item = UITabBarItem.alloc().initWithTitle_image_tag_(str(title), image, i)
             bar_items.append(bar_item)
         tab_bar.setItems_animated_(bar_items, False)
+
+    def _resolve_icon(self, UIImage: Any, icon: Any) -> Any:
+        """Resolve a tab icon spec to a UIImage, or return None.
+
+        Accepts a bare string (treated as an SF Symbol name) or a dict
+        of the form ``{"ios": "house.fill", "android": "..."}``. SF
+        Symbols are looked up via ``UIImage.systemImageNamed:``; names
+        that don't resolve produce a text-only tab.
+        """
+        if icon is None:
+            return None
+        name: Any = None
+        if isinstance(icon, str):
+            name = icon
+        elif isinstance(icon, dict):
+            name = icon.get("ios")
+        if not name:
+            return None
+        try:
+            image = UIImage.systemImageNamed_(str(name))
+            return image if image else None
+        except Exception:
+            return None
 
     def _set_active(self, tab_bar: Any, active: Any, items: list) -> None:
         if not active or not items:

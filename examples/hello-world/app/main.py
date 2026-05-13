@@ -34,12 +34,47 @@ Tab = pn.create_tab_navigator()
 
 @pn.component
 def MainTabs() -> pn.Element:
-    """Tabbed root screen: Home, Layout, List, Settings."""
+    """Tabbed root screen: Home, Layout, List, Settings.
+
+    Each tab opts into a native system icon via ``tab_bar_icon``: an
+    SF Symbol on iOS and an ``android.R.drawable.*`` resource on
+    Android. The framework renders text-only if a name doesn't
+    resolve on a given platform, so adding a new tab is safe even
+    before its icons are picked.
+    """
     return Tab.Navigator(
-        Tab.Screen("Home", component=HomeScreen, options={"title": "Home"}),
-        Tab.Screen("Layout", component=LayoutScreen, options={"title": "Layout"}),
-        Tab.Screen("List", component=ListScreen, options={"title": "List"}),
-        Tab.Screen("Settings", component=SettingsScreen, options={"title": "Settings"}),
+        Tab.Screen(
+            "Home",
+            component=HomeScreen,
+            options={
+                "title": "Home",
+                "tab_bar_icon": {"ios": "house.fill", "android": "ic_menu_home"},
+            },
+        ),
+        Tab.Screen(
+            "Layout",
+            component=LayoutScreen,
+            options={
+                "title": "Layout",
+                "tab_bar_icon": {"ios": "square.grid.2x2.fill", "android": "ic_menu_view"},
+            },
+        ),
+        Tab.Screen(
+            "List",
+            component=ListScreen,
+            options={
+                "title": "List",
+                "tab_bar_icon": {"ios": "list.bullet", "android": "ic_menu_sort_by_size"},
+            },
+        ),
+        Tab.Screen(
+            "Settings",
+            component=SettingsScreen,
+            options={
+                "title": "Settings",
+                "tab_bar_icon": {"ios": "gearshape.fill", "android": "ic_menu_preferences"},
+            },
+        ),
     )
 
 

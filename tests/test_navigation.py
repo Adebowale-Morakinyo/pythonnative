@@ -629,6 +629,66 @@ def test_tab_navigator_renders_native_tab_bar() -> None:
     assert callable(tab_bar.props["on_tab_select"])
 
 
+def test_tab_navigator_forwards_tab_bar_icon() -> None:
+    """`tab_bar_icon` (string or per-platform dict) reaches the TabBar element."""
+    Tab = create_tab_navigator()
+
+    @component
+    def ScreenA() -> Element:
+        return Element("Text", {"text": "a"}, [])
+
+    @component
+    def ScreenB() -> Element:
+        return Element("Text", {"text": "b"}, [])
+
+    @component
+    def ScreenC() -> Element:
+        return Element("Text", {"text": "c"}, [])
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    rec._screen_re_render = lambda: None
+
+    el = Tab.Navigator(
+        Tab.Screen(
+            "TabA",
+            component=ScreenA,
+            options={"title": "Tab A", "tab_bar_icon": "house.fill"},
+        ),
+        Tab.Screen(
+            "TabB",
+            component=ScreenB,
+            options={
+                "title": "Tab B",
+                "tab_bar_icon": {"ios": "gearshape.fill", "android": "ic_menu_preferences"},
+            },
+        ),
+        Tab.Screen("TabC", component=ScreenC, options={"title": "Tab C"}),
+    )
+    root = rec.mount(el)
+
+    def find_tab_bar(view: MockView) -> Any:
+        if view.type_name == "TabBar":
+            return view
+        for c in view.children:
+            r = find_tab_bar(c)
+            if r is not None:
+                return r
+        return None
+
+    tab_bar = find_tab_bar(root)
+    assert tab_bar is not None
+    assert tab_bar.props["items"] == [
+        {"name": "TabA", "title": "Tab A", "icon": "house.fill"},
+        {
+            "name": "TabB",
+            "title": "Tab B",
+            "icon": {"ios": "gearshape.fill", "android": "ic_menu_preferences"},
+        },
+        {"name": "TabC", "title": "Tab C"},
+    ]
+
+
 def test_tab_navigator_empty_screens() -> None:
     Tab = create_tab_navigator()
 

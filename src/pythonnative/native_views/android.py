@@ -1116,9 +1116,40 @@ class TabBarHandler(AndroidViewHandler):
             menu.clear()
             for i, item in enumerate(items):
                 title = item.get("title", item.get("name", ""))
-                menu.add(0, i, i, str(title))
+                menu_item = menu.add(0, i, i, str(title))
+                res_id = self._resolve_icon(item.get("icon"))
+                if res_id:
+                    try:
+                        menu_item.setIcon(res_id)
+                    except Exception:
+                        pass
         except Exception:
             pass
+
+    def _resolve_icon(self, icon: Any) -> int:
+        """Resolve a tab icon spec to an `android.R.drawable.*` res id.
+
+        Accepts a bare string (treated as the drawable's field name on
+        ``android.R.drawable``) or a dict of the form
+        ``{"ios": "...", "android": "ic_menu_home"}``. Returns ``0``
+        when the icon can't be resolved, which the caller treats as
+        "no icon".
+        """
+        if icon is None:
+            return 0
+        name: Any = None
+        if isinstance(icon, str):
+            name = icon
+        elif isinstance(icon, dict):
+            name = icon.get("android")
+        if not name:
+            return 0
+        try:
+            RDrawable = jclass("android.R$drawable")
+            res_id = getattr(RDrawable, str(name), 0)
+            return int(res_id) if res_id else 0
+        except Exception:
+            return 0
 
     def _set_active(self, bnv: Any, active: Any, items: list) -> None:
         if active and items:

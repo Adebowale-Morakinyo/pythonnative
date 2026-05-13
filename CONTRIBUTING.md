@@ -102,14 +102,20 @@ Accepted types (standard):
 Recommended scopes (choose the smallest, most accurate unit; prefer module/directory names):
 
 - Module/directory scopes:
+  - `alerts` – imperative Alert/Picker helpers (`alerts.py`)
+  - `animated` – Animated namespace and animation primitives (`animated.py`)
   - `cli` – CLI tool and `pn` command (`src/pythonnative/cli/`)
   - `components` – declarative element-creating functions (`components.py`)
   - `element` – Element descriptor class (`element.py`)
   - `hooks` – function components and hooks (`hooks.py`)
   - `hot_reload` – file watcher and module reloader (`hot_reload.py`)
+  - `layout` – pure-Python flexbox engine (`layout.py`)
   - `native_modules` – native API modules for device capabilities (`native_modules/`)
   - `native_views` – platform-specific native view creation and updates (`native_views/`)
+  - `navigation` – navigation containers and stack/tab/drawer navigators (`navigation.py`)
   - `package` – `src/pythonnative/__init__.py` exports and package boundary
+  - `platform` – `Platform.OS`/`Platform.select` and version detection (`platform.py`)
+  - `platform_metrics` – platform-reported metrics like safe-area insets and bar heights (`platform_metrics.py`)
   - `reconciler` – virtual view tree diffing and reconciliation (`reconciler.py`)
   - `screen` – screen host, native lifecycle bridge, and render scheduling (`screen.py`)
   - `style` – StyleSheet and theming (`style.py`)

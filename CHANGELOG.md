@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.15.0 (2026-05-14)
+
+### Chores
+
+- **scripts**: Add check.sh to run ci.yml checks locally
+  ([`6bcb874`](https://github.com/pythonnative/pythonnative/commit/6bcb874fe287e6b57036fb207bac28d24e29eb2a))
+
+### Features
+
+- **sdk,style**: Add native-component SDK and typed Style API
+  ([#2](https://github.com/pythonnative/pythonnative/pull/2),
+  [`9f26a6e`](https://github.com/pythonnative/pythonnative/commit/9f26a6e3482c6fb81d7522159b2916fa0855a283))
+
+
 ## v0.14.0 (2026-05-13)
 
 ### Chores

@@ -2243,28 +2243,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pythonnative.native_views.base.resolve_padding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;resolve_padding
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pythonnative.native_views.base.is_vertical" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;is_vertical
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2918,28 +2896,6 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;parse_color_int
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pythonnative.native_views.base.resolve_padding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;resolve_padding
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pythonnative.native_views.base.is_vertical" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;is_vertical
       
     </span>
   </a>
@@ -4036,8 +3992,9 @@ rebuild it from scratch.</p>
 
         <p>Shared base classes and utilities for native-view handlers.</p>
 <p>Provides the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a>
-protocol implemented by Android and iOS handlers, plus common helpers
-for color parsing and padding normalization shared across platforms.</p>
+protocol implemented by Android and iOS handlers, plus the
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;parse_color_int&lt;/span&gt;" href="#pythonnative.native_views.base.parse_color_int"><code>parse_color_int</code></a>
+helper shared across platforms.</p>
 <p>Layout itself is <em>not</em> a handler responsibility. The pure-Python flex
 engine in <code>pythonnative.layout</code> owns sizing and positioning;
 handlers receive computed frames via
@@ -4092,22 +4049,6 @@ for content-sized leaves (text, buttons, images).</p>
               <td>
                 <div class="doc-md-description">
                   <p>Parse a color value into a signed 32-bit ARGB int.</p>
-                </div>
-              </td>
-            </tr>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;resolve_padding&lt;/span&gt; (&lt;code&gt;pythonnative.native_views.base.resolve_padding&lt;/code&gt;)" href="#pythonnative.native_views.base.resolve_padding">resolve_padding</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>Normalize a padding value to <code>(left, top, right, bottom)</code>.</p>
-                </div>
-              </td>
-            </tr>
-            <tr class="doc-section-item">
-              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;is_vertical&lt;/span&gt; (&lt;code&gt;pythonnative.native_views.base.is_vertical&lt;/code&gt;)" href="#pythonnative.native_views.base.is_vertical">is_vertical</a></code></td>
-              <td>
-                <div class="doc-md-description">
-                  <p>Return whether <code>direction</code> represents a vertical (column) axis.</p>
                 </div>
               </td>
             </tr>
@@ -4815,107 +4756,6 @@ their negative two's-complement equivalent.</p>
           </tr>
       </tbody>
     </table>
-
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="pythonnative.native_views.base.resolve_padding" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">resolve_padding</span>
-
-
-<a href="#pythonnative.native_views.base.resolve_padding" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">resolve_padding</span><span class="p">(</span><span class="n">padding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Tuple&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Normalize a padding value to <code>(left, top, right, bottom)</code>.</p>
-<p>Accepts:</p>
-<ul>
-<li><code>None</code>: returns <code>(0, 0, 0, 0)</code>.</li>
-<li>A scalar int/float: same value on all sides.</li>
-<li>A dict with any of <code>horizontal</code>, <code>vertical</code>, <code>left</code>, <code>right</code>,
-  <code>top</code>, <code>bottom</code>, <code>all</code> keys.</li>
-</ul>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>padding</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>One of the forms above.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Tuple&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>A 4-tuple of <code>(left, top, right, bottom)</code> ints.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="pythonnative.native_views.base.is_vertical" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">is_vertical</span>
-
-
-<a href="#pythonnative.native_views.base.is_vertical" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_vertical</span><span class="p">(</span><span class="n">direction</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Return whether <code>direction</code> represents a vertical (column) axis.</p>
 
 
     </div>

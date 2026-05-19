@@ -1935,6 +1935,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.hooks.memo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;memo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.hooks.use_navigation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2936,6 +2947,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.hooks.memo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;memo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.hooks.use_navigation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3208,7 +3230,15 @@ committed native tree.</p>
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Provider&lt;/span&gt; (&lt;code&gt;pythonnative.hooks.Provider&lt;/code&gt;)" href="#pythonnative.hooks.Provider">Provider</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Provide <code>value</code> for <code>context</code> to all descendants of <code>child</code>.</p>
+                  <p>Provide <code>value</code> for <code>context</code> to all descendants of <code>children</code>.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;memo&lt;/span&gt; (&lt;code&gt;pythonnative.hooks.memo&lt;/code&gt;)" href="#pythonnative.hooks.memo">memo</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Skip a function component's render when its props haven't changed.</p>
                 </div>
               </td>
             </tr>
@@ -3321,17 +3351,6 @@ interact with the committed native tree.</p>
             <td>
               <div class="doc-md-description">
                 <p>One mutable dict per <code>use_ref</code> call.</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><span title="pythonnative.hooks.HookState.hook_index">hook_index</span></code></td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Cursor reset to 0 at the start of every render.</p>
               </div>
             </td>
           </tr>
@@ -5026,12 +5045,16 @@ when there is no enclosing
 
 
 <a href="#pythonnative.hooks.Provider" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Provider</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Context&lt;/span&gt; (&lt;code&gt;pythonnative.hooks.Context&lt;/code&gt;)" href="#pythonnative.hooks.Context">Context</a></span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">child</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Provider</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Context&lt;/span&gt; (&lt;code&gt;pythonnative.hooks.Context&lt;/code&gt;)" href="#pythonnative.hooks.Context">Context</a></span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="o">*</span><span class="n">children</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Provide <code>value</code> for <code>context</code> to all descendants of <code>child</code>.</p>
+        <p>Provide <code>value</code> for <code>context</code> to all descendants of <code>children</code>.</p>
+<p>Accepts any number of children (varargs). Multiple children are
+grouped under an internal <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Fragment&lt;/span&gt;" href="../components/#pythonnative.components.Fragment"><code>Fragment</code></a> so
+they all share the same provided value without an extra wrapping
+native view.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -5054,7 +5077,7 @@ when there is no enclosing
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The <code>Context</code> to set.</p>
+                <p>The <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Context&lt;/span&gt;" href="#pythonnative.hooks.Context"><code>Context</code></a> to set.</p>
               </div>
             </td>
             <td>
@@ -5080,18 +5103,18 @@ when there is no enclosing
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>child</code>
+                <code>*children</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Subtree under which the provider applies.</p>
+                <p>Subtree(s) under which the provider applies.</p>
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>()</code>
             </td>
           </tr>
       </tbody>
@@ -5139,7 +5162,110 @@ when there is no enclosing
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span><span class="n">ThemeContext</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#FF0000&quot;</span><span class="p">},</span> <span class="n">MyView</span><span class="p">())</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Provider</span><span class="p">(</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">ThemeContext</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="p">{</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#FF0000&quot;</span><span class="p">},</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="n">Header</span><span class="p">(),</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="n">Body</span><span class="p">(),</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="p">)</span>
+</span></code></pre></div>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.hooks.memo" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">memo</span>
+
+
+<a href="#pythonnative.hooks.memo" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">memo</span><span class="p">(</span><span class="n">component_fn</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Skip a function component's render when its props haven't changed.</p>
+<p>Decorate a <code>@component</code>-wrapped function to opt into shallow-prop
+memoization. When the reconciler re-renders the parent tree, a
+memoized child is skipped (its previously-rendered subtree is
+reused) iff:</p>
+<ul>
+<li>Its props are shallowly equal to the previous render's props
+  (callables compared by identity, scalars by <code>==</code>).</li>
+<li>None of its internal <code>use_state</code> / <code>use_reducer</code> setters fired
+  since the last render.</li>
+</ul>
+<p>Pair with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_callback&lt;/span&gt;" href="#pythonnative.hooks.use_callback"><code>use_callback</code></a> when passing
+callbacks as props, otherwise a fresh closure will defeat the memo.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>component_fn</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[..., <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A function previously decorated with
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;component&lt;/span&gt;" href="#pythonnative.hooks.component"><code>component</code></a>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[..., <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The same function, marked for memoization.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">memo</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">ExpensiveRow</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="o">...</span>
 </span></code></pre></div>
 </details>
 

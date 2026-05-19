@@ -2852,6 +2852,12 @@ objects are created until the
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;ErrorBoundary&lt;/span&gt;" href="../../api/components/#pythonnative.components.ErrorBoundary"><code>ErrorBoundary(child, fallback)</code></a>:
   catches render errors in child and displays fallback.</li>
 </ul>
+<p><strong>Composition:</strong></p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Fragment&lt;/span&gt;" href="../../api/components/#pythonnative.components.Fragment"><code>Fragment(*children)</code></a>: group siblings into a
+  parent's child list without an extra wrapping view (analogous to
+  React's <code>&lt;&gt;…&lt;/&gt;</code>).</li>
+</ul>
 <p><strong>Lists:</strong></p>
 <ul>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;FlatList&lt;/span&gt;" href="../../api/components/#pythonnative.components.FlatList"><code>FlatList(data, render_item, key_extractor, item_height, ...)</code></a>:
@@ -2863,7 +2869,7 @@ objects are created until the
 </ul>
 <p><strong>Platform UI:</strong></p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;StatusBar&lt;/span&gt;" href="../../api/components/#pythonnative.components.StatusBar"><code>StatusBar(style, background_color, hidden)</code></a>:
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;StatusBar&lt;/span&gt;" href="../../api/components/#pythonnative.components.StatusBar"><code>StatusBar(bar_style, background_color, hidden)</code></a>:
   configure the device's status bar (light/dark icons, color, hidden).</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;KeyboardAvoidingView&lt;/span&gt;" href="../../api/components/#pythonnative.components.KeyboardAvoidingView"><code>KeyboardAvoidingView(*children, behavior)</code></a>:
   shift content up when the software keyboard appears.</li>
@@ -3008,6 +3014,9 @@ hook state.</p>
   persists across renders. When passed via the <code>ref=</code> prop, the
   reconciler populates <code>ref["current"]</code> with the underlying native
   view.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_animated_value&lt;/span&gt;" href="../../api/animated/#pythonnative.animated.use_animated_value"><code>use_animated_value(initial)</code></a>:
+  stable <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="../../api/animated/#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a> across renders;
+  the canonical way to drive <code>Animated.View</code>.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_context&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_context"><code>use_context(context)</code></a>: read from a
   context provider.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_navigation"><code>use_navigation()</code></a>: navigation
@@ -3022,6 +3031,9 @@ hook state.</p>
   reactive safe-area insets.</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_keyboard_height&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_keyboard_height"><code>use_keyboard_height()</code></a>:
   reactive software-keyboard height.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;memo&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.memo"><code>@memo</code></a>: decorator that skips a function
+  component's re-render when its props are shallowly equal and its
+  internal state is unchanged.</li>
 </ul>
 <h3 id="custom-hooks">Custom hooks<a class="headerlink" href="#custom-hooks" title="Permanent link">&para;</a></h3>
 <p>Extract reusable stateful logic into plain functions:</p>

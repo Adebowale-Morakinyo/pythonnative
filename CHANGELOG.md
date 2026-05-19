@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.16.0 (2026-05-19)
+
+### Chores
+
+- **scripts**: Add Android emulator launcher
+  ([`ab6b4ae`](https://github.com/pythonnative/pythonnative/commit/ab6b4ae98a23c4d729e4ccb5ee4148ed4b4a6612))
+
+### Features
+
+- **components,hooks**: Add props, fragment, memo, and native picker
+  ([`54878c0`](https://github.com/pythonnative/pythonnative/commit/54878c0ceed67219b2f70ebd435020243a1fea7d))
+
+### Testing
+
+- Match full PythonNative version text in settings e2e flow
+  ([`5198051`](https://github.com/pythonnative/pythonnative/commit/5198051e2a1bcfcccb47e148a92df0185917ff5e))
+
+
 ## v0.15.0 (2026-05-14)
 
 ### Chores

@@ -12,13 +12,13 @@
         <meta name="author" content="Owen Carey">
       
       
-        <link rel="canonical" href="https://docs.pythonnative.com/api/pythonnative/">
+        <link rel="canonical" href="https://docs.pythonnative.com/api/runtime/">
       
       
-        <link rel="prev" href="../../examples/navigation/">
+        <link rel="prev" href="../alerts/">
       
       
-        <link rel="next" href="../components/">
+        <link rel="next" href="../net/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Package - PythonNative</title>
+        <title>Async runtime - PythonNative</title>
       
     
     
@@ -67,17 +67,17 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Package - PythonNative" />
+<meta property="og:title" content="Async runtime - PythonNative" />
 <meta property="og:description" content="Cross-platform native UI toolkit for Android and iOS" />
-<meta property="og:image" content="https://docs.pythonnative.com/assets/images/social/api/pythonnative.png" />
+<meta property="og:image" content="https://docs.pythonnative.com/assets/images/social/api/runtime.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://docs.pythonnative.com/api/pythonnative/" />
+<meta property="og:url" content="https://docs.pythonnative.com/api/runtime/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Package - PythonNative" />
+<meta property="twitter:title" content="Async runtime - PythonNative" />
 <meta property="twitter:description" content="Cross-platform native UI toolkit for Android and iOS" />
-<meta property="twitter:image" content="https://docs.pythonnative.com/assets/images/social/api/pythonnative.png" />
+<meta property="twitter:image" content="https://docs.pythonnative.com/assets/images/social/api/runtime.png" />
 </head>
   
   
@@ -97,7 +97,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#package-overview" class="md-skip">
+        <a href="#async-runtime" class="md-skip">
           Skip to content
         </a>
       
@@ -132,7 +132,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Package
+              Async runtime
             
           </span>
         </div>
@@ -352,7 +352,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+        <a href="../pythonnative/" class="md-tabs__link">
           
   
   
@@ -1598,37 +1598,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Package
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../pythonnative/" class="md-nav__link">
         
   
   
@@ -1644,59 +1617,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#entry-point" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Entry point
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#where-to-look-next" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Where to look next
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#property-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Property reference
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1818,10 +1738,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../runtime/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Async runtime
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1837,6 +1784,125 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.get_loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_loop
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.run_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;run_async
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.call_threadsafe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;call_threadsafe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.resolve_future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;resolve_future
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.reject_future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;reject_future
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.create_future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;create_future
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.call_on_main_thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;call_on_main_thread
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pattern-bridge-a-sync-handler-into-async-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern: bridge a sync handler into async code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2537,10 +2603,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#entry-point" class="md-nav__link">
+  <a href="#pythonnative.runtime.get_loop" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Entry point
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_loop
       
     </span>
   </a>
@@ -2548,10 +2614,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-to-look-next" class="md-nav__link">
+  <a href="#pythonnative.runtime.run_async" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where to look next
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;run_async
       
     </span>
   </a>
@@ -2559,10 +2625,76 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#property-reference" class="md-nav__link">
+  <a href="#pythonnative.runtime.call_threadsafe" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Property reference
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;call_threadsafe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.resolve_future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;resolve_future
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.reject_future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;reject_future
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.create_future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;create_future
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.call_on_main_thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;call_on_main_thread
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pattern-bridge-a-sync-handler-into-async-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern: bridge a sync handler into async code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
       
     </span>
   </a>
@@ -2586,7 +2718,7 @@
 
 
   
-    <a href="https://github.com/pythonnative/pythonnative/edit/main/docs/api/pythonnative.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/pythonnative/pythonnative/edit/main/docs/api/runtime.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -2595,32 +2727,36 @@
     
       
     
-    <a href="https://github.com/pythonnative/pythonnative/raw/main/docs/api/pythonnative.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/pythonnative/pythonnative/raw/main/docs/api/runtime.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
     </a>
   
 
 
-<h1 id="package-overview">Package overview<a class="headerlink" href="#package-overview" title="Permanent link">&para;</a></h1>
-<p>PythonNative re-exports a small public surface from
-<code>pythonnative/__init__.py</code>. Most user code only ever touches the names
-in this overview; deeper internals (<code>reconciler</code>, <code>native_views</code>,
-<code>page</code>) are documented for contributors and integrators.</p>
-<h2 id="entry-point">Entry point<a class="headerlink" href="#entry-point" title="Permanent link">&para;</a></h2>
-<p>Your app module defines a top-level component named <code>App</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">NavigationContainer</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-</span></code></pre></div>
-<p>The bundled Android <code>ScreenFragment</code> and iOS <code>ViewController</code> load
-your app by <strong>module path</strong> (<code>"app.main"</code>) and look up the
-module's top-level <code>App</code> attribute. There is no registration step
-or imperative bootstrap call. If you need to expose a
-differently-named root component, configure the templates to load
-an explicit dotted path like <code>"app.main.RootScreen"</code> instead.</p>
+<h1 id="async-runtime">Async runtime<a class="headerlink" href="#async-runtime" title="Permanent link">&para;</a></h1>
+<p>PythonNative runs a single framework-wide <code>asyncio</code> event loop on a
+dedicated daemon thread. Every awaitable surface in the framework —
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;fetch&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-async&quot;&gt;&lt;code&gt;async&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../net/#pythonnative.net.fetch"><code>fetch</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>, the awaitable native
+modules (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Camera&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.camera.Camera"><code>Camera</code></a> /
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Location&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.location.Location"><code>Location</code></a> /
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Notifications&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.notifications.Notifications"><code>Notifications</code></a>),
+and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Animated&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../animated/#pythonnative.animated.Animated"><code>Animated</code></a> composites — schedules
+its work on this loop.</p>
 
 
 <div class="doc doc-object doc-module">
@@ -2630,61 +2766,48 @@ an explicit dotted path like <code>"app.main.RootScreen"</code> instead.</p>
 
     <div class="doc doc-contents first">
 
-        <p>PythonNative: declarative native UI for Android and iOS.</p>
-<p>PythonNative is a cross-platform toolkit that turns Python <code>@component</code>
-functions into real, native Android and iOS views. The component model
-is React-like (function components plus hooks), but rendering happens
-through direct platform bindings: Chaquopy on Android (Java) and
-rubicon-objc on iOS (Objective-C). There is no JavaScript bridge.</p>
-<p>Key building blocks:</p>
-<ul>
-<li><strong>Element factories</strong> (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Text&lt;/span&gt;" href="../components/#pythonnative.components.Text"><code>Text</code></a>,
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Button&lt;/span&gt;" href="../components/#pythonnative.components.Button"><code>Button</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Column&lt;/span&gt;" href="../components/#pythonnative.components.Column"><code>Column</code></a>, etc.)
-  return immutable <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> descriptors.</li>
-<li><strong>Hooks</strong> (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_state"><code>use_state</code></a>,
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a>,
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_reducer&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_reducer"><code>use_reducer</code></a>, etc.) manage state, side
-  effects, and context inside <code>@component</code> functions.</li>
-<li><strong>Navigation</strong> is built from
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;NavigationContainer&lt;/span&gt;" href="../navigation/#pythonnative.navigation.NavigationContainer"><code>NavigationContainer</code></a> plus one of
-  the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_stack_navigator"><code>create_stack_navigator</code></a>,
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_tab_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_tab_navigator"><code>create_tab_navigator</code></a>, or
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_drawer_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_drawer_navigator"><code>create_drawer_navigator</code></a>
-  factories.</li>
-<li><strong>Styling</strong> uses a single <code>style</code> dict per element (or a list of
-  dicts), composable via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;StyleSheet&lt;/span&gt;" href="../style/#pythonnative.style.StyleSheet"><code>StyleSheet</code></a>.
-  PythonNative ships a fully-typed <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Style&lt;/span&gt;" href="../style/#pythonnative.style.Style"><code>Style</code></a>
-  TypedDict so editors and <code>mypy</code> validate every key as you type.</li>
-<li><strong>Animations</strong> use the <code>Animated</code> namespace, modeled on React
-  Native's animation API.</li>
-<li><strong>Custom native components</strong> can be authored with the
-  <code>pythonnative.sdk</code> package: define a typed
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Props&lt;/span&gt;
+        <p>Asyncio runtime for PythonNative.</p>
+<p>PythonNative runs a single, framework-wide <code>asyncio</code> event loop on
+a dedicated daemon thread. Every awaitable surface in the framework
+— the async hooks
+(<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>), the
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;fetch&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../sdk/#pythonnative.sdk.Props"><code>Props</code></a> dataclass, implement a
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a> for each
-  platform, and register it via
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;native_component&lt;/span&gt;" href="../sdk/#pythonnative.sdk.native_component"><code>@native_component</code></a> (or expose
-  it from a PyPI package via the <code>pythonnative.handlers</code> entry-point
-  group).</li>
-</ul>
+      &lt;small class=&quot;doc doc-label doc-label-async&quot;&gt;&lt;code&gt;async&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../net/#pythonnative.net.fetch"><code>fetch</code></a> HTTP client,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>, the awaitable
+native modules
+(<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Camera&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.camera.Camera"><code>Camera</code></a> /
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Location&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.location.Location"><code>Location</code></a> /
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Notifications&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.notifications.Notifications"><code>Notifications</code></a>),
+and awaited animations — schedules its work on this loop via
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="#pythonnative.runtime.run_async"><code>run_async</code></a>.</p>
+<p>The reconciler is <strong>not</strong> asyncio-aware; it still runs synchronously on
+the platform main thread. Coroutines that want to mutate component
+state simply call the regular <code>use_state</code> setter, and the existing
+deferred-render path inside the screen host marshals the re-render
+onto the main thread. The runtime is therefore additive: it gives
+coroutines somewhere to live without changing the rendering contract.</p>
 
 
 <details class="example" open>
   <summary>Example</summary>
-  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">App</span><span class="p">():</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">count</span><span class="p">,</span> <span class="n">set_count</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">)),</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_count</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">),</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">hello</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">return</span> <span class="s2">&quot;hi&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">future</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">hello</span><span class="p">())</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># &quot;hi&quot;</span>
 </span></code></pre></div>
 </details>
 
@@ -2696,6 +2819,75 @@ rubicon-objc on iOS (Objective-C). There is no JavaScript bridge.</p>
 
 
 
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_loop&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.get_loop&lt;/code&gt;)" href="#pythonnative.runtime.get_loop">get_loop</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return the framework-wide event loop, starting it on first use.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.run_async&lt;/code&gt;)" href="#pythonnative.runtime.run_async">run_async</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Schedule <code>awaitable</code> on the framework loop and return a thread future.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;call_threadsafe&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.call_threadsafe&lt;/code&gt;)" href="#pythonnative.runtime.call_threadsafe">call_threadsafe</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Schedule <code>callback(*args)</code> on the loop thread.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;resolve_future&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.resolve_future&lt;/code&gt;)" href="#pythonnative.runtime.resolve_future">resolve_future</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Set <code>future</code>'s result from any thread (no-op if already done).</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reject_future&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.reject_future&lt;/code&gt;)" href="#pythonnative.runtime.reject_future">reject_future</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Set <code>future</code>'s exception from any thread (no-op if already done).</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_future&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.create_future&lt;/code&gt;)" href="#pythonnative.runtime.create_future">create_future</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Create a future bound to the framework runtime loop.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;call_on_main_thread&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.call_on_main_thread&lt;/code&gt;)" href="#pythonnative.runtime.call_on_main_thread">call_on_main_thread</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Run <code>fn()</code> on the platform UI thread.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
 
 
 
@@ -2712,124 +2904,384 @@ rubicon-objc on iOS (Objective-C). There is no JavaScript bridge.</p>
 
 
 
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.get_loop" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_loop</span>
+
+
+<a href="#pythonnative.runtime.get_loop" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_loop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;asyncio.AbstractEventLoop&lt;/code&gt;" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.AbstractEventLoop">AbstractEventLoop</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the framework-wide event loop, starting it on first use.</p>
+<p>The loop runs on a daemon thread (<code>"pn-asyncio"</code>) and lives for
+the duration of the process. It is safe to call this from any
+thread.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;asyncio.AbstractEventLoop&lt;/code&gt;" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.AbstractEventLoop">AbstractEventLoop</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The shared :class:<code>asyncio.AbstractEventLoop</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.run_async" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">run_async</span>
+
+
+<a href="#pythonnative.runtime.run_async" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">run_async</span><span class="p">(</span><span class="n">awaitable</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.Awaitlike">Awaitlike</span></span><span class="p">[</span><span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;_ThreadFuture[T]&#39;</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Schedule <code>awaitable</code> on the framework loop and return a thread future.</p>
+<p>Use this when calling async code from synchronous code (e.g. an
+event handler, a hook setup function, or a test). The returned
+:class:<code>concurrent.futures.Future</code> is created by
+:func:<code>asyncio.run_coroutine_threadsafe</code> so it can be <code>result()</code>-ed
+from the calling thread and <code>cancel()</code>-ed from anywhere.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>awaitable</code>
+            </td>
+            <td>
+                  <code><span title="pythonnative.runtime.Awaitlike">Awaitlike</span>[<span title="pythonnative.runtime.T">T</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Either a coroutine object (the typical case) or any
+awaitable. Awaitables that are not coroutines are wrapped
+with :func:<code>asyncio.ensure_future</code> on the loop.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>&#39;_ThreadFuture[T]&#39;</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A thread-safe future that resolves with the coroutine's return</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code>&#39;_ThreadFuture[T]&#39;</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>value, or raises its exception.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">work</span><span class="p">():</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">return</span> <span class="mi">42</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">fut</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">work</span><span class="p">())</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">assert</span> <span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span>
+</span></code></pre></div>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.call_threadsafe" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">call_threadsafe</span>
+
+
+<a href="#pythonnative.runtime.call_threadsafe" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">call_threadsafe</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Schedule <code>callback(*args)</code> on the loop thread.</p>
+<p>Thin wrapper around
+:meth:<code>asyncio.AbstractEventLoop.call_soon_threadsafe</code>. Useful from
+native delegates (which may fire on arbitrary threads) when you
+need to hop onto the runtime thread before touching asyncio
+primitives.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.resolve_future" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">resolve_future</span>
+
+
+<a href="#pythonnative.runtime.resolve_future" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">resolve_future</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="s1">&#39;asyncio.Future[T]&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Set <code>future</code>'s result from any thread (no-op if already done).</p>
+<p>Convenience used by every native delegate that wraps a callback
+into an awaitable: the delegate doesn't have to know which thread
+it's on, only that it must not race with cancellation.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>future</code>
+            </td>
+            <td>
+                  <code>&#39;asyncio.Future[T]&#39;</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An :class:<code>asyncio.Future</code> bound to the runtime loop.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>value</code>
+            </td>
+            <td>
+                  <code><span title="pythonnative.runtime.T">T</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The value to deliver as the future's result.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.reject_future" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">reject_future</span>
+
+
+<a href="#pythonnative.runtime.reject_future" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reject_future</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="s1">&#39;asyncio.Future[Any]&#39;</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#BaseException">BaseException</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Set <code>future</code>'s exception from any thread (no-op if already done).</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.create_future" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">create_future</span>
+
+
+<a href="#pythonnative.runtime.create_future" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_future</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;asyncio.Future[Any]&#39;</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Create a future bound to the framework runtime loop.</p>
+<p>Safe to call from any thread. The returned future is <strong>not</strong>
+attached to whatever loop is current on the caller; instead it
+lives on the framework's shared loop so any thread can call
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;resolve_future&lt;/span&gt;" href="#pythonnative.runtime.resolve_future"><code>resolve_future</code></a> /
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reject_future&lt;/span&gt;" href="#pythonnative.runtime.reject_future"><code>reject_future</code></a> on it.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.call_on_main_thread" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">call_on_main_thread</span>
+
+
+<a href="#pythonnative.runtime.call_on_main_thread" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">call_on_main_thread</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run <code>fn()</code> on the platform UI thread.</p>
+<ul>
+<li><strong>iOS</strong>: dispatches <code>fn</code> onto the main dispatch queue via
+  <code>libdispatch.dispatch_async_f</code> (called through
+  :class:<code>ctypes.PyDLL</code> to keep the GIL held — see the
+  <code>_ios_call_on_main</code> comment block for why this matters).</li>
+<li><strong>Android</strong>: posts a <code>Runnable</code> to
+  <code>Handler(Looper.getMainLooper())</code>.</li>
+<li><strong>Desktop / tests</strong>: runs <code>fn()</code> inline.</li>
+</ul>
+<p>Exceptions raised by <code>fn</code> are caught and printed; they must not
+propagate into UIKit / the Android Looper. If you need to surface
+a result back to the asyncio loop, do it via
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;resolve_future&lt;/span&gt;" href="#pythonnative.runtime.resolve_future"><code>resolve_future</code></a> from
+inside <code>fn</code>.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>fn</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], None]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A zero-arg callable. Runs on the main thread when the
+platform's UI runtime is available, otherwise inline.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
 
 
   </div>
 
     </div>
 
-</div><h2 id="where-to-look-next">Where to look next<a class="headerlink" href="#where-to-look-next" title="Permanent link">&para;</a></h2>
-<p>The reference is split per module so each page stays scannable:</p>
-<table>
-<thead>
-<tr>
-<th>Area</th>
-<th>Page</th>
-<th>Key symbols</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Element factories</td>
-<td><a href="../components/">Components</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Text&lt;/span&gt;" href="../components/#pythonnative.components.Text"><code>Text</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Button&lt;/span&gt;" href="../components/#pythonnative.components.Button"><code>Button</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Column&lt;/span&gt;" href="../components/#pythonnative.components.Column"><code>Column</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Row&lt;/span&gt;" href="../components/#pythonnative.components.Row"><code>Row</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;ScrollView&lt;/span&gt;" href="../components/#pythonnative.components.ScrollView"><code>ScrollView</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;FlatList&lt;/span&gt;" href="../components/#pythonnative.components.FlatList"><code>FlatList</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;SectionList&lt;/span&gt;" href="../components/#pythonnative.components.SectionList"><code>SectionList</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Modal&lt;/span&gt;" href="../components/#pythonnative.components.Modal"><code>Modal</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Pressable&lt;/span&gt;" href="../components/#pythonnative.components.Pressable"><code>Pressable</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;StatusBar&lt;/span&gt;" href="../components/#pythonnative.components.StatusBar"><code>StatusBar</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;KeyboardAvoidingView&lt;/span&gt;" href="../components/#pythonnative.components.KeyboardAvoidingView"><code>KeyboardAvoidingView</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;RefreshControl&lt;/span&gt;" href="../components/#pythonnative.components.RefreshControl"><code>RefreshControl</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Picker&lt;/span&gt;" href="../components/#pythonnative.components.Picker"><code>Picker</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Fragment&lt;/span&gt;" href="../components/#pythonnative.components.Fragment"><code>Fragment</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;ErrorBoundary&lt;/span&gt;" href="../components/#pythonnative.components.ErrorBoundary"><code>ErrorBoundary</code></a></td>
-</tr>
-<tr>
-<td>Hooks</td>
-<td><a href="../hooks/">Hooks</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_state&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_state"><code>use_state</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_reducer&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_reducer"><code>use_reducer</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_memo&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_memo"><code>use_memo</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_ref&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_ref"><code>use_ref</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_context&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_context"><code>use_context</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_window_dimensions&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_window_dimensions"><code>use_window_dimensions</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_safe_area_insets&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_safe_area_insets"><code>use_safe_area_insets</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_keyboard_height&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_keyboard_height"><code>use_keyboard_height</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;memo&lt;/span&gt;" href="../hooks/#pythonnative.hooks.memo"><code>memo</code></a></td>
-</tr>
-<tr>
-<td>Animations</td>
-<td><a href="../animated/">Animated</a></td>
-<td><code>Animated</code>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="../animated/#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_animated_value&lt;/span&gt;" href="../animated/#pythonnative.animated.use_animated_value"><code>use_animated_value</code></a></td>
-</tr>
-<tr>
-<td>System dialogs</td>
-<td><a href="../alerts/">Alerts</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Alert&lt;/span&gt;" href="../alerts/#pythonnative.alerts.Alert"><code>Alert</code></a></td>
-</tr>
-<tr>
-<td>Platform</td>
-<td><a href="../platform/">Platform</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Platform&lt;/span&gt;" href="../platform/#pythonnative.platform.Platform"><code>Platform</code></a></td>
-</tr>
-<tr>
-<td>Navigation</td>
-<td><a href="../navigation/">Navigation</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;NavigationContainer&lt;/span&gt;" href="../navigation/#pythonnative.navigation.NavigationContainer"><code>NavigationContainer</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_stack_navigator"><code>create_stack_navigator</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_tab_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_tab_navigator"><code>create_tab_navigator</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_drawer_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_drawer_navigator"><code>create_drawer_navigator</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_navigation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_navigation"><code>use_navigation</code></a></td>
-</tr>
-<tr>
-<td>Styling</td>
-<td><a href="../style/">Style</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;StyleSheet&lt;/span&gt;" href="../style/#pythonnative.style.StyleSheet"><code>StyleSheet</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Style&lt;/span&gt;" href="../style/#pythonnative.style.Style"><code>Style</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;StyleProp&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../style/#pythonnative.style.StyleProp"><code>StyleProp</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;style&lt;/span&gt;" href="../style/#pythonnative.style.style"><code>style</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;ThemeContext&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../style/#pythonnative.style.ThemeContext"><code>ThemeContext</code></a></td>
-</tr>
-<tr>
-<td>Element descriptor</td>
-<td><a href="../element/">Element</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a></td>
-</tr>
-<tr>
-<td>Screen host</td>
-<td><a href="../screen/">Screen</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../screen/#pythonnative.screen.create_screen"><code>create_screen</code></a></td>
-</tr>
-<tr>
-<td>Reconciler</td>
-<td><a href="../reconciler/">Reconciler</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a></td>
-</tr>
-<tr>
-<td>Native modules</td>
-<td><a href="../native_modules/">Native modules</a></td>
-<td><code>Camera</code>, <code>Location</code>, <code>FileSystem</code>, <code>Notifications</code></td>
-</tr>
-<tr>
-<td>Native views</td>
-<td><a href="../native_views/">Native views</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NativeViewRegistry&lt;/span&gt;" href="../native_views/#pythonnative.native_views.NativeViewRegistry"><code>NativeViewRegistry</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a></td>
-</tr>
-<tr>
-<td>Hot reload</td>
-<td><a href="../hot_reload/">Hot reload</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;FileWatcher&lt;/span&gt;" href="../hot_reload/#pythonnative.hot_reload.FileWatcher"><code>FileWatcher</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ModuleReloader&lt;/span&gt;" href="../hot_reload/#pythonnative.hot_reload.ModuleReloader"><code>ModuleReloader</code></a></td>
-</tr>
-<tr>
-<td>Custom components SDK</td>
-<td><a href="../sdk/">SDK</a></td>
-<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Props&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../sdk/#pythonnative.sdk.Props"><code>Props</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;native_component&lt;/span&gt;" href="../sdk/#pythonnative.sdk.native_component"><code>native_component</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;register_component&lt;/span&gt;" href="../sdk/#pythonnative.sdk.register_component"><code>register_component</code></a>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;element_factory&lt;/span&gt;" href="../sdk/#pythonnative.sdk.element_factory"><code>element_factory</code></a></td>
-</tr>
-<tr>
-<td>Utilities</td>
-<td><a href="../utils/">Utilities</a></td>
-<td><code>IS_ANDROID</code>, <code>IS_IOS</code>, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_android_context&lt;/span&gt;" href="../utils/#pythonnative.utils.get_android_context"><code>get_android_context</code></a></td>
-</tr>
-<tr>
-<td>CLI</td>
-<td><a href="../cli/">CLI (<code>pn</code>)</a></td>
-<td><code>pn init</code>, <code>pn run</code>, <code>pn clean</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="property-reference">Property reference<a class="headerlink" href="#property-reference" title="Permanent link">&para;</a></h2>
-<p>All visual and layout properties pass through the <code>style</code> dict (or a
-list of dicts). The full per-component property catalogue lives in
-<a href="../component-properties/">Component properties</a>.</p>
+</div><h2 id="pattern-bridge-a-sync-handler-into-async-code">Pattern: bridge a sync handler into async code<a class="headerlink" href="#pattern-bridge-a-sync-handler-into-async-code" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">Toolbar</span><span class="p">():</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">():</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">report</span> <span class="o">=</span> <span class="k">await</span> <span class="n">build_report</span><span class="p">()</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="k">await</span> <span class="n">save_to_disk</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Export&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">export</span><span class="p">()))</span>
+</span></code></pre></div>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Walk through the async surface end-to-end:
+  <a href="../../guides/async/">Async + data guide</a>.</li>
+</ul>
 
 
 

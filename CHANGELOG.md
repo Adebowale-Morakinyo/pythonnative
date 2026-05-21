@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.17.0 (2026-05-21)
+
+### Continuous Integration
+
+- **workflows,tests**: Stabilize Android E2E on CI
+  ([#4](https://github.com/pythonnative/pythonnative/pull/4),
+  [`2488faf`](https://github.com/pythonnative/pythonnative/commit/2488fafd7c24590be4f442475f5fc8e114d61e7b))
+
+### Features
+
+- **runtime**: Add asyncio loop and awaitable APIs
+  ([#5](https://github.com/pythonnative/pythonnative/pull/5),
+  [`6b468fd`](https://github.com/pythonnative/pythonnative/commit/6b468fd98031466e00c1df9732f4c1f28188eb0d))
+
+
 ## v0.16.0 (2026-05-19)
 
 ### Chores

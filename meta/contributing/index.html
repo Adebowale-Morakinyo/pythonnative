@@ -2922,10 +2922,13 @@ The contents are included below so the docs site stays in sync.</p>
 <li><code>src/pythonnative/</code> – installable library and CLI</li>
 <li><code>pythonnative/</code> – core cross‑platform UI components and utilities</li>
 <li><code>cli/</code> – <code>pn</code> command</li>
-<li><code>tests/</code> – unit tests for the library</li>
+<li><code>tests/</code> – unit tests for the library, plus the Maestro E2E suite</li>
+<li><code>e2e/</code> – the comprehensive E2E suite (see <a href="#e2e-tests-maestro">E2E tests</a> below and <code>tests/e2e/AGENTS.md</code>)</li>
 <li><code>templates/</code> – Android/iOS project templates and zips</li>
 <li><code>examples/</code> – runnable example apps</li>
-<li><code>hello-world/</code> – minimal demo app using the library</li>
+<li><code>hello-world/</code> – minimal marketing demo</li>
+<li><code>e2e-suite/</code> – comprehensive feature catalog that drives the Maestro E2E suite</li>
+<li><code>scripts/</code> – helper scripts (<code>check.sh</code>, <code>run-e2e.sh</code>, <code>check-e2e-coverage.py</code>)</li>
 <li><code>README.md</code>, <code>pyproject.toml</code> – repo docs and packaging</li>
 </ul>
 <h2 id="coding-guidelines">Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Permanent link">&para;</a></h2>
@@ -3133,25 +3136,36 @@ The contents are included below so the docs site stays in sync.</p>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>fix/cli-regression
 </span></code></pre></div>
 <h3 id="e2e-tests-maestro">E2E tests (Maestro)<a class="headerlink" href="#e2e-tests-maestro" title="Permanent link">&para;</a></h3>
-<p>End-to-end tests use <a href="https://maestro.dev/">Maestro</a> to drive the hello-world example on real emulators and simulators.</p>
+<p>End-to-end tests use <a href="https://maestro.dev/">Maestro</a> to drive the dedicated <code>examples/e2e-suite</code> app on real emulators and simulators. That app contains one screen per public symbol in <code>pythonnative.__all__</code>; every flow under <code>tests/e2e/flows/&lt;category&gt;/</code> exercises one symbol.</p>
+<p>The dedicated <code>examples/hello-world</code> app is left in place as a small marketing demo; it is <strong>not</strong> the E2E target.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Install Maestro (one-time)</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>curl<span class="w"> </span>-Ls<span class="w"> </span><span class="s2">&quot;https://get.maestro.mobile.dev&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># For iOS, also install idb-companion</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>brew<span class="w"> </span>tap<span class="w"> </span>facebook/fb<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>brew<span class="w"> </span>install<span class="w"> </span>idb-companion
 </span></code></pre></div>
-<p>Build and launch the app first, then run the tests:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">cd</span><span class="w"> </span>examples/hello-world
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># Android (emulator must be running)</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>pn<span class="w"> </span>run<span class="w"> </span>android
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>maestro<span class="w"> </span><span class="nb">test</span><span class="w"> </span>../../tests/e2e/android.yaml
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># iOS (simulator must be running; --platform ios needed when an Android emulator is also connected)</span>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>pn<span class="w"> </span>run<span class="w"> </span>ios
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>maestro<span class="w"> </span>--platform<span class="w"> </span>ios<span class="w"> </span><span class="nb">test</span><span class="w"> </span>../../tests/e2e/ios.yaml
+<p>Build and run everything via the convenience script:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Android (emulator must be running)</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>./scripts/run-e2e.sh<span class="w"> </span>android
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># iOS (simulator must be running)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>./scripts/run-e2e.sh<span class="w"> </span>ios
 </span></code></pre></div>
-<p>Test flows live in <code>tests/e2e/flows/</code> and cover the main screen rendering, counter interaction, and multi-screen navigation. The <code>e2e.yml</code> workflow runs these automatically on pushes to <code>main</code> and PRs.</p>
+<p>For tight iteration, run a single category instead of the full pass:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./scripts/run-e2e.sh<span class="w"> </span>android<span class="w"> </span>hooks
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>./scripts/run-e2e.sh<span class="w"> </span>ios<span class="w"> </span>components
+</span></code></pre></div>
+<p>Available categories: <code>components</code>, <code>hooks</code>, <code>navigation</code>, <code>layout</code>, <code>styling</code>, <code>animations</code>, <code>misc</code>.</p>
+<p>A coverage checker, <code>scripts/check-e2e-coverage.py</code>, gates CI: every name in <code>pythonnative.__all__</code> must be covered by a demo + flow, or listed in <code>INTENTIONAL_EXEMPTIONS</code> with a justification.</p>
+<p>When you add a new public symbol you must also:</p>
+<ol>
+<li>Add a demo screen under <code>examples/e2e-suite/app/screens/&lt;category&gt;/</code>.</li>
+<li>Append a <code>DemoEntry</code> in <code>examples/e2e-suite/app/registry.py</code>.</li>
+<li>Add a Maestro flow at <code>tests/e2e/flows/&lt;category&gt;/&lt;name&gt;.yaml</code>.</li>
+<li>Append the flow to the top-level <code>tests/e2e/android.yaml</code>, <code>tests/e2e/ios.yaml</code>, and the matching <code>tests/e2e/suites/&lt;category&gt;.yaml</code>.</li>
+<li>Confirm <code>python scripts/check-e2e-coverage.py</code> exits 0.</li>
+</ol>
+<p><code>tests/e2e/AGENTS.md</code> is the deeper reference (label conventions, failure triage, naming rules); AI agents should read it before touching the suite. The <code>e2e.yml</code> workflow runs the suite automatically on pushes to <code>main</code> and PRs.</p>
 <h3 id="ci">CI<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>CI</strong> (<code>ci.yml</code>): runs formatter, linter, type checker, and tests on every push and PR.</li>

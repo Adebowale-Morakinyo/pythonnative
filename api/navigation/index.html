@@ -3300,6 +3300,15 @@ case (returns <code>{}</code> instead of raising).</p>
 only when the enclosing navigator marks this screen as the active
 one. Useful for starting subscriptions, refreshing data, or
 pausing animations on the inactive screen.</p>
+<p>The focus state combines two sources of truth:</p>
+<ul>
+<li>The screen host's lifecycle (<code>on_resume</code> / <code>on_pause</code>), so
+  pushing a sibling onto the navigation stack blurs this screen and
+  popping back to it refocuses it.</li>
+<li>The in-tree <code>_FocusContext</code> value, which lets declarative
+  navigators (e.g. tabs, drawers) mark only the active subtree as
+  focused even when both screens are part of the same host.</li>
+</ul>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>

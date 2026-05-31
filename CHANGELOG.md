@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.18.0 (2026-05-31)
+
+### Features
+
+- **components,native_modules**: Expand component and device APIs
+  ([#7](https://github.com/pythonnative/pythonnative/pull/7),
+  [`1d6fe92`](https://github.com/pythonnative/pythonnative/commit/1d6fe9282a3b85617b77532cd0bd79122cb06a87))
+
+
 ## v0.17.1 (2026-05-31)
 
 ### Bug Fixes

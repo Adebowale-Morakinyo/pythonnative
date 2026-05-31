@@ -1,6 +1,39 @@
 # CHANGELOG
 
 
+## v0.17.1 (2026-05-31)
+
+### Bug Fixes
+
+- Address library bugs uncovered by the E2E suite
+  ([`c7becef`](https://github.com/pythonnative/pythonnative/commit/c7becefd63ed46cc3a2922df5e7731231c22e0bf))
+
+- **native_views**: Wire return_key_type on Android, and dismiss keyboard
+  ([`3ab5d98`](https://github.com/pythonnative/pythonnative/commit/3ab5d987144bb5172c491798b32b34c6f3f44d39))
+
+- **screen**: Preserve hook state across Android pop-back
+  ([`6b27f0c`](https://github.com/pythonnative/pythonnative/commit/6b27f0cacfd8be36a19790c58e93686b9617f15b))
+
+### Continuous Integration
+
+- **workflows**: Shard the iOS E2E run across simulators
+  ([`536fed6`](https://github.com/pythonnative/pythonnative/commit/536fed6c1cd0a7c069aa9c3d1ff42941fa65da08))
+
+- **workflows,scripts**: Shard the Android E2E run across emulators
+  ([`67c340d`](https://github.com/pythonnative/pythonnative/commit/67c340d2117b4282d64081374d4d5ce6ab5c01fe))
+
+### Testing
+
+- Add e2e-suite covering every public API
+  ([`38e3e01`](https://github.com/pythonnative/pythonnative/commit/38e3e013bc51f951215c142f22515000e355a1ef))
+
+- Make e2e open_demo state-aware to skip redundant relaunches
+  ([`a94859f`](https://github.com/pythonnative/pythonnative/commit/a94859f9b6c31ca6203ce76fbbcbd3ac7d937d54))
+
+- **examples**: Use scrollUntilVisible for scroll_view/flat_list
+  ([`5b8af35`](https://github.com/pythonnative/pythonnative/commit/5b8af354f51c52549ef6e368ca8d85800eddb389))
+
+
 ## v0.17.0 (2026-05-21)
 
 ### Continuous Integration

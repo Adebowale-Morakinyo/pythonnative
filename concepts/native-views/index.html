@@ -957,6 +957,8 @@
       
         
       
+        
+      
     
     
     
@@ -1047,6 +1049,34 @@
     
   
     iOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/desktop-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desktop Preview
   
 
     
@@ -2776,9 +2806,13 @@ is a dict-like object that maps element type strings to handler
   populates the registry with Chaquopy-backed handlers.</li>
 <li>On iOS, <code>pythonnative.native_views.ios.register_handlers</code> does the
   same with rubicon-objc handlers.</li>
-<li>On the desktop (during tests), the registry is replaced with a mock
-  via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_registry&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.set_registry"><code>set_registry</code></a> before
-  any element is rendered.</li>
+<li>On the desktop (<code>pn preview</code>, with <code>PN_PLATFORM=desktop</code>),
+  <code>pythonnative.native_views.desktop.register_handlers</code> populates the
+  registry with Tkinter-backed handlers. See the
+  <a href="../../guides/desktop-preview/">Desktop preview guide</a>.</li>
+<li>Off-device under <code>pytest</code>, the registry is replaced with a mock via
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_registry&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.set_registry"><code>set_registry</code></a> before any
+  element is rendered.</li>
 </ul>
 <p>Custom widgets follow the same pattern: register a handler under a
 unique type string, then construct elements with that type and the

@@ -830,6 +830,8 @@
       
         
       
+        
+      
     
     
     
@@ -920,6 +922,34 @@
     
   
     iOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/desktop-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desktop Preview
   
 
     
@@ -2215,6 +2245,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.utils.IS_DESKTOP" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;IS_DESKTOP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.utils.set_android_context" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2603,6 +2644,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.utils.IS_DESKTOP" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;IS_DESKTOP
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.utils.set_android_context" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2772,6 +2824,25 @@ not enough to trigger this flag.</p>
               </div>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;IS_DESKTOP&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.utils.IS_DESKTOP&lt;/code&gt;)" href="#pythonnative.utils.IS_DESKTOP">IS_DESKTOP</a></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> when running the desktop preview backend
+(signaled by <code>PN_PLATFORM=desktop</code>, set by <code>pn preview</code>).
+This drives the Tkinter native-view registry so a PythonNative
+app can render in a real OS window for fast local iteration.</p>
+              </div>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -2890,6 +2961,33 @@ environment variables and trying to import Chaquopy's <code>java</code> module.<
 <p>The flag is computed once at import time, by checking
 <code>PN_PLATFORM=ios</code>, <code>sys.platform == "ios"</code>, and the iOS Simulator
 <code>HOME</code> path.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="pythonnative.utils.IS_DESKTOP" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">IS_DESKTOP</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#pythonnative.utils.IS_DESKTOP" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">IS_DESKTOP</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="n"><span title="pythonnative.utils._get_is_desktop">_get_is_desktop</span></span><span class="p">()</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p><code>True</code> when running the desktop (Tkinter) preview backend.</p>
+<p>Set by <code>pn preview</code> via <code>PN_PLATFORM=desktop</code>. Mutually exclusive
+with <code>IS_ANDROID</code> / <code>IS_IOS</code>. Off-device unit tests leave this
+<code>False</code> and inject a mock registry instead.</p>
 
     </div>
 

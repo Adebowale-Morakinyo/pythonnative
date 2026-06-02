@@ -830,6 +830,8 @@
       
         
       
+        
+      
     
     
     
@@ -920,6 +922,34 @@
     
   
     iOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/desktop-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desktop Preview
   
 
     
@@ -1867,6 +1897,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.runtime.set_desktop_main_dispatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;set_desktop_main_dispatch
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.runtime.call_on_main_thread" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2669,6 +2710,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.runtime.set_desktop_main_dispatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;set_desktop_main_dispatch
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.runtime.call_on_main_thread" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3196,6 +3248,29 @@ lives on the framework's shared loop so any thread can call
 <div class="doc doc-object doc-function">
 
 
+<h2 id="pythonnative.runtime.set_desktop_main_dispatch" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">set_desktop_main_dispatch</span>
+
+
+<a href="#pythonnative.runtime.set_desktop_main_dispatch" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_desktop_main_dispatch</span><span class="p">(</span><span class="n">dispatch</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Install (or clear) the desktop main-thread dispatcher.</p>
+<p>Called by <code>pythonnative.preview</code> with a
+function that marshals <code>fn</code> onto the Tk main thread, and with
+<code>None</code> when the preview window closes.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="pythonnative.runtime.call_on_main_thread" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">call_on_main_thread</span>
 
@@ -3214,7 +3289,9 @@ lives on the framework's shared loop so any thread can call
   <code>_ios_call_on_main</code> comment block for why this matters).</li>
 <li><strong>Android</strong>: posts a <code>Runnable</code> to
   <code>Handler(Looper.getMainLooper())</code>.</li>
-<li><strong>Desktop / tests</strong>: runs <code>fn()</code> inline.</li>
+<li><strong>Desktop</strong>: enqueues <code>fn</code> for the <code>pn preview</code> poll loop to
+  run on the Tk main thread (or runs inline if no preview is live).</li>
+<li><strong>Tests</strong>: runs <code>fn()</code> inline.</li>
 </ul>
 <p>Exceptions raised by <code>fn</code> are caught and printed; they must not
 propagate into UIKit / the Android Looper. If you need to surface

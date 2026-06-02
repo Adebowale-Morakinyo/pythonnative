@@ -830,6 +830,8 @@
       
         
       
+        
+      
     
     
     
@@ -920,6 +922,34 @@
     
   
     iOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/desktop-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desktop Preview
   
 
     
@@ -2276,6 +2306,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.cli.pn.preview_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;preview_project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.cli.pn.clean_project" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2647,6 +2688,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.cli.pn.preview_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;preview_project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.cli.pn.clean_project" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2720,6 +2772,10 @@ the documented behavior never drifts from the code.</p>
 <ul>
 <li><code>pn init [name]</code>: scaffold a new project (creates <code>app/</code>,
   <code>pythonnative.json</code>, <code>requirements.txt</code>, <code>.gitignore</code>).</li>
+<li><code>pn preview [component]</code>: render the app in a desktop (Tkinter) window
+  with Fast Refresh — the fastest way to iterate on UI. Flags:
+  <code>--width</code>, <code>--height</code>, <code>--title</code>, <code>--no-hot-reload</code>. See the
+  <a href="../../guides/desktop-preview/">Desktop preview guide</a>.</li>
 <li><code>pn run android|ios</code>: build and run on a connected device or
   simulator. Flags: <code>--prepare-only</code>, <code>--hot-reload</code>, <code>--no-logs</code>.</li>
 <li><code>pn clean</code>: remove the local <code>build/</code> directory.</li>
@@ -2735,9 +2791,12 @@ the documented behavior never drifts from the code.</p>
 
         <p><code>pn</code> CLI: scaffold, run, and clean PythonNative projects.</p>
 <p>The console script <code>pn</code> (declared in <code>pyproject.toml</code> under
-<code>[project.scripts]</code>) dispatches to one of three subcommands:</p>
+<code>[project.scripts]</code>) dispatches to one of four subcommands:</p>
 <ul>
 <li><code>pn init [name]</code>: scaffold a new project in the current directory.</li>
+<li><code>pn preview [component]</code>: render the app in a desktop (Tkinter)
+  window with instant Fast Refresh — the fast inner dev loop, no
+  device or simulator required.</li>
 <li><code>pn run android|ios</code>: stage code into a native template, build it,
   install it, and stream logs back to the terminal.</li>
 <li><code>pn clean</code>: remove the local <code>build/</code> directory.</li>
@@ -2796,6 +2855,14 @@ underlying message.</p>
               <td>
                 <div class="doc-md-description">
                   <p>Build and run the project on the requested platform.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;preview_project&lt;/span&gt; (&lt;code&gt;pythonnative.cli.pn.preview_project&lt;/code&gt;)" href="#pythonnative.cli.pn.preview_project">preview_project</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Render the project in a desktop preview window (Tkinter).</p>
                 </div>
               </td>
             </tr>
@@ -3075,6 +3142,70 @@ connected device or simulator. With <code>--hot-reload</code>, also watches
 <li><code>prepare_only</code> (<code>bool</code>): Stage files but skip the build.</li>
 <li><code>hot_reload</code> (<code>bool</code>): Watch <code>app/</code> and push changes.</li>
 <li><code>no_logs</code> (<code>bool</code>): Don't stream device logs after launch.</li>
+</ul>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.cli.pn.preview_project" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">preview_project</span>
+
+
+<a href="#pythonnative.cli.pn.preview_project" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">preview_project</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;argparse.Namespace&lt;/code&gt;" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace">Namespace</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Render the project in a desktop preview window (Tkinter).</p>
+<p>Sets <code>PN_PLATFORM=desktop</code> (so PythonNative selects the Tkinter
+backend) and hands off to <code>pythonnative.preview.run_preview</code>,
+which opens a window, mounts the app, and Fast Refreshes on every
+file save until the window is closed.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>args</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;argparse.Namespace&lt;/code&gt;" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace">Namespace</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Parsed argparse namespace. Recognized attributes:</p>
+<ul>
+<li><code>component</code> (<code>str</code>, optional): Module path like
+  <code>"app.main"</code> (its <code>App</code> is used) or a dotted
+  <code>module.Component</code> path. Defaults to the project's
+  configured <code>entryPoint</code>.</li>
+<li><code>width</code> / <code>height</code> (<code>int</code>): Initial window size in points.</li>
+<li><code>title</code> (<code>str</code>): Window title.</li>
+<li><code>no_hot_reload</code> (<code>bool</code>): Disable file watching.</li>
 </ul>
               </div>
             </td>

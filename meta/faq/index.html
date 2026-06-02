@@ -830,6 +830,8 @@
       
         
       
+        
+      
     
     
     
@@ -920,6 +922,34 @@
     
   
     iOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/desktop-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desktop Preview
   
 
     
@@ -2928,12 +2958,20 @@ a small Python factory that returns
 <code>Element(&lt;type&gt;, props, children)</code>. Step-by-step instructions live in
 <a href="../../concepts/native-views/#custom-widgets">Native views (concept)</a>.</p>
 <h2 id="does-pythonnative-work-on-the-desktop">Does PythonNative work on the desktop?<a class="headerlink" href="#does-pythonnative-work-on-the-desktop" title="Permanent link">&para;</a></h2>
-<p>The core (components, hooks, reconciler) is platform-agnostic and runs
-on the desktop with a <a href="../../guides/testing/#a-minimal-mock-registry">mock registry</a>.
-That's how the test suite works. There is no built-in <em>desktop</em> widget
-backend; if you need one, plug a Tk or Qt-backed
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NativeViewRegistry&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.NativeViewRegistry"><code>NativeViewRegistry</code></a>
-in.</p>
+<p>Yes — for <strong>previewing</strong>. <code>pn preview</code> renders your app in a native
+desktop window using a built-in Tkinter backend, with instant Fast
+Refresh on every save. It's the fastest inner-loop: see your real UI
+and iterate in seconds without booting a simulator or deploying to a
+device. The same flex layout engine and reconciler drive it, so what
+you see closely matches the device. See the
+<a href="../../guides/desktop-preview/">Desktop preview guide</a>.</p>
+<p>The desktop backend is a <strong>development tool</strong>, not a production target:
+chrome like rounded corners, shadows, and overflow clipping are
+approximated, and there's no app packaging for desktop. Ship to devices
+with <code>pn run android</code> / <code>pn run ios</code>.</p>
+<p>The core (components, hooks, reconciler) is also platform-agnostic and
+runs headless with a <a href="../../guides/testing/#a-minimal-mock-registry">mock registry</a> —
+that's how the unit-test suite works.</p>
 <h2 id="how-do-i-package-and-distribute-my-app">How do I package and distribute my app?<a class="headerlink" href="#how-do-i-package-and-distribute-my-app" title="Permanent link">&para;</a></h2>
 <p><code>pn run android</code> and <code>pn run ios</code> produce installable artifacts in
 <code>build/</code>:</p>

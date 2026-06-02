@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.19.0 (2026-06-02)
+
+### Features
+
+- **native_views,cli**: Add desktop preview backend and pn preview
+  ([#8](https://github.com/pythonnative/pythonnative/pull/8),
+  [`3228f11`](https://github.com/pythonnative/pythonnative/commit/3228f11b4fc70f92c8fede4b03639f8eb51bc24c))
+
+
 ## v0.18.0 (2026-05-31)
 
 ### Features

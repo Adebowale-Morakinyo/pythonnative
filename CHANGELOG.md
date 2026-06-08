@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.20.0 (2026-06-08)
+
+### Features
+
+- **reconciler**: Re-render only dirty components, not the whole tree
+  ([#9](https://github.com/pythonnative/pythonnative/pull/9),
+  [`13b615d`](https://github.com/pythonnative/pythonnative/commit/13b615df2c0a85b77f9c2f16a6349c7e93faaa82))
+
+
 ## v0.19.0 (2026-06-02)
 
 ### Features

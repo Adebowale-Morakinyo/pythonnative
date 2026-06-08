@@ -2044,6 +2044,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.root_view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;root_view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.mark_dirty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;mark_dirty
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.flush_dirty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;flush_dirty
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.reconciler.Reconciler.set_viewport_size" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2662,6 +2695,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.root_view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;root_view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.mark_dirty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;mark_dirty
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.flush_dirty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;flush_dirty
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.reconciler.Reconciler.set_viewport_size" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2892,6 +2958,19 @@ wrappers such as providers and error boundaries.</p>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pythonnative.reconciler.VNode.parent">parent</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.VNode&lt;/code&gt;)" href="#pythonnative.reconciler.VNode">VNode</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The owning <code>VNode</code>, or <code>None</code> for the tree root. Used
+by local (component-scoped) re-renders to bubble a changed
+native view up to the nearest native container.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
             <td><code><span title="pythonnative.reconciler.VNode.hook_state">hook_state</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
@@ -2901,6 +2980,18 @@ wrappers such as providers and error boundaries.</p>
                 <p>The component's
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;HookState&lt;/span&gt;" href="../hooks/#pythonnative.hooks.HookState"><code>HookState</code></a> when the node
 wraps a function component, otherwise <code>None</code>.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.reconciler.VNode.mounted">mounted</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>False</code> once the node has been destroyed, so stale
+entries in the reconciler's dirty set are skipped.</p>
               </div>
             </td>
           </tr>
@@ -3030,6 +3121,30 @@ an iOS backend; tests can pass a mock.</p>
               <td>
                 <div class="doc-md-description">
                   <p>Diff <code>new_element</code> against the current tree and patch native views.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;root_view&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.root_view&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.root_view">root_view</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return the current root native view, or <code>None</code> before mount.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;mark_dirty&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.mark_dirty&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.mark_dirty">mark_dirty</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Queue <code>vnode</code> (a function component) for a local re-render.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;flush_dirty&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.flush_dirty&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.flush_dirty">flush_dirty</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Re-render only the component subtrees marked dirty since the last pass.</p>
                 </div>
               </td>
             </tr>
@@ -3215,6 +3330,114 @@ an iOS backend; tests can pass a mock.</p>
             <td>
               <div class="doc-md-description">
                 <p>The (possibly replaced) root native view.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.root_view" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">root_view</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.root_view" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">root_view</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the current root native view, or <code>None</code> before mount.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.mark_dirty" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">mark_dirty</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.mark_dirty" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">mark_dirty</span><span class="p">(</span><span class="n">vnode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.VNode&lt;/code&gt;)" href="#pythonnative.reconciler.VNode">VNode</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Queue <code>vnode</code> (a function component) for a local re-render.</p>
+<p>Called by a component's <code>use_state</code> / <code>use_reducer</code> setter
+when its own state changes. The node is re-rendered on the next
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;flush_dirty&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.flush_dirty"><code>flush_dirty</code></a>
+pass, which the screen host schedules. Marking is idempotent and
+cheap; the actual render is deferred so several setters (e.g.
+inside <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;batch_updates&lt;/span&gt;" href="../hooks/#pythonnative.hooks.batch_updates"><code>batch_updates</code></a>) coalesce
+into a single pass.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.flush_dirty" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">flush_dirty</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.flush_dirty" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">flush_dirty</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Re-render only the component subtrees marked dirty since the last pass.</p>
+<p>This is the hot path for state-driven updates: instead of
+re-running the whole app from the root, each dirty function
+component re-runs its own body (reusing its
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;HookState&lt;/span&gt;" href="../hooks/#pythonnative.hooks.HookState"><code>HookState</code></a>) and reconciles just
+its subtree. Nodes are processed shallowest-first so that when a
+dirty ancestor's re-render already covers a dirty descendant, the
+descendant is skipped (its <code>_dirty</code> flag is cleared by the
+ancestor pass).</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The (possibly replaced) root native view, so the host can</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>re-attach it if the root changed.</p>
               </div>
             </td>
           </tr>

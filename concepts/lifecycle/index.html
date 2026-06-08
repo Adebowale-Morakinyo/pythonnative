@@ -2734,15 +2734,21 @@ fold into it, and where you can hook in.</p>
 <li>A navigation event (<code>navigate</code>, <code>go_back</code>, <code>replace</code>).</li>
 <li>A hot-reload module swap (see <a href="../../guides/hot-reload/">Hot reload guide</a>).</li>
 </ul>
+<p>A <code>use_state</code> / <code>use_reducer</code> setter re-renders <strong>locally</strong>: only the
+component that owns the changed state (and the subtree it returns) is
+re-run, not the whole app. The full tree is rebuilt from the root only
+on initial mount, navigation, and hot reload. Sibling and ancestor
+components keep their existing native views and hook state untouched.</p>
 <p>The phases:</p>
 <ol>
-<li><strong>Render</strong>. Your <code>@component</code> function runs. Hooks register state,
+<li><strong>Render</strong>. The affected <code>@component</code> function(s) run — for a state
+   change, just the component whose setter fired. Hooks register state,
    queue effects, and capture closures. No native widgets change yet,
    so this phase is cheap and pure (modulo <code>use_state</code> updates).</li>
 <li><strong>Commit</strong>. The
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> diffs the new
-   tree against the previous one and applies the smallest set of
-   native mutations through the registered
+   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> diffs the
+   re-rendered subtree against the previous one and applies the
+   smallest set of native mutations through the registered
    <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a>s.</li>
 <li><strong>Effects</strong>. Cleanup callbacks from the <em>previous</em> render run
    first; new <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> callbacks run

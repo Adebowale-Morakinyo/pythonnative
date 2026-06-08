@@ -2961,9 +2961,14 @@ platform APIs synchronously from Python.</p>
 <li><strong>Reconciler.</strong> On first render, the
    <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Reconciler&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler"><code>Reconciler</code></a> walks the tree
    and creates real native views via the platform backend. On
-   subsequent renders (triggered by hook state changes), it diffs the
-   new tree against the previous one and applies the minimal set of
-   native mutations.</li>
+   subsequent renders it diffs against the previous tree and applies
+   the minimal set of native mutations. State-driven renders are
+   <strong>local</strong>: a setter marks only its own component subtree dirty, and
+   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;flush_dirty&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.Reconciler.flush_dirty"><code>flush_dirty</code></a>
+   re-runs just those components instead of the whole app from the
+   root (the full tree is only rebuilt on mount, navigation, and hot
+   reload). Sibling and ancestor components whose state did not change
+   are left untouched.</li>
 <li><strong>Post-render effects.</strong> Effects queued via
    <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> are flushed <strong>after</strong> the
    reconciler commits native mutations, matching React semantics.
@@ -3016,15 +3021,29 @@ native view. When the type changes, the old native view is destroyed
 and a new one is created.</p>
 <h3 id="render-lifecycle">Render lifecycle<a class="headerlink" href="#render-lifecycle" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Render phase</strong>: component functions execute. Hooks record state
-   reads, queue effects, and register memos. No native mutations
-   happen yet.</li>
-<li><strong>Commit phase</strong>: the reconciler applies the diff to native views,
-   creating, updating, and removing views as needed.</li>
+<li><strong>Schedule phase</strong>: a <code>use_state</code> / <code>use_reducer</code> setter that
+   actually changes a value marks its owning component dirty (adding
+   the component's node to the reconciler's dirty set) and asks the
+   screen host to schedule a flush. Several setters coalesce into one
+   flush.</li>
+<li><strong>Render phase</strong>: only the dirty components execute, shallowest
+   first so a dirty ancestor's re-render subsumes any dirty descendant.
+   Each dirty component re-runs its body against its preserved hook
+   state, with the context stack of every enclosing <code>Provider</code> restored
+   so <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_context&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_context"><code>use_context</code></a> still resolves. Hooks
+   record state reads, queue effects, and register memos. No native
+   mutations happen yet.</li>
+<li><strong>Commit phase</strong>: the reconciler applies the diff for each
+   re-rendered subtree to native views, creating, updating, and
+   removing views as needed, and bubbles any swapped subtree-root view
+   up to its nearest native container.</li>
+<li><strong>Layout phase</strong>: a layout pass recomputes frames. Leaves whose
+   <code>Element</code> is unchanged reuse a cached intrinsic measurement, so
+   untouched subtrees skip native <code>measure_intrinsic</code> calls.</li>
 <li><strong>Effect phase</strong>: pending effects are flushed in depth-first order
    (children before parents). Cleanup functions from the previous
    render run before new effect callbacks.</li>
-<li><strong>Drain phase</strong>: if effects set state, a new render pass is
+<li><strong>Drain phase</strong>: if effects set state, another flush is
    automatically triggered and the cycle repeats (up to a safety
    limit to prevent infinite loops).</li>
 </ol>

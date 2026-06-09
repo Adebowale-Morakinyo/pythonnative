@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pythonnative"
-version = "0.20.0"
+version = "0.21.0"
 description = "Cross-platform native UI toolkit for Android and iOS"
 authors = [
   { name = "Owen Carey" }
@@ -67,6 +67,7 @@ Homepage = "https://github.com/pythonnative/pythonnative"
 Repository = "https://github.com/pythonnative/pythonnative"
 Issues = "https://github.com/pythonnative/pythonnative/issues"
 Documentation = "https://docs.pythonnative.com/"
+
 
 
 

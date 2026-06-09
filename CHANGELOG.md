@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.21.0 (2026-06-09)
+
+### Features
+
+- Add pythonnative.toml config and build system
+  ([#10](https://github.com/pythonnative/pythonnative/pull/10),
+  [`869e977`](https://github.com/pythonnative/pythonnative/commit/869e9776b02628102bff7d76b67d2663d606915e))
+
+
 ## v0.20.0 (2026-06-08)
 
 ### Features

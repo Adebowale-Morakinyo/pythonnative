@@ -328,6 +328,28 @@
     
     
       <li class="md-tabs__item">
+        <a href="../../guides/configuration/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Building
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="../../examples/" class="md-tabs__link">
           
   
@@ -1293,12 +1315,6 @@
       
         
       
-        
-      
-        
-      
-        
-      
     
     
     
@@ -1324,7 +1340,7 @@
   <span class="md-ellipsis">
     
   
-    Examples
+    Building
   
 
     
@@ -1337,6 +1353,165 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Building
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/building-for-release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building for Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1589,10 +1764,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1610,8 +1785,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2281,10 +2456,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   
@@ -2302,8 +2477,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2983,10 +3158,13 @@ that's how the unit-test suite works.</p>
 normal Android Studio / Xcode project (sign, archive, upload via
 Play Console / App Store Connect).</p>
 <h2 id="can-i-use-any-python-package">Can I use any Python package?<a class="headerlink" href="#can-i-use-any-python-package" title="Permanent link">&para;</a></h2>
-<p>Pure-Python packages, mostly yes. The <code>pn</code> CLI installs your
-<code>requirements.txt</code> into the bundled site:</p>
+<p>Pure-Python packages, mostly yes. List them in
+<code>[requirements].packages</code> in <code>pythonnative.toml</code> and the <code>pn</code> CLI
+bundles them into the app:</p>
 <ul>
-<li><strong>Android</strong>: Chaquopy installs them into the APK at build time.</li>
+<li><strong>Android</strong>: the packages are written to the staged template's
+  <code>requirements.txt</code> and Chaquopy installs them into the APK at build
+  time.</li>
 <li><strong>iOS</strong>: pure-Python packages are copied into the app bundle's
   <code>platform-site/</code>.</li>
 </ul>
@@ -2995,7 +3173,7 @@ platform / architecture (<code>armeabi-v7a</code> and <code>arm64-v8a</code> on 
 <code>arm64</code>, <code>x86_64</code> for iOS Simulator on iOS). Many popular
 extensions (numpy, Pillow) have no upstream iOS wheels yet, so you'd
 need to build them locally.</p>
-<p>Don't put <code>pythonnative</code> itself in <code>requirements.txt</code>; the CLI
+<p>Don't put <code>pythonnative</code> itself in <code>[requirements].packages</code>; the CLI
 bundles the installed copy directly.</p>
 <h2 id="where-do-flex-padding-and-position-absolute-actually-run">Where do <code>flex</code>, <code>padding</code>, and <code>position: "absolute"</code> actually run?<a class="headerlink" href="#where-do-flex-padding-and-position-absolute-actually-run" title="Permanent link">&para;</a></h2>
 <p>In Python. PythonNative ships its own pure-Python flexbox engine

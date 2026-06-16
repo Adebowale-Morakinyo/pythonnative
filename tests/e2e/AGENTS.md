@@ -71,7 +71,7 @@ scripts/
 ./scripts/run-e2e.sh ios components
 ```
 
-Available category suites: `components`, `hooks`, `navigation`, `layout`, `styling`, `animations`, `misc`.
+Available category suites: `components`, `hooks`, `navigation`, `layout`, `styling`, `animations`, `gestures`, `misc`. The components category also has `components-a` / `components-b` halves: CI's Android shards use them because a GitHub-hosted emulator session degrades and drops offline before all 28 component flows finish in one run (`components.yaml` just chains the two halves).
 
 You can also run a single flow directly. Useful when iterating on one demo:
 
@@ -108,6 +108,8 @@ When adding a new flow that needs to scroll a non-fullscreen container, copy thi
 ### Suite-level retry
 
 `scripts/run-e2e.sh` re-invokes the whole `maestro test` once if the first attempt exits non-zero. The retry exists to absorb Maestro's iOS XCUITest driver flake (transient `Application is not running` / `Request for viewHierarchy failed`) — not to paper over real failures.
+
+Between attempts the script force-kills the app (`simctl terminate` / `am force-stop`) so the retry starts from a cold launch (`open_demo` relaunches a dead app). Without this, in-process state from the failed attempt — module-level counters some demos display, scroll offsets, half-open nested navigators — leaks into the retry and fails assertions that hold on a first visit. The memo demo's `"MemoA render count: 1"` was the canonical victim. Demos should still avoid module-level state that changes what a flow asserts on a revisit *within* one attempt (the `open_demo`/`close_demo` recovery paths can re-enter a demo after a stray tap); if such state is unavoidable, reset it on mount the way `memo_demo.py` does.
 
 When the script prints:
 
@@ -163,6 +165,7 @@ Diagnostic procedure:
 
 4. **Inspect logs**: `pn run android` streams `print()` calls from the device. `print("[use_state] count -> ...")` style debug statements from the demo screen surface here, which is usually the fastest way to localize a regression.
 5. **Reproduce in isolation**: many failures are state-related. Re-run `./scripts/run-e2e.sh android components` (or the relevant category) — if the flow passes there but fails in the full suite, the bug is most likely in cleanup between flows.
+6. **CI-only failures**: the E2E workflow uploads `~/.maestro/tests` (command log, view-hierarchy dumps, failure screenshots) as a `maestro-debug-<platform>-<shard>` artifact when a shard fails. Download it from the run page (or `gh run download <run-id>`) before trying to reproduce locally — the failure screenshot usually answers "what was actually on screen" immediately.
 
 ## Adding a new demo (and its flow)
 
@@ -211,6 +214,27 @@ When you add a new public symbol to `pythonnative`, follow this exact recipe:
 8. Run `./scripts/run-e2e.sh android` (or `ios`) and confirm the new flow passes.
 
 If a symbol is genuinely untestable through a UI flow (type-only alias, network-dependent, requires hardware), instead add it to `INTENTIONAL_EXEMPTIONS` in `scripts/check-e2e-coverage.py` with a comment explaining why.
+
+## Interactive controls must be driven natively
+
+Every flow for an interactive component must exercise the **real native control** at least once — tap the actual Switch/Checkbox/segment, drag the actual Slider, open the actual Picker, pull the actual page — before (or in addition to) driving state through proxy buttons.
+
+Proxy "Set X" / "Turn on" buttons all share one happy-path event route (`Button.on_click`). The per-control native event bridges — target-actions for `ValueChanged` on iOS, per-widget listeners on Android — are exactly where platform-specific breakage hides. A regression where tapping the real `UISwitch` crashed the app on iOS 18 was completely invisible to a buttons-only flow; the suite stayed green while the control was unusable. Real-control interaction also catches rendering bugs (a control that never gets laid out or draws white-on-white can still pass text-only assertions).
+
+Practical notes:
+
+- Give label-less controls an `accessibility_label` in the demo (exposed as the accessibility label on iOS and `contentDescription` on Android — Maestro matches both as text).
+- Element-anchored swipes start from the element's center. The Slider demo starts at `value=0.5` precisely so the thumb sits where the swipe begins (iOS only drags a `UISlider` from the thumb).
+- Keep the proxy-button path too: it pins down the programmatic prop-update direction (Python -> native), which real gestures don't cover.
+- Documented exception: `DatePicker`'s popover/dialog internals are platform-divergent and too brittle to script; its value-changed wiring is identical to the covered Switch/SegmentedControl paths. See the comment in `flows/components/date_picker.yaml`.
+
+### Controls that trigger their own teardown
+
+A control that, when tapped, unmounts the subtree it lives in destroys *itself* as part of handling its own tap. On some iOS simulators (notably the loaded, headless CI sim) that self-teardown leaves UIKit's touch delivery in a bad state and the **next** tap is silently dropped — so a "navigate away" button works the first time and then the following navigation no-ops.
+
+The drawer demo hit this: its per-screen "Go to One" / "Go to Two" buttons lived inside the screens the navigator swaps, so each tap tore down the button that fired it. The first hop worked and the second was dropped — deterministic on CI, invisible locally (the timing only bites on the slower sim) and invisible headlessly (the Python reconciler/layout are provably correct). The tab navigator never hit it because its `TabBar` is persistent.
+
+Rule: when a demo control causes the subtree it belongs to to be replaced (navigation between distinct screen components, conditionally-rendered branches, etc.), put the control **outside** that subtree. The drawer demo publishes its navigation handle on a context (`_NavBus`) and renders the nav buttons in the persistent demo body. Mirror the tab navigator, not an in-screen button.
 
 ## Stable label conventions
 

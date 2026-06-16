@@ -2,6 +2,11 @@
 #
 # Demo screen: examples/e2e-suite/app/screens/navigation/tab_navigator.py
 # Source under test: src/pythonnative/navigation.py :: create_tab_navigator
+#
+# The tap target (the TabBar) is persistent across switches, so taps are
+# reliable. We `extendedWaitUntil` rather than assert immediately only
+# because a state-driven re-render is committed on the next run-loop turn,
+# so the new tab body appears a beat after the tap.
 appId: ${APP_ID}
 ---
 - runFlow:
@@ -9,13 +14,21 @@ appId: ${APP_ID}
     env:
       CATEGORY: Navigation
       DEMO_TITLE: Tab Navigator
-- assertVisible: "Tab Alpha body"
+- extendedWaitUntil:
+    visible: "Tab Alpha body"
+    timeout: 30000
 - tapOn: "Beta"
-- assertVisible: "Tab Beta body"
+- extendedWaitUntil:
+    visible: "Tab Beta body"
+    timeout: 10000
 - tapOn: "Gamma"
-- assertVisible: "Tab Gamma body"
+- extendedWaitUntil:
+    visible: "Tab Gamma body"
+    timeout: 10000
 - tapOn: "Alpha"
-- assertVisible: "Tab Alpha body"
+- extendedWaitUntil:
+    visible: "Tab Alpha body"
+    timeout: 10000
 - runFlow:
     file: ../../helpers/close_demo.yaml
     env:

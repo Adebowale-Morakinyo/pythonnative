@@ -1,0 +1,30 @@
+# Tests gestures.Tap / LongPress / Swipe recognition reaching Python callbacks.
+#
+# Demo screen: examples/e2e-suite/app/screens/gestures/gestures.py
+# Source under test: src/pythonnative/gestures.py :: gestures
+appId: ${APP_ID}
+---
+- runFlow:
+    file: ../../helpers/open_demo.yaml
+    env:
+      CATEGORY: Gestures
+      DEMO_TITLE: gestures
+- assertVisible: "Taps: 0"
+- assertVisible: "Long presses: 0"
+- assertVisible: "Swipe: none"
+# "Gesture target" is the box's label; the section header is titled
+# "Gesture area", so tapping by that text would hit the header instead.
+- tapOn: "Gesture target"
+- assertVisible: "Taps: 1"
+- longPressOn: "Gesture target"
+- assertVisible: "Long presses: 1"
+# Horizontal swipe so the page ScrollView doesn't steal the motion.
+- swipe:
+    from:
+      text: "Gesture target"
+    direction: LEFT
+- assertVisible: "Swipe: left"
+- runFlow:
+    file: ../../helpers/close_demo.yaml
+    env:
+      CATEGORY: Gestures

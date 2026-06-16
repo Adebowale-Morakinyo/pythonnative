@@ -1,7 +1,16 @@
-# Tests the nested Drawer navigator switches screens via explicit nav buttons.
+# Tests the nested Drawer navigator switches screens back and forth.
 #
 # Demo screen: examples/e2e-suite/app/screens/navigation/drawer_navigator.py
 # Source under test: src/pythonnative/navigation.py :: create_drawer_navigator
+#
+# The "Go to One" / "Go to Two" controls live in the demo body, OUTSIDE the
+# navigator's swappable screens (they drive the drawer handle published on a
+# context). This mirrors the tab navigator's persistent TabBar: a control
+# that lives inside the screen being torn down destroys itself the instant it
+# fires, and on a loaded CI simulator that self-teardown drops the *next* tap
+# (the second navigation then silently no-ops). Keeping the controls
+# persistent removes that race. The core navigation logic is covered
+# headlessly by the One->Two->One regression in tests/test_navigation.py.
 appId: ${APP_ID}
 ---
 - runFlow:
@@ -9,11 +18,17 @@ appId: ${APP_ID}
     env:
       CATEGORY: Navigation
       DEMO_TITLE: Drawer Navigator
-- assertVisible: "Drawer screen One"
+- extendedWaitUntil:
+    visible: "Drawer screen One"
+    timeout: 30000
 - tapOn: "Go to Two"
-- assertVisible: "Drawer screen Two"
+- extendedWaitUntil:
+    visible: "Drawer screen Two"
+    timeout: 10000
 - tapOn: "Go to One"
-- assertVisible: "Drawer screen One"
+- extendedWaitUntil:
+    visible: "Drawer screen One"
+    timeout: 10000
 - runFlow:
     file: ../../helpers/close_demo.yaml
     env:

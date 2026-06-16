@@ -3,6 +3,8 @@
 from typing import Any, Dict, List
 
 import pytest
+from fake_backend import FakeBackend as MockBackend
+from fake_backend import FakeView as MockView
 
 from pythonnative.element import Element
 from pythonnative.hooks import HookState, _NavigationContext, _set_hook_state, component, use_navigation
@@ -22,48 +24,6 @@ from pythonnative.navigation import (
     use_route,
 )
 from pythonnative.reconciler import Reconciler
-
-# ======================================================================
-# Mock backend (same as test_reconciler / test_hooks)
-# ======================================================================
-
-
-class MockView:
-    _next_id = 0
-
-    def __init__(self, type_name: str, props: Dict[str, Any]) -> None:
-        MockView._next_id += 1
-        self.id = MockView._next_id
-        self.type_name = type_name
-        self.props = dict(props)
-        self.children: List["MockView"] = []
-
-
-class MockBackend:
-    def __init__(self) -> None:
-        self.ops: List[Any] = []
-
-    def create_view(self, type_name: str, props: Dict[str, Any]) -> MockView:
-        view = MockView(type_name, props)
-        self.ops.append(("create", type_name, view.id))
-        return view
-
-    def update_view(self, view: MockView, type_name: str, changed: Dict[str, Any]) -> None:
-        view.props.update(changed)
-        self.ops.append(("update", type_name, view.id, tuple(sorted(changed.keys()))))
-
-    def add_child(self, parent: MockView, child: MockView, parent_type: str) -> None:
-        parent.children.append(child)
-        self.ops.append(("add_child", parent.id, child.id))
-
-    def remove_child(self, parent: MockView, child: MockView, parent_type: str) -> None:
-        parent.children = [c for c in parent.children if c.id != child.id]
-        self.ops.append(("remove_child", parent.id, child.id))
-
-    def insert_child(self, parent: MockView, child: MockView, parent_type: str, index: int) -> None:
-        parent.children.insert(index, child)
-        self.ops.append(("insert_child", parent.id, child.id, index))
-
 
 # ======================================================================
 # Data structures
@@ -626,7 +586,9 @@ def test_tab_navigator_renders_native_tab_bar() -> None:
         {"name": "TabB", "title": "Tab B"},
     ]
     assert tab_bar.props["active_tab"] == "TabA"
-    assert callable(tab_bar.props["on_tab_select"])
+    # The callback itself is routed to the event registry; the native
+    # payload only carries the wired event-name set.
+    assert "on_tab_select" in tab_bar.props["_pn_events"]
 
 
 def test_tab_navigator_forwards_tab_bar_icon() -> None:
@@ -743,6 +705,82 @@ def test_drawer_navigator_renders_initial_screen() -> None:
 
     texts = find_texts(root)
     assert "home" in texts
+
+
+def test_drawer_navigator_switches_screens_back_and_forth() -> None:
+    """Driving One->Two->One through the event registry re-renders correctly.
+
+    Regression for a CI E2E failure where the drawer demo got stuck on
+    "screen Two" after tapping "Go to One". The two screens are distinct
+    component types, so each ``navigate`` replaces the whole nested-screen
+    subtree; this exercises that replace path end-to-end (event dispatch ->
+    state setter -> ``flush_dirty`` -> reconcile) to prove the navigation
+    logic itself is deterministic. The on-device failure was native, not a
+    logic bug: the per-screen "Go to One" button lived inside the subtree
+    that ``navigate`` tore down, so it destroyed itself mid-tap and dropped
+    the follow-up touch on the loaded CI simulator. The demo now drives
+    navigation from a persistent control (see drawer_navigator.py); this
+    test guards the underlying logic so a real regression can't hide behind
+    that native quirk.
+    """
+    from pythonnative.events import get_event_registry
+
+    Drawer = create_drawer_navigator()
+
+    @component
+    def One() -> Element:
+        nav = use_navigation()
+        return Element(
+            "View",
+            {},
+            [
+                Element("Text", {"text": "screen One"}, []),
+                Element("Button", {"title": "Go to Two", "on_click": lambda: nav.navigate("Two")}, []),
+            ],
+        )
+
+    @component
+    def Two() -> Element:
+        nav = use_navigation()
+        return Element(
+            "View",
+            {},
+            [
+                Element("Text", {"text": "screen Two"}, []),
+                Element("Button", {"title": "Go to One", "on_click": lambda: nav.navigate("One")}, []),
+            ],
+        )
+
+    backend = MockBackend()
+    rec = Reconciler(backend)
+    # Wire the production render trigger so a state setter fired from an
+    # event callback actually re-renders, exactly as on device.
+    rec._screen_re_render = rec.flush_dirty
+
+    el = Drawer.Navigator(
+        Drawer.Screen("One", component=One, options={"title": "One"}),
+        Drawer.Screen("Two", component=Two, options={"title": "Two"}),
+    )
+    rec.mount(el)
+
+    def texts() -> set:
+        return {v.props.get("text") for v in backend.views.values() if v.type_name == "Text"}
+
+    def tag_of_button(title: str) -> int:
+        for v in backend.views.values():
+            if v.type_name == "Button" and v.props.get("title") == title:
+                return v.tag
+        raise AssertionError(f"button {title!r} not found; have {texts()}")
+
+    registry = get_event_registry()
+
+    assert "screen One" in texts()
+
+    registry.dispatch(tag_of_button("Go to Two"), "on_click")
+    assert texts() == {"screen Two"}, "navigate('Two') must show screen Two only"
+
+    registry.dispatch(tag_of_button("Go to One"), "on_click")
+    assert texts() == {"screen One"}, "navigate('One') must switch back to screen One"
 
 
 def test_drawer_navigator_empty_screens() -> None:

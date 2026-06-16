@@ -33,17 +33,20 @@ jobs:
     # ~35th flow. Sharding the run into a few balanced groups — each on
     # its own freshly booted emulator — keeps every session well under
     # the limit, and parallelizes the Android pass as a bonus. Groups are
-    # sized so none exceeds ~25 flows; ``components`` is the largest
-    # single category and runs alone. ``fail-fast: false`` so one shard's
-    # failure still lets the others report.
+    # sized so none exceeds ~15 flows; ``components`` (28 flows after the
+    # gesture/animated additions) crossed the ceiling at ~flow 26, so it
+    # runs as two halves. ``fail-fast: false`` so one shard's failure
+    # still lets the others report.
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: components
-            suites: components
-          - name: hooks-nav
-            suites: hooks navigation
+          - name: components-a
+            suites: components-a
+          - name: components-b
+            suites: components-b
+          - name: hooks-nav-gestures
+            suites: hooks navigation gestures
           - name: layout-styling-anim-misc
             suites: layout styling animations misc
 
@@ -85,6 +88,18 @@ jobs:
           arch: x86_64
           script: bash -lc "./scripts/run-e2e.sh android ${{ matrix.suites }}"
 
+      # Maestro writes per-flow debug output (command log, view-hierarchy
+      # dumps, failure screenshots) under ~/.maestro/tests. Surface it when
+      # a shard fails so CI-only failures are diagnosable without guesswork.
+      - name: Upload Maestro debug output
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-debug-android-${{ matrix.name }}
+          path: ~/.maestro/tests/
+          if-no-files-found: ignore
+          retention-days: 7
+
   e2e-ios:
     needs: coverage
     runs-on: macos-latest
@@ -104,8 +119,8 @@ jobs:
         include:
           - name: components
             suites: components
-          - name: hooks-nav
-            suites: hooks navigation
+          - name: hooks-nav-gestures
+            suites: hooks navigation gestures
           - name: layout-styling-anim-misc
             suites: layout styling animations misc
 
@@ -133,3 +148,15 @@ jobs:
         run: ./scripts/run-e2e.sh ios ${{ matrix.suites }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Maestro writes per-flow debug output (command log, view-hierarchy
+      # dumps, failure screenshots) under ~/.maestro/tests. Surface it when
+      # a shard fails so CI-only failures are diagnosable without guesswork.
+      - name: Upload Maestro debug output
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-debug-ios-${{ matrix.name }}
+          path: ~/.maestro/tests/
+          if-no-files-found: ignore
+          retention-days: 7

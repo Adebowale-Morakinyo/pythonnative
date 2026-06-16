@@ -854,6 +854,8 @@
       
         
       
+        
+      
     
     
     
@@ -1056,6 +1058,34 @@
     
   
     Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -1751,6 +1781,8 @@
       
         
       
+        
+      
     
     
     
@@ -1898,6 +1930,34 @@
     
   
     Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -2230,6 +2290,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.root_tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;root_tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.unmount" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;unmount
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.dispatch_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;dispatch_command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.reconciler.Reconciler.mark_dirty" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2275,6 +2368,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.next_tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;next_tag
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2881,6 +2985,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.root_tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;root_tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.unmount" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;unmount
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.dispatch_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;dispatch_command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.reconciler.Reconciler.mark_dirty" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2926,6 +3063,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.next_tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;next_tag
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2988,11 +3136,18 @@ widgets exclusively through the
 
     <div class="doc doc-contents first">
 
-        <p>Virtual-tree reconciler.</p>
+        <p>Virtual-tree reconciler with a batched, tag-based commit protocol.</p>
 <p>Maintains a tree of <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt;" href="#pythonnative.reconciler.VNode"><code>VNode</code></a> objects
-(each wrapping a native view) and diffs incoming
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> trees to apply the minimal set of
-native mutations.</p>
+(each owning an integer <strong>tag</strong> that identifies its native view) and
+diffs incoming <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> trees to compute the
+minimal set of native mutations.</p>
+<p>The diff phase is <em>pure</em>: it never touches the native layer. Each pass
+appends ops (<code>pythonnative.mutations</code>) to a transaction list, and the
+commit applies them through a single
+<code>backend.apply_mutations(ops)</code> call. Event callbacks never cross into
+the native layer at all — they live in the Python-side
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;EventRegistry&lt;/span&gt;" href="../native_views/#pythonnative.events.EventRegistry"><code>EventRegistry</code></a>, keyed by tag, so
+re-renders that only produce fresh closures cost nothing natively.</p>
 <p>Supports:</p>
 <ul>
 <li><strong>Native elements</strong> (<code>type</code> is a string like <code>"Text"</code>).</li>
@@ -3003,17 +3158,16 @@ native mutations.</p>
   context values during tree traversal.</li>
 <li><strong>Error boundary elements</strong> (<code>type == "__ErrorBoundary__"</code>), which
   catch exceptions in child subtrees and render a fallback.</li>
-<li><strong>Key-based child reconciliation</strong> for stable identity across
-  re-renders.</li>
-<li><strong>Post-render effect flushing</strong>. After each mount or reconcile pass,
-  all queued effects are executed so they see the committed native tree.</li>
-<li><strong>Layout pass</strong>: after every commit, a parallel
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="../layout/#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> tree is built from
-  the committed VNodes and fed through
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt;" href="../layout/#pythonnative.layout.calculate_layout"><code>calculate_layout</code></a>; the
-  resulting per-node frames are applied via the backend's
-  <code>set_frame</code>. The viewport size is supplied by the screen host via
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_viewport_size&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.set_viewport_size"><code>set_viewport_size</code></a>.</li>
+<li><strong>Key-based child reconciliation</strong> with indexed, move-aware inserts
+  (keyed reorders emit one move per child instead of detach-all /
+  re-attach-all).</li>
+<li><strong>Post-render effect flushing</strong>. After each commit, all queued
+  effects are executed so they see the committed native tree.</li>
+<li><strong>Incremental layout</strong>: a parallel
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="../layout/#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> tree is cached across
+  passes; clean subtrees keep their cached nodes (enabling the layout
+  engine's measurement memo) and only frames that actually changed are
+  sent to the native side.</li>
 </ul>
 
 
@@ -3038,7 +3192,7 @@ native mutations.</p>
             <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.VNode&lt;/code&gt;)" href="#pythonnative.reconciler.VNode">VNode</a></code></td>
             <td>
               <div class="doc-md-description">
-                <p>A mounted <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> plus its native view.</p>
+                <p>A mounted <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> plus its native identity.</p>
               </div>
             </td>
           </tr>
@@ -3054,6 +3208,27 @@ native mutations.</p>
     </table>
 
 
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;next_tag&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.next_tag&lt;/code&gt;)" href="#pythonnative.reconciler.next_tag">next_tag</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Allocate a fresh, process-unique view tag.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
 
 
 
@@ -3078,14 +3253,14 @@ native mutations.</p>
 
 
 <a href="#pythonnative.reconciler.VNode" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">VNode</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span><span class="p">,</span> <span class="n">native_view</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">,</span> <span class="n">children</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.List&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.List">List</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.VNode&lt;/code&gt;)" href="#pythonnative.reconciler.VNode">VNode</a></span><span class="p">])</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">VNode</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt; (&lt;code&gt;pythonnative.element.Element&lt;/code&gt;)" href="../element/#pythonnative.element.Element">Element</a></span><span class="p">,</span> <span class="n">children</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.List&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.List">List</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.VNode&lt;/code&gt;)" href="#pythonnative.reconciler.VNode">VNode</a></span><span class="p">],</span> <span class="n">tag</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
 
 
-        <p>A mounted <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> plus its native view.</p>
+        <p>A mounted <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a> plus its native identity.</p>
 <p>The reconciler walks parallel trees of <code>VNode</code> and incoming
 <code>Element</code> to compute the minimal set of native mutations.</p>
 
@@ -3111,14 +3286,29 @@ native mutations.</p>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td><code><span title="pythonnative.reconciler.VNode.native_view">native_view</span></code></td>
+            <td><code><span title="pythonnative.reconciler.VNode.tag">tag</span></code></td>
             <td>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The platform-native view (e.g., an Android <code>View</code>
-or an iOS <code>UIView</code>). May be <code>None</code> for purely virtual
-wrappers such as providers and error boundaries.</p>
+                <p>Integer identity of the underlying native view. Native
+elements own a fresh tag; transparent wrappers (function
+components, providers, error boundaries) delegate the tag
+of their rendered subtree root. <code>None</code> before the subtree
+renders anything.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.reconciler.VNode.native_view">native_view</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The platform-native view object, resolved from the
+registry after commit. May be <code>None</code> for purely virtual
+wrappers that rendered nothing.</p>
               </div>
             </td>
           </tr>
@@ -3141,7 +3331,7 @@ wrappers such as providers and error boundaries.</p>
               <div class="doc-md-description">
                 <p>The owning <code>VNode</code>, or <code>None</code> for the tree root. Used
 by local (component-scoped) re-renders to bubble a changed
-native view up to the nearest native container.</p>
+subtree root up to the nearest native container.</p>
               </div>
             </td>
           </tr>
@@ -3224,10 +3414,16 @@ entries in the reconciler's dirty set are skipped.</p>
 
 
         <p>Create, diff, and patch native view trees from <code>Element</code> descriptors.</p>
-<p>After each <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;mount&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.mount"><code>mount</code></a> or
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reconcile&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.reconcile"><code>reconcile</code></a> call the
-reconciler walks the committed tree and flushes all pending effects
-so effect callbacks run <em>after</em> native mutations are applied.</p>
+<p>After each <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;mount&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.mount"><code>mount</code></a>,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reconcile&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.reconcile"><code>reconcile</code></a>, or
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;flush_dirty&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.flush_dirty"><code>flush_dirty</code></a>
+pass the reconciler:</p>
+<ol>
+<li>applies the accumulated mutation ops in one batch,</li>
+<li>resolves freshly created native views and populates refs,</li>
+<li>flushes pending effects (so they see the committed tree), and</li>
+<li>runs the layout pass, emitting only changed frames.</li>
+</ol>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3250,10 +3446,11 @@ so effect callbacks run <em>after</em> native mutations are applied.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An object implementing the native-view protocol
-(<code>create_view</code>, <code>update_view</code>, <code>add_child</code>, <code>remove_child</code>,
-<code>insert_child</code>). PythonNative ships an Android backend and
-an iOS backend; tests can pass a mock.</p>
+                <p>An object implementing the registry protocol
+(<code>apply_mutations</code>, <code>resolve_view</code>,
+<code>measure_intrinsic</code>, <code>command</code>). PythonNative ships
+Android, iOS, and desktop registries; tests can pass a
+registry stocked with mock handlers.</p>
               </div>
             </td>
             <td>
@@ -3304,6 +3501,30 @@ an iOS backend; tests can pass a mock.</p>
               <td>
                 <div class="doc-md-description">
                   <p>Return the current root native view, or <code>None</code> before mount.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;root_tag&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.root_tag&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.root_tag">root_tag</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Return the root native view's tag, or <code>None</code> before mount.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;unmount&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.unmount&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.unmount">unmount</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Destroy the entire mounted tree and release native views.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_command&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.dispatch_command&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.dispatch_command">dispatch_command</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Run an imperative command against the view registered under <code>tag</code>.</p>
                 </div>
               </td>
             </tr>
@@ -3539,6 +3760,66 @@ an iOS backend; tests can pass a mock.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="pythonnative.reconciler.Reconciler.root_tag" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">root_tag</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.root_tag" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">root_tag</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Return the root native view's tag, or <code>None</code> before mount.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.unmount" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">unmount</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.unmount" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">unmount</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Destroy the entire mounted tree and release native views.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.dispatch_command" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">dispatch_command</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.dispatch_command" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dispatch_command</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run an imperative command against the view registered under <code>tag</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="pythonnative.reconciler.Reconciler.mark_dirty" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">mark_dirty</span>
 
@@ -3584,7 +3865,8 @@ component re-runs its own body (reusing its
 its subtree. Nodes are processed shallowest-first so that when a
 dirty ancestor's re-render already covers a dirty descendant, the
 descendant is skipped (its <code>_dirty</code> flag is cleared by the
-ancestor pass).</p>
+ancestor pass). The whole batch commits as one native
+transaction.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -3727,6 +4009,26 @@ has been mounted yet.</p>
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.reconciler.next_tag" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">next_tag</span>
+
+
+<a href="#pythonnative.reconciler.next_tag" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">next_tag</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Allocate a fresh, process-unique view tag.</p>
+
+
+    </div>
+
+</div>
 
 
 

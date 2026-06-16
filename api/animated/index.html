@@ -18,7 +18,7 @@
         <link rel="prev" href="../hooks/">
       
       
-        <link rel="next" href="../alerts/">
+        <link rel="next" href="../gestures/">
       
       
         
@@ -854,6 +854,8 @@
       
         
       
+        
+      
     
     
     
@@ -1056,6 +1058,34 @@
     
   
     Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -1751,6 +1781,8 @@
       
         
       
+        
+      
     
     
     
@@ -1995,6 +2027,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.attach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;attach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.attachments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;attachments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.animated.AnimatedValue.add_listener" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2005,8 +2059,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.has_listeners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;has_listeners
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.stop_animation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;stop_animation
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.animated.native_animation_completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;native_animation_completed
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2036,6 +2123,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2837,6 +2952,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.attach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;attach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.attachments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;attachments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.animated.AnimatedValue.add_listener" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2847,8 +2984,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.has_listeners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;has_listeners
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.animated.AnimatedValue.stop_animation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;stop_animation
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.animated.native_animation_completed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;native_animation_completed
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2924,12 +3094,13 @@ bypass full reconciliation.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Animated values + animation drivers + animated component wrappers.</p>
-<p>Modeled on React Native's <code>Animated</code> API but with an
-<code>async</code>-aware completion contract. The core primitives are:</p>
+        <p>Animated values, native-driven animation, and animated components.</p>
+<p>Modeled on React Native's <code>Animated</code> API with an <code>async</code>-aware
+completion contract. The core primitives are:</p>
 <ul>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a>: a numeric
-  cell with subscribers; animations mutate it over time.</li>
+  cell attached to native view properties; animations drive it over
+  time.</li>
 <li><code>Animated.timing</code> / <code>Animated.spring</code> / <code>Animated.decay</code>:
   animation factories. The objects they return implement
   <code>__await__</code>, so you can write <code>await Animated.timing(v, to=1.0)</code>
@@ -2939,14 +3110,23 @@ bypass full reconciliation.</p>
 <li><code>Animated.View</code> / <code>Animated.Text</code> / <code>Animated.Image</code>:
   components whose <code>style</code> may contain <code>AnimatedValue</code> instances.</li>
 </ul>
-<p>Driver:</p>
+<p>Driver architecture (the <strong>native driver</strong>):</p>
+<p>When an animation starts, PythonNative compiles its spec (curve,
+duration, target value) and offers it to the platform handler of every
+native view the value is attached to
+(<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;start_animation&lt;/span&gt;" href="../native_views/#pythonnative.native_views.base.ViewHandler.start_animation"><code>ViewHandler.start_animation</code></a>).</p>
 <ul>
-<li>A single background thread ticks at ~60 Hz, advancing every active
-  animation by <code>dt</code>.</li>
-<li>Animations expose two APIs:</li>
-<li><code>handle.start()</code> — fire-and-forget. Returns <code>self</code>.</li>
-<li><code>await handle</code> (or <code>await handle.run()</code>) — wait for the
-    animation to complete; cancellation cancels the animation.</li>
+<li><strong>Accepted</strong> (iOS Core Animation, Android <code>ViewPropertyAnimator</code> /
+  <code>DynamicAnimation</code>): the platform animates the property entirely
+  natively — no Python code runs per frame. Python receives exactly one
+  callback when the animation settles, updates the
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a>, and resolves
+  any awaiting tasks.</li>
+<li><strong>Declined</strong> (desktop preview, unattached values, callable easings,
+  values feeding Python-side listeners): a single background thread
+  ticks the animation at ~60 Hz from Python, pushing each frame through
+  <code>set_animated_property</code>. Semantics are identical; only the frame
+  source differs.</li>
 </ul>
 
 
@@ -2993,7 +3173,7 @@ bypass full reconciliation.</p>
             <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue">AnimatedValue</a></code></td>
             <td>
               <div class="doc-md-description">
-                <p>A subscribable numeric cell driven by animations.</p>
+                <p>A numeric cell that can be attached to native view properties.</p>
               </div>
             </td>
           </tr>
@@ -3012,6 +3192,14 @@ bypass full reconciliation.</p>
         </tr>
       </thead>
       <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;native_animation_completed&lt;/span&gt; (&lt;code&gt;pythonnative.animated.native_animation_completed&lt;/code&gt;)" href="#pythonnative.animated.native_animation_completed">native_animation_completed</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Report a natively-driven animation as settled.</p>
+                </div>
+              </td>
+            </tr>
             <tr class="doc-section-item">
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_animated_value&lt;/span&gt; (&lt;code&gt;pythonnative.animated.use_animated_value&lt;/code&gt;)" href="#pythonnative.animated.use_animated_value">use_animated_value</a></code></td>
               <td>
@@ -3104,14 +3292,17 @@ bypass full reconciliation.</p>
 
 
 
-        <p>A subscribable numeric cell driven by animations.</p>
-<p>Direct mutation via
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_value&lt;/span&gt;" href="#pythonnative.animated.AnimatedValue.set_value"><code>set_value</code></a>
-fires subscribers immediately; animations call <code>set_value</code> from
-the ticker thread.</p>
-<p>Subscribers are <code>(prop_name, callback)</code> tuples. Each animated
-component (e.g., <code>Animated.View</code>) subscribes once per
-<code>AnimatedValue</code> prop in its style during mount.</p>
+        <p>A numeric cell that can be attached to native view properties.</p>
+<p>Animated components (<code>Animated.View</code> et al.) <strong>attach</strong> the value
+to <code>(tag, prop)</code> bindings after mount. Setting the value pushes
+the new number to every attached native view through the registry's
+<code>set_animated_property</code> — and when an animation can be driven
+natively, the platform animates those same bindings directly.</p>
+<p>Python-side listeners registered via
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;add_listener&lt;/span&gt;" href="#pythonnative.animated.AnimatedValue.add_listener"><code>add_listener</code></a>
+observe every Python-driven change. Natively-driven animations
+intentionally skip per-frame Python callbacks (that's the point);
+listeners see the final settled value.</p>
 
 
 
@@ -3137,7 +3328,23 @@ component (e.g., <code>Animated.View</code>) subscribes once per
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;set_value&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue.set_value&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue.set_value">set_value</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Set the value immediately and fire all subscribers.</p>
+                  <p>Set the value immediately, pushing to native views and listeners.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;attach&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue.attach&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue.attach">attach</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Bind this value to <code>prop</code> of the native view under <code>tag</code>.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;attachments&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue.attachments&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue.attachments">attachments</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Snapshot of the current <code>(tag, prop)</code> bindings.</p>
                 </div>
               </td>
             </tr>
@@ -3145,7 +3352,23 @@ component (e.g., <code>Animated.View</code>) subscribes once per
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;add_listener&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue.add_listener&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue.add_listener">add_listener</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Register <code>callback</code> for changes to this value.</p>
+                  <p>Register <code>callback</code> for Python-driven changes to this value.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;has_listeners&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue.has_listeners&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue.has_listeners">has_listeners</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Whether any Python-side listeners are registered.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;stop_animation&lt;/span&gt; (&lt;code&gt;pythonnative.animated.AnimatedValue.stop_animation&lt;/code&gt;)" href="#pythonnative.animated.AnimatedValue.stop_animation">stop_animation</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Cancel any in-flight animation on this value (native or Python).</p>
                 </div>
               </td>
             </tr>
@@ -3235,7 +3458,49 @@ component (e.g., <code>Animated.View</code>) subscribes once per
 
     <div class="doc doc-contents ">
 
-        <p>Set the value immediately and fire all subscribers.</p>
+        <p>Set the value immediately, pushing to native views and listeners.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.animated.AnimatedValue.attach" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">attach</span>
+
+
+<a href="#pythonnative.animated.AnimatedValue.attach" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">attach</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">prop</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Bind this value to <code>prop</code> of the native view under <code>tag</code>.</p>
+<p>The current value is pushed immediately so the view reflects it
+even if no animation is running. Returns a detach callable.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.animated.AnimatedValue.attachments" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">attachments</span>
+
+
+<a href="#pythonnative.animated.AnimatedValue.attachments" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">attachments</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.List&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.List">List</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Tuple&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Snapshot of the current <code>(tag, prop)</code> bindings.</p>
 
 
     </div>
@@ -3255,10 +3520,50 @@ component (e.g., <code>Animated.View</code>) subscribes once per
 
     <div class="doc doc-contents ">
 
-        <p>Register <code>callback</code> for changes to this value.</p>
-<p>Returns an unsubscribe callable. <code>prop</code> is metadata only —
-it lets the subscriber differentiate this binding from others
-on the same <code>AnimatedValue</code>.</p>
+        <p>Register <code>callback</code> for Python-driven changes to this value.</p>
+<p>Returns an unsubscribe callable. <code>prop</code> is metadata only — it
+lets the subscriber differentiate this binding from others on
+the same <code>AnimatedValue</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.animated.AnimatedValue.has_listeners" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">has_listeners</span>
+
+
+<a href="#pythonnative.animated.AnimatedValue.has_listeners" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">has_listeners</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Whether any Python-side listeners are registered.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.animated.AnimatedValue.stop_animation" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">stop_animation</span>
+
+
+<a href="#pythonnative.animated.AnimatedValue.stop_animation" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">stop_animation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Cancel any in-flight animation on this value (native or Python).</p>
 
 
     </div>
@@ -3273,6 +3578,79 @@ on the same <code>AnimatedValue</code>.</p>
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.animated.native_animation_completed" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">native_animation_completed</span>
+
+
+<a href="#pythonnative.animated.native_animation_completed" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">native_animation_completed</span><span class="p">(</span><span class="n">anim_id</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">finished</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Report a natively-driven animation as settled.</p>
+<p>Called by platform handlers from their completion callbacks (iOS
+<code>UIView</code> completion blocks, Android <code>withEndAction</code> /
+<code>DynamicAnimation.OnAnimationEndListener</code>). Safe to call from any
+thread; unknown ids are ignored (e.g. an animation cancelled
+moments before its completion fired).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>anim_id</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The id passed to <code>ViewHandler.start_animation</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>finished</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>False</code> when the platform reports the animation was
+interrupted rather than running to completion.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 

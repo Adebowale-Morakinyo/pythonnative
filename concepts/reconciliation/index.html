@@ -818,6 +818,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#commits-are-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commits are transactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#keyed-children" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -963,6 +974,8 @@
   
     
     
+      
+        
       
         
       
@@ -1194,6 +1207,34 @@
     
   
     Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -1887,6 +1928,8 @@
       
         
       
+        
+      
     
     
     
@@ -2033,6 +2076,34 @@
     
   
     Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -2819,6 +2890,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#commits-are-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commits are transactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#keyed-children" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2929,28 +3011,62 @@ diffing, function components, providers, and error boundaries.</p>
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../../api/element/#pythonnative.element.Element"><code>Element</code></a> tree. Naively recreating native
 widgets every render would be slow (Auto Layout passes, JNI roundtrips)
 and would lose user state (text selections, scroll position, focus).</p>
-<p>The reconciler instead asks: what is the <em>minimal</em> sequence of native
-calls that turns the previous tree into the new one? It maintains a
+<p>The reconciler instead asks: what is the <em>minimal</em> list of native
+mutations that turns the previous tree into the new one? It maintains a
 parallel virtual tree of <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;VNode&lt;/span&gt;" href="../../api/reconciler/#pythonnative.reconciler.VNode"><code>VNode</code></a>s, each
-of which holds the native handle returned by a
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ViewHandler&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.base.ViewHandler"><code>ViewHandler</code></a> and the props
-last applied.</p>
+of which holds an integer <strong>tag</strong> (the view's stable identity on the
+native side) and the props last applied.</p>
 <h2 id="the-diff-algorithm-in-one-paragraph">The diff algorithm in one paragraph<a class="headerlink" href="#the-diff-algorithm-in-one-paragraph" title="Permanent link">&para;</a></h2>
 <p>For each pair of (previous, next) elements at the same position in the
 tree:</p>
 <ul>
-<li>If their <code>type</code> matches, <strong>update</strong>: hand the native view back to the
-  handler with <code>update_view(view, prev_props, next_props)</code>.</li>
-<li>If their <code>type</code> differs, <strong>replace</strong>: ask the handler to remove the
-  old view, mount a new one, and recurse into its children.</li>
+<li>If their <code>type</code> matches, <strong>update</strong>: emit an
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;UpdateOp&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/native_views/#pythonnative.mutations.UpdateOp"><code>UpdateOp</code></a> carrying only the
+  props that changed (removed props arrive as <code>None</code>).</li>
+<li>If their <code>type</code> differs, <strong>replace</strong>: emit destroy ops for the old
+  subtree, create ops for the new one, and recurse into its children.</li>
 <li>For container elements, match children by <code>key</code> first and by
   position only if no key was provided. Reorder, mount, and unmount
-  as needed using <code>insert_child</code> / <code>add_child</code> / <code>remove_child</code>.</li>
+  as needed using <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;InsertOp&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/native_views/#pythonnative.mutations.InsertOp"><code>InsertOp</code></a> /
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RemoveOp&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/native_views/#pythonnative.mutations.RemoveOp"><code>RemoveOp</code></a> /
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;DestroyOp&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/native_views/#pythonnative.mutations.DestroyOp"><code>DestroyOp</code></a>.</li>
 </ul>
 <p>That's it. There is no "fiber tree", no time slicing, and no priority
-lanes. The reconciler runs synchronously to completion on the main
-thread; if a render is heavy, you'll feel it as a frame drop, not a
-deferred update.</p>
+lanes. The reconciler runs synchronously to completion; if a render is
+heavy, you'll feel it as a frame drop, not a deferred update.</p>
+<h2 id="commits-are-transactions">Commits are transactions<a class="headerlink" href="#commits-are-transactions" title="Permanent link">&para;</a></h2>
+<p>The diff phase is pure: it only accumulates ops. At the end of the
+pass the whole list — including the <code>SetFrameOp</code>s produced by the
+layout pass — is applied through a single
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;apply_mutations&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.NativeViewRegistry.apply_mutations"><code>apply_mutations</code></a>
+call. The native side sees one coherent transaction per commit
+(mirroring React Native's Fabric mounting layer), which is also what
+makes <code>flush_dirty</code> batches cheap: several dirty components re-render,
+and their combined mutations land as one batch.</p>
+<p>Callable props never enter the transaction at all. They're registered
+in the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;EventRegistry&lt;/span&gt;" href="../../api/native_views/#pythonnative.events.EventRegistry"><code>EventRegistry</code></a> keyed by
+<code>(tag, event name)</code>, so a render that only changes callback identities
+emits <strong>zero</strong> ops.</p>
 <h2 id="keyed-children">Keyed children<a class="headerlink" href="#keyed-children" title="Permanent link">&para;</a></h2>
 <p>Without keys, children are matched by <strong>index</strong>. That's fine for static
 lists but breaks down when items are inserted or reordered:</p>
@@ -3024,11 +3140,19 @@ for usage patterns.</p>
 <p>For animation-driven values that change every frame (60+ Hz), going
 through <code>set_state</code> is wasteful. Two ways to bypass:</p>
 <ul>
+<li>Use the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Animated&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt;" href="../../api/animated/#pythonnative.animated.Animated"><code>Animated</code></a> API: an
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="../../api/animated/#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a> bound into an
+  <code>Animated.View</code> style drives the native property directly — and
+  when the platform can run the animation natively, no Python code
+  runs per frame at all. See the
+  <a href="../../guides/animations/">Animations guide</a>.</li>
 <li>Use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_ref&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_ref"><code>use_ref</code></a> to hold a reference to a
-  native view and mutate it directly (<code>view.setText(...)</code> from inside
-  an effect callback).</li>
-<li>Implement a custom widget that internally manages an animation; the
-  reconciler only sees the static element wrapping it.</li>
+  native view and mutate it directly from inside an effect callback.</li>
 </ul>
 <p>Reach for these only when profiling tells you that re-rendering is the
 bottleneck.</p>

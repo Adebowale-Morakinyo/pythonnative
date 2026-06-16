@@ -856,6 +856,8 @@
       
         
       
+        
+      
     
     
     
@@ -1059,6 +1061,34 @@
     
   
     Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -1926,6 +1956,8 @@
       
         
       
+        
+      
     
     
     
@@ -2072,6 +2104,34 @@
     
   
     Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -3096,7 +3156,7 @@ diffing in the reconciler stays cheap.</p>
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
 </span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="nd">@native_component</span><span class="p">(</span><span class="s2">&quot;Badge&quot;</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="n">BadgeProps</span><span class="p">,</span> <span class="n">platforms</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;ios&quot;</span><span class="p">,))</span>
 </span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="k">class</span><span class="w"> </span><span class="nc">IOSBadgeHandler</span><span class="p">(</span><span class="n">ViewHandler</span><span class="p">):</span>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 </span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>        <span class="n">view</span> <span class="o">=</span> <span class="n">UIView</span><span class="o">.</span><span class="n">alloc</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 </span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="n">view</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">cornerRadius</span> <span class="o">=</span> <span class="mi">12</span>
 </span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>        <span class="n">label</span> <span class="o">=</span> <span class="n">UILabel</span><span class="o">.</span><span class="n">alloc</span><span class="p">()</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
@@ -3143,7 +3203,7 @@ inside a <code>FrameLayout</code>:</p>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="nd">@native_component</span><span class="p">(</span><span class="s2">&quot;Badge&quot;</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="n">BadgeProps</span><span class="p">,</span> <span class="n">platforms</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;android&quot;</span><span class="p">,))</span>
 </span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="k">class</span><span class="w"> </span><span class="nc">AndroidBadgeHandler</span><span class="p">(</span><span class="n">ViewHandler</span><span class="p">):</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">props</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 </span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">get_android_context</span><span class="p">()</span>
 </span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="n">container</span> <span class="o">=</span> <span class="n">FrameLayout</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">bg</span> <span class="o">=</span> <span class="n">GradientDrawable</span><span class="p">()</span>
@@ -3169,6 +3229,12 @@ inside a <code>FrameLayout</code>:</p>
 <p>The <code>set_frame</code> and <code>measure_intrinsic</code> shapes are identical to the
 built-in handlers; see
 <a href="../../concepts/native-views/">Native views</a> for the full protocol.</p>
+<p>The <code>tag</code> argument is the view's stable identity in the mutation
+protocol. Handlers that fire events use it to dispatch back into
+Python — wire the platform listener once in <code>create</code> and call
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_event&lt;/span&gt;" href="../../api/native_views/#pythonnative.events.dispatch_event"><code>dispatch_event(tag, "on_change", value)</code></a>;
+the reconciler keeps the <code>(tag, name) -&gt; callback</code> registry up to date
+across re-renders without any further native calls.</p>
 <h3 id="4-wire-it-into-your-project">4. Wire it into your project<a class="headerlink" href="#4-wire-it-into-your-project" title="Permanent link">&para;</a></h3>
 <p><code>my_pkg/__init__.py</code> imports the right module based on the active
 runtime and exposes a typed factory:</p>
@@ -3277,7 +3343,7 @@ swap in a stub handler that records calls:</p>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
 </span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
 </span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">_StubHandler</span><span class="p">(</span><span class="n">ViewHandler</span><span class="p">):</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span> <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;props&quot;</span><span class="p">:</span> <span class="n">props</span><span class="p">}</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span> <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;props&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">props</span><span class="p">)}</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">changed</span><span class="p">):</span> <span class="n">view</span><span class="p">[</span><span class="s2">&quot;props&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span>
 </span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
 </span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>

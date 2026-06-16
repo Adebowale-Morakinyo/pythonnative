@@ -854,6 +854,8 @@
       
         
       
+        
+      
     
     
     
@@ -1056,6 +1058,34 @@
     
   
     Animations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -1854,6 +1884,8 @@
       
         
       
+        
+      
     
     
     
@@ -2000,6 +2032,34 @@
     
   
     Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -2938,10 +2998,10 @@ both come from the same <code>todo["id"]</code>. When in doubt: use a stable
 identifier that's part of the data, not the position.</p>
 <h2 id="performance-notes">Performance notes<a class="headerlink" href="#performance-notes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>FlatList</code> lazily mounts rows that are visible (or near visible) on
-  iOS via <code>UITableView</code> and on Android via <code>RecyclerView</code>. For long
-  lists it scales much better than wrapping a <code>Column</code> in a
-  <code>ScrollView</code>.</li>
+<li><code>FlatList</code> lazily mounts only the rows that are visible (or near
+  visible); off-screen rows are represented by spacers and the window
+  shifts as the user scrolls. For long lists it scales much better
+  than wrapping a <code>Column</code> in a <code>ScrollView</code>.</li>
 <li>Avoid recomputing <code>data</code> on every render. If you derive it from
   another piece of state, wrap it in
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_memo&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_memo"><code>use_memo</code></a>.</li>

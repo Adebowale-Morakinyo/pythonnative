@@ -18,7 +18,7 @@
         <link rel="prev" href="../styling/">
       
       
-        <link rel="next" href="../lists/">
+        <link rel="next" href="../gestures/">
       
       
         
@@ -856,6 +856,8 @@
       
         
       
+        
+      
     
     
     
@@ -1122,6 +1124,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-native-driver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The native driver
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fade-in-on-mount" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1166,6 +1179,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#decay-fling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decay (fling)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#stopping-an-animation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1191,6 +1215,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1876,6 +1928,8 @@
       
         
       
+        
+      
     
     
     
@@ -2022,6 +2076,34 @@
     
   
     Animated
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gestures
   
 
     
@@ -2797,6 +2879,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-native-driver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The native driver
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fade-in-on-mount" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2834,6 +2927,17 @@
     <span class="md-ellipsis">
       
         Easing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decay-fling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decay (fling)
       
     </span>
   </a>
@@ -2913,12 +3017,30 @@ without re-rendering the component tree on every frame.</p>
 <li><code>await handle</code> runs the animation and suspends until it
      completes. Cancelling the awaiting task stops the animation.</li>
 </ol>
-<p>The animated component captures a <code>ref</code> to the underlying native view
-(via the same <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_ref&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_ref"><code>use_ref</code></a> mechanism users have
-access to). The animation driver then invokes the platform's native
-animation API (<code>UIView.animate</code> on iOS, <code>ViewPropertyAnimator</code> on
-Android) directly on that view, so per-frame updates skip the
-reconciler.</p>
+<p>The animated component attaches the value to its native view's
+animation bindings after mount. From there, the <strong>native driver</strong>
+takes over whenever it can.</p>
+<h2 id="the-native-driver">The native driver<a class="headerlink" href="#the-native-driver" title="Permanent link">&para;</a></h2>
+<p>When you <code>start()</code> (or await) an animation whose value is attached to
+mounted views, PythonNative first offers the animation to the
+platform: Core Animation (<code>CABasicAnimation</code> / <code>CASpringAnimation</code>)
+on iOS, <code>ViewPropertyAnimator</code> / <code>DynamicAnimation</code> on Android. If
+the platform accepts, the animation runs entirely natively at the
+display's refresh rate — <strong>no Python code executes per frame</strong> — and
+Python receives exactly one completion callback, which settles the
+<code>AnimatedValue</code> at its final number.</p>
+<p>The Python-ticked fallback (a ~60 Hz loop) is used automatically
+when:</p>
+<ul>
+<li>the value isn't attached to any mounted view (pure data animation),</li>
+<li>a Python listener is registered via <code>add_listener</code> (listeners want
+  per-frame values, and only the ticker provides those),</li>
+<li>a callable <code>easing</code> is supplied (custom curves can't cross the
+  bridge), or</li>
+<li>the platform declines the animation.</li>
+</ul>
+<p>Either way the API and the observable end state are identical, so you
+never have to opt in or out manually.</p>
 <h2 id="fade-in-on-mount">Fade in on mount<a class="headerlink" href="#fade-in-on-mount" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -2989,18 +3111,26 @@ awaitable.</p>
 <h2 id="easing">Easing<a class="headerlink" href="#easing" title="Permanent link">&para;</a></h2>
 <p><code>Animated.timing</code> accepts an <code>easing</code> argument: <code>"linear"</code>,
 <code>"ease_in"</code>, <code>"ease_out"</code>, <code>"ease_in_out"</code>, or <code>"bounce"</code>.</p>
+<h2 id="decay-fling">Decay (fling)<a class="headerlink" href="#decay-fling" title="Permanent link">&para;</a></h2>
+<p><code>Animated.decay</code> decelerates a value from an initial velocity —
+the standard ending for a pan gesture:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">on_pan_end</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">decay</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">velocity_x</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></code></pre></div>
+<p>See the <a href="../gestures/">Gestures guide</a> for the full drag-and-release
+pattern.</p>
 <h2 id="stopping-an-animation">Stopping an animation<a class="headerlink" href="#stopping-an-animation" title="Permanent link">&para;</a></h2>
 <p><code>start()</code> returns the handle you started with, and the handle exposes
 <code>.stop()</code>. A common pattern is to keep the handle in a <code>use_ref</code> so
 you can cancel a long-running animation when the user interrupts. If
 you're awaiting the animation instead, cancelling the awaiting task
 stops the animation:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_enter</span><span class="p">():</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">timing</span><span class="p">(</span><span class="n">opacity</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">task</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">_enter</span><span class="p">())</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Sometime later:</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1"># animation snaps to wherever it was; opacity stops here.</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_enter</span><span class="p">():</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">timing</span><span class="p">(</span><span class="n">opacity</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">task</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">_enter</span><span class="p">())</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Sometime later:</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1"># animation snaps to wherever it was; opacity stops here.</span>
 </span></code></pre></div>
 <h2 id="when-not-to-use-animated">When NOT to use <code>Animated</code><a class="headerlink" href="#when-not-to-use-animated" title="Permanent link">&para;</a></h2>
 <ul>

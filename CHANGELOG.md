@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.22.0 (2026-06-16)
+
+### Features
+
+- Overhaul native bridge, animations, gestures, and lists
+  ([#11](https://github.com/pythonnative/pythonnative/pull/11),
+  [`b635110`](https://github.com/pythonnative/pythonnative/commit/b635110fe7139d39f2ae7830fe99177eb03dc0bb))
+
+
 ## v0.21.0 (2026-06-09)
 
 ### Features

@@ -3030,7 +3030,7 @@ place:</p>
 <li>Look up each function's replacement by <code>__module__</code> +
    <code>__qualname__</code> in the freshly reloaded module (unwrapping the
    <code>@pn.component</code> decorator).</li>
-<li>Rewrite the <code>Element.type</code> references on every VNode in place —
+<li>Rewrite the <code>Element.type</code> references on every VNode in place;
    the next reconcile sees the new function with the same
    <code>HookState</code>, so state survives.</li>
 </ol>
@@ -3039,9 +3039,9 @@ place:</p>
 just like a normal re-render, so layout and native views are
 updated incrementally. Component state (<code>use_state</code>, <code>use_reducer</code>,
 refs) is preserved across the swap.</p>
-<p>If Fast Refresh can't find a clean swap — for example, a
+<p>If Fast Refresh can't find a clean swap (for example, a
 component's <code>__qualname__</code> changed, a new module was added that the
-tree doesn't reference yet, or the swap raises — the host
+tree doesn't reference yet, or the swap raises), the host
 <strong>falls back</strong> to a full remount of its root component so you never
 get stuck with a stale tree. Hook state is reset in that case.</p>
 <p>Per-screen scope: each native screen (UIViewController on iOS,

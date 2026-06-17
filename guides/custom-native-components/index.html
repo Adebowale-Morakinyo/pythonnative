@@ -3058,8 +3058,8 @@
 <h1 id="custom-native-components">Custom native components<a class="headerlink" href="#custom-native-components" title="Permanent link">&para;</a></h1>
 <p>PythonNative ships a public extension SDK,
 <a href="../../api/sdk/"><code>pythonnative.sdk</code></a>, that lets you wrap a real
-platform widget — a <code>UIView</code> subclass on iOS, a <code>View</code> subclass on
-Android — and expose it to user code as a first-class element with
+platform widget (a <code>UIView</code> subclass on iOS, a <code>View</code> subclass on
+Android) and expose it to user code as a first-class element with
 type-checked props. Custom components participate in reconciliation,
 flex layout, and Fast Refresh exactly like the built-ins.</p>
 <p>This guide walks through the four-file shape of a typical component
@@ -3099,7 +3099,7 @@ plugins, and <code>mypy</code> couldn't help you.</p>
 </ul>
 <h2 id="a-worked-example-badge">A worked example: <code>Badge</code><a class="headerlink" href="#a-worked-example-badge" title="Permanent link">&para;</a></h2>
 <p>We'll build a small widget that draws a coloured pill with a centred
-label — useful for unread counts, status chips, etc. The same
+label, useful for unread counts, status chips, etc. The same
 project layout works for anything from a chart view to a camera
 preview.</p>
 <h3 id="1-define-typed-props">1. Define typed props<a class="headerlink" href="#1-define-typed-props" title="Permanent link">&para;</a></h3>
@@ -3231,7 +3231,7 @@ built-in handlers; see
 <a href="../../concepts/native-views/">Native views</a> for the full protocol.</p>
 <p>The <code>tag</code> argument is the view's stable identity in the mutation
 protocol. Handlers that fire events use it to dispatch back into
-Python — wire the platform listener once in <code>create</code> and call
+Python: wire the platform listener once in <code>create</code> and call
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_event&lt;/span&gt;" href="../../api/native_views/#pythonnative.events.dispatch_event"><code>dispatch_event(tag, "on_change", value)</code></a>;
 the reconciler keeps the <code>(tag, name) -&gt; callback</code> registry up to date
 across re-renders without any further native calls.</p>

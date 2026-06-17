@@ -3065,8 +3065,8 @@ first to confirm the toolchain is ready.</p>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pn<span class="w"> </span>doctor<span class="w"> </span>ios
 </span></code></pre></div>
 <p><code>pn doctor</code> validates <code>pythonnative.toml</code> and checks the platform
-toolchain — for Android: <code>adb</code>, a JDK, and whether release signing is
-configured; for iOS: macOS, Xcode, <code>simctl</code>, and a development team. It
+toolchain: for Android, <code>adb</code>, a JDK, and whether release signing is
+configured; for iOS, macOS, Xcode, <code>simctl</code>, and a development team. It
 exits non-zero on anything that will block a build, so you can gate CI
 on it.</p>
 <hr />
@@ -3079,7 +3079,7 @@ the build and live under the staged project:</p>
 </span></code></pre></div>
 <h3 id="signing">Signing<a class="headerlink" href="#signing" title="Permanent link">&para;</a></h3>
 <p>Without signing configured, Gradle emits an <strong>unsigned</strong> release APK
-(<code>app-release-unsigned.apk</code>) — fine for inspection, not for the store.
+(<code>app-release-unsigned.apk</code>), fine for inspection, not for the store.
 To produce signed artifacts, create a keystore once:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>keytool<span class="w"> </span>-genkeypair<span class="w"> </span>-v<span class="w"> </span>-keystore<span class="w"> </span>release.keystore<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>-alias<span class="w"> </span>myapp<span class="w"> </span>-keyalg<span class="w"> </span>RSA<span class="w"> </span>-keysize<span class="w"> </span><span class="m">2048</span><span class="w"> </span>-validity<span class="w"> </span><span class="m">10000</span>
@@ -3091,7 +3091,7 @@ To produce signed artifacts, create a keystore once:</p>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># store_password_env / key_password_env default to</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># PN_ANDROID_KEYSTORE_PASSWORD / PN_ANDROID_KEY_PASSWORD</span>
 </span></code></pre></div>
-<p>Passwords are <strong>never</strong> stored in the config — only the names of the
+<p>Passwords are <strong>never</strong> stored in the config, only the names of the
 environment variables that hold them. Provide the secrets at build time:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEYSTORE_PASSWORD</span><span class="o">=</span>…
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEY_PASSWORD</span><span class="o">=</span>…
@@ -3151,16 +3151,16 @@ every per-platform, per-density variant at build time:</p>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;assets/splash.png&quot;</span>
 </span></code></pre></div>
 <ul>
-<li><strong>iOS</strong> — a universal <code>AppIcon.appiconset</code> (Xcode resizes the rest)
+<li><strong>iOS</strong>: a universal <code>AppIcon.appiconset</code> (Xcode resizes the rest)
   and a <code>Splash</code> image set referenced by the generated launch screen.</li>
-<li><strong>Android</strong> — <code>mipmap-*</code> launcher icons at every density plus a round
+<li><strong>Android</strong>: <code>mipmap-*</code> launcher icons at every density plus a round
   variant, and a centered icon for the Android 12+ splash screen.</li>
 </ul>
 <p>Image processing needs <a href="https://python-pillow.org/">Pillow</a>, an optional
 dependency:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pythonnative[build]&#39;</span>
 </span></code></pre></div>
-<p>If Pillow isn't installed the build still succeeds — it just keeps the
+<p>If Pillow isn't installed the build still succeeds; it just keeps the
 template's default assets. <code>pn doctor</code> reports whether Pillow is
 available.</p>
 <hr />
@@ -3194,7 +3194,7 @@ stage and configure the native project without compiling:</p>
 </span></code></pre></div>
 <p>This writes a fully configured project (identity, permissions, icons,
 relocated Android package) under <code>build/</code>, which you can open and build
-with the native IDE — useful for debugging signing or build issues with
+with the native IDE, useful for debugging signing or build issues with
 the platform's own tooling.</p>
 
 

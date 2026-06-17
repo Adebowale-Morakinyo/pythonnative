@@ -3033,7 +3033,7 @@ if you need multipart, streaming, or HTTP/2.</p>
 <p>A small, dependency-free coroutine wrapper around
 :mod:<code>urllib.request</code>. Operates on bytes internally and exposes a
 :class:<code>Response</code> with <code>text()</code>, <code>json()</code>, and <code>bytes</code> accessors.</p>
-<p>The implementation is deliberately minimal — it covers the
+<p>The implementation is deliberately minimal; it covers the
 "call a JSON API" path that's overwhelmingly the use case for mobile
 apps. For streaming, multipart uploads, or HTTP/2, integrate
 <code>httpx</code> / <code>aiohttp</code> directly; this module won't try to compete.</p>
@@ -3743,7 +3743,7 @@ time spent on DNS / connect).</p>
             <td>
               <div class="doc-md-description">
                 <p>For network errors (DNS failure, connection refused,
-etc.) — re-raised from <code>urllib</code>.</p>
+etc.), re-raised from <code>urllib</code>.</p>
               </div>
             </td>
           </tr>

@@ -2937,7 +2937,7 @@ PythonNative does not depend on a native layout library.</p>
 <ol>
 <li>The reconciler maintains a parallel
    <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> tree (cached across
-   passes — clean subtrees keep their nodes, dirty ones are rebuilt).</li>
+   passes: clean subtrees keep their nodes, dirty ones are rebuilt).</li>
 <li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;calculate_layout&lt;/span&gt;" href="#pythonnative.layout.calculate_layout"><code>calculate_layout</code></a> is called
    with the viewport size; it recursively determines each node's
    <code>(x, y, width, height)</code> relative to its parent's coordinate space.

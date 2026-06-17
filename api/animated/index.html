@@ -3118,7 +3118,7 @@ native view the value is attached to
 <ul>
 <li><strong>Accepted</strong> (iOS Core Animation, Android <code>ViewPropertyAnimator</code> /
   <code>DynamicAnimation</code>): the platform animates the property entirely
-  natively — no Python code runs per frame. Python receives exactly one
+  natively; no Python code runs per frame. Python receives exactly one
   callback when the animation settles, updates the
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a>, and resolves
   any awaiting tasks.</li>
@@ -3296,7 +3296,7 @@ native view the value is attached to
 <p>Animated components (<code>Animated.View</code> et al.) <strong>attach</strong> the value
 to <code>(tag, prop)</code> bindings after mount. Setting the value pushes
 the new number to every attached native view through the registry's
-<code>set_animated_property</code> — and when an animation can be driven
+<code>set_animated_property</code>, and when an animation can be driven
 natively, the platform animates those same bindings directly.</p>
 <p>Python-side listeners registered via
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;add_listener&lt;/span&gt;" href="#pythonnative.animated.AnimatedValue.add_listener"><code>add_listener</code></a>
@@ -3521,7 +3521,7 @@ even if no animation is running. Returns a detach callable.</p>
     <div class="doc doc-contents ">
 
         <p>Register <code>callback</code> for Python-driven changes to this value.</p>
-<p>Returns an unsubscribe callable. <code>prop</code> is metadata only — it
+<p>Returns an unsubscribe callable. <code>prop</code> is metadata only; it
 lets the subscriber differentiate this binding from others on
 the same <code>AnimatedValue</code>.</p>
 

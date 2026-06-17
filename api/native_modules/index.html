@@ -8058,9 +8058,9 @@ the platform accepted the request. On desktop they return <code>False</code>.</p
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Permissions&lt;/span&gt;" href="#pythonnative.native_modules.permissions.Permissions"><code>Permissions</code></a> normalizes the very different
 iOS and Android permission models behind two calls:</p>
 <ul>
-<li><code>check(permission)</code> — synchronous, returns a status string without
+<li><code>check(permission)</code>: synchronous, returns a status string without
   prompting.</li>
-<li><code>request(permission)</code> — a coroutine that shows the system prompt
+<li><code>request(permission)</code>: a coroutine that shows the system prompt
   (if needed) and resolves to the resulting status.</li>
 </ul>
 <p>Statuses are <code>"granted"</code>, <code>"denied"</code>, <code>"blocked"</code> (denied with
@@ -8978,7 +8978,7 @@ changes through
 
         <p>Encrypted key/value storage for secrets (tokens, credentials).</p>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;SecureStore&lt;/span&gt;" href="#pythonnative.native_modules.secure_store.SecureStore"><code>SecureStore</code></a> persists small string values
-in the iOS Keychain and Android <code>EncryptedSharedPreferences</code> — the
+in the iOS Keychain and Android <code>EncryptedSharedPreferences</code>, the
 right place for auth tokens and other secrets that
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a> (plain, unencrypted) should
 never hold.</p>
@@ -9521,11 +9521,11 @@ lets you subscribe to changes that the native host forwards via
         <p>Haptic feedback and raw vibration.</p>
 <p>Two interfaces live here:</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Haptics&lt;/span&gt;" href="#pythonnative.native_modules.haptics.Haptics"><code>Haptics</code></a> — semantic, iOS-style feedback
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Haptics&lt;/span&gt;" href="#pythonnative.native_modules.haptics.Haptics"><code>Haptics</code></a>: semantic, iOS-style feedback
   (impact / notification / selection) backed by
   <code>UIFeedbackGenerator</code> on iOS and <code>VibrationEffect</code> patterns on
   Android.</li>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Vibration&lt;/span&gt;" href="#pythonnative.native_modules.haptics.Vibration"><code>Vibration</code></a> — a blunt "buzz for N
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Vibration&lt;/span&gt;" href="#pythonnative.native_modules.haptics.Vibration"><code>Vibration</code></a>: a blunt "buzz for N
   milliseconds" interface for cases where you want an explicit
   duration.</li>
 </ul>

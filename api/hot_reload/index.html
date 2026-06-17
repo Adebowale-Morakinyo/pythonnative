@@ -3319,7 +3319,7 @@ page. Both are wired up automatically by <code>pn run --hot-reload</code>.</p>
   the reconciler tree is walked and every component function whose
   module was reloaded is swapped in place. Hook state, navigation
   state, and even scroll positions survive because the underlying
-  <code>VNode</code> objects are reused — the next render simply calls the
+  <code>VNode</code> objects are reused; the next render simply calls the
   new function bodies through the old slots.</li>
 <li><strong>Full remount</strong>: when the in-place swap fails (e.g. the new
   module raised at import time, or a render exception bubbled out
@@ -3768,8 +3768,8 @@ notification reflects subsequent edits, not pre-existing files.</p>
         <p>Reload changed Python modules on device and trigger a re-render.</p>
 <p>Designed to be invoked from device-side glue when a hot-reload
 push completes. All public methods are static; the class holds a
-single piece of process-wide state — the manifest version that
-has most recently been applied to <code>sys.modules</code> — so that
+single piece of process-wide state (the manifest version that
+has most recently been applied to <code>sys.modules</code>) so that
 multiple screen hosts polling the same manifest do not each
 re-execute the user-app modules. The first host to see a new
 version pays the <code>reload_modules</code> cost; subsequent hosts on the
@@ -4268,7 +4268,7 @@ behavior.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>sys.modules</code> — either freshly reloaded by this call, or</p>
+                <p><code>sys.modules</code>, either freshly reloaded by this call, or</p>
               </div>
             </td>
           </tr>

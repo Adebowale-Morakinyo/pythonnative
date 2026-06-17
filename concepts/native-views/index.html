@@ -3001,8 +3001,8 @@
 
 <h1 id="native-views">Native views<a class="headerlink" href="#native-views" title="Permanent link">&para;</a></h1>
 <p>The reconciler doesn't know what a <code>Text</code> or a <code>Button</code> is. It produces
-a flat list of <strong>mutation ops</strong> — create, update, insert, remove,
-destroy, set-frame — that reference views by integer <strong>tag</strong>, and hands
+a flat list of <strong>mutation ops</strong> (create, update, insert, remove,
+destroy, set-frame) that reference views by integer <strong>tag</strong>, and hands
 the whole list to the
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NativeViewRegistry&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.NativeViewRegistry"><code>NativeViewRegistry</code></a> in
 a single
@@ -3027,7 +3027,7 @@ the render loop.</p>
 <tbody>
 <tr>
 <td><code>CreateOp(tag, type_name, props)</code></td>
-<td>Create a native view for <code>tag</code>. Props are already <em>clean</em> — callables have been routed to the event registry.</td>
+<td>Create a native view for <code>tag</code>. Props are already <em>clean</em>: callables have been routed to the event registry.</td>
 </tr>
 <tr>
 <td><code>UpdateOp(tag, changed_props)</code></td>
@@ -3054,7 +3054,7 @@ the render loop.</p>
 <p>Tags matter because the diff phase is pure: it runs before any native
 view exists, so ops can't reference views directly. Tags also give the
 native side a stable identity for event routing and animation
-bookkeeping, and a flat op list is trivially serializable — the door
+bookkeeping, and a flat op list is trivially serializable; the door
 stays open for applying mutations through a single JNI/ObjC crossing.</p>
 <h2 id="the-handler-protocol">The handler protocol<a class="headerlink" href="#the-handler-protocol" title="Permanent link">&para;</a></h2>
 <p>Every native widget is implemented as a class that fulfils the
@@ -3087,7 +3087,7 @@ objects:</p>
 </tr>
 <tr>
 <td><code>destroy(view)</code></td>
-<td>When the view is released — unhook listeners, cancel image loads, etc.</td>
+<td>When the view is released: unhook listeners, cancel image loads, etc.</td>
 </tr>
 <tr>
 <td><code>set_frame(view, x, y, width, height)</code></td>
@@ -3124,15 +3124,15 @@ listeners <strong>once</strong>, dispatching back through
 </span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="n">size</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="n">max_w</span><span class="p">,</span> <span class="n">max_h</span><span class="p">)</span>
 </span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="k">return</span> <span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">size</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Handlers do <strong>not</strong> read flex / margin / padding props themselves —
+<p>Handlers do <strong>not</strong> read flex / margin / padding props themselves;
 those are interpreted by <code>pythonnative.layout</code> and turned into
 <code>SetFrameOp</code>s. A handler only needs to apply the frame it is given.</p>
 <h2 id="events-never-cross-the-bridge">Events never cross the bridge<a class="headerlink" href="#events-never-cross-the-bridge" title="Permanent link">&para;</a></h2>
 <p>Callable props (<code>on_press</code>, <code>on_change</code>, …) are stripped before a
 <code>CreateOp</code>/<code>UpdateOp</code> is built and registered in the process-wide
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;EventRegistry&lt;/span&gt;" href="../../api/native_views/#pythonnative.events.EventRegistry"><code>EventRegistry</code></a> keyed by
-<code>(tag, name)</code>. The native payload carries only <code>_pn_events</code> — a
-<code>frozenset</code> of the event names present — so handlers can wire expensive
+<code>(tag, name)</code>. The native payload carries only <code>_pn_events</code> (a
+<code>frozenset</code> of the event names present) so handlers can wire expensive
 listeners (scroll delegates, gesture recognizers) conditionally.</p>
 <p>The payoff: a re-render that only changes a callback's identity (every
 lambda is a fresh object!) costs <strong>zero</strong> native calls. The registry
@@ -3165,7 +3165,7 @@ full list (sizing, flex, position, margin, padding, spacing, …) is
 documented in <a href="../../api/component-properties/">Component properties</a>.
 The set of keys the layout engine consumes is exposed as
 <code>pythonnative.layout.LAYOUT_STYLE_KEYS</code>.</p>
-<p>Handlers only deal with <strong>visual</strong> properties — colours, fonts,
+<p>Handlers only deal with <strong>visual</strong> properties: colours, fonts,
 borders, corner radii, image scaling, text content. After each commit
 the reconciler runs the layout pass and emits <code>SetFrameOp</code>s for every
 node whose frame changed.</p>
@@ -3185,7 +3185,7 @@ node whose frame changed.</p>
   <code>setTextColor</code>, <code>setTextSize</code>, etc.</li>
 </ul>
 <p>Because layout is centralised, the same <code>style</code> dict produces the same
-geometry on Android and iOS — there is no "container-only" vs
+geometry on Android and iOS; there's no "container-only" vs
 "child-only" trap to fall into.</p>
 <h2 id="children">Children<a class="headerlink" href="#children" title="Permanent link">&para;</a></h2>
 <p>Children of a container element become subviews of the corresponding
@@ -3203,7 +3203,7 @@ recreating views.</p>
 <h2 id="testing-without-a-device">Testing without a device<a class="headerlink" href="#testing-without-a-device" title="Permanent link">&para;</a></h2>
 <p>Production handlers require Chaquopy (Android) or rubicon-objc (iOS),
 neither of which is available on a developer laptop. The test suite
-sidesteps this with <code>tests/fake_backend.py</code> — a shared in-memory
+sidesteps this with <code>tests/fake_backend.py</code>, a shared in-memory
 backend implementing the same mutation protocol while keeping a real
 tree of <code>FakeView</code> objects:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fake_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">FakeBackend</span>
@@ -3274,8 +3274,8 @@ the <code>pythonnative.handlers</code> entry-point group (see
       &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
   &lt;/span&gt;" href="../../api/sdk/#pythonnative.sdk.ENTRY_POINT_GROUP"><code>ENTRY_POINT_GROUP</code></a>),
 so users only have to <code>pip install</code> your package.</p>
-<p>For the full walkthrough — typed props, iOS handler, Android handler,
-distribution as a plugin, unit-testing — see the
+<p>For the full walkthrough (typed props, iOS handler, Android handler,
+distribution as a plugin, unit-testing), see the
 <a href="../../guides/custom-native-components/">Custom native components guide</a>.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>

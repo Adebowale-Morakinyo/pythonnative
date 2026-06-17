@@ -3015,7 +3015,7 @@
 <p><code>pn preview</code> renders your app in a native desktop window with <strong>instant
 Fast Refresh</strong> on every save. It's the fastest way to build UI in
 PythonNative: edit a component, hit save, and see the result in a second
-— no simulator boot, no device deploy, no rebuild.</p>
+(no simulator boot, no device deploy, no rebuild).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pn<span class="w"> </span>preview
 </span></code></pre></div>
 <p>The preview reuses the <strong>same reconciler, hooks, navigation, async
@@ -3030,13 +3030,13 @@ that defines <code>App</code>):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pn<span class="w"> </span>preview
 </span></code></pre></div>
 <p><code>pn preview</code> runs your real app code, so install your project's
-dependencies in the same environment first — <code>pip install</code> whatever you
+dependencies in the same environment first: <code>pip install</code> whatever you
 declared in <code>[requirements].packages</code> in <code>pythonnative.toml</code>. If an
 import fails, the preview shows the traceback in the window instead of
-crashing — install the missing package or fix the code and save to
+crashing; install the missing package or fix the code and save to
 recover.</p>
 <p>This opens a phone-sized window, mounts your <code>App</code>, and starts watching
-<code>app/</code> for changes. Edit any component and save — the window updates in
+<code>app/</code> for changes. Edit any component and save: the window updates in
 place while preserving component state (counters, text input, scroll
 position, navigation stack).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pn<span class="w"> </span>preview<span class="w">                          </span><span class="c1"># the project entry point (app/main.py → App)</span>
@@ -3056,7 +3056,7 @@ missing:</p>
 <li><strong>Windows</strong>: re-run the Python installer and enable the
   "tcl/tk and IDLE" optional feature.</li>
 </ul>
-<p>No other dependencies are required — the desktop backend is pure Python.</p>
+<p>No other dependencies are required; the desktop backend is pure Python.</p>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <p><code>pn preview</code> sets <code>PN_PLATFORM=desktop</code> and starts
 <code>pythonnative.preview.run_preview</code>, which:</p>
@@ -3097,7 +3097,7 @@ possible (structural edits, a raised exception), the preview falls back
 to a full remount so you're never stuck with a stale tree.</p>
 <p>If your component raises at import time (a syntax error you're mid-fix
 on), the preview shows the traceback as an overlay and recovers
-automatically on your next successful save — no restart needed.</p>
+automatically on your next successful save (no restart needed).</p>
 <p>See the <a href="../hot-reload/">Hot reload guide</a> for the underlying mechanics;
 the desktop preview shares the same Fast Refresh engine.</p>
 <h2 id="branching-on-the-platform">Branching on the platform<a class="headerlink" href="#branching-on-the-platform" title="Permanent link">&para;</a></h2>
@@ -3108,7 +3108,7 @@ the desktop preview shares the same Fast Refresh engine.</p>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">pad</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">select</span><span class="p">({</span><span class="s2">&quot;desktop&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
 </span></code></pre></div>
 <p>Note that <code>Platform.select</code>'s <code>"native"</code> key matches iOS and Android
-only — desktop is a development surface, so use an explicit <code>"desktop"</code>
+only; desktop is a development surface, so use an explicit <code>"desktop"</code>
 key (or <code>"default"</code>) for it. You can also check
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Platform&lt;/span&gt;" href="../../api/platform/#pythonnative.platform.Platform"><code>Platform.is_desktop</code></a> or the
 <code>pythonnative.utils.IS_DESKTOP</code> flag directly.</p>
@@ -3128,7 +3128,7 @@ and logic rather than pixel-perfect chrome.</p>
 <p>Approximated or omitted (Tkinter can't express these cheaply):</p>
 <ul>
 <li>Rounded corners, shadows, gradients, and per-widget opacity.</li>
-<li>Overflow <strong>clipping</strong> — a <code>ScrollView</code>'s content renders but isn't
+<li>Overflow <strong>clipping</strong>: a <code>ScrollView</code>'s content renders but isn't
   clipped to the viewport, and there's no interactive scrolling.</li>
 <li>Animations show their <strong>end state</strong> rather than smooth interpolation
   (translations are applied; scale/rotate/opacity are skipped).</li>
@@ -3144,7 +3144,7 @@ need:</p>
 <li>Real device APIs (camera, location, notifications, biometrics, …).</li>
 <li>To test packaging, permissions, or store builds.</li>
 </ul>
-<p>There is no desktop packaging target — ship to devices with
+<p>There's no desktop packaging target; ship to devices with
 <code>pn run android</code> / <code>pn run ios</code>.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>

@@ -3023,7 +3023,8 @@
 
 <h1 id="async-runtime">Async runtime<a class="headerlink" href="#async-runtime" title="Permanent link">&para;</a></h1>
 <p>PythonNative runs a single framework-wide <code>asyncio</code> event loop on a
-dedicated daemon thread. Every awaitable surface in the framework —
+dedicated daemon thread. Every awaitable surface in the framework
+schedules its work on this loop:
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>,
@@ -3042,8 +3043,7 @@ and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
       &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../animated/#pythonnative.animated.Animated"><code>Animated</code></a> composites — schedules
-its work on this loop.</p>
+  &lt;/span&gt;" href="../animated/#pythonnative.animated.Animated"><code>Animated</code></a> composites.</p>
 
 
 <div class="doc doc-object doc-module">
@@ -3056,7 +3056,8 @@ its work on this loop.</p>
         <p>Asyncio runtime for PythonNative.</p>
 <p>PythonNative runs a single, framework-wide <code>asyncio</code> event loop on
 a dedicated daemon thread. Every awaitable surface in the framework
-— the async hooks
+schedules its work on this loop via
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="#pythonnative.runtime.run_async"><code>run_async</code></a>: the async hooks
 (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>), the
@@ -3071,8 +3072,7 @@ native modules
 (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Camera&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.camera.Camera"><code>Camera</code></a> /
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Location&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.location.Location"><code>Location</code></a> /
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Notifications&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.notifications.Notifications"><code>Notifications</code></a>),
-and awaited animations — schedules its work on this loop via
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="#pythonnative.runtime.run_async"><code>run_async</code></a>.</p>
+and awaited animations.</p>
 <p>The reconciler is <strong>not</strong> asyncio-aware; it still runs synchronously on
 the platform main thread. Coroutines that want to mutate component
 state simply call the regular <code>use_state</code> setter, and the existing
@@ -3520,7 +3520,7 @@ function that marshals <code>fn</code> onto the Tk main thread, and with
 <ul>
 <li><strong>iOS</strong>: dispatches <code>fn</code> onto the main dispatch queue via
   <code>libdispatch.dispatch_async_f</code> (called through
-  :class:<code>ctypes.PyDLL</code> to keep the GIL held — see the
+  :class:<code>ctypes.PyDLL</code> to keep the GIL held; see the
   <code>_ios_call_on_main</code> comment block for why this matters).</li>
 <li><strong>Android</strong>: posts a <code>Runnable</code> to
   <code>Handler(Looper.getMainLooper())</code>.</li>

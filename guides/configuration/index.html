@@ -3072,7 +3072,7 @@ other command (<code>pn run</code>, <code>pn build</code>, <code>pn doctor</code
 </span></code></pre></div>
 <p>Paths (icon, splash, keystore) are resolved relative to the project
 root. Invalid configuration fails fast with a specific, actionable
-error — run <a href="../../api/cli/"><code>pn doctor</code></a> to validate at any time.</p>
+error; run <a href="../../api/cli/"><code>pn doctor</code></a> to validate at any time.</p>
 <hr />
 <h2 id="app"><code>[app]</code><a class="headerlink" href="#app" title="Permanent link">&para;</a></h2>
 <p>Core identity, shared by both platforms.</p>
@@ -3185,7 +3185,7 @@ catalog and how each capability maps to native artifacts.</p>
 <p>Asset generation requires <a href="https://python-pillow.org/">Pillow</a>, the
 <code>pythonnative[build]</code> optional dependency (<code>pip install
 'pythonnative[build]'</code>). If Pillow isn't installed, the template's
-default assets are kept and the build still succeeds — <code>pn doctor</code>
+default assets are kept and the build still succeeds; <code>pn doctor</code>
 reports whether Pillow is available. See
 <a href="../building-for-release/#app-icon-and-splash">Building for release</a>.</p>
 <hr />
@@ -3402,7 +3402,7 @@ themselves are read from the environment at build time. See
     AS --&gt; B</code></pre>
 <p>Because parsing and validation happen once, up front, the platform
 configurators and builder always work from a fully-defaulted, valid
-config — so <code>pn run</code> and <code>pn build</code> behave consistently. For the build
+config, so <code>pn run</code> and <code>pn build</code> behave consistently. For the build
 mechanics, continue to <a href="../building-for-release/">Building for release</a>.</p>
 
 

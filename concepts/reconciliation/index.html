@@ -3051,13 +3051,13 @@ tree:</p>
       &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
   &lt;/span&gt;" href="../../api/native_views/#pythonnative.mutations.DestroyOp"><code>DestroyOp</code></a>.</li>
 </ul>
-<p>That's it. There is no "fiber tree", no time slicing, and no priority
+<p>That's it. There's no "fiber tree", no time slicing, and no priority
 lanes. The reconciler runs synchronously to completion; if a render is
 heavy, you'll feel it as a frame drop, not a deferred update.</p>
 <h2 id="commits-are-transactions">Commits are transactions<a class="headerlink" href="#commits-are-transactions" title="Permanent link">&para;</a></h2>
 <p>The diff phase is pure: it only accumulates ops. At the end of the
-pass the whole list — including the <code>SetFrameOp</code>s produced by the
-layout pass — is applied through a single
+pass the whole list (including the <code>SetFrameOp</code>s produced by the
+layout pass) is applied through a single
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;apply_mutations&lt;/span&gt;" href="../../api/native_views/#pythonnative.native_views.NativeViewRegistry.apply_mutations"><code>apply_mutations</code></a>
 call. The native side sees one coherent transaction per commit
 (mirroring React Native's Fabric mounting layer), which is also what
@@ -3147,7 +3147,7 @@ through <code>set_state</code> is wasteful. Two ways to bypass:</p>
       &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
   &lt;/span&gt;" href="../../api/animated/#pythonnative.animated.Animated"><code>Animated</code></a> API: an
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AnimatedValue&lt;/span&gt;" href="../../api/animated/#pythonnative.animated.AnimatedValue"><code>AnimatedValue</code></a> bound into an
-  <code>Animated.View</code> style drives the native property directly — and
+  <code>Animated.View</code> style drives the native property directly, and
   when the platform can run the animation natively, no Python code
   runs per frame at all. See the
   <a href="../../guides/animations/">Animations guide</a>.</li>

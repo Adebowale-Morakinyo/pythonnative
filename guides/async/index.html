@@ -3002,7 +3002,7 @@
 <h1 id="async-data-fetching">Async + data fetching<a class="headerlink" href="#async-data-fetching" title="Permanent link">&para;</a></h1>
 <p>PythonNative is built on Python's <code>asyncio</code>. Animations, native
 modules, alerts, the network client, and persistent storage are all
-coroutines — and there are dedicated hooks
+coroutines, and there are dedicated hooks
 (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>,
@@ -3126,7 +3126,7 @@ mutator.</p>
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p>The handle returned by <code>mutate(...)</code> is a
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;MutationCall&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.MutationCall"><code>MutationCall</code></a> — awaitable,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;MutationCall&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.MutationCall"><code>MutationCall</code></a>, awaitable,
 cancellable, and safe to ignore if you only care about the state
 transitions.</p>
 <h2 id="http-requests-pnfetch">HTTP requests: <code>pn.fetch</code><a class="headerlink" href="#http-requests-pnfetch" title="Permanent link">&para;</a></h2>
@@ -3142,7 +3142,7 @@ transitions.</p>
 </span></code></pre></div>
 <p><code>resp.text()</code>, <code>resp.json()</code>, and <code>resp.content</code> cover the common
 cases. For multipart uploads, HTTP/2, or streaming, integrate
-<code>httpx</code> / <code>aiohttp</code> directly — <code>pn.fetch</code> deliberately stays small.</p>
+<code>httpx</code> / <code>aiohttp</code> directly; <code>pn.fetch</code> deliberately stays small.</p>
 <h2 id="keyvalue-persistence-asyncstorage">Key/value persistence: <code>AsyncStorage</code><a class="headerlink" href="#keyvalue-persistence-asyncstorage" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../../api/storage/#pythonnative.storage.AsyncStorage"><code>pn.AsyncStorage</code></a> is the platform
 key/value store (<code>NSUserDefaults</code> on iOS, <code>SharedPreferences</code> on
@@ -3245,7 +3245,7 @@ data + form + persistence + animations" shape:</p>
 </span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="n">opacity</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
 </span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>    <span class="p">)</span>
 </span></code></pre></div>
-<p>Each piece — fetch, animation, persistence, mutation — is its own
+<p>Each piece (fetch, animation, persistence, mutation) is its own
 hook with its own lifecycle, and <code>asyncio</code> is the glue.</p>
 
 

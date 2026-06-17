@@ -3006,8 +3006,8 @@
 <p>This scaffolds:</p>
 <ul>
 <li><code>app/</code> with a minimal <code>main.py</code></li>
-<li><code>pythonnative.toml</code> — your project configuration: app id, version,
-  permissions, assets, and signing. See
+<li><code>pythonnative.toml</code>: your project configuration (app id, version,
+  permissions, assets, and signing). See
   <a href="../guides/configuration/">Configuration</a>.</li>
 <li><code>.gitignore</code></li>
 </ul>
@@ -3056,9 +3056,9 @@
 </ul>
 <p>When the root <code>Stack.Navigator</code> is rendered inside the host's first screen, <code>navigate(...)</code> and <code>go_back()</code> drive the <strong>native</strong> navigation controller (UINavigationController on iOS, AndroidX Navigation Component on Android). Each pushed screen runs in its own reconciler host, so state on the previous screen is preserved by the platform stack.</p>
 <h2 id="configure-your-app">Configure your app<a class="headerlink" href="#configure-your-app" title="Permanent link">&para;</a></h2>
-<p>Everything about your app's <em>identity</em> — its bundle/application id,
+<p>Everything about your app's <em>identity</em> (its bundle/application id,
 display name, version, the device permissions it requests, its icon and
-splash, third-party packages, and signing — lives in a single
+splash, third-party packages, and signing) lives in a single
 <code>pythonnative.toml</code> at the project root:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">[app]</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;com.example.myapp&quot;</span>
@@ -3080,8 +3080,8 @@ splash, third-party packages, and signing — lives in a single
 <a href="../guides/permissions/">Permissions guide</a>.</p>
 <h2 id="preview-on-your-desktop">Preview on your desktop<a class="headerlink" href="#preview-on-your-desktop" title="Permanent link">&para;</a></h2>
 <p>The fastest way to iterate is <code>pn preview</code>, which renders your app in a
-desktop window and <strong>Fast Refreshes on every save</strong> — no simulator, no
-device build:</p>
+desktop window and <strong>Fast Refreshes on every save</strong> (no simulator, no
+device build):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pn<span class="w"> </span>preview
 </span></code></pre></div>
 <p>This opens a phone-sized window, mounts your project's <code>App</code>, and
@@ -3089,7 +3089,7 @@ watches <code>app/</code> for changes. Edit a component, hit save, and the windo
 updates in place while keeping component state (counters, form input,
 scroll position). Navigation, hooks, async, and the flex layout engine
 all run exactly as they do on device, because the desktop backend reuses
-the same reconciler and layout engine — only the leaf widgets differ
+the same reconciler and layout engine; only the leaf widgets differ
 (Tkinter instead of UIKit / Android views).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pn<span class="w"> </span>preview<span class="w">                 </span><span class="c1"># preview the project&#39;s entry point (app/main.py → App)</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>pn<span class="w"> </span>preview<span class="w"> </span>app.main.Detail<span class="w"> </span><span class="c1"># preview a specific component</span>
@@ -3099,7 +3099,7 @@ the same reconciler and layout engine — only the leaf widgets differ
 <p>The preview needs Tkinter, which ships with most Python installs. If
 it's missing, install it (<code>brew install python-tk</code> on macOS,
 <code>sudo apt-get install python3-tk</code> on Debian/Ubuntu). The desktop backend
-is a <strong>development</strong> surface for layout and logic — some visual chrome is
+is a <strong>development</strong> surface for layout and logic; some visual chrome is
 approximated, and there's no desktop packaging. Ship to devices with
 <code>pn run</code>. See the <a href="../guides/desktop-preview/">Desktop preview guide</a>.</p>
 <h2 id="run-on-a-platform">Run on a platform<a class="headerlink" href="#run-on-a-platform" title="Permanent link">&para;</a></h2>
@@ -3130,8 +3130,8 @@ qualified name across the reloaded module, the live VNode tree's
 function references are swapped in place, and the next render reuses
 the existing hook state. So edits to the body of a component preserve
 in-memory state (counters, scroll positions, etc.). When Fast Refresh
-cannot find a clean swap — for example, after deeper structural
-edits — PythonNative falls back to a full remount of the active page
+can't find a clean swap (for example, after deeper structural
+edits), PythonNative falls back to a full remount of the active page
 so you never get stuck with a stale tree.</p>
 <p>This works best for Python UI changes; native template changes
 (Kotlin, Swift, manifests) still require a normal rebuild.</p>

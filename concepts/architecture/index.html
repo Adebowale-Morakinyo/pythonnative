@@ -3350,7 +3350,7 @@ component. App code does not call it directly.</p>
 React-Native-compatible re-implementation of Yoga's algorithm). All
 layout decisions are made in Python and then pushed to native views as
 absolute frames via <code>set_frame</code>. This means the <em>exact same</em> layout
-rules apply on Android and iOS — there is no platform drift between
+rules apply on Android and iOS; there's no platform drift between
 <code>LinearLayout</code> and <code>UIStackView</code>.</p>
 <p>The engine is implemented in <code>pythonnative.layout</code> and runs as a
 dedicated <strong>layout pass</strong> after every commit:</p>
@@ -3421,9 +3421,9 @@ submodules:</p>
 </ul>
 <p>Every handler implements two layout-facing methods:</p>
 <ul>
-<li><code>set_frame(view, x, y, width, height)</code> — apply an absolute frame
+<li><code>set_frame(view, x, y, width, height)</code>: apply an absolute frame
   computed by the layout engine.</li>
-<li><code>measure_intrinsic(view, max_width, max_height)</code> — return the
+<li><code>measure_intrinsic(view, max_width, max_height)</code>: return the
   natural content size for leaf widgets (used as a hint by the layout
   engine).</li>
 </ul>
@@ -3526,7 +3526,7 @@ near-instant UI updates without full rebuilds.</p>
   it.</li>
 <li>The outermost <code>Stack.Navigator</code> delegates <code>navigate(...)</code>,
   <code>go_back()</code>, and <code>reset(...)</code> to the platform's native navigation
-  controller — <code>UINavigationController</code> on iOS and the AndroidX
+  controller: <code>UINavigationController</code> on iOS and the AndroidX
   Navigation Component on Android. Nested navigators (tabs inside a
   stack, stacks inside tabs) stay in Python and reuse the existing
   reconciler.</li>

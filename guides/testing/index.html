@@ -3023,7 +3023,7 @@ covered by the Maestro E2E suite (<code>tests/e2e/</code>).</p>
 <h2 id="a-minimal-fake-backend">A minimal fake backend<a class="headerlink" href="#a-minimal-fake-backend" title="Permanent link">&para;</a></h2>
 <p>A test backend implements the registry protocol: <code>apply_mutations</code>,
 <code>resolve_view</code>, <code>measure_intrinsic</code>, and <code>command</code>. PythonNative's own
-suite keeps a full-featured one in <code>tests/fake_backend.py</code> — copy it
+suite keeps a full-featured one in <code>tests/fake_backend.py</code>; copy it
 into your project or use this trimmed version:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.mutations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">CreateOp</span><span class="p">,</span> <span class="n">UpdateOp</span><span class="p">,</span> <span class="n">InsertOp</span><span class="p">,</span> <span class="n">RemoveOp</span><span class="p">,</span> <span class="n">DestroyOp</span><span class="p">,</span> <span class="n">SetFrameOp</span><span class="p">,</span>
@@ -3092,7 +3092,7 @@ into your project or use this trimmed version:</p>
 <p>(For a longer-running test (effects, navigation), use <code>create_screen</code> so
 you get the full lifecycle plumbing.)</p>
 <h2 id="asserting-on-rendered-output">Asserting on rendered output<a class="headerlink" href="#asserting-on-rendered-output" title="Permanent link">&para;</a></h2>
-<p>Event callbacks live in the event registry, not on the view — drive
+<p>Event callbacks live in the event registry, not on the view; drive
 them with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_event&lt;/span&gt;" href="../../api/native_views/#pythonnative.events.dispatch_event"><code>dispatch_event</code></a>
 exactly like a native listener would:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">dispatch_event</span>
@@ -3121,7 +3121,7 @@ exactly like a native listener would:</p>
 <li><code>key="t"</code> and <code>key="b"</code> aren't required for a two-child column, but
   using them in tests makes assertions more robust as the component
   evolves.</li>
-<li>Callable props never appear in <code>props</code> — the view carries a
+<li>Callable props never appear in <code>props</code>; the view carries a
   <code>_pn_events</code> frozenset naming the wired events, and
   <code>dispatch_event(tag, name, *args)</code> invokes the current callback.</li>
 </ul>

@@ -4007,8 +4007,8 @@ is mounted to a native view tree until the
     <div class="doc doc-contents first">
 
         <p>Built-in element factories and the typed prop schemas they share.</p>
-<p>Each <code>@dataclass(frozen=True)</code> class in this module — <code>TextProps</code>,
-<code>ButtonProps</code>, etc. — is the canonical schema for one built-in
+<p>Each <code>@dataclass(frozen=True)</code> class in this module (<code>TextProps</code>,
+<code>ButtonProps</code>, etc.) is the canonical schema for one built-in
 component. Each factory function (<code>Text</code>, <code>Button</code>, …) is a thin
 ergonomic wrapper that builds an <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../element/#pythonnative.element.Element"><code>Element</code></a>
 through the shared :func:<code>_make_element</code> helper, so style resolution,
@@ -8056,7 +8056,7 @@ remaining space.</p>
             <td>
               <div class="doc-md-description">
                 <p>Fixed gap in dp/pt along the parent's main axis. Mirrored
-on both axes — whichever axis the parent's
+on both axes: whichever axis the parent's
 <code>flex_direction</code> chooses as main becomes the actual gap.</p>
               </div>
             </td>
@@ -8336,14 +8336,14 @@ UI test drivers) for the slider.</p>
 <li><code>flex_direction</code>: <code>"column"</code> (default), <code>"row"</code>,
   <code>"column_reverse"</code>, <code>"row_reverse"</code>.</li>
 <li><code>flex_wrap</code>: <code>"nowrap"</code> (default), <code>"wrap"</code>,
-  <code>"wrap_reverse"</code> — with <code>align_content</code> controlling how
+  <code>"wrap_reverse"</code>, with <code>align_content</code> controlling how
   wrapped lines share leftover cross-axis space.</li>
 <li><code>justify_content</code>: main-axis distribution. Accepts
   <code>"flex_start"</code> (default), <code>"center"</code>, <code>"flex_end"</code>,
   <code>"space_between"</code>, <code>"space_around"</code>, <code>"space_evenly"</code>.</li>
 <li><code>align_items</code>: cross-axis alignment. Accepts <code>"stretch"</code>
   (default), <code>"flex_start"</code>, <code>"center"</code>, <code>"flex_end"</code>.</li>
-<li><code>direction</code>: <code>"ltr"</code> (default) or <code>"rtl"</code> — flips rows and
+<li><code>direction</code>: <code>"ltr"</code> (default) or <code>"rtl"</code>. Flips rows and
   resolves <code>margin_start</code> / <code>padding_end</code> / absolute <code>start</code>
   / <code>end</code> insets.</li>
 <li><code>overflow</code>: <code>"visible"</code> (default) or <code>"hidden"</code>.</li>
@@ -9010,7 +9010,7 @@ content), distinct from <code>style</code> (the scroll view frame).</p>
             <td>
               <div class="doc-md-description">
                 <p><code>"none"</code> (default), <code>"on_drag"</code>, or
-<code>"interactive"</code> — controls whether scrolling dismisses
+<code>"interactive"</code>. Controls whether scrolling dismisses
 the keyboard.</p>
               </div>
             </td>
@@ -9381,7 +9381,7 @@ instead of fully covered.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>iOS presentation style —
+                <p>iOS presentation style,
 <code>"page_sheet"</code> (default), <code>"form_sheet"</code>,
 <code>"full_screen"</code>, or <code>"overlay"</code> (custom dimmed
 overlay). On Android, <code>"overlay"</code> keeps the dialog
@@ -11215,7 +11215,7 @@ render, or a callable <code>fallback(err) -&gt; Element</code>.</p>
 leading and trailing spacers stand in for everything else, and the
 window shifts as the user scrolls. Rows may have <strong>variable
 heights</strong>: pass <code>item_height</code> when rows are uniform,
-<code>get_item_height</code> for exact per-item extents, or nothing at all —
+<code>get_item_height</code> for exact per-item extents, or nothing at all;
 unknown rows start at <code>estimated_item_height</code> and are corrected
 with their measured extent once they've been on screen.</p>
 <p>The <code>ref</code> dict (from <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_ref&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_ref"><code>use_ref</code></a>) is
@@ -11677,7 +11677,7 @@ controller functions.</p>
         <p>Virtualized list with section headers interleaved between row groups.</p>
 <p>Flattens <code>sections</code> into a single virtualized sequence where each
 entry is either a header or an item, then reuses the same windowing
-engine as <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;FlatList&lt;/span&gt;" href="#pythonnative.components.FlatList"><code>FlatList</code></a> — headers and items
+engine as <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;FlatList&lt;/span&gt;" href="#pythonnative.components.FlatList"><code>FlatList</code></a>; headers and items
 may have different (and variable) heights.</p>
 
 
@@ -12111,7 +12111,7 @@ elsewhere.</p>
             <td>
               <div class="doc-md-description">
                 <p>Color of the status-bar background (Android
-only — iOS draws the bar transparent over your content).</p>
+only; iOS draws the bar transparent over your content).</p>
               </div>
             </td>
             <td>

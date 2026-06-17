@@ -3026,7 +3026,7 @@ mounted views, PythonNative first offers the animation to the
 platform: Core Animation (<code>CABasicAnimation</code> / <code>CASpringAnimation</code>)
 on iOS, <code>ViewPropertyAnimator</code> / <code>DynamicAnimation</code> on Android. If
 the platform accepts, the animation runs entirely natively at the
-display's refresh rate — <strong>no Python code executes per frame</strong> — and
+display's refresh rate (<strong>no Python code executes per frame</strong>), and
 Python receives exactly one completion callback, which settles the
 <code>AnimatedValue</code> at its final number.</p>
 <p>The Python-ticked fallback (a ~60 Hz loop) is used automatically
@@ -3112,7 +3112,7 @@ awaitable.</p>
 <p><code>Animated.timing</code> accepts an <code>easing</code> argument: <code>"linear"</code>,
 <code>"ease_in"</code>, <code>"ease_out"</code>, <code>"ease_in_out"</code>, or <code>"bounce"</code>.</p>
 <h2 id="decay-fling">Decay (fling)<a class="headerlink" href="#decay-fling" title="Permanent link">&para;</a></h2>
-<p><code>Animated.decay</code> decelerates a value from an initial velocity —
+<p><code>Animated.decay</code> decelerates a value from an initial velocity,
 the standard ending for a pan gesture:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">on_pan_end</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">decay</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">velocity_x</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>

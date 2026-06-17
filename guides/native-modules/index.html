@@ -3182,8 +3182,8 @@ share sheet, deep links, permissions, connectivity, secure storage,
 battery, haptics, and biometrics. Each module is implemented twice
 (once per platform) and dispatches at runtime based on
 <code>utils.IS_ANDROID</code> / <code>utils.IS_IOS</code>, so app code stays single-source.
-Off-device (desktop), each module falls back to a safe default —
-in-memory buffers, <code>"unknown"</code> states, no-op feedback — so the same
+Off-device (desktop), each module falls back to a safe default
+(in-memory buffers, <code>"unknown"</code> states, no-op feedback) so the same
 code runs in the desktop mock and in unit tests.</p>
 <p>Both synchronous and coroutine APIs exist, chosen to match the
 underlying platform call:</p>
@@ -3287,23 +3287,23 @@ to <code>CLLocationManagerDelegate</code> (iOS) or <code>LocationManager.request
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;FileSystem&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.file_system.FileSystem"><code>FileSystem</code></a> is
 scoped to your app's documents directory; relative paths are resolved
 inside that sandbox automatically. Unlike the other modules, the file
-system surface is synchronous — local disk reads are typically
+system surface is synchronous; local disk reads are typically
 faster than the cost of hopping onto the asyncio loop. For large
 files you can opt into a worker thread:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Sync — fine for small files (preferences, JSON state, etc.)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Sync: fine for small files (preferences, JSON state, etc.)</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;notes.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;hello&quot;</span><span class="p">)</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">text</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="s2">&quot;notes.txt&quot;</span><span class="p">)</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># Async — explicitly offload to a worker thread for big payloads.</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># Async: explicitly offload to a worker thread for big payloads.</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">read_text</span><span class="p">,</span> <span class="s2">&quot;big.txt&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Need just a key-value store?</p>
 <p>Prefer <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../../api/storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a> over
-serialising JSON into a file by hand — it's the native
+serialising JSON into a file by hand; it's the native
 <code>NSUserDefaults</code> / <code>SharedPreferences</code> API and is async-first.</p>
 </div>
 <h2 id="notifications">Notifications<a class="headerlink" href="#notifications" title="Permanent link">&para;</a></h2>
@@ -3388,7 +3388,7 @@ the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 </span></code></pre></div>
 <h2 id="secure-storage">Secure storage<a class="headerlink" href="#secure-storage" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;SecureStore&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.secure_store.SecureStore"><code>SecureStore</code></a> persists secrets in the iOS
-Keychain / Android <code>EncryptedSharedPreferences</code>. Use it for tokens —
+Keychain / Android <code>EncryptedSharedPreferences</code>. Use it for tokens,
 not <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../../api/storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>, which is
 unencrypted.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">set_item</span><span class="p">(</span><span class="s2">&quot;auth_token&quot;</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>

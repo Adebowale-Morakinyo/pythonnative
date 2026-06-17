@@ -3184,24 +3184,24 @@ The contents are included below so the docs site stays in sync.</p>
 </span></code></pre></div>
 <h2 id="project-layout-highlevel">Project layout (high‑level)<a class="headerlink" href="#project-layout-highlevel" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>src/pythonnative/</code> – installable library and CLI</li>
-<li><code>pythonnative/</code> – core cross‑platform UI components and utilities</li>
-<li><code>cli/</code> – <code>pn</code> command</li>
-<li><code>tests/</code> – unit tests for the library, plus the Maestro E2E suite</li>
-<li><code>e2e/</code> – the comprehensive E2E suite (see <a href="#e2e-tests-maestro">E2E tests</a> below and <code>tests/e2e/AGENTS.md</code>)</li>
-<li><code>templates/</code> – Android/iOS project templates and zips</li>
-<li><code>examples/</code> – runnable example apps</li>
-<li><code>hello-world/</code> – minimal marketing demo</li>
-<li><code>e2e-suite/</code> – comprehensive feature catalog that drives the Maestro E2E suite</li>
-<li><code>scripts/</code> – helper scripts (<code>check.sh</code>, <code>run-e2e.sh</code>, <code>check-e2e-coverage.py</code>)</li>
-<li><code>README.md</code>, <code>pyproject.toml</code> – repo docs and packaging</li>
+<li><code>src/pythonnative/</code>: installable library and CLI</li>
+<li><code>pythonnative/</code>: core cross‑platform UI components and utilities</li>
+<li><code>cli/</code>: <code>pn</code> command</li>
+<li><code>tests/</code>: unit tests for the library, plus the Maestro E2E suite</li>
+<li><code>e2e/</code>: the comprehensive E2E suite (see <a href="#e2e-tests-maestro">E2E tests</a> below and <code>tests/e2e/AGENTS.md</code>)</li>
+<li><code>templates/</code>: Android/iOS project templates and zips</li>
+<li><code>examples/</code>: runnable example apps</li>
+<li><code>hello-world/</code>: minimal marketing demo</li>
+<li><code>e2e-suite/</code>: comprehensive feature catalog that drives the Maestro E2E suite</li>
+<li><code>scripts/</code>: helper scripts (<code>check.sh</code>, <code>run-e2e.sh</code>, <code>check-e2e-coverage.py</code>)</li>
+<li><code>README.md</code>, <code>pyproject.toml</code>: repo docs and packaging</li>
 </ul>
 <h2 id="coding-guidelines">Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Style: Black; lint: Ruff; typing where useful. Keep APIs stable.</li>
 <li>Prefer explicit, descriptive names; keep platform abstractions clean.</li>
 <li>Add/extend tests under <code>tests/</code> for new behavior.</li>
-<li>Do not commit generated artifacts or large binaries; templates live under <code>templates/</code>.</li>
+<li>Don't commit generated artifacts or large binaries; templates live under <code>templates/</code>.</li>
 <li>Docstrings: Google style throughout. Ruff is configured with the Google
   convention (<code>pydocstyle.convention = "google"</code>) and enforces the <code>D</code> rule
   set on <code>src/pythonnative/</code>. See the
@@ -3229,60 +3229,60 @@ The contents are included below so the docs site stays in sync.</p>
 </ul>
 <p>Accepted types (standard):</p>
 <ul>
-<li><code>build</code> – build system or external dependencies (e.g., requirements, packaging)</li>
-<li><code>chore</code> – maintenance (no library behavior change)</li>
-<li><code>ci</code> – continuous integration configuration (workflows, pipelines)</li>
-<li><code>docs</code> – documentation only</li>
-<li><code>feat</code> – user‑facing feature or capability</li>
-<li><code>fix</code> – bug fix</li>
-<li><code>perf</code> – performance improvements</li>
-<li><code>refactor</code> – code change that neither fixes a bug nor adds a feature</li>
-<li><code>revert</code> – revert of a previous commit</li>
-<li><code>style</code> – formatting/whitespace (no code behavior)</li>
-<li><code>test</code> – add/adjust tests only</li>
+<li><code>build</code>: build system or external dependencies (e.g., requirements, packaging)</li>
+<li><code>chore</code>: maintenance (no library behavior change)</li>
+<li><code>ci</code>: continuous integration configuration (workflows, pipelines)</li>
+<li><code>docs</code>: documentation only</li>
+<li><code>feat</code>: user‑facing feature or capability</li>
+<li><code>fix</code>: bug fix</li>
+<li><code>perf</code>: performance improvements</li>
+<li><code>refactor</code>: code change that neither fixes a bug nor adds a feature</li>
+<li><code>revert</code>: revert of a previous commit</li>
+<li><code>style</code>: formatting/whitespace (no code behavior)</li>
+<li><code>test</code>: add/adjust tests only</li>
 </ul>
 <p>Recommended scopes (choose the smallest, most accurate unit; prefer module/directory names):</p>
 <ul>
 <li>Module/directory scopes:</li>
-<li><code>alerts</code> – imperative Alert/Picker helpers (<code>alerts.py</code>)</li>
-<li><code>animated</code> – Animated namespace and animation primitives (<code>animated.py</code>)</li>
-<li><code>cli</code> – CLI tool and <code>pn</code> command (<code>src/pythonnative/cli/</code>)</li>
-<li><code>components</code> – declarative element-creating functions (<code>components.py</code>)</li>
-<li><code>element</code> – Element descriptor class (<code>element.py</code>)</li>
-<li><code>events</code> – tag-based event routing between native views and Python callbacks (<code>events.py</code>)</li>
-<li><code>gestures</code> – gesture descriptors and the pure-Python recognition arbiter (<code>gestures.py</code>)</li>
-<li><code>hooks</code> – function components and hooks (<code>hooks.py</code>)</li>
-<li><code>hot_reload</code> – file watcher and module reloader (<code>hot_reload.py</code>)</li>
-<li><code>layout</code> – pure-Python flexbox engine (<code>layout.py</code>)</li>
-<li><code>mutations</code> – batched mutation ops between reconciler and native backends (<code>mutations.py</code>)</li>
-<li><code>native_modules</code> – native API modules for device capabilities (<code>native_modules/</code>)</li>
-<li><code>native_views</code> – platform-specific native view creation and updates (<code>native_views/</code>)</li>
-<li><code>navigation</code> – navigation containers and stack/tab/drawer navigators (<code>navigation.py</code>)</li>
-<li><code>net</code> – awaitable HTTP client (<code>net.py</code>)</li>
-<li><code>package</code> – <code>src/pythonnative/__init__.py</code> exports and package boundary</li>
-<li><code>platform</code> – <code>Platform.OS</code>/<code>Platform.select</code> and version detection (<code>platform.py</code>)</li>
-<li><code>platform_metrics</code> – platform-reported metrics like safe-area insets and bar heights (<code>platform_metrics.py</code>)</li>
-<li><code>reconciler</code> – virtual view tree diffing and reconciliation (<code>reconciler.py</code>)</li>
-<li><code>runtime</code> – framework-wide asyncio loop and thread-safe future helpers (<code>runtime.py</code>)</li>
-<li><code>screen</code> – screen host, native lifecycle bridge, and render scheduling (<code>screen.py</code>)</li>
-<li><code>sdk</code> – public extension SDK for custom native components (<code>sdk/</code>)</li>
-<li><code>storage</code> – AsyncStorage key/value persistence and <code>use_persisted_state</code> (<code>storage.py</code>)</li>
-<li><code>style</code> – StyleSheet and theming (<code>style.py</code>)</li>
+<li><code>alerts</code>: imperative Alert/Picker helpers (<code>alerts.py</code>)</li>
+<li><code>animated</code>: Animated namespace and animation primitives (<code>animated.py</code>)</li>
+<li><code>cli</code>: CLI tool and <code>pn</code> command (<code>src/pythonnative/cli/</code>)</li>
+<li><code>components</code>: declarative element-creating functions (<code>components.py</code>)</li>
+<li><code>element</code>: Element descriptor class (<code>element.py</code>)</li>
+<li><code>events</code>: tag-based event routing between native views and Python callbacks (<code>events.py</code>)</li>
+<li><code>gestures</code>: gesture descriptors and the pure-Python recognition arbiter (<code>gestures.py</code>)</li>
+<li><code>hooks</code>: function components and hooks (<code>hooks.py</code>)</li>
+<li><code>hot_reload</code>: file watcher and module reloader (<code>hot_reload.py</code>)</li>
+<li><code>layout</code>: pure-Python flexbox engine (<code>layout.py</code>)</li>
+<li><code>mutations</code>: batched mutation ops between reconciler and native backends (<code>mutations.py</code>)</li>
+<li><code>native_modules</code>: native API modules for device capabilities (<code>native_modules/</code>)</li>
+<li><code>native_views</code>: platform-specific native view creation and updates (<code>native_views/</code>)</li>
+<li><code>navigation</code>: navigation containers and stack/tab/drawer navigators (<code>navigation.py</code>)</li>
+<li><code>net</code>: awaitable HTTP client (<code>net.py</code>)</li>
+<li><code>package</code>: <code>src/pythonnative/__init__.py</code> exports and package boundary</li>
+<li><code>platform</code>: <code>Platform.OS</code>/<code>Platform.select</code> and version detection (<code>platform.py</code>)</li>
+<li><code>platform_metrics</code>: platform-reported metrics like safe-area insets and bar heights (<code>platform_metrics.py</code>)</li>
+<li><code>reconciler</code>: virtual view tree diffing and reconciliation (<code>reconciler.py</code>)</li>
+<li><code>runtime</code>: framework-wide asyncio loop and thread-safe future helpers (<code>runtime.py</code>)</li>
+<li><code>screen</code>: screen host, native lifecycle bridge, and render scheduling (<code>screen.py</code>)</li>
+<li><code>sdk</code>: public extension SDK for custom native components (<code>sdk/</code>)</li>
+<li><code>storage</code>: AsyncStorage key/value persistence and <code>use_persisted_state</code> (<code>storage.py</code>)</li>
+<li><code>style</code>: StyleSheet and theming (<code>style.py</code>)</li>
 <li>
-<p><code>utils</code> – shared utilities (<code>utils.py</code>)</p>
+<p><code>utils</code>: shared utilities (<code>utils.py</code>)</p>
 </li>
 <li>
 <p>Other scopes:</p>
 </li>
-<li><code>deps</code> – dependency updates and version pins</li>
-<li><code>examples</code> – example apps under <code>examples/</code></li>
-<li><code>mkdocs</code> – documentation site (MkDocs/Material) configuration and content under <code>docs/</code></li>
-<li><code>pyproject</code> – <code>pyproject.toml</code> packaging/build metadata</li>
-<li><code>repo</code> – repository metadata and top‑level files (<code>README.md</code>, <code>CONTRIBUTING.md</code>, <code>.gitignore</code>, licenses)</li>
-<li><code>scripts</code> – developer scripts under <code>scripts/</code> (e.g., <code>check.sh</code>)</li>
-<li><code>templates</code> – Android/iOS project templates under <code>src/pythonnative/templates/</code></li>
-<li><code>tests</code> – unit/integration/E2E tests under <code>tests/</code></li>
-<li><code>workflows</code> – CI pipelines under <code>.github/workflows/</code></li>
+<li><code>deps</code>: dependency updates and version pins</li>
+<li><code>examples</code>: example apps under <code>examples/</code></li>
+<li><code>mkdocs</code>: documentation site (MkDocs/Material) configuration and content under <code>docs/</code></li>
+<li><code>pyproject</code>: <code>pyproject.toml</code> packaging/build metadata</li>
+<li><code>repo</code>: repository metadata and top‑level files (<code>README.md</code>, <code>CONTRIBUTING.md</code>, <code>.gitignore</code>, licenses)</li>
+<li><code>scripts</code>: developer scripts under <code>scripts/</code> (e.g., <code>check.sh</code>)</li>
+<li><code>templates</code>: Android/iOS project templates under <code>src/pythonnative/templates/</code></li>
+<li><code>tests</code>: unit/integration/E2E tests under <code>tests/</code></li>
+<li><code>workflows</code>: CI pipelines under <code>.github/workflows/</code></li>
 </ul>
 <p>Note: Avoid redundant type==scope pairs (e.g., <code>docs(docs)</code>). Prefer a module scope (e.g., <code>docs(core)</code>) or <code>docs(repo)</code> for top‑level updates.</p>
 <p>Examples:</p>
@@ -3330,7 +3330,7 @@ The contents are included below so the docs site stays in sync.</p>
 <li>Imperative mood; no trailing period; ≤ 72 chars; <code>!</code> for breaking changes.</li>
 <li>PR description: include brief sections: What, Why, How (brief), Testing, Risks/Impact, Docs/Follow‑ups.</li>
 <li>Link issues with keywords (e.g., <code>Closes #123</code>).</li>
-<li>Merging: prefer “Squash and merge” with “Pull request title and description”.</li>
+<li>Merging: prefer "Squash and merge" with "Pull request title and description".</li>
 <li>Keep PRs focused; avoid unrelated changes in the same PR.</li>
 </ul>
 <p>Recommended PR template:</p>
@@ -3377,7 +3377,7 @@ The contents are included below so the docs site stays in sync.</p>
 <li><strong>Draft / published toggle</strong>: the <code>DRAFT_RELEASE</code> variable at the top of <code>.github/workflows/release.yml</code> controls release mode. Set to <code>"true"</code> (the default) for draft GitHub Releases with PyPI publishing skipped; flip to <code>"false"</code> to publish releases and upload to PyPI immediately.</li>
 <li>Commit types that trigger a release: <code>feat</code> (minor), <code>fix</code> and <code>perf</code> (patch), <code>BREAKING CHANGE</code> (major). All other types (<code>build</code>, <code>chore</code>, <code>ci</code>, <code>docs</code>, <code>refactor</code>, <code>revert</code>, <code>style</code>, <code>test</code>) are recorded in the changelog but do <strong>not</strong> trigger a release on their own.</li>
 <li>Tag format: <code>v</code>-prefixed (e.g., <code>v0.4.0</code>).</li>
-<li>Manual version bumps are no longer needed — just merge PRs with valid Conventional Commit titles. For ad-hoc runs, use the workflow's <strong>Run workflow</strong> button (<code>workflow_dispatch</code>).</li>
+<li>Manual version bumps are no longer needed: just merge PRs with valid Conventional Commit titles. For ad-hoc runs, use the workflow's <strong>Run workflow</strong> button (<code>workflow_dispatch</code>).</li>
 </ul>
 <h3 id="branch-naming-suggested">Branch naming (suggested)<a class="headerlink" href="#branch-naming-suggested" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3405,7 +3405,7 @@ The contents are included below so the docs site stays in sync.</p>
 </span></code></pre></div>
 <h3 id="e2e-tests-maestro">E2E tests (Maestro)<a class="headerlink" href="#e2e-tests-maestro" title="Permanent link">&para;</a></h3>
 <p>End-to-end tests use <a href="https://maestro.dev/">Maestro</a> to drive the dedicated <code>examples/e2e-suite</code> app on real emulators and simulators. That app contains one screen per public symbol in <code>pythonnative.__all__</code>; every flow under <code>tests/e2e/flows/&lt;category&gt;/</code> exercises one symbol.</p>
-<p>The dedicated <code>examples/hello-world</code> app is left in place as a small marketing demo; it is <strong>not</strong> the E2E target.</p>
+<p>The dedicated <code>examples/hello-world</code> app is left in place as a small marketing demo; it's <strong>not</strong> the E2E target.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Install Maestro (one-time)</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>curl<span class="w"> </span>-Ls<span class="w"> </span><span class="s2">&quot;https://get.maestro.mobile.dev&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
@@ -3448,7 +3448,7 @@ The contents are included below so the docs site stays in sync.</p>
 <li>Prefer runtime configuration via environment variables for Django and CI.</li>
 </ul>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p>By contributing, you agree that your contributions are licensed under the repository’s MIT License.</p>
+<p>By contributing, you agree that your contributions are licensed under the repository's MIT License.</p>
 
 
 

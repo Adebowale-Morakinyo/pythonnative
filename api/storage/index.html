@@ -3511,7 +3511,7 @@ add a JSON encode/decode step.</p>
 
         <p>Return the JSON-decoded value stored at <code>key</code>, or <code>None</code>.</p>
 <p>If the stored value isn't valid JSON, returns <code>None</code> rather
-than raising — assume the entry was written by another
+than raising; assume the entry was written by another
 process or an older version of the app.</p>
 
 
@@ -3570,7 +3570,7 @@ process or an older version of the app.</p>
 <p>Backed by <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>:
 behaves like <code>use_state</code> but loads the prior value (if any) on
 mount and persists every subsequent update. Until the load
-completes the value is <code>initial</code> — the same fallback React
+completes the value is <code>initial</code>, the same fallback React
 Native users get with <code>AsyncStorage.getItem</code>.</p>
 <p>The setter accepts either a value or a <code>current -&gt; new</code>
 callable, matching
@@ -3642,7 +3642,7 @@ best-effort by design).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>(value, setter)</code> — same shape as</p>
+                <p><code>(value, setter)</code>, same shape as</p>
               </div>
             </td>
           </tr>

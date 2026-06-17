@@ -2976,8 +2976,8 @@ on initial mount, navigation, and hot reload. Sibling and ancestor
 components keep their existing native views and hook state untouched.</p>
 <p>The phases:</p>
 <ol>
-<li><strong>Render</strong>. The affected <code>@component</code> function(s) run — for a state
-   change, just the component whose setter fired. Hooks register state,
+<li><strong>Render</strong>. The affected <code>@component</code> function(s) run (for a state
+   change, just the component whose setter fired). Hooks register state,
    queue effects, and capture closures. No native widgets change yet,
    so this phase is cheap and pure (modulo <code>use_state</code> updates).</li>
 <li><strong>Commit</strong>. The

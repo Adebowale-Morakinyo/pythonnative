@@ -4398,7 +4398,7 @@ mutation, or <code>None</code>.</p>
 <p>Returned by the second element of the
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="#pythonnative.hooks.use_mutation"><code>use_mutation</code></a> tuple. Awaiting the
 handle resolves to the mutator's return value (or re-raises its
-exception); discarding the handle is safe — Python won't warn
+exception); discarding the handle is safe. Python won't warn
 about an unawaited coroutine because this is a plain object.</p>
 
 
@@ -4617,7 +4617,7 @@ via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 <p>Wraps the host's push/pop primitives so screens can navigate
 without knowing the underlying native navigation stack. The
 typical user-facing surface is the declarative handle returned by
-a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_stack_navigator"><code>Stack</code></a> — this class is
+a <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_stack_navigator&lt;/span&gt;" href="../navigation/#pythonnative.navigation.create_stack_navigator"><code>Stack</code></a>; this class is
 the lower-level fallback used when no navigator is rendered (and
 as the bridge that declarative navigators delegate to when they
 need to push real native screens).</p>
@@ -5827,7 +5827,7 @@ current data.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Dependency list — refetches whenever any entry changes.</p>
+                <p>Dependency list. Refetches whenever any entry changes.</p>
               </div>
             </td>
             <td>
@@ -6873,14 +6873,14 @@ instead become the special <code>children</code> prop.</p>
 <p>For coroutines and data-driven UI, PythonNative ships dedicated
 async-aware hooks layered on top of <code>use_state</code> / <code>use_effect</code>:</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a> — async sibling
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>: async sibling
   of <code>use_effect</code>; cancels the in-flight coroutine on re-run /
   unmount.</li>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="#pythonnative.hooks.use_query"><code>use_query</code></a> — subscribes to an async
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="#pythonnative.hooks.use_query"><code>use_query</code></a>: subscribes to an async
   fetcher and re-renders on data / error / refetch.</li>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="#pythonnative.hooks.use_mutation"><code>use_mutation</code></a> — wraps an async
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>: wraps an async
   mutator with loading / error state and a trigger.</li>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_persisted_state&lt;/span&gt;" href="../storage/#pythonnative.storage.use_persisted_state"><code>use_persisted_state</code></a> —
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_persisted_state&lt;/span&gt;" href="../storage/#pythonnative.storage.use_persisted_state"><code>use_persisted_state</code></a>:
   <code>use_state</code> backed by
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>.</li>
 </ul>
@@ -6892,9 +6892,9 @@ walkthrough.</p>
 change. The screen host is the only code that updates the underlying
 values; user code consumes them.</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_window_dimensions&lt;/span&gt;" href="#pythonnative.hooks.use_window_dimensions"><code>use_window_dimensions</code></a> — viewport size.</li>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_safe_area_insets&lt;/span&gt;" href="#pythonnative.hooks.use_safe_area_insets"><code>use_safe_area_insets</code></a> — top/bottom/left/right insets.</li>
-<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_keyboard_height&lt;/span&gt;" href="#pythonnative.hooks.use_keyboard_height"><code>use_keyboard_height</code></a> — software keyboard height.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_window_dimensions&lt;/span&gt;" href="#pythonnative.hooks.use_window_dimensions"><code>use_window_dimensions</code></a>: viewport size.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_safe_area_insets&lt;/span&gt;" href="#pythonnative.hooks.use_safe_area_insets"><code>use_safe_area_insets</code></a>: top/bottom/left/right insets.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_keyboard_height&lt;/span&gt;" href="#pythonnative.hooks.use_keyboard_height"><code>use_keyboard_height</code></a>: software keyboard height.</li>
 </ul>
 <p>For most apps the dedicated
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;KeyboardAvoidingView&lt;/span&gt;" href="../components/#pythonnative.components.KeyboardAvoidingView"><code>KeyboardAvoidingView</code></a> component

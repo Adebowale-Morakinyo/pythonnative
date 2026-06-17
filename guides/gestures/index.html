@@ -2958,7 +2958,7 @@
 <h1 id="gestures">Gestures<a class="headerlink" href="#gestures" title="Permanent link">&para;</a></h1>
 <p><code>pythonnative.gestures</code> attaches native gesture recognition to any
 view-like element through the <code>gestures=</code> prop. Six recognizers ship
-out of the box — <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Tap&lt;/span&gt;
+out of the box: <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Tap&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
@@ -3063,7 +3063,7 @@ and routes the callbacks through the same tag-based event channel as
 </span></code></pre></div>
 <p><code>Pan</code> activates once the pointer travels <code>min_distance</code> points (10 by
 default), reports <code>on_change</code> with translation measured from the
-activation point, and <code>on_end</code> with release velocity — ready to feed
+activation point, and <code>on_end</code> with release velocity, ready to feed
 into <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;Animated&lt;/span&gt;
 
 
@@ -3111,13 +3111,13 @@ share one handler across slots.</p>
 <h2 id="gestures-vs-pressable">Gestures vs. <code>Pressable</code><a class="headerlink" href="#gestures-vs-pressable" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Pressable&lt;/span&gt;" href="../../api/components/#pythonnative.components.Pressable"><code>Pressable</code></a> (and <code>on_press</code>) remains the
 right tool for plain buttons: it adds pressed-state feedback and
-accessibility semantics. Reach for <code>gestures=</code> when you need motion —
-drags, flicks, pinches — or multi-tap/long-press recognition on an
+accessibility semantics. Reach for <code>gestures=</code> when you need motion
+(drags, flicks, pinches) or multi-tap/long-press recognition on an
 arbitrary view.</p>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <p>The arbiter that powers Android and desktop recognition is pure
 Python, so gesture logic is unit-testable with scripted pointer
-streams — see <code>tests/test_gestures.py</code> for ready-made patterns.</p>
+streams; see <code>tests/test_gestures.py</code> for ready-made patterns.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Pair gestures with the <a href="../animations/">Animated API</a> for

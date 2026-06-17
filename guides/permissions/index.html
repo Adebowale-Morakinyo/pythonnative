@@ -2969,7 +2969,7 @@
 
 <h1 id="permissions">Permissions<a class="headerlink" href="#permissions" title="Permanent link">&para;</a></h1>
 <p>iOS and Android describe the same device capability in very different
-ways — iOS wants <em>usage-description</em> strings in <code>Info.plist</code>, Android
+ways: iOS wants <em>usage-description</em> strings in <code>Info.plist</code>, Android
 wants <code>&lt;uses-permission&gt;</code> entries (and, since API 23, a runtime prompt).
 PythonNative lets you declare capabilities <strong>once</strong>, by name, in
 <code>pythonnative.toml</code>, and expands each into the correct native artifacts
@@ -3000,7 +3000,7 @@ for both platforms.</p>
 </tr>
 <tr>
 <td><strong><code>false</code></strong></td>
-<td>The capability is disabled — useful for toggling one off without deleting the line.</td>
+<td>The capability is disabled, useful for toggling one off without deleting the line.</td>
 </tr>
 </tbody>
 </table>
@@ -3155,10 +3155,10 @@ derived set:</p>
 <h2 id="how-it-maps-to-native-files">How it maps to native files<a class="headerlink" href="#how-it-maps-to-native-files" title="Permanent link">&para;</a></h2>
 <p>When you run <code>pn run</code> or <code>pn build</code>, the configurators write:</p>
 <ul>
-<li><strong>iOS</strong> — each usage key/string pair into <code>Info.plist</code>, plus a
+<li><strong>iOS</strong>: each usage key/string pair into <code>Info.plist</code>, plus a
   <code>UIBackgroundModes</code> array when any background-capable capability is
   declared.</li>
-<li><strong>Android</strong> — a <code>&lt;uses-permission android:name="…"/&gt;</code> element into
+<li><strong>Android</strong>: a <code>&lt;uses-permission android:name="…"/&gt;</code> element into
   <code>AndroidManifest.xml</code> for every resolved permission.</li>
 </ul>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="infoplist-ios" name="__tabbed_1" type="radio" /><input id="androidmanifestxml-android" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="infoplist-ios">Info.plist (iOS)</label><label for="androidmanifestxml-android">AndroidManifest.xml (Android)</label></div>
@@ -3192,7 +3192,7 @@ it does not, by itself, show a prompt:</p>
 </ul>
 <p>Use the relevant <a href="../native-modules/">native module</a> to trigger the
 request at the right moment in your UX. Keep your <code>[permissions]</code> table
-to the minimum your app actually uses — both stores scrutinize
+to the minimum your app actually uses; both stores scrutinize
 over-broad permission requests.</p>
 
 

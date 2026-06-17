@@ -2985,8 +2985,8 @@ inside (and just beyond) the viewport are mounted as native views.
 Leading and trailing spacers stand in for everything off-screen, and
 the window of mounted rows shifts as the user scrolls. The windowing
 runs in Python on top of the platform's native scroll view, so the
-same behavior — including <code>on_end_reached</code>, viewability callbacks, and
-the imperative scroll controller — is identical on Android, iOS, and
+same behavior (including <code>on_end_reached</code>, viewability callbacks, and
+the imperative scroll controller) is identical on Android, iOS, and
 the desktop preview.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -3002,15 +3002,15 @@ the desktop preview.</p>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n">key_extractor</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">)</span>
 </span></code></pre></div>
-<p>The list never holds 10,000 native views — only the window around the
+<p>The list never holds 10,000 native views; only the window around the
 viewport ever exists.</p>
 <h2 id="row-heights">Row heights<a class="headerlink" href="#row-heights" title="Permanent link">&para;</a></h2>
 <p>Three ways to tell the list how tall rows are, in order of preference:</p>
 <ul>
-<li><code>item_height=44</code> — uniform rows. Offsets are exact and cheap.</li>
-<li><code>get_item_height=lambda item, i: ...</code> — exact per-row extents
+<li><code>item_height=44</code>: uniform rows. Offsets are exact and cheap.</li>
+<li><code>get_item_height=lambda item, i: ...</code>: exact per-row extents
   without measurement.</li>
-<li>Nothing at all — rows start at <code>estimated_item_height</code> (default 44)
+<li>Nothing at all: rows start at <code>estimated_item_height</code> (default 44)
   and are corrected with their measured extent once they've been on
   screen. Scroll positions stay stable as estimates converge.</li>
 </ul>

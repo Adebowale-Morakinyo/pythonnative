@@ -5338,7 +5338,7 @@ is pure, and the native side sees one coherent transaction per commit.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Initial <em>clean</em> props — callables have already been
+                <p>Initial <em>clean</em> props; callables have already been
 routed to the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;EventRegistry&lt;/span&gt;" href="#pythonnative.events.EventRegistry"><code>EventRegistry</code></a>
 and replaced by the <code>_pn_events</code> name set.</p>
               </div>
@@ -5754,7 +5754,7 @@ the bridge. This module replaces that with a single dispatch channel:</p>
 <li>Handlers wire their platform listener <strong>once</strong> at view creation; the
   listener calls <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_event&lt;/span&gt;" href="#pythonnative.events.dispatch_event"><code>dispatch_event</code></a>
   with the view's tag and the event name.</li>
-<li>Re-renders only mutate this Python-side registry — no native call is
+<li>Re-renders only mutate this Python-side registry; no native call is
   made when just a callback identity changes.</li>
 </ul>
 <p>The set of event names present on an element is forwarded to handlers
@@ -6179,7 +6179,7 @@ thread.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>it raised — exceptions are swallowed so a buggy app</p>
+                <p>it raised: exceptions are swallowed so a buggy app</p>
               </div>
             </td>
           </tr>
@@ -6314,7 +6314,7 @@ native listener fires.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Event name — the original prop name (<code>"on_click"</code>,
+                <p>Event name, the original prop name (<code>"on_click"</code>,
 <code>"on_change"</code>, …) or a gesture channel (<code>"gesture:0"</code>).</p>
               </div>
             </td>
@@ -6394,8 +6394,8 @@ preserving each prop's documented signature.</p>
 <li><code>gestures</code> lists of gesture descriptors are serialized to plain
   dicts (handlers wire recognizers from them) while their callbacks
   are folded into per-gesture <code>"gesture:&lt;i&gt;"</code> routers.</li>
-<li>The resulting payload carries <code>_pn_events</code> — a frozenset of the
-  event names present — so handlers can wire listeners
+<li>The resulting payload carries <code>_pn_events</code> (a frozenset of the
+  event names present), so handlers can wire listeners
   conditionally and the prop differ can detect listener
   addition/removal without comparing closures.</li>
 </ul>
@@ -6603,7 +6603,7 @@ for content-sized leaves (text, buttons, images).</p>
         <p>Protocol implemented by every native-view handler.</p>
 <p>A <code>ViewHandler</code> knows how to create, update, re-parent, and destroy
 native views of one element type. The reconciler never calls a
-handler directly — it emits a batch of mutation ops
+handler directly; it emits a batch of mutation ops
 (<code>pythonnative.mutations</code>) that the
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NativeViewRegistry&lt;/span&gt;" href="#pythonnative.native_views.NativeViewRegistry"><code>NativeViewRegistry</code></a>
 applies by dispatching to handlers. Handlers never need to know
@@ -7166,7 +7166,7 @@ their content (text, buttons, images). Either <code>max_width</code> or
 <code>max_height</code> may be <code>math.inf</code> to indicate no constraint.</p>
 <p>The default implementation returns <code>(0, 0)</code>; override for
 leaves whose size depends on their content. Container handlers
-leave this alone — the engine sizes containers by laying out
+leave this alone; the engine sizes containers by laying out
 their children.</p>
 
 
@@ -7275,7 +7275,7 @@ their children.</p>
 
         <p>Execute an imperative command (e.g. <code>"scroll_to_offset"</code>).</p>
 <p>Commands are the escape hatch for one-shot imperative actions
-that don't fit declarative props — scrolling, focusing,
+that don't fit declarative props: scrolling, focusing,
 flashing indicators. Unknown commands should be ignored.</p>
 
 

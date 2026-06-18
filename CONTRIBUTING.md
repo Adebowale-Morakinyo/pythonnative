@@ -53,7 +53,7 @@ cd examples/hello-world && pn run android
 - Docstrings: Google style throughout. Ruff is configured with the Google
   convention (`pydocstyle.convention = "google"`) and enforces the `D` rule
   set on `src/pythonnative/`. See the
-  [Documentation style guide](https://docs.pythonnative.com/meta/style-guide/)
+  [Documentation style guide](https://pythonnative.com/meta/style-guide/)
   for examples and Markdown/grammar conventions.
 
 Common commands:

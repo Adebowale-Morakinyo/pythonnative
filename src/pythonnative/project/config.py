@@ -590,7 +590,7 @@ def render_default_toml(*, name: str, app_id: str, python_version: str = "3.11")
     """
     display = name.replace("_", " ").replace("-", " ").strip().title() or name
     return f"""# PythonNative project configuration.
-# Docs: https://docs.pythonnative.com/guide/configuration/
+# Docs: https://pythonnative.com/guides/configuration/
 
 [app]
 id = "{app_id}"
@@ -604,7 +604,7 @@ entry_point = "app/main.py"
 
 # Declare the device capabilities your app needs. A string becomes the
 # iOS permission prompt text; `true` uses a sensible default.
-# See: https://docs.pythonnative.com/guide/permissions/
+# See: https://pythonnative.com/guides/permissions/
 [permissions]
 # camera = "Scan receipts with your camera."
 # location_when_in_use = "Show nearby stores."

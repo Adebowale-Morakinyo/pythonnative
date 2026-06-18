@@ -1,7 +1,7 @@
 site_name: PythonNative
 site_description: Cross-platform native UI toolkit for Android and iOS
 site_author: Owen Carey
-site_url: https://docs.pythonnative.com/
+site_url: https://pythonnative.com/
 repo_url: https://github.com/pythonnative/pythonnative
 repo_name: pythonnative/pythonnative
 edit_uri: edit/main/docs/

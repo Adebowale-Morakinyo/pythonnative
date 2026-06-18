@@ -12,13 +12,13 @@
   <a href="https://pypi.org/project/pythonnative/"><img src="https://img.shields.io/pypi/v/pythonnative" alt="PyPI Version" /></a>
   <a href="https://pypi.org/project/pythonnative/"><img src="https://img.shields.io/pypi/pyversions/pythonnative" alt="Python Versions" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/pypi/l/pythonnative" alt="License: MIT" /></a>
-  <a href="https://docs.pythonnative.com/"><img src="https://img.shields.io/website?url=https%3A%2F%2Fdocs.pythonnative.com&label=docs" alt="Docs" /></a>
+  <a href="https://pythonnative.com/"><img src="https://img.shields.io/website?url=https%3A%2F%2Fpythonnative.com&label=docs" alt="Docs" /></a>
 </p>
 
 <p align="center">
-  <a href="https://docs.pythonnative.com/">Documentation</a> ·
-  <a href="https://docs.pythonnative.com/getting-started/">Getting Started</a> ·
-  <a href="https://docs.pythonnative.com/examples/">Examples</a> ·
+  <a href="https://pythonnative.com/">Documentation</a> ·
+  <a href="https://pythonnative.com/getting-started/">Getting Started</a> ·
+  <a href="https://pythonnative.com/examples/">Examples</a> ·
   <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
@@ -77,7 +77,7 @@ def App():
 
 ## Documentation
 
-Visit [docs.pythonnative.com](https://docs.pythonnative.com/) for the full documentation, including getting started guides, platform-specific instructions for Android and iOS, API reference, and working examples.
+Visit [pythonnative.com](https://pythonnative.com/) for the full documentation, including getting started guides, platform-specific instructions for Android and iOS, API reference, and working examples.
 
 ## Contributing
 

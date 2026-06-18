@@ -1,6 +1,27 @@
 # CHANGELOG
 
 
+## v0.22.1 (2026-06-18)
+
+### Bug Fixes
+
+- Pin PythonKit to v0.5.1 after upstream renamed master to main
+  ([#13](https://github.com/pythonnative/pythonnative/pull/13),
+  [`e787891`](https://github.com/pythonnative/pythonnative/commit/e787891a72e62526f70effc21cb70f37898c5de9))
+
+### Documentation
+
+- Add AGENTS.md with documentation style guidelines
+  ([`1e860b7`](https://github.com/pythonnative/pythonnative/commit/1e860b7ee40f933b29e7d94d3c9cbedac873b6f6))
+
+- Serve documentation site from the apex domain
+  ([`6b659e9`](https://github.com/pythonnative/pythonnative/commit/6b659e9c5bb1631891cd35cc4b179ee5e3e26e44))
+
+- Use straight quotes, and drop em dashes per style guide
+  ([#12](https://github.com/pythonnative/pythonnative/pull/12),
+  [`6c0399c`](https://github.com/pythonnative/pythonnative/commit/6c0399c4c2a3f5452e04edbc1ac2a709c411ad3f))
+
+
 ## v0.22.0 (2026-06-16)
 
 ### Features

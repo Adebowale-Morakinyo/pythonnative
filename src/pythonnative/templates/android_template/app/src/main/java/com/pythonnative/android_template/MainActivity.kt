@@ -27,8 +27,12 @@ class MainActivity : AppCompatActivity() {
                 "configure_dev_environment",
                 filesDir.absolutePath
             )
-            // Touch module to ensure bundled Python code is available; actual instantiation happens in ScreenFragment
-            py.getModule("app.main")
+            // Warm the framework's bootstrap module; it resolves the root
+            // component (the configured app, or the PythonNative Go dev
+            // client for a `pn go` build). Actual instantiation happens in
+            // ScreenFragment. We avoid importing "app.main" directly here so
+            // PythonNative Go (which ships no user app) still boots.
+            py.getModule("pythonnative.bootstrap")
         } catch (e: Exception) {
             Log.e("PythonNative", "Bootstrap failed", e)
             val tv = TextView(this)

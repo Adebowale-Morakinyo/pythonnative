@@ -1,31 +1,27 @@
 # Hot reload
 
-Hot reload turns your edit-save-rebuild loop into edit-save-see. The
-`pn` CLI watches `app/` for changes and pushes the modified files
-straight to the running app, where a small device-side helper reloads
-the affected modules and asks the screen host to re-render.
+Hot reload turns your edit-save-rebuild loop into edit-save-see. While
+[PythonNative Go](dev-client.md) is connected to a `pn start` dev
+server, every save streams the changed files to the device, where a
+small device-side helper reloads the affected modules and asks the
+screen host to re-render with state preserved.
+
+This page covers the reload mechanics. For how to set up the dev server
+and client, see the [PythonNative Go guide](dev-client.md).
 
 ## Turn it on
 
-Add `--hot-reload` to your `pn run` invocation:
+Hot reload is the default behavior of the dev loop. Install the client
+once, then start the server:
 
 ```bash
-pn run android --hot-reload
-# or
-pn run ios --hot-reload
+pn go install android   # one time (or: pn go install ios)
+pn start                # in your project; serves over Wi-Fi
 ```
 
-`pn` will:
-
-1. Build and install the app once (the standard `run` flow).
-2. Launch the app on a connected device or simulator.
-3. Start a [`FileWatcher`][pythonnative.hot_reload.FileWatcher] over
-   `app/`.
-4. Push changed Python files into a writable on-device overlay.
-5. Write a small reload manifest that the running app polls from the
-   main thread.
-6. Tail logs (Android) or print hot-reload notifications (iOS) until
-   you press `Ctrl+C`.
+Connect PythonNative Go to the printed URL and start editing. You can
+also Fast-Refresh entirely on the desktop with
+[`pn preview`](desktop-preview.md), which uses the same machinery.
 
 ## How the device sees changes
 
@@ -35,17 +31,17 @@ before importing your app. That creates a `pythonnative_dev/` directory
 in the app's writable sandbox and puts it before the bundled app code
 on `sys.path`.
 
-When a source file changes, the CLI copies it to that overlay:
+When you save, the dev server rebuilds the bundle and bumps a version
+token. PythonNative Go is long-polling for that token; when it changes,
+the client fetches only the files whose content hash differs and writes
+them into the `pythonnative_dev/` overlay (the same directory the
+templates already prioritize on `sys.path`).
 
-- Android: app-private storage via `adb` + `run-as`
-- iOS Simulator: the installed app's `Documents/pythonnative_dev/`
-  directory
-
-After the files are in place, the CLI writes `reload.json`. The
-Android and iOS templates poll that manifest on the platform main
-thread and call the screen host's reload hook. The host re-imports the
-root component by dotted path, resets hook/navigation state for the
-page, and mounts the refreshed tree.
+After the files are in place, the client writes `reload.json` into the
+overlay. The Android and iOS templates poll that manifest on the
+platform main thread and call the screen host's reload hook. The host
+re-imports the root component by dotted path, resets hook/navigation
+state for the page, and mounts the refreshed tree.
 
 ## What gets reloaded
 
@@ -125,36 +121,31 @@ references.
     state change for the renamed component to take effect; closing
     and reopening the screen always works.
 
-## Working without `--hot-reload`
+## Rebuilding from scratch
 
-Hot reload is opt-in. If you'd rather rebuild on every change (more
-predictable, slower), use `pn run android` / `pn run ios` without the
-flag, or split the loop:
+When you change native code (Kotlin, Swift, the manifest, or
+`Info.plist`) or need a true standalone build, skip the dev server and
+bake the app into the native shell:
 
 ```bash
-pn run android --prepare-only   # stage files, skip the build
-# ...edit...
-pn run android                  # rebuild and re-install
+pn run android   # build, install, and launch with your app baked in
+# ...edit native files...
+pn run android   # rebuild and re-install
 ```
 
-`--prepare-only` is also useful for iterating on
-`AndroidManifest.xml` or `Info.plist` because those changes never
-hot-reload and you want the smallest possible cycle.
+You can stage the project without building (handy when iterating on
+`AndroidManifest.xml` or `Info.plist`) with `pn run android
+--prepare-only`, then open it in Android Studio or Xcode.
 
 ## Reading device logs
 
-Hot reload streams logs by default so you can see exceptions from your
-reloaded modules. Pass `--no-logs` to suppress the stream:
-
-```bash
-pn run android --hot-reload --no-logs
-```
-
-On iOS hot reload currently targets the Simulator flow. Use Console.app
-or Xcode for full live logs while the CLI keeps the watcher process in
-the foreground.
+`pn start` prints reload activity in your terminal. For full app
+stdout/stderr and tracebacks from a standalone build, `pn run` streams
+device logs by default (pass `--no-logs` to suppress them); on iOS you
+can also use Console.app or Xcode.
 
 ## Next steps
 
+- Set up the dev loop: [PythonNative Go](dev-client.md).
 - Reference: [Hot reload API](../api/hot_reload.md).
-- See where hot reload sits in the run loop: [`pn run`](../api/cli.md).
+- See where the dev loop sits in the CLI: [`pn` CLI](../api/cli.md).

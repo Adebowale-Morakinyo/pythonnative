@@ -61,7 +61,7 @@ Key ideas:
 - **`@pn.component`** marks a function as a PythonNative component. The function returns an element tree describing the UI. PythonNative creates and updates native views automatically.
 - **`pn.use_state(initial)`** creates local component state. Call the setter to update it and the UI re-renders automatically.
 - **`pn.create_stack_navigator()`** returns a `Stack` with `.Navigator` and `.Screen` factories. Wrap them in `pn.NavigationContainer` to enable [`pn.use_navigation()`][pythonnative.use_navigation] and [`pn.use_route()`][pythonnative.use_route] anywhere below.
-- **The `App` function** is the entry point. The Android and iOS templates import `app.main`, look up its top-level `App` attribute, and start rendering. If you'd rather expose a differently-named component, configure your templates to load an explicit dotted path like `"app.main.RootScreen"`.
+- **The `App` function** is the entry point. The Android and iOS templates import the module named by `app.entry_point` in `pythonnative.toml` (`app/main.py` → `app.main` by default), look up its top-level `App` attribute, and start rendering. Point `entry_point` at a different module to change the root.
 - **`style={...}`** passes visual and layout properties as a dict (or list of dicts) to any component.
 - Element functions like `pn.Text(...)`, `pn.Button(...)`, `pn.Column(...)` create lightweight descriptions, not native objects.
 
@@ -127,7 +127,38 @@ is a **development** surface for layout and logic; some visual chrome is
 approximated, and there's no desktop packaging. Ship to devices with
 `pn run`. See the [Desktop preview guide](guides/desktop-preview.md).
 
+## Develop on a device with PythonNative Go
+
+To iterate on a real phone or simulator without rebuilding on every
+save, use **PythonNative Go**, the Python answer to Expo Go. It's a
+prebuilt client app you install once; `pn start` then serves your
+project to it over Wi-Fi and live-reloads on save.
+
+```bash
+pn go install android   # one time: build + install the client
+pn start                # in your project: serve over the LAN
+```
+
+`pn start` bundles your `app/`, prints a URL and a scannable QR code,
+and watches for changes:
+
+```text
+  PythonNative dev server  -  myapp
+  http://192.168.1.20:8765
+  ...
+```
+
+Open PythonNative Go, enter that URL (it remembers recent servers), and
+your app downloads and runs. Edit a file under `app/`, save, and the
+device **Fast Refreshes** in place, keeping component state (counters,
+form input, scroll position). The framework is baked into the client, so
+one install runs any project. See the
+[PythonNative Go guide](guides/dev-client.md).
+
 ## Run on a platform
+
+When you want a standalone build with your app baked into the native
+shell (no dev server), use `pn run`:
 
 ```bash
 pn run android
@@ -136,7 +167,7 @@ pn run ios
 ```
 
 - Uses bundled templates (no network required for scaffolding)
-- Copies your `app/` into the generated project
+- Copies your `app/` into the generated project, builds it, and launches
 
 If you just want to scaffold the platform project without building, use:
 
@@ -145,33 +176,24 @@ pn run android --prepare-only
 pn run ios --prepare-only
 ```
 
-This stages files under `build/` so you can open them in Android Studio or Xcode.
+This stages files under `build/` so you can open them in Android Studio
+or Xcode. For day-to-day UI work, prefer the
+[PythonNative Go](guides/dev-client.md) loop above; it's much faster than
+a rebuild.
 
-## Hot reload while developing
+## How Fast Refresh preserves state
 
-For day-to-day UI work, run with `--hot-reload`:
-
-```bash
-pn run android --hot-reload
-pn run ios --hot-reload
-```
-
-The first run still builds and launches the native app. After that,
-edits under `app/` are copied into the running app's writable source
-overlay and the active page refreshes without a full rebuild.
-
-PythonNative prefers a **Fast Refresh** path: each
-[`@pn.component`][pythonnative.component] function is matched by
-qualified name across the reloaded module, the live VNode tree's
-function references are swapped in place, and the next render reuses
-the existing hook state. So edits to the body of a component preserve
-in-memory state (counters, scroll positions, etc.). When Fast Refresh
-can't find a clean swap (for example, after deeper structural
-edits), PythonNative falls back to a full remount of the active page
-so you never get stuck with a stale tree.
-
-This works best for Python UI changes; native template changes
-(Kotlin, Swift, manifests) still require a normal rebuild.
+Whether you're using `pn preview` or PythonNative Go, edits to a
+[`@pn.component`][pythonnative.component] function are applied with **Fast
+Refresh**: each function is matched by qualified name across the reloaded
+module, the live VNode tree's function references are swapped in place,
+and the next render reuses the existing hook state. So edits to the body
+of a component preserve in-memory state. When Fast Refresh can't find a
+clean swap (after deeper structural edits), PythonNative falls back to a
+full remount of the active page so you never get stuck with a stale tree.
+This works for Python UI changes; native template changes (Kotlin,
+Swift, manifests) still require a `pn run` rebuild. See the
+[Hot reload guide](guides/hot-reload.md).
 
 ## Viewing logs
 

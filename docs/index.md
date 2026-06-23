@@ -50,9 +50,11 @@ produce identical frames on both platforms.
   Component fragments on Android, `UINavigationController` on iOS),
   so transitions, back gestures, and state preservation are exactly
   what users expect from a first-class native app.
-- **Fast Refresh hot reload.** `pn run --hot-reload` watches `app/`
-  and patches the running app in place, preserving component state
-  across most edits.
+- **PythonNative Go dev client.** Install a prebuilt client once with
+  `pn go install`, then `pn start` serves your `app/` over Wi-Fi and
+  Fast-Refreshes the running app on save, preserving component state
+  across most edits. See the
+  [PythonNative Go guide](guides/dev-client.md).
 - **Instant desktop preview.** `pn preview` renders your app in a
   desktop window with Fast Refresh, so you can iterate on UI, state,
   and navigation in milliseconds (no simulator boot required). See the

@@ -170,11 +170,13 @@ You're either missing keys or using positional keys. See
 
 ### Edits don't appear
 
-- Make sure you actually launched with `--hot-reload` (the run command
-  prints `[hot-reload] Watching app/ for changes` when the watcher
-  starts).
-- The watcher only sees `.py` files under `app/`. Code outside `app/`
-  needs a manual rebuild.
+- Make sure `pn start` is running and PythonNative Go is connected (the
+  server prints a `changed: ... -> reloading` line on each save). See
+  the [PythonNative Go guide](../guides/dev-client.md).
+- The dev server only watches `.py` files under `app/`. Code outside
+  `app/`, and native changes, need a `pn run` rebuild.
+- If the device can't reach the server, confirm both are on the same
+  Wi-Fi and try the URL in the phone's browser.
 - Top-level side effects re-run on each reload; if your module
   registers something into a global on import, the *second* import
   may raise. See [Hot reload guide](../guides/hot-reload.md#common-pitfalls).

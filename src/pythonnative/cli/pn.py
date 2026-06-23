@@ -6,18 +6,22 @@ The console script `pn` (declared in `pyproject.toml`) dispatches to:
 - `pn doctor [platform]`: diagnose the local toolchain and config.
 - `pn preview [component]`: render the app in a desktop (Tkinter) window
   with Fast Refresh, the fast inner dev loop, no device required.
-- `pn run android|ios`: stage + build + install + launch on a device or
-  simulator, with optional on-device hot reload.
+- `pn start`: run the dev server and serve the app to PythonNative Go
+  over Wi-Fi, with a scannable QR code and live reload on every save.
+- `pn go build|install android|ios`: build (and install) the PythonNative
+  Go dev client, a generic shell that connects to `pn start`.
+- `pn run android|ios`: stage + build + install + launch a standalone
+  build on a device or simulator.
 - `pn build android|ios`: produce standalone artifacts (signed APK/AAB,
   or an iOS archive/IPA).
 - `pn app-id android|ios`: print the resolved application/bundle id
   (handy for scripts and CI).
 - `pn clean`: remove the local `build/` directory.
 
-The heavy lifting lives in the ``pythonnative.project`` package; this
-module is a thin, side-effect-y shell that wires arguments to it and
-handles the device-facing steps (simulator boot, log streaming, hot
-reload) that can't be unit tested.
+The heavy lifting lives in the ``pythonnative.project`` and
+``pythonnative.dev`` packages; this module is a thin, side-effect-y shell
+that wires arguments to them and handles the device-facing steps
+(simulator boot, log streaming) that can't be unit tested.
 """
 
 from __future__ import annotations
@@ -29,10 +33,10 @@ import re
 import shutil
 import subprocess
 import sys
-import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from ..dev import protocol as dev_protocol
 from ..project import builder as builder_mod
 from ..project import doctor as doctor_mod
 from ..project.android import collect_logcat_filters
@@ -249,13 +253,15 @@ def _preview_entry(project_dir: Path) -> str:
 def run_project(args: argparse.Namespace) -> None:
     """Stage, build, install, and launch the app on a device/simulator.
 
+    This produces a standalone build with the app baked in. For the fast,
+    Expo-style inner loop (edit + live reload over Wi-Fi), use ``pn start``
+    together with the PythonNative Go client (``pn go install``).
+
     Args:
-        args: Parsed namespace (``platform``, ``prepare_only``,
-            ``hot_reload``, ``no_logs``).
+        args: Parsed namespace (``platform``, ``prepare_only``, ``no_logs``).
     """
     platform: str = args.platform
     prepare_only: bool = getattr(args, "prepare_only", False)
-    hot_reload: bool = getattr(args, "hot_reload", False)
     show_logs: bool = not getattr(args, "no_logs", False)
 
     config = _load_config_or_exit()
@@ -273,29 +279,18 @@ def run_project(args: argparse.Namespace) -> None:
 
     try:
         if platform == "android":
-            _run_android(builder, prepared, hot_reload=hot_reload, show_logs=show_logs)
+            _run_android(builder, prepared, show_logs=show_logs)
         else:
-            _run_ios(builder, prepared, hot_reload=hot_reload, show_logs=show_logs)
+            _run_ios(builder, prepared, show_logs=show_logs)
     except builder_mod.BuildError as exc:
         print(f"Error: {exc}")
         sys.exit(1)
-
-    if hot_reload:
-        _run_hot_reload(
-            platform,
-            str(config.project_root),
-            str(prepared.build_dir),
-            app_id=config.application_id,
-            bundle_id=config.bundle_id,
-            show_logs=show_logs,
-        )
 
 
 def _run_android(
     builder: builder_mod.Builder,
     prepared: builder_mod.PreparedProject,
     *,
-    hot_reload: bool,
     show_logs: bool,
 ) -> None:
     builder.install_android_debug(prepared)
@@ -304,7 +299,7 @@ def _run_android(
         ["adb", "shell", "am", "start", "-n", f"{prepared.app_id}/.MainActivity"],
         check=True,
     )
-    if show_logs and not hot_reload:
+    if show_logs:
         proc = _start_android_log_stream()
         if proc is not None:
             try:
@@ -319,7 +314,6 @@ def _run_ios(
     builder: builder_mod.Builder,
     prepared: builder_mod.PreparedProject,
     *,
-    hot_reload: bool,
     show_logs: bool,
 ) -> None:
     app_path = builder.build_ios_simulator(prepared)
@@ -331,9 +325,6 @@ def _run_ios(
     subprocess.run(["xcrun", "simctl", "install", udid, str(app_path)], check=False)
     _clear_ios_hot_reload_overlay(prepared.app_id)
 
-    if hot_reload:
-        # The hot-reload loop launches the app with a console PTY itself.
-        return
     if show_logs:
         env = {**os.environ, "SIMCTL_CHILD_PYTHONUNBUFFERED": "1"}
         print("Launched iOS app on Simulator. Streaming logs (Ctrl+C to stop)...")
@@ -535,65 +526,8 @@ def _terminate_subprocess(proc: Optional[subprocess.Popen]) -> None:
 
 
 # ======================================================================
-# Hot reload
+# Hot-reload overlay cleanup (clears stale dev files before launch)
 # ======================================================================
-
-
-def _hot_reload_manifest_payload(
-    changed_files: List[str],
-    project_dir: str,
-    *,
-    version: Optional[str] = None,
-) -> Dict[str, Any]:
-    """Build the reload manifest consumed by the running app.
-
-    Args:
-        changed_files: Absolute paths to changed source files.
-        project_dir: The project root, used to relativize paths.
-        version: Optional explicit version stamp (defaults to a timestamp).
-
-    Returns:
-        The manifest dict (``version``, ``files``, ``modules``).
-    """
-    from pythonnative.hot_reload import ModuleReloader
-
-    rel_files = sorted(os.path.relpath(path, project_dir) for path in changed_files)
-    return {
-        "version": version or str(time.time_ns()),
-        "files": rel_files,
-        "modules": ModuleReloader.modules_from_files(rel_files),
-    }
-
-
-def _write_hot_reload_manifest(changed_files: List[str], project_dir: str, build_dir: str) -> str:
-    """Write a local hot-reload manifest and return its path."""
-    manifest_dir = os.path.join(build_dir, "hot_reload")
-    os.makedirs(manifest_dir, exist_ok=True)
-    manifest_path = os.path.join(manifest_dir, "reload.json")
-    with open(manifest_path, "w", encoding="utf-8") as handle:
-        json.dump(_hot_reload_manifest_payload(changed_files, project_dir), handle)
-    return manifest_path
-
-
-def _android_hot_reload_dest(rel_path: str) -> str:
-    """Return a ``run-as`` relative destination for an app source file."""
-    return os.path.join("files", HOT_RELOAD_DEV_ROOT, rel_path)
-
-
-def _push_android_hot_reload_file(local_path: str, rel_path: str, app_id: str) -> bool:
-    """Push one file into the Android app's writable hot-reload overlay."""
-    tmp_path = f"/data/local/tmp/pythonnative-hot-reload-{os.getpid()}-{os.path.basename(local_path)}"
-    dest_path = _android_hot_reload_dest(rel_path)
-    dest_dir = os.path.dirname(dest_path)
-    push = subprocess.run(["adb", "push", local_path, tmp_path], check=False, capture_output=True)
-    if push.returncode != 0:
-        return False
-    subprocess.run(["adb", "shell", "run-as", app_id, "mkdir", "-p", dest_dir], check=False, capture_output=True)
-    copy = subprocess.run(
-        ["adb", "shell", "run-as", app_id, "cp", tmp_path, dest_path], check=False, capture_output=True
-    )
-    subprocess.run(["adb", "shell", "rm", "-f", tmp_path], check=False, capture_output=True)
-    return copy.returncode == 0
 
 
 def _ios_data_container(bundle_id: str) -> Optional[str]:
@@ -610,17 +544,6 @@ def _ios_data_container(bundle_id: str) -> Optional[str]:
     if result.returncode != 0:
         return None
     return result.stdout.strip() or None
-
-
-def _push_ios_hot_reload_file(local_path: str, rel_path: str, bundle_id: str) -> bool:
-    """Copy one file into the booted iOS Simulator's hot-reload overlay."""
-    container = _ios_data_container(bundle_id)
-    if container is None:
-        return False
-    dest_path = os.path.join(container, "Documents", HOT_RELOAD_DEV_ROOT, rel_path)
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    shutil.copy2(local_path, dest_path)
-    return True
 
 
 def _clear_android_hot_reload_overlay(app_id: str) -> bool:
@@ -642,77 +565,200 @@ def _clear_ios_hot_reload_overlay(bundle_id: str) -> bool:
     return True
 
 
-def _push_hot_reload_file(platform: str, local_path: str, rel_path: str, *, app_id: str, bundle_id: str) -> bool:
-    """Push a changed source file to the running app."""
-    if platform == "android":
-        return _push_android_hot_reload_file(local_path, rel_path, app_id)
-    if platform == "ios":
-        return _push_ios_hot_reload_file(local_path, rel_path, bundle_id)
-    return False
+# ======================================================================
+# start (dev server)
+# ======================================================================
 
 
-def _run_hot_reload(
-    platform: str,
-    project_dir: str,
-    build_dir: str,
-    *,
-    app_id: str,
-    bundle_id: str,
-    show_logs: bool = True,
-) -> None:
-    """Watch ``app/`` for changes and push updated files to the device.
+def start_project(args: argparse.Namespace) -> None:
+    """Run the dev server: serve the app over the LAN with live reload.
+
+    Bundles ``app/`` (plus pure-Python requirements), serves it over HTTP,
+    prints a scannable QR code, and pushes updates to connected PythonNative
+    Go clients on every save. This is the fast inner loop, the Python answer
+    to ``expo start``.
 
     Args:
-        platform: ``"android"`` or ``"ios"``.
-        project_dir: Absolute path to the user's project root.
-        build_dir: Absolute path to the staged build directory.
-        app_id: The Android application id (for ``run-as``).
-        bundle_id: The iOS bundle id (for the data container / launch).
-        show_logs: Whether to stream device logs in parallel.
+        args: Parsed namespace (``host``, ``port``, ``no_qr``,
+            ``no_requirements``).
     """
-    from ..hot_reload import FileWatcher
+    config = _load_config_or_exit()
+    host: str = getattr(args, "host", None) or "0.0.0.0"
+    port: int = getattr(args, "port", None) or dev_protocol.DEFAULT_PORT
 
-    app_dir = os.path.join(project_dir, "app")
+    site_packages: Optional[Path] = None
+    if config.requirements and not getattr(args, "no_requirements", False):
+        site_packages = _install_dev_requirements(config)
 
-    def on_change(changed_files: List[str]) -> None:
-        pushed: List[str] = []
-        for fpath in changed_files:
-            rel = os.path.relpath(fpath, project_dir)
-            print(f"[hot-reload] Changed: {rel}")
-            if _push_hot_reload_file(platform, fpath, rel, app_id=app_id, bundle_id=bundle_id):
-                pushed.append(fpath)
-            else:
-                print(f"[hot-reload] Failed to push {rel}")
-        if pushed:
-            manifest = _write_hot_reload_manifest(pushed, project_dir, build_dir)
-            if _push_hot_reload_file(platform, manifest, "reload.json", app_id=app_id, bundle_id=bundle_id):
-                print(f"[hot-reload] Signaled reload for {len(pushed)} file(s).")
-            else:
-                print("[hot-reload] Failed to signal reload; app will not refresh automatically.")
-
-    print("[hot-reload] Watching app/ for changes. Press Ctrl+C to stop.")
-    watcher = FileWatcher(app_dir, on_change, interval=1.0)
-    watcher.start()
-
-    log_proc: Optional[subprocess.Popen] = None
-    if show_logs:
-        if platform == "android":
-            log_proc = _start_android_log_stream()
-        elif platform == "ios":
-            log_proc = _start_ios_log_stream(bundle_id)
+    from ..dev.discovery import lan_ip, server_url
+    from ..dev.server import DevServer
 
     try:
-        if log_proc is not None:
-            log_proc.wait()
-        else:
-            while True:
-                time.sleep(1)
+        server = DevServer(
+            config.project_root,
+            app_name=config.name,
+            entry_module=config.entry_module,
+            host=host,
+            port=port,
+            site_packages=site_packages,
+            log=print,
+        )
+    except OSError as exc:
+        print(f"Error: couldn't start the dev server on {host}:{port} ({exc}).")
+        print("Another `pn start` may already be running; try --port to pick a different port.")
+        sys.exit(1)
+
+    url = server_url(lan_ip(), server.port)
+    _print_start_banner(url, config.name, qr=not getattr(args, "no_qr", False))
+    try:
+        server.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
-        _terminate_subprocess(log_proc)
-        watcher.stop()
-        print("\n[hot-reload] Stopped.")
+        server.stop()
+        print("\nStopped dev server.")
+
+
+def _print_start_banner(url: str, app_name: str, *, qr: bool) -> None:
+    print()
+    print(f"  PythonNative dev server  -  {app_name}")
+    print(f"  {url}")
+    print()
+    if qr:
+        from ..dev.qr import render_qr
+
+        rendered = render_qr(url)
+        if rendered:
+            print(rendered)
+            print()
+    print("  Open PythonNative Go on your device and scan the QR code above,")
+    print("  or type the URL in by hand. Install the client with `pn go install`.")
+    print("  Edit a file under app/ and the device refreshes. Ctrl+C to stop.")
+    print()
+
+
+def _install_dev_requirements(config: AppConfig) -> Optional[Path]:
+    """Best-effort: pip-install ``[requirements].packages`` for the bundle.
+
+    Returns the site-packages directory to include in the served bundle, or
+    ``None`` if there's nothing to install or the install failed (in which
+    case the app is served without its third-party deps and the device shows
+    an import error the developer can act on).
+    """
+    site_dir = config.project_root / "build" / "devserver" / "site-packages"
+    try:
+        if site_dir.exists():
+            shutil.rmtree(site_dir)
+        site_dir.mkdir(parents=True, exist_ok=True)
+        print(f"Installing requirements for the bundle: {', '.join(config.requirements)}")
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "-t", str(site_dir), *config.requirements],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            print("Note: couldn't install some requirements; serving app sources only.")
+            return None
+    except OSError:
+        return None
+    return site_dir
+
+
+# ======================================================================
+# go (PythonNative Go dev client)
+# ======================================================================
+
+
+def _go_client_config(project_root: Path) -> AppConfig:
+    """Return the built-in config for the PythonNative Go client app."""
+    try:
+        from .. import __version__
+
+        version = __version__ if re.match(r"^\d+(\.\d+){0,3}$", __version__) else "1.0.0"
+    except Exception:
+        version = "1.0.0"
+    return AppConfig.from_dict(
+        {
+            "app": {
+                "id": "com.pythonnative.go",
+                "name": "PythonNativeGo",
+                "display_name": "PythonNative Go",
+                "version": version,
+                "python_version": "3.11",
+                "orientation": "portrait",
+            },
+        },
+        project_root=project_root,
+    )
+
+
+def go_command(args: argparse.Namespace) -> None:
+    """Build (and optionally install) the PythonNative Go dev client.
+
+    PythonNative Go is a generic client app that bakes in the framework but no
+    user code; it connects to ``pn start`` to download and run any project.
+    Build it once per device, then iterate with ``pn start`` alone.
+
+    Args:
+        args: Parsed namespace (``action`` of ``build``/``install``,
+            ``platform``).
+    """
+    action: str = args.action
+    platform: str = args.platform
+    project_root = Path.cwd()
+    config = _go_client_config(project_root)
+    builder = builder_mod.Builder(config, log=print, build_root=project_root / "build" / "pythonnative-go")
+
+    try:
+        prepared = builder.prepare(platform, dev_client=True)
+        if platform == "android":
+            artifacts = builder.build_android(prepared, debug=True)
+        else:
+            app_path = builder.build_ios_simulator(prepared)
+            artifacts = builder_mod.BuildArtifacts(paths=[app_path])
+    except builder_mod.BuildError as exc:
+        print(f"Error: {exc}")
+        sys.exit(1)
+
+    if not artifacts.paths:
+        print("Build completed, but no PythonNative Go artifact was found. Check the output above.")
+        sys.exit(1)
+
+    if action == "build":
+        print("\nBuilt PythonNative Go:")
+        for path in artifacts.paths:
+            print(f"  {path}")
+        print("\nInstall it with: pn go install " + platform)
+        return
+
+    _go_install(platform, prepared, artifacts)
+
+
+def _go_install(platform: str, prepared: builder_mod.PreparedProject, artifacts: builder_mod.BuildArtifacts) -> None:
+    """Install and launch the freshly built PythonNative Go client."""
+    if platform == "android":
+        apk = next((p for p in artifacts.paths if p.suffix == ".apk"), None)
+        if apk is None:
+            print("No APK found to install.")
+            sys.exit(1)
+        subprocess.run(["adb", "install", "-r", str(apk)], check=False)
+        subprocess.run(
+            ["adb", "shell", "am", "start", "-n", f"{prepared.app_id}/.MainActivity"],
+            check=False,
+        )
+        print("Installed and launched PythonNative Go. Now run `pn start` in your project.")
+        return
+
+    app_path = artifacts.paths[0]
+    udid = _select_ios_simulator()
+    if udid is None:
+        print("No available iOS Simulators found; open the project in Xcode to run.")
+        return
+    subprocess.run(["xcrun", "simctl", "boot", udid], check=False, capture_output=True)
+    subprocess.run(["xcrun", "simctl", "install", udid, str(app_path)], check=False)
+    subprocess.run(["xcrun", "simctl", "launch", udid, prepared.app_id], check=False)
+    print("Installed and launched PythonNative Go. Now run `pn start` in your project.")
 
 
 # ======================================================================
@@ -747,10 +793,27 @@ def _build_parser() -> argparse.ArgumentParser:
     parser_preview.add_argument("--no-hot-reload", action="store_true", help="Disable file watching / Fast Refresh")
     parser_preview.set_defaults(func=preview_project)
 
-    parser_run = subparsers.add_parser("run", help="Build, install, and launch on a device/simulator")
+    parser_start = subparsers.add_parser(
+        "start", help="Run the dev server for PythonNative Go (live reload over Wi-Fi)"
+    )
+    parser_start.add_argument(
+        "--port", type=int, default=None, help=f"Port to serve on (default: {dev_protocol.DEFAULT_PORT})"
+    )
+    parser_start.add_argument("--host", default=None, help="Interface to bind (default: 0.0.0.0, all interfaces)")
+    parser_start.add_argument("--no-qr", action="store_true", help="Don't print a QR code, just the URL")
+    parser_start.add_argument(
+        "--no-requirements", action="store_true", help="Don't bundle [requirements].packages into the served app"
+    )
+    parser_start.set_defaults(func=start_project)
+
+    parser_go = subparsers.add_parser("go", help="Build/install the PythonNative Go dev client")
+    parser_go.add_argument("action", choices=["build", "install"], help="Build the client, or build and install it")
+    parser_go.add_argument("platform", choices=["android", "ios"])
+    parser_go.set_defaults(func=go_command)
+
+    parser_run = subparsers.add_parser("run", help="Build, install, and launch a standalone build on a device")
     parser_run.add_argument("platform", choices=["android", "ios"])
     parser_run.add_argument("--prepare-only", action="store_true", help="Stage + configure without building")
-    parser_run.add_argument("--hot-reload", action="store_true", help="Watch app/ and push updates to the running app")
     parser_run.add_argument("--no-logs", action="store_true", help="Don't stream device logs after launch")
     parser_run.set_defaults(func=run_project)
 

@@ -4,8 +4,9 @@ Two cooperating pieces:
 
 - **Host-side**: [`FileWatcher`][pythonnative.hot_reload.FileWatcher]
   polls the developer's ``app/`` directory for ``.py`` changes and
-  triggers a callback (typically ``adb push`` on Android or a
-  ``simctl`` file copy on iOS).
+  triggers a callback. The ``pn start`` dev server uses it to rebuild
+  the served bundle (which PythonNative Go then fetches over the
+  network), and ``pn preview`` uses it to refresh the desktop window.
 - **Device-side**:
   [`ModuleReloader`][pythonnative.hot_reload.ModuleReloader] reloads
   changed Python modules using ``importlib`` and asks the screen
@@ -26,7 +27,7 @@ Two strategies share the device-side surface:
   running.
 
 Example:
-    Integrated into ``pn run --hot-reload``:
+    Integrated into the ``pn start`` dev server (and ``pn preview``):
 
     ```python
     from pythonnative.hot_reload import FileWatcher

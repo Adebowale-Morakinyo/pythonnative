@@ -60,13 +60,16 @@ pn run android   # or: pn run ios
 3. Install and launch it on a connected device or simulator.
 4. Stream logs back to the terminal.
 
-For an even tighter loop while iterating, add `--hot-reload`:
+For a much tighter loop while iterating, use
+[PythonNative Go](../guides/dev-client.md): install the client once, then
+serve your app over Wi-Fi with live reload.
 
 ```bash
-pn run android --hot-reload
+pn go install android   # one time
+pn start                # serves app/ with Fast Refresh on save
 ```
 
-See [Hot reload guide](../guides/hot-reload.md) for the details.
+See the [PythonNative Go guide](../guides/dev-client.md) for the details.
 
 ## Next steps
 

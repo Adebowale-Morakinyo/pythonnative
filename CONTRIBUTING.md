@@ -101,8 +101,10 @@ Recommended scopes (choose the smallest, most accurate unit; prefer module/direc
 - Module/directory scopes:
   - `alerts`: imperative Alert/Picker helpers (`alerts.py`)
   - `animated`: Animated namespace and animation primitives (`animated.py`)
+  - `bootstrap`: root-entry resolver for the native templates (`bootstrap.py`)
   - `cli`: CLI tool and `pn` command (`src/pythonnative/cli/`)
   - `components`: declarative element-creating functions (`components.py`)
+  - `dev`: PythonNative Go dev server/client, bundler, and protocol (`dev/`)
   - `element`: Element descriptor class (`element.py`)
   - `events`: tag-based event routing between native views and Python callbacks (`events.py`)
   - `gestures`: gesture descriptors and the pure-Python recognition arbiter (`gestures.py`)

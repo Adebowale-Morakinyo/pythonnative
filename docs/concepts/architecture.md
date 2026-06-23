@@ -56,16 +56,18 @@ platform APIs synchronously from Python.
      the JNI bridge.
 9. **Thin native bootstrap.** The host app remains native (Android
    `Activity` or iOS `UIViewController`). It calls
-   [`create_screen`][pythonnative.create_screen] internally to bootstrap
-   your Python component, and the reconciler drives the UI from
-   there.
+   `pythonnative.bootstrap.create_root_host` (which wraps
+   [`create_screen`][pythonnative.create_screen]) to bootstrap your
+   Python component, and the reconciler drives the UI from there.
 10. **`App` entry point.** The user's app module (`app/main.py`)
-    defines a top-level component named `App`. Native templates
-    import that module by path (`"app.main"`) and look up its `App`
-    attribute, so users never write a separate registration step.
-    Components with other names can still be loaded by passing an
-    explicit dotted path like `"app.main.RootScreen"` to the
-    template.
+    defines a top-level component named `App`. The templates resolve the
+    root through `pythonnative.bootstrap`, which reads a generated
+    `pn_entry` marker: a normal build mounts `app.entry_point`
+    (`app.main` by default) and looks up its `App` attribute, while a
+    [PythonNative Go](../guides/dev-client.md) build mounts the dev-client
+    shell instead. Either way, users never write a separate registration
+    step, and pushed screens can still be loaded by an explicit dotted
+    path like `"app.main.RootScreen"`.
 
 ## How it works
 
@@ -313,9 +315,10 @@ See [Mental model](mental-model.md) for a wider comparison table.
 
 ## Hot reload (Fast Refresh)
 
-During development, `pn run --hot-reload` watches `app/` for file
-changes and pushes updated Python files to the running app, enabling
-near-instant UI updates without full rebuilds.
+During development, the [`pn start`](../guides/dev-client.md) dev server
+watches `app/` for file changes and streams updated Python files to
+PythonNative Go on the device, enabling near-instant UI updates without
+full rebuilds.
 
 PythonNative uses a **Fast Refresh** strategy:
 

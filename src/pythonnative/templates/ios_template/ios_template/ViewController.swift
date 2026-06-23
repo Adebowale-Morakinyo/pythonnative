@@ -110,13 +110,12 @@ class ViewController: UIViewController {
                 NSLog("[PN] Hot reload setup skipped: \(error)")
             }
         }
-        // Determine which Python module to load. PythonNative's
-        // convention is "import the module and grab its top-level
-        // `App` attribute", so the default is just the module path
-        // "app.main". Push navigation overrides this via
-        // `requestedScreenPath`, which may also be a dotted-attribute
-        // path like "app.main.RootScreen".
-        let screenPath: String = requestedScreenPath ?? "app.main"
+        // Resolve the root screen. For the root (no `requestedScreenPath`),
+        // hand off to `pythonnative.bootstrap`, which reads the build's
+        // `pn_entry` marker and mounts either the configured app or the
+        // PythonNative Go dev client. Pushed screens set `requestedScreenPath`
+        // (possibly a dotted-attribute path like "app.main.RootScreen") and
+        // go straight to create_screen.
         do {
             let pnScreen = try Python.attemptImport("pythonnative.screen")
             let ptr = Unmanaged.passUnretained(self).toOpaque()
@@ -124,9 +123,17 @@ class ViewController: UIViewController {
             let argsJson: PythonObject = (requestedScreenArgsJSON != nil)
                 ? PythonObject(requestedScreenArgsJSON!)
                 : Python.None
-            let screen = try pnScreen.create_screen.throwing.dynamicallyCall(
-                withArguments: [screenPath, addr, argsJson]
-            )
+            let screen: PythonObject
+            if let requested = requestedScreenPath {
+                screen = try pnScreen.create_screen.throwing.dynamicallyCall(
+                    withArguments: [requested, addr, argsJson]
+                )
+            } else {
+                let bootstrap = try Python.attemptImport("pythonnative.bootstrap")
+                screen = try bootstrap.create_root_host.throwing.dynamicallyCall(
+                    withArguments: [addr, argsJson]
+                )
+            }
             self.screen = screen
             let devRoot = "\(NSHomeDirectory())/Documents/pythonnative_dev"
             let manifestPath = "\(devRoot)/reload.json"

@@ -12,7 +12,7 @@
         <argument
             android:name="screen_path"
             app:argType="string"
-            android:defaultValue="app.main" />
+            android:defaultValue="__pn_root__" />
         <argument
             android:name="args_json"
             app:argType="string"

@@ -15,8 +15,16 @@ the documented behavior never drifts from the code.
   with Fast Refresh, the fastest way to iterate on UI. Flags:
   `--width`, `--height`, `--title`, `--no-hot-reload`. See the
   [Desktop preview guide](../guides/desktop-preview.md).
-- `pn run android|ios`: build and run on a connected device or
-  simulator. Flags: `--prepare-only`, `--hot-reload`, `--no-logs`.
+- `pn start`: run the dev server and serve your app to
+  [PythonNative Go](../guides/dev-client.md) over Wi-Fi, with a QR code
+  and live reload on save. Flags: `--port`, `--host`, `--no-qr`,
+  `--no-requirements`.
+- `pn go build|install android|ios`: build (and install) the
+  PythonNative Go dev client, a generic shell that connects to
+  `pn start`.
+- `pn run android|ios`: build and run a standalone build (your app baked
+  in) on a connected device or simulator. Flags: `--prepare-only`,
+  `--no-logs`.
 - `pn build android|ios`: build distributable artifacts (release by
   default). Flag: `--debug` for the debug variant. See
   [Building for release](../guides/building-for-release.md).
@@ -34,5 +42,5 @@ the documented behavior never drifts from the code.
 ## Next steps
 
 - See the [Getting started](../getting-started.md) walkthrough.
-- Read about [Hot reload](../guides/hot-reload.md) when you turn on
-  `--hot-reload`.
+- Set up the fast dev loop with [PythonNative Go](../guides/dev-client.md).
+- Read about [Hot reload](../guides/hot-reload.md) internals.

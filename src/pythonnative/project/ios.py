@@ -81,13 +81,22 @@ class IOSLayout:
     bundle_id: str
 
 
-def configure(project_dir: Path, config: AppConfig, *, log: Optional[Logger] = None) -> IOSLayout:
+def configure(
+    project_dir: Path,
+    config: AppConfig,
+    *,
+    log: Optional[Logger] = None,
+    dev_client: bool = False,
+) -> IOSLayout:
     """Configure a staged iOS template for ``config``.
 
     Args:
         project_dir: The staged ``ios_template`` directory.
         config: The validated app configuration.
         log: Optional progress logger.
+        dev_client: When ``True``, allow local-network cleartext HTTP in the
+            ``Info.plist`` so the PythonNative Go client can reach a
+            ``pn start`` dev server.
 
     Returns:
         An [`IOSLayout`][pythonnative.project.ios.IOSLayout].
@@ -96,7 +105,7 @@ def configure(project_dir: Path, config: AppConfig, *, log: Optional[Logger] = N
     project_dir = Path(project_dir)
     info_plist = project_dir / "ios_template" / "Info.plist"
 
-    configure_info_plist(info_plist, config)
+    configure_info_plist(info_plist, config, dev_client=dev_client)
     _apply_branding(project_dir, config, emit)
 
     emit(f"Configured iOS project ({config.bundle_id}).")
@@ -108,12 +117,15 @@ def configure(project_dir: Path, config: AppConfig, *, log: Optional[Logger] = N
 # ======================================================================
 
 
-def configure_info_plist(info_plist: Path, config: AppConfig) -> None:
+def configure_info_plist(info_plist: Path, config: AppConfig, *, dev_client: bool = False) -> None:
     """Write display name, orientation, permissions, and extras to the plist.
 
     Args:
         info_plist: Path to the app ``Info.plist``.
         config: The validated app configuration.
+        dev_client: When ``True``, add an App Transport Security exception
+            allowing local-network cleartext HTTP so the PythonNative Go
+            client can reach a ``pn start`` dev server.
     """
     with open(info_plist, "rb") as handle:
         plist = plistlib.load(handle)
@@ -133,6 +145,13 @@ def configure_info_plist(info_plist: Path, config: AppConfig) -> None:
 
     if config.splash:
         plist["UILaunchStoryboardName"] = "LaunchScreen"
+
+    if dev_client:
+        plist["NSAppTransportSecurity"] = {
+            "NSAllowsLocalNetworking": True,
+            "NSAllowsArbitraryLoads": True,
+        }
+        plist.setdefault("NSLocalNetworkUsageDescription", "Connect to a PythonNative dev server on your network.")
 
     for key, value in config.ios.extra_info_plist.items():
         plist[key] = value

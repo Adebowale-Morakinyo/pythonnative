@@ -9,7 +9,6 @@ from typing import List
 import pytest
 
 import pythonnative.cli.pn as pn_cli
-import pythonnative.hot_reload as hot_reload_module
 
 
 def run_pn(args: List[str], cwd: str) -> "subprocess.CompletedProcess[str]":
@@ -68,8 +67,29 @@ def test_cli_run_help_lists_flags() -> None:
         result = run_pn(["run", "--help"], tmpdir)
         assert result.returncode == 0, result.stderr
         assert "--no-logs" in result.stdout
-        assert "--hot-reload" in result.stdout
         assert "--prepare-only" in result.stdout
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_cli_start_help_lists_flags() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
+    try:
+        result = run_pn(["start", "--help"], tmpdir)
+        assert result.returncode == 0, result.stderr
+        assert "--port" in result.stdout
+        assert "--no-qr" in result.stdout
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_cli_go_help_lists_actions() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
+    try:
+        result = run_pn(["go", "--help"], tmpdir)
+        assert result.returncode == 0, result.stderr
+        assert "build" in result.stdout
+        assert "install" in result.stdout
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -192,29 +212,6 @@ def test_booted_ios_udid_handles_xcrun_missing(monkeypatch: pytest.MonkeyPatch) 
     assert pn_cli._booted_ios_udid() is None
 
 
-def test_hot_reload_manifest_payload_maps_files_to_modules(tmp_path: Path) -> None:
-    app_dir = tmp_path / "app"
-    app_dir.mkdir()
-    changed = app_dir / "main.py"
-    changed.write_text("print('hi')\n", encoding="utf-8")
-
-    payload = pn_cli._hot_reload_manifest_payload([os.fspath(changed)], os.fspath(tmp_path), version="v1")
-
-    assert payload == {
-        "version": "v1",
-        "files": ["app/main.py"],
-        "modules": ["app.main"],
-    }
-
-
-def test_android_hot_reload_dest_points_to_overlay() -> None:
-    assert pn_cli._android_hot_reload_dest("app/main.py") == os.path.join(
-        "files",
-        "pythonnative_dev",
-        "app/main.py",
-    )
-
-
 def test_clear_ios_hot_reload_overlay_removes_stale_files(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -227,40 +224,3 @@ def test_clear_ios_hot_reload_overlay_removes_stale_files(
 
     assert pn_cli._clear_ios_hot_reload_overlay("com.example.app") is True
     assert not overlay.exists()
-
-
-def test_run_hot_reload_imports_top_level_watcher(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    app_dir = tmp_path / "app"
-    app_dir.mkdir()
-    build_dir = tmp_path / "build"
-    events: list[str] = []
-
-    class FakeWatcher:
-        def __init__(self, watch_dir: str, on_change: object, interval: float = 1.0) -> None:
-            assert watch_dir == os.fspath(app_dir)
-
-        def start(self) -> None:
-            events.append("start")
-
-        def stop(self) -> None:
-            events.append("stop")
-
-    def stop_loop(_seconds: float) -> None:
-        raise KeyboardInterrupt
-
-    monkeypatch.setattr(hot_reload_module, "FileWatcher", FakeWatcher)
-    monkeypatch.setattr("time.sleep", stop_loop)
-
-    pn_cli._run_hot_reload(
-        "ios",
-        os.fspath(tmp_path),
-        os.fspath(build_dir),
-        app_id="com.example.app",
-        bundle_id="com.example.app",
-        show_logs=False,
-    )
-
-    assert events == ["start", "stop"]

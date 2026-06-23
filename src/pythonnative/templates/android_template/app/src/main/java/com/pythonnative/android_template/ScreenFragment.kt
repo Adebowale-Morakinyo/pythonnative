@@ -37,19 +37,24 @@ class ScreenFragment : Fragment() {
         }
         try {
             val py = Python.getInstance()
-            // Default to "app.main": PythonNative imports the module
-            // and looks up its top-level `App` attribute. Override
-            // via fragment arguments / nav graph to load a different
-            // module or a specific dotted-attribute path (e.g.
-            // "app.main.RootScreen").
-            val screenPath = arguments?.getString("screen_path") ?: "app.main"
+            // The root screen is resolved by `pythonnative.bootstrap`, which
+            // reads the build's `pn_entry` marker and mounts either the
+            // configured app or the PythonNative Go dev client. Pushed
+            // screens pass an explicit dotted path via fragment arguments
+            // (e.g. "app.main.RootScreen") and go straight to create_screen.
+            val screenPath = arguments?.getString("screen_path") ?: ROOT_SENTINEL
             val argsJson = arguments?.getString("args_json")
             val filesRoot = requireContext().filesDir.absolutePath
             val devRoot = "$filesRoot/pythonnative_dev"
             val hotReload = py.getModule("pythonnative.hot_reload")
             hotReload.callAttr("configure_dev_environment", filesRoot)
             val pnScreen = py.getModule("pythonnative.screen")
-            screen = pnScreen.callAttr("create_screen", screenPath, requireActivity(), argsJson)
+            screen = if (screenPath == ROOT_SENTINEL) {
+                val bootstrap = py.getModule("pythonnative.bootstrap")
+                bootstrap.callAttr("create_root_host", requireActivity(), argsJson)
+            } else {
+                pnScreen.callAttr("create_screen", screenPath, requireActivity(), argsJson)
+            }
             screen?.callAttr("enable_hot_reload", "$devRoot/reload.json", devRoot)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to instantiate screen", e)
@@ -121,6 +126,12 @@ class ScreenFragment : Fragment() {
     }
 
     companion object {
+        // Sentinel screen path for the root destination. ScreenFragment
+        // resolves it via pythonnative.bootstrap rather than importing a
+        // fixed module, so the same template serves both a normal app build
+        // and the PythonNative Go dev client.
+        const val ROOT_SENTINEL = "__pn_root__"
+
         fun newInstance(screenPath: String, argsJson: String?): ScreenFragment {
             val f = ScreenFragment()
             f.arguments = bundleOf(

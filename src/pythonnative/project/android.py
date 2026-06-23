@@ -75,6 +75,7 @@ def configure(
     *,
     dev_lib_root: Optional[Path] = None,
     log: Optional[Logger] = None,
+    dev_client: bool = False,
 ) -> AndroidLayout:
     """Fully configure a staged Android template for ``config``.
 
@@ -84,6 +85,9 @@ def configure(
         dev_lib_root: Path to an in-repo ``pythonnative`` package to
             bundle (dev checkout); ``None`` to rely on the PyPI install.
         log: Optional progress logger.
+        dev_client: When ``True``, configure the PythonNative Go client:
+            the user's ``app/`` is not staged and LAN cleartext traffic is
+            enabled so the app can reach a ``pn start`` dev server.
 
     Returns:
         An [`AndroidLayout`][pythonnative.project.android.AndroidLayout]
@@ -96,12 +100,12 @@ def configure(
     configure_gradle(project_dir, config)
     configure_settings_gradle(project_dir, config)
     configure_strings(project_dir, config)
-    configure_manifest(project_dir, config)
+    configure_manifest(project_dir, config, dev_client=dev_client)
     write_requirements(project_dir, config)
 
     _apply_branding(project_dir, config, emit)
 
-    python_root = stage_python_sources(project_dir, config, dev_lib_root=dev_lib_root)
+    python_root = stage_python_sources(project_dir, config, dev_lib_root=dev_lib_root, dev_client=dev_client)
     emit(f"Configured Android project ({config.application_id}).")
     return AndroidLayout(project_dir=project_dir, application_id=config.application_id, python_root=python_root)
 
@@ -254,20 +258,29 @@ def configure_strings(project_dir: Path, config: AppConfig) -> None:
     strings_path.write_text(content, encoding="utf-8")
 
 
-def configure_manifest(project_dir: Path, config: AppConfig) -> None:
+def configure_manifest(project_dir: Path, config: AppConfig, *, dev_client: bool = False) -> None:
     """Inject ``<uses-permission>`` entries and the launch orientation.
 
     Args:
         project_dir: The staged Android project root.
         config: The validated app configuration.
+        dev_client: When ``True``, also request ``INTERNET`` and enable
+            ``android:usesCleartextTraffic`` so the PythonNative Go client can
+            reach a LAN dev server over plain HTTP.
     """
     manifest_path = project_dir / "app" / "src" / "main" / "AndroidManifest.xml"
     content = manifest_path.read_text(encoding="utf-8")
 
-    permissions = config.resolved_permissions().android_permissions
+    permissions = list(config.resolved_permissions().android_permissions)
+    if dev_client and "android.permission.INTERNET" not in permissions:
+        permissions.insert(0, "android.permission.INTERNET")
     if permissions:
         lines = "".join(f'    <uses-permission android:name="{name}" />\n' for name in permissions)
         content = content.replace("    <application", f"{lines}\n    <application", 1)
+
+    if dev_client and "usesCleartextTraffic" not in content:
+        cleartext = '    <application\n        android:usesCleartextTraffic="true"'
+        content = content.replace("    <application", cleartext, 1)
 
     orientation_attr = _ANDROID_ORIENTATION.get(config.orientation)
     if orientation_attr:
@@ -403,6 +416,7 @@ def stage_python_sources(
     config: AppConfig,
     *,
     dev_lib_root: Optional[Path] = None,
+    dev_client: bool = False,
 ) -> Path:
     """Copy the user's ``app/`` and (optionally) the in-repo library.
 
@@ -411,6 +425,9 @@ def stage_python_sources(
         config: The validated app configuration.
         dev_lib_root: Path to an in-repo ``pythonnative`` package to
             bundle, or ``None``.
+        dev_client: When ``True`` (PythonNative Go), skip staging the user's
+            ``app/``; the client downloads a project from a dev server at
+            runtime instead of baking one in.
 
     Returns:
         The Chaquopy Python source root (``app/src/main/python``).
@@ -419,7 +436,7 @@ def stage_python_sources(
     python_root.mkdir(parents=True, exist_ok=True)
 
     app_src = config.project_root / "app"
-    if app_src.is_dir():
+    if not dev_client and app_src.is_dir():
         shutil.copytree(app_src, python_root / "app", dirs_exist_ok=True)
 
     if dev_lib_root and dev_lib_root.is_dir():

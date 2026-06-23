@@ -1638,3 +1638,57 @@ def create_screen(
     if args_json:
         _set_args(host, args_json)
     return host
+
+
+# ======================================================================
+# PythonNative Go: dev-client host
+# ======================================================================
+
+from .dev import DEV_CLIENT_ENTRY  # noqa: E402  (kept near its dev-client users)
+
+
+def mount_component(host: Any, component_path: str, args_json: Optional[str] = None) -> None:
+    """Re-point a live host at a new root component and remount it.
+
+    Used by the PythonNative Go dev client to switch the host between the
+    shell UI (`DEV_CLIENT_ENTRY`) and the user's entry module once a bundle is
+    downloaded. The old element tree
+    is unmounted (running effect cleanups) and a fresh one is mounted into the
+    same native root, so the connected app behaves exactly as it would in a
+    standalone build, including Fast Refresh keyed on its own package.
+
+    Must run on the UI thread.
+
+    Args:
+        host: The screen host to re-point.
+        component_path: The new root component path (e.g. ``"app.main"``).
+        args_json: Optional JSON navigation arguments for the new root.
+    """
+    if args_json is not None:
+        _set_args(host, args_json)
+    host._component_path = component_path
+    host._component = None
+    _full_remount(host, [component_path])
+
+
+def create_dev_client_host(native_instance: Any = None, args_json: Optional[str] = None) -> "_ScreenHost":
+    """Create the PythonNative Go shell host and bind the global dev session.
+
+    The native PythonNative Go templates call this instead of
+    [`create_screen`][pythonnative.screen.create_screen]: it mounts the shell
+    UI (`pythonnative.dev.ui`) and attaches the host to the process-wide dev
+    session (`pythonnative.dev.session.DevSession`) so the session can re-point
+    the host between the connect screen and the running app.
+
+    Args:
+        native_instance: The native ``Activity`` / ``UIViewController`` owner.
+        args_json: Optional JSON navigation arguments.
+
+    Returns:
+        A host ready to receive native lifecycle callbacks.
+    """
+    from .dev import session as dev_session
+
+    host = create_screen(DEV_CLIENT_ENTRY, native_instance, args_json)
+    dev_session.get_session().attach_host(host)
+    return host

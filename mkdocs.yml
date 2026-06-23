@@ -87,6 +87,7 @@ nav:
     - Platform & Accessibility: guides/platform-accessibility.md
     - Native Modules: guides/native-modules.md
     - Custom Native Components: guides/custom-native-components.md
+    - PythonNative Go: guides/dev-client.md
     - Hot Reload: guides/hot-reload.md
     - Error Boundaries: guides/error-boundaries.md
     - Testing: guides/testing.md

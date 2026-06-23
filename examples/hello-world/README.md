@@ -19,7 +19,19 @@ under `app/`, save, and the window Fast Refreshes in place (no
 simulator or device needed). See the
 [Desktop preview guide](../../docs/guides/desktop-preview.md).
 
-## Run on a device or simulator
+## Develop on a device with live reload (fastest on hardware)
+
+Install the PythonNative Go client once, then serve this app to it over
+Wi-Fi with Fast Refresh on every save:
+
+```bash
+pn go install ios     # or: pn go install android
+pn start              # prints a URL + QR code; connect from the client
+```
+
+See the [PythonNative Go guide](../../docs/guides/dev-client.md).
+
+## Run a standalone build
 
 ```bash
 pn run ios
@@ -27,5 +39,5 @@ pn run ios
 pn run android
 ```
 
-Add `--hot-reload` to push edits to the running app without a full
-rebuild.
+This bakes the app into the native shell (no dev server). Use it to test
+a real build before shipping.

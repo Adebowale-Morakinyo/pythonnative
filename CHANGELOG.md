@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.23.0 (2026-07-08)
+
+### Features
+
+- Add native lists, dark mode, rich text, and image pipeline
+  ([#15](https://github.com/pythonnative/pythonnative/pull/15),
+  [`c609a94`](https://github.com/pythonnative/pythonnative/commit/c609a941c230a7e92269f97dae775d3619ff1907))
+
+
 ## v0.22.1 (2026-06-18)
 
 ### Bug Fixes

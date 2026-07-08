@@ -1783,6 +1783,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -2014,6 +2018,62 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appearance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appearance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Images
   
 
     
@@ -2604,17 +2664,6 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;InsertOp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pythonnative.mutations.RemoveOp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RemoveOp
       
     </span>
   </a>
@@ -3617,17 +3666,6 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;InsertOp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pythonnative.mutations.RemoveOp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RemoveOp
       
     </span>
   </a>
@@ -5072,8 +5110,8 @@ is pure, and the native side sees one coherent transaction per commit.</p>
 <ol>
 <li>A <code>CreateOp</code> for a tag precedes any other op referencing that tag.</li>
 <li><code>InsertOp</code> ops appear after both the parent and child exist.</li>
-<li><code>DestroyOp</code> ops appear after the corresponding <code>RemoveOp</code> (if the
-   node was attached) and are emitted children-first.</li>
+<li><code>DestroyOp</code> ops are emitted children-first; handlers detach the view
+   from its parent as part of destruction.</li>
 <li><code>SetFrameOp</code> ops are only emitted for frames that actually changed
    since the last layout pass (frame diffing).</li>
 </ol>
@@ -5132,19 +5170,6 @@ is pure, and the native side sees one coherent transaction per commit.</p>
             <td>
               <div class="doc-md-description">
                 <p>Ensure the child view sits at <code>index</code> inside the parent view.</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RemoveOp&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt; (&lt;code&gt;pythonnative.mutations.RemoveOp&lt;/code&gt;)" href="#pythonnative.mutations.RemoveOp">RemoveOp</a></code></td>
-            <td>
-              <div class="doc-md-description">
-                <p>Detach the child view from the parent view (without destroying it).</p>
               </div>
             </td>
           </tr>
@@ -5248,12 +5273,7 @@ is pure, and the native side sees one coherent transaction per commit.</p>
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
       &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt; (&lt;code&gt;pythonnative.mutations.InsertOp&lt;/code&gt;)" href="#pythonnative.mutations.InsertOp">InsertOp</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;RemoveOp&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt; (&lt;code&gt;pythonnative.mutations.RemoveOp&lt;/code&gt;)" href="#pythonnative.mutations.RemoveOp">RemoveOp</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;DestroyOp&lt;/span&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.mutations.InsertOp&lt;/code&gt;)" href="#pythonnative.mutations.InsertOp">InsertOp</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;DestroyOp&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
@@ -5464,62 +5484,6 @@ pre-existing handler contract.</p>
 attached to the parent at a different position, it is moved rather
 than duplicated. <code>index</code> is clamped by handlers to the current
 child count.</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="pythonnative.mutations.RemoveOp" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">RemoveOp</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span>
-
-<a href="#pythonnative.mutations.RemoveOp" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">RemoveOp</span><span class="p">(</span><span class="n">parent_tag</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">child_tag</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-
-
-        <p>Detach the child view from the parent view (without destroying it).</p>
 
 
 

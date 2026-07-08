@@ -1930,6 +1930,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -2160,6 +2164,62 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/appearance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appearance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Images
   
 
     
@@ -3038,12 +3098,8 @@ the render loop.</p>
 <td>Place the child at <code>index</code> (move-aware: an attached child is repositioned, not duplicated).</td>
 </tr>
 <tr>
-<td><code>RemoveOp(parent_tag, child_tag)</code></td>
-<td>Detach the child without destroying it.</td>
-</tr>
-<tr>
 <td><code>DestroyOp(tag)</code></td>
-<td>Release the native view and drop the tag record.</td>
+<td>Release the native view (detaching it from its parent) and drop the tag record.</td>
 </tr>
 <tr>
 <td><code>SetFrameOp(tag, x, y, w, h)</code></td>
@@ -3190,7 +3246,7 @@ geometry on Android and iOS; there's no "container-only" vs
 <h2 id="children">Children<a class="headerlink" href="#children" title="Permanent link">&para;</a></h2>
 <p>Children of a container element become subviews of the corresponding
 native view. The reconciler determines insertion order (and reorders
-on key change) and expresses it as <code>InsertOp</code> / <code>RemoveOp</code> pairs; the
+on key change) and expresses it as <code>InsertOp</code> / <code>DestroyOp</code> ops; the
 handler performs the actual native mutations:</p>
 <ul>
 <li>iOS containers use <code>insertSubview_atIndex_</code> on a plain <code>UIView</code>.</li>

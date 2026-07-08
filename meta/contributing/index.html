@@ -1781,6 +1781,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -2011,6 +2015,62 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/appearance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appearance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Images
   
 
     
@@ -3160,7 +3220,7 @@
 <a href="https://github.com/pythonnative/pythonnative/blob/main/CONTRIBUTING.md"><code>CONTRIBUTING.md</code></a>.
 The contents are included below so the docs site stays in sync.</p>
 <h3 id="contributing-to-pythonnative">Contributing to PythonNative<a class="headerlink" href="#contributing-to-pythonnative" title="Permanent link">&para;</a></h3>
-<p>Thanks for your interest in contributing. This repository contains the PythonNative library, CLI, templates, a demo app, and a Django site used for docs/demo hosting and E2E. Contributions should keep the code reliable, cross‑platform, and easy to use.</p>
+<p>Thanks for your interest in contributing. This repository contains the PythonNative library, the <code>pn</code> CLI, Android/iOS project templates, example apps, and the documentation site. Contributions should keep the code reliable, cross-platform, and easy to use.</p>
 <h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <p>Development uses Python ≥ 3.10.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># one-shot: creates .venv, syncs CI deps, runs every CI check</span>
@@ -3176,7 +3236,7 @@ The contents are included below so the docs site stays in sync.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># CLI help</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pn<span class="w"> </span>--help
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># create a new sample app (template fetch is remote)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># create a new sample app from the bundled templates</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>pn<span class="w"> </span>init<span class="w"> </span>my_app
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># run the Hello World example</span>
@@ -3187,9 +3247,9 @@ The contents are included below so the docs site stays in sync.</p>
 <li><code>src/pythonnative/</code>: installable library and CLI</li>
 <li><code>pythonnative/</code>: core cross‑platform UI components and utilities</li>
 <li><code>cli/</code>: <code>pn</code> command</li>
+<li><code>templates/</code>: Android/iOS project templates (bundled with the package)</li>
 <li><code>tests/</code>: unit tests for the library, plus the Maestro E2E suite</li>
 <li><code>e2e/</code>: the comprehensive E2E suite (see <a href="#e2e-tests-maestro">E2E tests</a> below and <code>tests/e2e/AGENTS.md</code>)</li>
-<li><code>templates/</code>: Android/iOS project templates and zips</li>
 <li><code>examples/</code>: runnable example apps</li>
 <li><code>hello-world/</code>: minimal marketing demo</li>
 <li><code>e2e-suite/</code>: comprehensive feature catalog that drives the Maestro E2E suite</li>
@@ -3201,7 +3261,7 @@ The contents are included below so the docs site stays in sync.</p>
 <li>Style: Black; lint: Ruff; typing where useful. Keep APIs stable.</li>
 <li>Prefer explicit, descriptive names; keep platform abstractions clean.</li>
 <li>Add/extend tests under <code>tests/</code> for new behavior.</li>
-<li>Don't commit generated artifacts or large binaries; templates live under <code>templates/</code>.</li>
+<li>Don't commit generated artifacts or large binaries; templates live under <code>src/pythonnative/templates/</code>.</li>
 <li>Docstrings: Google style throughout. Ruff is configured with the Google
   convention (<code>pydocstyle.convention = "google"</code>) and enforces the <code>D</code> rule
   set on <code>src/pythonnative/</code>. See the
@@ -3362,7 +3422,7 @@ The contents are included below so the docs site stays in sync.</p>
 <li>Tests: added/updated; <code>pytest</code> passes.</li>
 <li>Lint/format: <code>ruff check .</code>, <code>black</code> pass.</li>
 <li>Docs: update <code>README.md</code> if behavior changes.</li>
-<li>Templates: update <code>templates/</code> if generator output changes.</li>
+<li>Templates: update <code>src/pythonnative/templates/</code> if generator output changes.</li>
 <li>No generated artifacts committed.</li>
 </ul>
 <h2 id="versioning-and-releases">Versioning and releases<a class="headerlink" href="#versioning-and-releases" title="Permanent link">&para;</a></h2>
@@ -3445,7 +3505,7 @@ The contents are included below so the docs site stays in sync.</p>
 <h2 id="security-and-provenance">Security and provenance<a class="headerlink" href="#security-and-provenance" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Avoid bundling secrets or credentials in templates or code.</li>
-<li>Prefer runtime configuration via environment variables for Django and CI.</li>
+<li>Prefer runtime configuration via environment variables in CI.</li>
 </ul>
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
 <p>By contributing, you agree that your contributions are licensed under the repository's MIT License.</p>

@@ -131,6 +131,42 @@ def test_sectionlist_stays_windowed_without_header_height(native_lists: None) ->
 # ======================================================================
 
 
+def test_unstyled_native_list_fills_available_space(native_lists: None) -> None:
+    """An unstyled VirtualList must fill its parent, like a ScrollView.
+
+    Regression test: the layout engine only measures leaves with a
+    measure callback, and ``VirtualList`` wasn't in the measured set,
+    so a list without an explicit ``height`` collapsed to 0 points and
+    the platform virtualizer never mounted a row.
+    """
+
+    class _FillBackend(FakeBackend):
+        def measure_intrinsic(self, tag: int, max_width: float, max_height: float) -> Tuple[float, float]:
+            view = self.views.get(tag)
+            if view is not None and view.type_name == "VirtualList":
+                return (max_width, max_height)
+            return super().measure_intrinsic(tag, max_width, max_height)
+
+    from pythonnative.components import View
+
+    el = View(
+        FlatList(
+            data=list(range(40)),
+            item_height=44,
+            render_item=lambda item, _i: Text(f"row-{item}"),
+        ),
+        style={"height": 220},
+    )
+    backend = _FillBackend()
+    rec = Reconciler(backend)
+    rec._screen_re_render = lambda: None
+    root = rec.mount(el)
+    rec.set_viewport_size(390, 800)
+    vlist = root.find_first("VirtualList")
+    assert vlist is not None
+    assert vlist.frame == (0.0, 0.0, 390.0, 220.0)
+
+
 def test_render_row_produces_mountable_row_elements(native_lists: None) -> None:
     el = FlatList(
         data=list(range(20)),
@@ -270,19 +306,20 @@ def test_native_list_forwards_user_on_scroll(native_lists: None) -> None:
 
 
 def test_native_list_controller_dispatches_commands(native_lists: None) -> None:
-    ref: dict = {"current": None}
+    from pythonnative.hooks import Ref
+
+    ref: Ref = Ref()
     el = FlatList(data=list(range(50)), item_height=20, ref=ref)
     _root, _rec, backend = _mount(el)
 
-    assert callable(ref["scroll_to_index"])
-    assert callable(ref["scroll_to_offset"])
-    assert callable(ref["scroll_to_end"])
+    controller = ref.current
+    assert controller is not None
 
     set_registry(backend)  # type: ignore[arg-type]
     try:
-        ref["scroll_to_index"](3, animated=False)
-        ref["scroll_to_offset"](120.0)
-        ref["scroll_to_end"]()
+        controller.scroll_to_index(3, animated=False)
+        controller.scroll_to_offset(120.0)
+        controller.scroll_to_end()
     finally:
         set_registry(None)
 

@@ -39,7 +39,7 @@ pytestmark = pytest.mark.skipif(
     reason=f"tkinter unavailable: {_DESKTOP_IMPORT_ERROR!r}",
 )
 
-# The 24 built-in element types every platform backend must service.
+# The 25 built-in element types every platform backend must service.
 _EXPECTED_TYPES = {
     "View",
     "Column",
@@ -65,6 +65,7 @@ _EXPECTED_TYPES = {
     "Checkbox",
     "SegmentedControl",
     "DatePicker",
+    "Portal",
 }
 
 
@@ -223,7 +224,7 @@ _BACKEND_SCRIPT = """
     calls = []
     rec.mount(pn.Column(
         pn.Text("Hi there", style={"font_size": 18}),
-        pn.Button("OK", on_click=lambda: calls.append(1)),
+        pn.Button("OK", on_press=lambda: calls.append(1)),
         style={"padding": 10, "spacing": 8},
     ))
     rec.set_viewport_size(390.0, 844.0)
@@ -294,8 +295,8 @@ _NAV_SCRIPT = """
         return pn.Column(
             pn.Text("HOME"),
             pn.Text("count=%d" % count),
-            pn.Button("inc", on_click=lambda: set_count(count + 1)),
-            pn.Button("detail", on_click=lambda: nav.navigate("Detail", {"x": count})),
+            pn.Button("inc", on_press=lambda: set_count(count + 1)),
+            pn.Button("detail", on_press=lambda: nav.navigate("Detail", {"x": count})),
         )
 
     @pn.component
@@ -304,7 +305,7 @@ _NAV_SCRIPT = """
         p = pn.use_route()
         return pn.Column(
             pn.Text("DETAIL x=%s" % p.get("x")),
-            pn.Button("back", on_click=nav.go_back),
+            pn.Button("back", on_press=nav.go_back),
         )
 
     @pn.component

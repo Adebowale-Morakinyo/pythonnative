@@ -1589,7 +1589,7 @@ class ButtonHandler(IOSViewHandler):
         btn.setTranslatesAutoresizingMaskIntoConstraints_(True)
         btn.retain()
         _pn_retained_views.append(btn)
-        _register_control_action(btn, 1 << 6, lambda: _fire(btn, "on_click"))  # TouchUpInside
+        _register_control_action(btn, 1 << 6, lambda: _fire(btn, "on_press"))  # TouchUpInside
         return btn
 
     def measure_intrinsic(
@@ -3138,6 +3138,174 @@ class ModalHandler(IOSViewHandler):
 
 
 # ======================================================================
+# Portal: floats its children over the screen in a top-level overlay
+# ======================================================================
+#
+# The overlay is an instance of ``_PNPortalViewCTypes``, a raw libobjc
+# subclass of ``UIView`` overriding ``pointInside:withEvent:`` so the
+# overlay only claims touches that land on one of its subviews. UIKit's
+# default hit-testing skips a view (and its whole subtree) when
+# ``pointInside:`` returns NO, so taps on empty portal area fall
+# through to the screen content below while the portal's own children
+# stay fully interactive. Registered raw (not via rubicon's
+# ``@objc_method``) for the same arm64 FFI reliability reasons as the
+# other delegate classes in this module.
+
+
+class _PNCGPoint(_ct.Structure):
+    _fields_ = [("x", _ct.c_double), ("y", _ct.c_double)]
+
+
+_PORTAL_POINT_INSIDE_TYPE = _ct.CFUNCTYPE(_ct.c_bool, _ct.c_void_p, _ct.c_void_p, _PNCGPoint, _ct.c_void_p)
+
+
+def _portal_point_inside_imp(self_ptr: int, _cmd_ptr: int, point: Any, _event_ptr: int) -> bool:
+    """Return whether ``point`` lands on any visible, interactive subview."""
+    try:
+        view = ObjCInstance(_ct.c_void_p(self_ptr))
+        px = float(point.x)
+        py = float(point.y)
+        # On instances of this raw-registered class rubicon resolves
+        # ``subviews`` as a bound method rather than a property, so it
+        # must be called to get the NSArray.
+        subs = view.subviews
+        if callable(subs):
+            subs = subs()
+        for sub in list(subs or []):
+            try:
+                if bool(sub.isHidden()) or float(sub.alpha) <= 0.01:
+                    continue
+                if not bool(sub.isUserInteractionEnabled()):
+                    continue
+                frame = sub.frame
+                fx = float(frame.origin.x)
+                fy = float(frame.origin.y)
+                fw = float(frame.size.width)
+                fh = float(frame.size.height)
+                if fx <= px <= fx + fw and fy <= py <= fy + fh:
+                    return True
+            except Exception:
+                continue
+        return False
+    except Exception:
+        return False
+
+
+_portal_point_inside_imp_ref = _PORTAL_POINT_INSIDE_TYPE(_portal_point_inside_imp)
+
+_UIVIEW_CLS = _get_cls(b"UIView")
+_PN_PORTAL_VIEW_CLS = _alloc_cls(_UIVIEW_CLS, b"_PNPortalViewCTypes", 0) if _UIVIEW_CLS else None
+if _PN_PORTAL_VIEW_CLS:
+    _add_method(
+        _PN_PORTAL_VIEW_CLS,
+        _sel_reg(b"pointInside:withEvent:"),
+        _ct.cast(_portal_point_inside_imp_ref, _ct.c_void_p),
+        b"c@:{CGPoint=dd}@",
+    )
+    _reg_cls(_PN_PORTAL_VIEW_CLS)
+
+
+class PortalHandler(IOSViewHandler):
+    """Overlay container hosting [`Portal`][pythonnative.Portal] children.
+
+    The portal's native view is a transparent, full-size overlay added
+    to the topmost view controller's view (the same view the screen
+    root is attached to). Its frame mirrors the screen host's root
+    frame (below the top safe-area inset), so portal coordinates equal
+    viewport coordinates. Attachment happens lazily on the first child
+    insert and re-homes itself if the host view changed (e.g. after a
+    native modal closed).
+
+    When the ``_PNPortalViewCTypes`` registration is unavailable the
+    handler degrades to a plain ``UIView`` overlay: portal children
+    still render and receive touches, but empty portal area blocks the
+    content below instead of passing touches through.
+    """
+
+    def _build(self, props: Dict[str, Any]) -> Any:
+        overlay = None
+        if _PN_PORTAL_VIEW_CLS:
+            try:
+                overlay = ObjCClass("_PNPortalViewCTypes").alloc().init()
+            except Exception:
+                overlay = None
+        if overlay is None:
+            overlay = ObjCClass("UIView").alloc().init()
+        overlay.setTranslatesAutoresizingMaskIntoConstraints_(True)
+        overlay.setBackgroundColor_(_uicolor("#00000000"))
+        overlay.retain()
+        _pn_retained_views.append(overlay)
+        return overlay
+
+    def _apply(self, overlay: Any, props: Dict[str, Any], initial: bool) -> None:
+        _apply_common_visual(overlay, props)
+        if not initial:
+            self._ensure_attached(overlay)
+
+    def _ensure_attached(self, overlay: Any) -> None:
+        try:
+            UIApplication = ObjCClass("UIApplication")
+            top = _top_view_controller_for_alert(UIApplication.sharedApplication)
+            host = top.view if top is not None else None
+            if host is None:
+                return
+            current = overlay.superview
+            if current is not None and _objc_ptr(current) == _objc_ptr(host):
+                host.bringSubviewToFront_(overlay)
+                self._sync_overlay_frame(overlay, host)
+                return
+            if current is not None:
+                overlay.removeFromSuperview()
+            host.addSubview_(overlay)
+            self._sync_overlay_frame(overlay, host)
+        except Exception:
+            pass
+
+    @staticmethod
+    def _sync_overlay_frame(overlay: Any, host: Any) -> None:
+        """Mirror the screen host's root frame (see ``_sync_root_frame``)."""
+        try:
+            bounds = host.bounds
+            insets = host.safeAreaInsets
+            top = float(insets.top)
+            left = float(insets.left)
+            right = float(insets.right)
+            w = max(0.0, float(bounds.size.width) - left - right)
+            h = max(0.0, float(bounds.size.height) - top)
+            overlay.setFrame_(((left, top), (w, h)))
+            overlay.setAutoresizingMask_(2 | 16)  # FlexibleWidth | FlexibleHeight
+        except Exception:
+            pass
+
+    def insert_child(self, parent: Any, child: Any, index: int) -> None:
+        self._ensure_attached(parent)
+        super().insert_child(parent, child, index)
+
+    def set_frame(self, native_view: Any, x: float, y: float, width: float, height: float) -> None:
+        # The overlay frames itself against the host view; the engine
+        # frames only the portal's children.
+        return
+
+    def measure_intrinsic(
+        self,
+        native_view: Any,
+        max_width: float,
+        max_height: float,
+    ) -> Tuple[float, float]:
+        return (0.0, 0.0)
+
+    def _teardown(self, overlay: Any) -> None:
+        try:
+            _pn_retained_views.remove(overlay)
+        except ValueError:
+            pass
+        try:
+            overlay.release()
+        except Exception:
+            pass
+
+
+# ======================================================================
 # StatusBar: global side effect, no view in the tree
 # ======================================================================
 
@@ -3972,6 +4140,28 @@ def _table_row_height(info: dict, row: int) -> float:
     return float(info.get("row_height", 44.0))
 
 
+def _table_row_start(info: dict, row: int) -> float:
+    """Content-coordinate y where ``row`` begins."""
+    starts = info.get("row_starts")
+    if starts is not None and 0 <= row < len(starts):
+        return float(starts[row])
+    return float(info.get("row_height", 44.0)) * row
+
+
+def _table_set_heights(info: dict, heights: Optional[List[float]]) -> None:
+    """Store per-row heights plus their prefix sums (for row starts)."""
+    info["row_heights"] = heights
+    if not heights:
+        info["row_starts"] = None
+        return
+    starts = [0.0] * len(heights)
+    acc = 0.0
+    for i, h in enumerate(heights):
+        starts[i] = acc
+        acc += float(h)
+    info["row_starts"] = starts
+
+
 def _table_num_sections_imp(self_ptr: int, cmd_ptr: int, tv_ptr: int) -> int:
     return 1
 
@@ -4041,7 +4231,37 @@ def _table_cell_imp(self_ptr: int, cmd_ptr: int, tv_ptr: int, ip_ptr: int) -> in
         except Exception:
             pass
 
-        if info is not None:
+        # Only rows in (or near) the visible content window get a
+        # mounted subtree. UITableView's accessibility container calls
+        # ``cellForRowAtIndexPath:`` for *every* row whenever an
+        # accessibility client (VoiceOver, XCUITest / UI-test drivers)
+        # snapshots the hierarchy, no matter the estimated heights.
+        # Mounting those would defeat virtualization -- a 10k-row list
+        # would mount 10k Python subtrees on the first snapshot -- and
+        # the never-displayed cells would sit stacked at the table
+        # origin where tests read them as visible. Off-window requests
+        # get an empty accessibility-hidden placeholder; when the row
+        # really scrolls on screen UIKit asks again and the content
+        # window has moved, so the real subtree mounts.
+        try:
+            offset_y = float(tv.contentOffset.y)
+        except Exception:
+            offset_y = 0.0
+        try:
+            viewport_h = float(tv.bounds.size.height)
+        except Exception:
+            viewport_h = 0.0
+        row_start = _table_row_start(info, row) if info else 0.0
+        margin = viewport_h if viewport_h > 0 else 800.0
+        in_window = (row_start + row_h >= offset_y - margin) and (
+            row_start <= offset_y + max(viewport_h, row_h) + margin
+        )
+        try:
+            cell.setAccessibilityElementsHidden_(not in_window)
+        except Exception:
+            pass
+
+        if in_window and info is not None:
             render_row = info.get("render_row")
             pool = info.get("pool")
             if render_row is not None and pool is not None:
@@ -4195,7 +4415,19 @@ class VirtualListHandler(IOSViewHandler):
         tv.setTranslatesAutoresizingMaskIntoConstraints_(True)
         tv.setSeparatorStyle_(0)  # none by default; rows draw their own
         try:
-            tv.setEstimatedRowHeight_(0.0)  # force exact heightForRow
+            # A *nonzero* estimate keeps UITableView lazy: with
+            # ``estimatedRowHeight = 0`` modern UIKit builds cells for
+            # every row up front to size its content, which mounts a
+            # Python subtree per row (defeating virtualization) and
+            # leaves the never-displayed cells visible to the
+            # accessibility tree. ``heightForRowAtIndexPath:`` still
+            # returns exact heights for the rows that do come on screen.
+            heights = props.get("row_heights")
+            if heights:
+                estimate = sum(float(h) for h in heights) / max(1, len(heights))
+            else:
+                estimate = float(props.get("row_height", 44.0) or 44.0)
+            tv.setEstimatedRowHeight_(max(1.0, estimate))
         except Exception:
             pass
         tv.retain()
@@ -4205,14 +4437,15 @@ class VirtualListHandler(IOSViewHandler):
         if source_ptr == 0:
             raise RuntimeError("[VirtualList][iOS] dataSource alloc returned NULL")
 
-        _pn_table_state[source_ptr] = {
+        state = {
             "count": int(props.get("count", 0) or 0),
             "row_height": float(props.get("row_height", 44.0) or 44.0),
-            "row_heights": props.get("row_heights"),
             "render_row": props.get("render_row"),
             "pool": RowHostPool(),
             "tv": tv,
         }
+        _table_set_heights(state, props.get("row_heights"))
+        _pn_table_state[source_ptr] = state
 
         _objc_msgSend.restype = None
         _objc_msgSend.argtypes = [_ct.c_void_p, _ct.c_void_p, _ct.c_void_p]
@@ -4220,7 +4453,6 @@ class VirtualListHandler(IOSViewHandler):
         _objc_msgSend(tv_ptr, _SEL_SET_DATA_SOURCE, _ct.c_void_p(source_ptr))
         _objc_msgSend(tv_ptr, _SEL_SET_DELEGATE, _ct.c_void_p(source_ptr))
 
-        state = _pn_table_state[source_ptr]
         state["source_ptr"] = source_ptr
         return tv
 
@@ -4245,7 +4477,7 @@ class VirtualListHandler(IOSViewHandler):
             info["row_height"] = float(props["row_height"])
             data_changed = True
         if "row_heights" in props:
-            info["row_heights"] = props.get("row_heights")
+            _table_set_heights(info, props.get("row_heights"))
             data_changed = True
         if "render_row" in props:
             info["render_row"] = props.get("render_row")
@@ -4350,6 +4582,7 @@ def register_handlers(registry: Any) -> None:
     registry.register("ScrollView", ScrollViewHandler())
     registry.register("SafeAreaView", SafeAreaViewHandler())
     registry.register("Modal", ModalHandler())
+    registry.register("Portal", PortalHandler())
     registry.register("Slider", SliderHandler())
     registry.register("TabBar", TabBarHandler())
     registry.register("Pressable", PressableHandler())
@@ -4377,6 +4610,7 @@ __all__ = [
     "SpacerHandler",
     "SafeAreaViewHandler",
     "ModalHandler",
+    "PortalHandler",
     "SliderHandler",
     "TabBarHandler",
     "PressableHandler",

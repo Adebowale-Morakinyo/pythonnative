@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.24.0 (2026-07-11)
+
+### Features
+
+- Overhaul core semantics, dev diagnostics, and public API
+  ([#16](https://github.com/pythonnative/pythonnative/pull/16),
+  [`985d7ca`](https://github.com/pythonnative/pythonnative/commit/985d7ca258a15d0452db5816a7680f2626ea1f45))
+
+
 ## v0.23.0 (2026-07-08)
 
 ### Features

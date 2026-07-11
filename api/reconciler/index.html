@@ -1787,6 +1787,8 @@
       
         
       
+        
+      
     
     
     
@@ -2416,6 +2418,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.register_back_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;register_back_handler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.dispatch_back_press" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;dispatch_back_press
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.reset_hook_signatures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;reset_hook_signatures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.reconciler.Reconciler.compute_layout_for_test" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2645,6 +2680,34 @@
     
   
     Hot reload
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostics
   
 
     
@@ -3111,6 +3174,39 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.register_back_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;register_back_handler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.dispatch_back_press" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;dispatch_back_press
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pythonnative.reconciler.Reconciler.reset_hook_signatures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;reset_hook_signatures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pythonnative.reconciler.Reconciler.compute_layout_for_test" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3213,16 +3309,31 @@ re-renders that only produce fresh closures cost nothing natively.</p>
 <li><strong>Native elements</strong> (<code>type</code> is a string like <code>"Text"</code>).</li>
 <li><strong>Function components</strong> (<code>type</code> is a callable decorated with
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;component&lt;/span&gt;" href="../hooks/#pythonnative.hooks.component"><code>component</code></a>). Their hook state is preserved
-  across renders.</li>
+  across renders. Components may return a single element, a list of
+  elements, or <code>None</code>; every node in the tree can contribute zero or
+  more native views to its native parent (<strong>multi-child rendering</strong>).</li>
 <li><strong>Provider elements</strong> (<code>type == "__Provider__"</code>), which push and pop
-  context values during tree traversal.</li>
+  context values during traversal and, when their value changes,
+  re-render every descendant that read the context on its last render
+  (<strong>reactive context</strong>), even under memoized components that skipped.</li>
 <li><strong>Error boundary elements</strong> (<code>type == "__ErrorBoundary__"</code>), which
-  catch exceptions in child subtrees and render a fallback.</li>
+  catch exceptions in child subtrees, invoke <code>on_error</code>, render a
+  fallback (optionally receiving a <code>reset</code> callable), and remount
+  their children when <code>reset</code> is called.</li>
+<li><strong>Fragments</strong> (<code>type == "__Fragment__"</code>), expanded inline unless
+  keyed, in which case they participate in keyed reconciliation as a
+  transparent multi-child wrapper.</li>
+<li><strong>Portals</strong> (<code>type == "Portal"</code>), native elements whose handler hosts
+  their children in a top-level overlay. Portals contribute no child to
+  their native parent; their subtree is laid out against the viewport
+  like a <code>Modal</code>.</li>
 <li><strong>Key-based child reconciliation</strong> with indexed, move-aware inserts
-  (keyed reorders emit one move per child instead of detach-all /
-  re-attach-all).</li>
-<li><strong>Post-render effect flushing</strong>. After each commit, all queued
-  effects are executed so they see the committed native tree.</li>
+  computed by simulating the native child list, so appends and keyed
+  reorders emit the minimal set of <code>InsertOp</code>s.</li>
+<li><strong>Two effect phases</strong>: layout effects
+  (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_layout_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_layout_effect"><code>use_layout_effect</code></a>) flush
+  synchronously after mutations and layout; passive effects
+  (<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a>) flush afterwards.</li>
 <li><strong>Incremental layout</strong>: a parallel
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;LayoutNode&lt;/span&gt;" href="../layout/#pythonnative.layout.LayoutNode"><code>LayoutNode</code></a> tree is cached across
   passes; clean subtrees keep their cached nodes (enabling the layout
@@ -3353,9 +3464,9 @@ re-renders that only produce fresh closures cost nothing natively.</p>
               <div class="doc-md-description">
                 <p>Integer identity of the underlying native view. Native
 elements own a fresh tag; transparent wrappers (function
-components, providers, error boundaries) delegate the tag
-of their rendered subtree root. <code>None</code> before the subtree
-renders anything.</p>
+components, providers, boundaries, keyed fragments)
+delegate the tag of their first native root. <code>None</code> when
+the subtree renders no native view.</p>
               </div>
             </td>
           </tr>
@@ -3378,7 +3489,9 @@ wrappers that rendered nothing.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Ordered list of child <code>VNode</code> instances.</p>
+                <p>Ordered list of child <code>VNode</code> instances. Wrappers may
+own any number of children; each child contributes zero or
+more native roots to the nearest native ancestor.</p>
               </div>
             </td>
           </tr>
@@ -3391,7 +3504,7 @@ wrappers that rendered nothing.</p>
               <div class="doc-md-description">
                 <p>The owning <code>VNode</code>, or <code>None</code> for the tree root. Used
 by local (component-scoped) re-renders to bubble a changed
-subtree root up to the nearest native container.</p>
+subtree up to the nearest native container.</p>
               </div>
             </td>
           </tr>
@@ -3481,8 +3594,9 @@ pass the reconciler:</p>
 <ol>
 <li>applies the accumulated mutation ops in one batch,</li>
 <li>resolves freshly created native views and populates refs,</li>
-<li>flushes pending effects (so they see the committed tree), and</li>
-<li>runs the layout pass, emitting only changed frames.</li>
+<li>runs the layout pass, emitting only changed frames,</li>
+<li>flushes layout effects (children-first), then</li>
+<li>flushes passive effects.</li>
 </ol>
 
 
@@ -3613,6 +3727,30 @@ registry stocked with mock handlers.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;register_back_handler&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.register_back_handler&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.register_back_handler">register_back_handler</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Register a back-press handler; returns an unregister callable.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_back_press&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.dispatch_back_press&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.dispatch_back_press">dispatch_back_press</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Offer the system back action to registered handlers.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reset_hook_signatures&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.reset_hook_signatures&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.reset_hook_signatures">reset_hook_signatures</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Forget recorded hook-order signatures across the whole tree.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;compute_layout_for_test&lt;/span&gt; (&lt;code&gt;pythonnative.reconciler.Reconciler.compute_layout_for_test&lt;/code&gt;)" href="#pythonnative.reconciler.Reconciler.compute_layout_for_test">compute_layout_for_test</a></code></td>
               <td>
                 <div class="doc-md-description">
@@ -3711,7 +3849,17 @@ registry stocked with mock handlers.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>mounted tree.</p>
+                <p>mounted tree (the first native root when the root element</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>renders several).</p>
               </div>
             </td>
           </tr>
@@ -3892,12 +4040,14 @@ registry stocked with mock handlers.</p>
 
         <p>Queue <code>vnode</code> (a function component) for a local re-render.</p>
 <p>Called by a component's <code>use_state</code> / <code>use_reducer</code> setter
-when its own state changes. The node is re-rendered on the next
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;flush_dirty&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.flush_dirty"><code>flush_dirty</code></a>
-pass, which the screen host schedules. Marking is idempotent and
-cheap; the actual render is deferred so several setters (e.g.
-inside <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;batch_updates&lt;/span&gt;" href="../hooks/#pythonnative.hooks.batch_updates"><code>batch_updates</code></a>) coalesce
-into a single pass.</p>
+when its own state changes, and by reactive context when a
+Provider's value changes for a consumer that a memoized
+ancestor would otherwise skip. The node is re-rendered on the
+next <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;flush_dirty&lt;/span&gt;" href="#pythonnative.reconciler.Reconciler.flush_dirty"><code>flush_dirty</code></a>
+pass. Marking is idempotent and cheap; the actual render is
+deferred so several setters (e.g. inside
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;batch_updates&lt;/span&gt;" href="../hooks/#pythonnative.hooks.batch_updates"><code>batch_updates</code></a>) coalesce into a
+single pass.</p>
 
 
     </div>
@@ -4032,6 +4182,104 @@ sizes are no-ops.</p>
           </tr>
       </tbody>
     </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.register_back_handler" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">register_back_handler</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.register_back_handler" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">register_back_handler</span><span class="p">(</span><span class="n">handler</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Register a back-press handler; returns an unregister callable.</p>
+<p>Used by <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_back_handler&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_back_handler"><code>use_back_handler</code></a>.
+Handlers are dispatched most-recently-registered first.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.dispatch_back_press" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">dispatch_back_press</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.dispatch_back_press" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dispatch_back_press</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Offer the system back action to registered handlers.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if a handler consumed the event (the platform</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>should <em>not</em> run its default behavior).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.reconciler.Reconciler.reset_hook_signatures" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">reset_hook_signatures</span>
+
+
+<a href="#pythonnative.reconciler.Reconciler.reset_hook_signatures" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reset_hook_signatures</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Forget recorded hook-order signatures across the whole tree.</p>
+<p>Called by the hot-reload machinery after a Fast Refresh swaps in
+new component bodies, since the old call signatures no longer
+apply.</p>
 
 
     </div>

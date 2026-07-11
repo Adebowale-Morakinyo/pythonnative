@@ -1073,6 +1073,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dev-mode-and-the-error-overlay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dev mode and the error overlay
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1940,6 +1951,8 @@
       
         
       
+        
+      
     
     
     
@@ -2610,6 +2623,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/utils/" class="md-nav__link">
         
   
@@ -2978,6 +3019,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dev-mode-and-the-error-overlay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dev mode and the error overlay
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3147,6 +3199,18 @@ in-process stack of screen hosts in the preview, the same way they drive
 <code>UINavigationController</code> / AndroidX Navigation on device. <code>navigate(...)</code>
 pushes a new screen host (preserving the previous screen's state);
 <code>go_back()</code> pops it. Each screen runs in its own reconciler host.</p>
+<p>The Escape key acts as the system back action:
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_back_handler&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_back_handler"><code>use_back_handler</code></a> subscribers on the
+active screen get the first chance to consume it, and otherwise the
+navigation stack pops, matching the Android hardware back button.</p>
+<h3 id="dev-mode-and-the-error-overlay">Dev mode and the error overlay<a class="headerlink" href="#dev-mode-and-the-error-overlay" title="Permanent link">&para;</a></h3>
+<p>The preview always runs with dev diagnostics on: unknown style keys
+and duplicate list keys print <code>[PN] WARN</code> messages, hook-order
+violations raise immediately, and uncaught errors from renders,
+effects, and event handlers show a full-screen <strong>RedBox</strong> with the
+traceback. Fix the code and save; a successful reload clears the
+overlay. The same diagnostics run on device under <code>pn run</code> with hot
+reload enabled.</p>
 <h2 id="fast-refresh">Fast Refresh<a class="headerlink" href="#fast-refresh" title="Permanent link">&para;</a></h2>
 <p>Saving a <code>.py</code> file under <code>app/</code> triggers a reload. The preview prefers
 <strong>Fast Refresh</strong>: the changed modules are reloaded and the live VNode

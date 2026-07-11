@@ -1787,6 +1787,8 @@
       
         
       
+        
+      
     
     
     
@@ -2378,6 +2380,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.navigation.ScreenOptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ScreenOptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.navigation.create_stack_navigator" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2562,6 +2575,34 @@
     
   
     Hot reload
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostics
   
 
     
@@ -2906,6 +2947,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.navigation.ScreenOptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ScreenOptions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.navigation.create_stack_navigator" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3084,6 +3136,27 @@ onto in that case.</p>
 
 
 
+<p><span class="doc-section-title">Classes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;ScreenOptions&lt;/span&gt; (&lt;code&gt;pythonnative.navigation.ScreenOptions&lt;/code&gt;)" href="#pythonnative.navigation.ScreenOptions">ScreenOptions</a></code></td>
+            <td>
+              <div class="doc-md-description">
+                <p>Typed per-screen options accepted by <code>Screen(..., options=...)</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
 
 
 <p><span class="doc-section-title">Functions:</span></p>
@@ -3159,6 +3232,104 @@ onto in that case.</p>
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pythonnative.navigation.ScreenOptions" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ScreenOptions</span>
+
+
+<a href="#pythonnative.navigation.ScreenOptions" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.TypedDict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.TypedDict">TypedDict</a></code></p>
+
+
+
+        <p>Typed per-screen options accepted by <code>Screen(..., options=...)</code>.</p>
+<p>All keys are optional. Navigators ignore keys they don't use.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.navigation.ScreenOptions.title">title</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Human-readable screen title. Stack navigators forward it
+to the host's native navigation bar; tab and drawer
+navigators use it as the item label.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="pythonnative.navigation.ScreenOptions.tab_bar_icon">tab_bar_icon</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Union&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Native system icon identifier for tab items. A
+string is used on every platform; a dict like
+<code>{"ios": "house.fill", "android": "ic_menu_home"}</code>
+selects per platform. iOS values are resolved via
+SF Symbols (<code>UIImage.systemImageNamed_</code>); Android values
+are resolved against <code>android.R.drawable.&lt;name&gt;</code>. Names
+that don't resolve fall back to text-only.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 <div class="doc doc-object doc-function">

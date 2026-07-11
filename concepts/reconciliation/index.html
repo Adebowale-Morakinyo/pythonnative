@@ -851,6 +851,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fragments-and-multi-child-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fragments and multi-child rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Portals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#context-providers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1934,6 +1956,8 @@
       
         
       
+        
+      
     
     
     
@@ -2604,6 +2628,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/utils/" class="md-nav__link">
         
   
@@ -2983,6 +3035,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fragments-and-multi-child-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fragments and multi-child rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Portals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#context-providers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3148,18 +3222,38 @@ all. Use a stable identifier (database id, file path, etc.).</p>
 <li>It looks up the function's hook state (or creates a fresh slot).</li>
 <li>It calls the function with the current props inside an active hook
    context.</li>
-<li>It recursively reconciles whatever
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../../api/element/#pythonnative.element.Element"><code>Element</code></a> the function returned.</li>
+<li>It recursively reconciles whatever the function returned: a single
+   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../../api/element/#pythonnative.element.Element"><code>Element</code></a>, a <code>list</code> of elements (which
+   mount as siblings at the component's position), or <code>None</code> (which
+   mounts nothing).</li>
 </ol>
 <p>Hook slots are matched by their position in the function body, which is
-why hooks must be called at the top level (not inside <code>if</code>/<code>for</code>).</p>
+why hooks must be called at the top level (not inside <code>if</code>/<code>for</code>). In
+dev mode the reconciler verifies the hook call sequence on every
+render and raises
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;HookOrderError&lt;/span&gt;" href="../../api/diagnostics/#pythonnative.diagnostics.HookOrderError"><code>HookOrderError</code></a> on a mismatch.</p>
+<h2 id="fragments-and-multi-child-rendering">Fragments and multi-child rendering<a class="headerlink" href="#fragments-and-multi-child-rendering" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Fragment&lt;/span&gt;" href="../../api/components/#pythonnative.components.Fragment"><code>Fragment</code></a> groups siblings without a wrapping
+native view: its children splice directly into the parent's native
+child list. <code>None</code> and <code>False</code> children are dropped everywhere, so
+conditional rendering with <code>cond and pn.Text(...)</code> needs no special
+casing. A keyed Fragment participates in keyed diffing as one unit,
+moving all of its children together.</p>
+<h2 id="portals">Portals<a class="headerlink" href="#portals" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Portal&lt;/span&gt;" href="../../api/components/#pythonnative.components.Portal"><code>Portal</code></a> elements contribute <strong>zero</strong> native
+children to their parent. Their subtree mounts into a full-screen
+overlay owned by the platform handler, and the layout pass positions
+portal children against the viewport instead of the parent box. State,
+context, and events still flow through the normal component tree; only
+the native views live elsewhere.</p>
 <h2 id="context-providers">Context providers<a class="headerlink" href="#context-providers" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Provider&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.Provider"><code>Provider</code></a> is itself an element type. When the
 reconciler mounts one, it pushes a value onto a per-context stack;
 descendants reading via <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_context&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_context"><code>use_context</code></a>
-observe the topmost value. On unmount or value change, the reconciler
-re-renders descendants whose <code>use_context</code> hook subscribes to that
-context.</p>
+observe the topmost value. Context is reactive: when a re-render
+changes a Provider's value, the reconciler marks every recorded
+consumer of that context dirty, so consumers re-render even when a
+memoized ancestor in between skips its subtree.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">ThemeContext</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">create_context</span><span class="p">({</span><span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="s2">&quot;#000&quot;</span><span class="p">})</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
@@ -3180,11 +3274,12 @@ context.</p>
 element. When the reconciler renders a subtree underneath one and an
 exception escapes a child component or handler, the reconciler:</p>
 <ol>
-<li>Catches the exception.</li>
+<li>Catches the exception and invokes the boundary's <code>on_error</code>
+   callback, if provided.</li>
 <li>Tears down the partially-mounted subtree.</li>
-<li>Renders the boundary's <code>fallback</code> (which may be a static
-   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../../api/element/#pythonnative.element.Element"><code>Element</code></a> or a callable that receives the
-   exception).</li>
+<li>Renders the boundary's <code>fallback</code> (a static
+   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Element&lt;/span&gt;" href="../../api/element/#pythonnative.element.Element"><code>Element</code></a>, <code>fallback(error)</code>, or
+   <code>fallback(error, reset)</code> where <code>reset</code> remounts the children).</li>
 <li>Continues reconciling the rest of the page.</li>
 </ol>
 <p>This means a single misbehaving component can't bring down the whole

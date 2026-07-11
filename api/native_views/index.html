@@ -1787,6 +1787,8 @@
       
         
       
+        
+      
     
     
     
@@ -3092,6 +3094,34 @@
     
   
     Hot reload
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Diagnostics
   
 
     
@@ -5708,7 +5738,7 @@ exactly as computed by the layout engine.</p>
     <div class="doc doc-contents first">
 
         <p>Tag-based event routing between native views and Python callbacks.</p>
-<p>Before the batched-commit overhaul, every event prop (<code>on_click</code>,
+<p>Before the batched-commit overhaul, every event prop (<code>on_press</code>,
 <code>on_change</code>, …) was wired by storing the Python callable on (or next
 to) the native view, and every re-render re-pushed fresh closures across
 the bridge. This module replaces that with a single dispatch channel:</p>
@@ -6143,7 +6173,7 @@ thread.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>it raised: exceptions are swallowed so a buggy app</p>
+                <p>it raised: exceptions never propagate into the platform's</p>
               </div>
             </td>
           </tr>
@@ -6153,7 +6183,7 @@ thread.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>callback can't crash the platform's UI thread), <code>False</code></p>
+                <p>UI thread; in dev mode they are routed to the RedBox via</p>
               </div>
             </td>
           </tr>
@@ -6163,7 +6193,27 @@ thread.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>when nothing is registered.</p>
+                <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;report_error&lt;/span&gt;" href="../diagnostics/#pythonnative.diagnostics.report_error"><code>report_error</code></a>,</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>otherwise the traceback is printed), <code>False</code> when nothing</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>is registered.</p>
               </div>
             </td>
           </tr>
@@ -6278,7 +6328,7 @@ native listener fires.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Event name, the original prop name (<code>"on_click"</code>,
+                <p>Event name, the original prop name (<code>"on_press"</code>,
 <code>"on_change"</code>, …) or a gesture channel (<code>"gesture:0"</code>).</p>
               </div>
             </td>

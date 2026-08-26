@@ -63,7 +63,7 @@ scripts/
 # Full Android suite (emulator must be running)
 ./scripts/run-e2e.sh android
 
-# Full iOS suite (simulator must be running; idb-companion installed)
+# Full iOS suite (simulator must be running)
 ./scripts/run-e2e.sh ios
 
 # Just one category, for tight iteration loops:
@@ -124,6 +124,12 @@ treat it as a signal to investigate, not as "all clear." If a flow needs the ret
 - or a real Maestro/driver bug worth filing upstream.
 
 Override or disable with `MAESTRO_MAX_ATTEMPTS=1 ./scripts/run-e2e.sh ios` when bisecting a flake.
+
+### The iOS jobs are pinned to the macos-15 runner image
+
+The iOS jobs in `e2e.yml` run on `macos-15`, not `macos-latest`. The macos-26 image sporadically (about a quarter of taps) delivers one XCTest-synthesized tap as two `UIControl` action sends: the app's unified log shows a single `UIEvent` delivered to one window, then a doubled "send control actions" burst about 1 ms apart. It reproduces on both the iOS 26.5 and iOS 26.2 simulator runtimes on that image, and never on a macOS 15 host with the same app, flows, and Maestro version, so the host-side simulator/XCTest event-injection stack is the trigger. Doubled taps break every non-idempotent press handler: reducer counters jump by two, alerts present twice (the second can't be dismissed by the flow), and pickers reopen after a selection. Idempotent handlers (plain value setters) mask the bug, which makes the failures look flow-specific when they aren't.
+
+If the pin ever has to move to a newer image, check for the double-fire before touching any flow: tap a counter demo once and read the count, or grep the maestro-debug artifact's `device-simulator.log` for back-to-back "send control actions" bursts after one tap.
 
 ## The flow header convention
 

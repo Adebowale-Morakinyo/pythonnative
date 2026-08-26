@@ -1587,6 +1587,19 @@ else:
                     return True
                 _log_pn("_request_render: native iOS scheduler unavailable; render remains queued")
                 return True
+            # Defer via the main dispatch queue rather than an NSTimer.
+            # GCD main-queue blocks are serviced in the common run-loop
+            # modes, so they still run while UIKit is in tracking mode
+            # (scrolls, synthesized test touches). A default-mode NSTimer
+            # is starved for the whole gesture, which delayed renders
+            # long enough on slow CI simulators for Maestro asserts to
+            # time out, and let stale flushes land mid-touch.
+            from .runtime import _ensure_libdispatch_loaded, _ios_dispatch_async
+
+            if _ensure_libdispatch_loaded():
+                _ios_dispatch_async(_flush_ios_scheduled_renders)
+                _log_pn("_request_render: deferred iOS render to next main-queue turn")
+                return True
             try:
                 NSTimer = ObjCClass("NSTimer")
                 target = _ensure_ios_render_scheduler_target()
@@ -1719,21 +1732,54 @@ else:
                     raise RuntimeError(
                         "No UINavigationController available; ensure template embeds root in navigation controller"
                     )
-                nav.pushViewController_animated_(next_vc, True)
+                self._run_nav_op(lambda n: n.pushViewController_animated_(next_vc, True))
 
             def _pop(self) -> None:
-                nav = getattr(self.native_instance, "navigationController", None)
-                if nav is not None:
-                    nav.popViewControllerAnimated_(True)
+                self._run_nav_op(lambda n: n.popViewControllerAnimated_(True))
 
             def _reset_to_root(self) -> None:
                 """Pop everything above the root view-controller."""
-                nav = getattr(self.native_instance, "navigationController", None)
-                if nav is not None:
+
+                def op(n: Any) -> None:
                     try:
-                        nav.popToRootViewControllerAnimated_(True)
+                        n.popToRootViewControllerAnimated_(True)
                     except Exception:
                         pass
+
+                self._run_nav_op(op)
+
+            def _run_nav_op(self, op: Any) -> None:
+                """Run ``op(nav)`` unless a stack transition is mid-flight.
+
+                UIKit does not queue navigation calls: a
+                ``pushViewController`` / ``popViewController`` issued
+                while the previous transition is still animating is
+                silently ignored or, worse, misapplies and pops past
+                the intended screen. A fast tap right after a push
+                (easy for a user, common for a UI test on a slow
+                machine) lands exactly in that window. Dropping the
+                operation keeps the stack consistent: the tap simply
+                does nothing, and a retry lands on a settled stack.
+                (Deferring the operation instead was tried and is
+                worse: the user retries, then the deferred operation
+                also fires, popping one screen too many.)
+                """
+                nav = getattr(self.native_instance, "navigationController", None)
+                if nav is None:
+                    return
+                try:
+                    # rubicon resolves ``transitionCoordinator`` as a bound
+                    # method rather than a property on some classes; call
+                    # it to get the actual (possibly nil -> None) value.
+                    coord = nav.transitionCoordinator
+                    if callable(coord):
+                        coord = coord()
+                    if coord is not None:
+                        _log_pn("_run_nav_op: transition in flight; dropping nav op")
+                        return
+                except Exception:
+                    pass
+                op(nav)
 
             def _set_screen_options(self, options: Dict[str, Any]) -> None:
                 """Bind screen options (e.g. title) to the native nav bar.

@@ -22,6 +22,15 @@
 # a deep demo; we scroll up to it before asserting.
 appId: ${APP_ID}
 ---
+# A tall demo (or a short viewport: small AVDs with a software navbar)
+# can leave "Back to list" below the fold; surface it before tapping.
+# No-op when the button is already visible.
+- scrollUntilVisible:
+    element:
+      text: "Back to list"
+    direction: DOWN
+    timeout: 30000
+    optional: true
 - tapOn: "Back to list"
 # Scrolling back to the top can take many swipes after a deep demo, and
 # a badly lagging emulator can compress one of those swipes into a

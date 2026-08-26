@@ -29,14 +29,16 @@ jobs:
     # GitHub-hosted Android emulators grow unstable after ~15 minutes of
     # sustained Maestro driving and start reporting "device offline" /
     # "device not found" mid-run (the emulator VM, not the app, dies).
-    # The full 60-flow suite reliably crosses that threshold around the
-    # ~35th flow. Sharding the run into a few balanced groups, each on
-    # its own freshly booted emulator, keeps every session well under
-    # the limit, and parallelizes the Android pass as a bonus. Groups are
-    # sized so none exceeds ~15 flows; ``components`` (28 flows after the
-    # gesture/animated additions) crossed the ceiling at ~flow 26, so it
-    # runs as two halves. ``fail-fast: false`` so one shard's failure
-    # still lets the others report.
+    # The full suite reliably crosses that threshold around the ~35th
+    # flow. Sharding the run into a few balanced groups, each on its
+    # own freshly booted emulator, keeps every session well under the
+    # limit, and parallelizes the Android pass as a bonus. Groups are
+    # sized so none exceeds ~15 flows; ``components`` (28 flows after
+    # the gesture/animated additions) crossed the ceiling at ~flow 26,
+    # so it runs as two halves, and ``hooks`` (22 flows after the async
+    # hook additions) now takes ~10 minutes of driving on its own, so
+    # it gets a dedicated emulator. ``fail-fast: false`` so one shard's
+    # failure still lets the others report.
     strategy:
       fail-fast: false
       matrix:
@@ -45,10 +47,12 @@ jobs:
             suites: components-a
           - name: components-b
             suites: components-b
-          - name: hooks-nav-gestures
-            suites: hooks navigation gestures
-          - name: layout-styling-anim-misc
-            suites: layout styling animations misc
+          - name: hooks
+            suites: hooks
+          - name: nav-gestures-layout-styling
+            suites: navigation gestures layout styling
+          - name: anim-misc
+            suites: animations misc
 
     name: e2e-android (${{ matrix.name }})
 
@@ -102,7 +106,18 @@ jobs:
 
   e2e-ios:
     needs: coverage
-    runs-on: macos-latest
+    # Pinned to macos-15 rather than macos-latest: the macos-26 image
+    # (default since mid-July 2026) sporadically delivers a single
+    # XCTest-synthesized tap as TWO UIControl action sends (~25% of
+    # taps; the app's unified log shows one UIEvent followed by a
+    # doubled "send control actions" burst ~1ms apart). It reproduces
+    # on both the iOS 26.5 and 26.2 simulator runtimes on that image,
+    # but never on a macOS 15 host, so the host-side simulator/XCTest
+    # event-injection stack is the trigger. Doubled taps break every
+    # non-idempotent press handler: reducer counters jump by two,
+    # alerts present twice, pickers reopen after selecting. This suite
+    # ran green on the macos-15 image for months.
+    runs-on: macos-15
     # Budget for the worst case: ~8 min build/boot plus two full suite
     # attempts (run-e2e.sh retries the whole suite once after a driver
     # flake) at up to ~20 min each on a slow runner. 40 was enough for
@@ -142,13 +157,14 @@ jobs:
       - name: Install PythonNative
         run: pip install -e .
 
-      - name: Install Maestro and idb
+      # Maestro drives iOS simulators with its own bundled XCTest
+      # runner; idb-companion (once installed here) hasn't been needed
+      # since Maestro dropped idb, and its formula no longer installs
+      # on macos-15 anyway (no bottle, and building needs Xcode 26).
+      - name: Install Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-          # Homebrew refuses formulae from untrusted third-party taps by
-          # default; trust the tap explicitly before installing.
-          brew tap facebook/fb && brew trust facebook/fb && brew install idb-companion
 
       - name: Build and run E2E tests
         run: ./scripts/run-e2e.sh ios ${{ matrix.suites }}

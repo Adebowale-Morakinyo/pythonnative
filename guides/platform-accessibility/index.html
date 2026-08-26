@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1931,6 +1931,8 @@
       
         
       
+        
+      
     
     
     
@@ -2161,6 +2163,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -3086,7 +3116,7 @@ platform-aware code:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">font</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">{</span><span class="s2">&quot;ios&quot;</span><span class="p">:</span> <span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span> <span class="s2">&quot;Roboto&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">{</span><span class="s2">"ios"</span><span class="p">:</span> <span class="s2">"Helvetica"</span><span class="p">,</span> <span class="s2">"android"</span><span class="p">:</span> <span class="s2">"Roboto"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Platform</span><span class="o">.</span><span class="n">is_ios</span><span class="p">:</span>
@@ -3108,10 +3138,10 @@ platform-published metrics in <code>pythonnative.platform_metrics</code>:</p>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">keyboard</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_keyboard_height</span><span class="p">()</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dims</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> × </span><span class="si">{</span><span class="n">dims</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bottom inset: </span><span class="si">{</span><span class="n">insets</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keyboard: </span><span class="si">{</span><span class="n">keyboard</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dims</span><span class="p">[</span><span class="s1">'width'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> × </span><span class="si">{</span><span class="n">dims</span><span class="p">[</span><span class="s1">'height'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Bottom inset: </span><span class="si">{</span><span class="n">insets</span><span class="p">[</span><span class="s1">'bottom'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Keyboard: </span><span class="si">{</span><span class="n">keyboard</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"padding"</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p>The component re-renders whenever the underlying value actually
@@ -3122,7 +3152,7 @@ the keyboard case for you and you won't need
 <h2 id="status-bar">Status bar<a class="headerlink" href="#status-bar" title="Permanent link">&para;</a></h2>
 <p>Mount <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;StatusBar&lt;/span&gt;" href="../../api/components/#pythonnative.components.StatusBar"><code>StatusBar</code></a> anywhere in the tree (it
 renders nothing visible) to control style and visibility:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">StatusBar</span><span class="p">(</span><span class="n">bar_style</span><span class="o">=</span><span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;#000000&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">StatusBar</span><span class="p">(</span><span class="n">bar_style</span><span class="o">=</span><span class="s2">"light"</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">"#000000"</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>style</code> is <code>"light"</code> (light icons, dark background), <code>"dark"</code> (dark
 icons, light background), or <code>"default"</code>.</p>
@@ -3193,24 +3223,24 @@ Supported keys are <code>disabled</code>, <code>selected</code>, <code>checked</
 <code>expanded</code>; they map to <code>UIAccessibilityTraits</code> on iOS and to
 <code>AccessibilityNodeInfo</code> state on Android:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Pressable</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Inbox&quot;</span><span class="p">),</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Inbox"</span><span class="p">),</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">on_press</span><span class="o">=</span><span class="n">select_inbox</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">accessibility_role</span><span class="o">=</span><span class="s2">&quot;button&quot;</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">accessibility_state</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;selected&quot;</span><span class="p">:</span> <span class="n">current_tab</span> <span class="o">==</span> <span class="s2">&quot;inbox&quot;</span><span class="p">},</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">accessibility_role</span><span class="o">=</span><span class="s2">"button"</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">accessibility_state</span><span class="o">=</span><span class="p">{</span><span class="s2">"selected"</span><span class="p">:</span> <span class="n">current_tab</span> <span class="o">==</span> <span class="s2">"inbox"</span><span class="p">},</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="live-regions">Live regions<a class="headerlink" href="#live-regions" title="Permanent link">&para;</a></h3>
 <p>Set <code>accessibility_live_region="polite"</code> on a status line so screen
 readers announce its text when it changes without moving focus (use
 <code>"assertive"</code> only for content the user must hear immediately):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unread</span><span class="si">}</span><span class="s2"> unread messages&quot;</span><span class="p">,</span> <span class="n">accessibility_live_region</span><span class="o">=</span><span class="s2">&quot;polite&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">unread</span><span class="si">}</span><span class="s2"> unread messages"</span><span class="p">,</span> <span class="n">accessibility_live_region</span><span class="o">=</span><span class="s2">"polite"</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="test-identifiers">Test identifiers<a class="headerlink" href="#test-identifiers" title="Permanent link">&para;</a></h3>
 <p><code>test_id</code> gives UI-test frameworks (Maestro, Appium, XCUITest,
 Espresso) a stable handle that is independent of visible text. It
 maps to <code>accessibilityIdentifier</code> on iOS and to the accessibility
 node's <code>viewIdResourceName</code> (resource-id) on Android:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Continue&quot;</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="n">next_step</span><span class="p">,</span> <span class="n">test_id</span><span class="o">=</span><span class="s2">&quot;onboarding-continue&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">"Continue"</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="n">next_step</span><span class="p">,</span> <span class="n">test_id</span><span class="o">=</span><span class="s2">"onboarding-continue"</span><span class="p">)</span>
 </span></code></pre></div>
 
 
@@ -3290,7 +3320,7 @@ node's <code>viewIdResourceName</code> (resource-id) on Android:</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

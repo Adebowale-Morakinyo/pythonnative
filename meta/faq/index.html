@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1787,6 +1787,8 @@
       
         
       
+        
+      
     
     
     
@@ -2017,6 +2019,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -3379,11 +3409,16 @@ identity for the function so it can keep state across re-renders.</p>
   <code>set_state</code> for every frame is wasteful.</li>
 </ul>
 <h2 id="is-there-asyncawait-support">Is there async/await support?<a class="headerlink" href="#is-there-asyncawait-support" title="Permanent link">&para;</a></h2>
-<p>Yes. <code>asyncio.create_task</code> works, and many native APIs surface as
-coroutine-friendly callbacks via small bridge helpers. PythonNative
-does not start an event loop for you (Chaquopy/iOS run their own UI
-loops); use <code>asyncio.run</code> from the entry point or schedule tasks on
-the loop your platform integration provides.</p>
+<p>Yes, and it's the core of the framework. PythonNative runs a single
+<code>asyncio</code> event loop on the platform's main thread, pumped as a guest
+of the native run loop. Components themselves can be <code>async def</code> (pair
+them with <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Suspense&lt;/span&gt;" href="../../api/components/#pythonnative.components.Suspense"><code>Suspense</code></a> for loading states),
+<code>use_effect</code> accepts coroutine callbacks and cancels them on unmount,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_resource&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_resource"><code>use_resource</code></a> fetches during render, and
+native modules like <code>Camera</code> and <code>Location</code> are awaitable. From a
+synchronous event handler, kick off work with
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="../../api/runtime/#pythonnative.runtime.run_async"><code>pn.run_async</code></a>. See the
+<a href="../../guides/async/">Async + data guide</a>.</p>
 <h2 id="how-is-this-different-from-toga-beeware-kivy-briefcase">How is this different from Toga, BeeWare, Kivy, Briefcase?<a class="headerlink" href="#how-is-this-different-from-toga-beeware-kivy-briefcase" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3507,7 +3542,7 @@ without a prior issue. See <a href="../contributing/">Contributing</a>.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

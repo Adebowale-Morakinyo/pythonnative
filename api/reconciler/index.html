@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1789,6 +1789,8 @@
       
         
       
+        
+      
     
     
     
@@ -2020,6 +2022,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -3320,6 +3350,20 @@ re-renders that only produce fresh closures cost nothing natively.</p>
   catch exceptions in child subtrees, invoke <code>on_error</code>, render a
   fallback (optionally receiving a <code>reset</code> callable), and remount
   their children when <code>reset</code> is called.</li>
+<li><strong>Suspense boundaries</strong> (<code>type == "__Suspense__"</code>), which catch
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Suspend&lt;/span&gt;" href="../suspense/#pythonnative.suspense.Suspend"><code>Suspend</code></a> signals from mounting
+  descendants (<code>async def</code> component bodies blocking on pending
+  awaits, <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;read&lt;/span&gt;" href="../suspense/#pythonnative.suspense.Resource.read"><code>Resource.read</code></a> on unresolved
+  data), show their <code>fallback</code> while pending, and retry the content
+  when the awaited work completes. Suspended components' hook states
+  are preserved across retries so cached resources are not refetched.
+  Updates of already-mounted components that suspend keep their
+  previous content on screen and re-render when ready, no fallback
+  flash.</li>
+<li><strong>Async component bodies</strong>: a component may be an <code>async def</code>.
+  The body is driven synchronously as far as possible (awaits on
+  resolved futures complete inline); blocking on pending work
+  suspends the render.</li>
 <li><strong>Fragments</strong> (<code>type == "__Fragment__"</code>), expanded inline unless
   keyed, in which case they participate in keyed reconciliation as a
   transparent multi-child wrapper.</li>
@@ -4428,7 +4472,7 @@ has been mounted yet.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

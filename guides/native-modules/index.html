@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2024,6 +2024,8 @@
       
         
       
+        
+      
     
     
     
@@ -2254,6 +2256,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -3284,8 +3314,9 @@ underlying platform call:</p>
 <li><strong>Coroutines</strong> (<code>await</code> them): <code>Camera.take_photo</code>,
   <code>Location.get_current</code>, <code>Share.share</code>, <code>Permissions.request</code>,
   <code>Biometrics.authenticate</code>, <code>Notifications.*</code>. Inside a component,
-  drive them with
-  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
+  drive them with an <code>async def</code>
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> callback,
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_resource&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_resource"><code>use_resource</code></a>,
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>, or
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="../../api/runtime/#pythonnative.runtime.run_async"><code>pn.run_async(coro)</code></a> from a sync
   handler.</li>
@@ -3301,9 +3332,9 @@ call into the API.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="android-android_templateappsrcmainandroidmanifestxml" name="__tabbed_1" type="radio" /><input id="ios-ios_templateinfoplist" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="android-android_templateappsrcmainandroidmanifestxml">Android (<code>android_template/app/src/main/AndroidManifest.xml</code>)</label><label for="ios-ios_templateinfoplist">iOS (<code>ios_template/Info.plist</code>)</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;uses-permission</span><span class="w"> </span><span class="na">android:name=</span><span class="s">&quot;android.permission.CAMERA&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">&lt;uses-permission</span><span class="w"> </span><span class="na">android:name=</span><span class="s">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">&lt;uses-permission</span><span class="w"> </span><span class="na">android:name=</span><span class="s">&quot;android.permission.POST_NOTIFICATIONS&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">&lt;uses-permission</span><span class="w"> </span><span class="na">android:name=</span><span class="s">"android.permission.CAMERA"</span><span class="w"> </span><span class="nt">/&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">&lt;uses-permission</span><span class="w"> </span><span class="na">android:name=</span><span class="s">"android.permission.ACCESS_FINE_LOCATION"</span><span class="w"> </span><span class="nt">/&gt;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">&lt;uses-permission</span><span class="w"> </span><span class="na">android:name=</span><span class="s">"android.permission.POST_NOTIFICATIONS"</span><span class="w"> </span><span class="nt">/&gt;</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -3336,7 +3367,7 @@ saved file (or <code>None</code> if the user cancelled).</p>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>            <span class="n">set_photo</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Take photo&quot;</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">take</span><span class="p">())),</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">"Take photo"</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">take</span><span class="p">())),</span>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">photo</span><span class="p">)</span> <span class="k">if</span> <span class="n">photo</span> <span class="k">else</span> <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(),</span>
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="p">)</span>
 </span></code></pre></div>
@@ -3362,11 +3393,11 @@ reads a single GPS fix.</p>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">WhereAmI</span><span class="p">():</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">q</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_query</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Location</span><span class="o">.</span><span class="n">get_current</span><span class="p">,</span> <span class="p">[])</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Acquiring location...&quot;</span><span class="p">)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Acquiring location..."</span><span class="p">)</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Location unavailable&quot;</span><span class="p">)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Location unavailable"</span><span class="p">)</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">data</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lat</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lon</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">lat</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lon</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_query"><code>use_query</code></a> manages the
 loading/data/error state for you and exposes a <code>refetch()</code> callable.</p>
@@ -3384,11 +3415,11 @@ files you can opt into a worker thread:</p>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Sync: fine for small files (preferences, JSON state, etc.)</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;notes.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;hello&quot;</span><span class="p">)</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">text</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="s2">&quot;notes.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"notes.txt"</span><span class="p">,</span> <span class="s2">"hello"</span><span class="p">)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">text</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="s2">"notes.txt"</span><span class="p">)</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># Async: explicitly offload to a worker thread for big payloads.</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">read_text</span><span class="p">,</span> <span class="s2">&quot;big.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">FileSystem</span><span class="o">.</span><span class="n">read_text</span><span class="p">,</span> <span class="s2">"big.txt"</span><span class="p">)</span>
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Need just a key-value store?</p>
@@ -3407,10 +3438,10 @@ schedules local notifications and cancels previously scheduled ones.</p>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">granted</span><span class="p">:</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>        <span class="k">return</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Notifications</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Stretch break&quot;</span><span class="p">,</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="n">body</span><span class="o">=</span><span class="s2">&quot;Stand up!&quot;</span><span class="p">,</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="n">title</span><span class="o">=</span><span class="s2">"Stretch break"</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="n">body</span><span class="o">=</span><span class="s2">"Stand up!"</span><span class="p">,</span>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        <span class="n">delay_seconds</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;reminder&quot;</span><span class="p">,</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="n">identifier</span><span class="o">=</span><span class="s2">"reminder"</span><span class="p">,</span>
 </span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p><code>request_permission()</code> is required on iOS and on Android 13+. On
@@ -3420,7 +3451,7 @@ older Android the call returns <code>True</code> without prompting.</p>
 pasteboard synchronously.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">pn</span><span class="o">.</span><span class="n">Clipboard</span><span class="o">.</span><span class="n">set_string</span><span class="p">(</span><span class="s2">&quot;Copied!&quot;</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">pn</span><span class="o">.</span><span class="n">Clipboard</span><span class="o">.</span><span class="n">set_string</span><span class="p">(</span><span class="s2">"Copied!"</span><span class="p">)</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">text</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Clipboard</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Clipboard</span><span class="o">.</span><span class="n">has_string</span><span class="p">():</span>
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="o">...</span>
@@ -3429,16 +3460,16 @@ pasteboard synchronously.</p>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Share&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.share.Share"><code>Share.share</code></a> presents the system share sheet and
 resolves to <code>True</code> once the user completes a share.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">share_link</span><span class="p">():</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Share</span><span class="o">.</span><span class="n">share</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Check this out&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Share</span><span class="o">.</span><span class="n">share</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">"Check this out"</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">"https://example.com"</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="linking">Linking<a class="headerlink" href="#linking" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Linking&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.linking.Linking"><code>Linking</code></a> opens URLs, deep links, and the app's
 Settings page, and reports the URL that launched the app.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">can_open_url</span><span class="p">(</span><span class="s2">&quot;tel:+15551234567&quot;</span><span class="p">):</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">open_url</span><span class="p">(</span><span class="s2">&quot;tel:+15551234567&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">can_open_url</span><span class="p">(</span><span class="s2">"tel:+15551234567"</span><span class="p">):</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">open_url</span><span class="p">(</span><span class="s2">"tel:+15551234567"</span><span class="p">)</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">launch_url</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">get_initial_url</span><span class="p">()</span>  <span class="c1"># deep link the app opened with</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">open_settings</span><span class="p">()</span>                 <span class="c1"># this app&#39;s entry in Settings</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">open_settings</span><span class="p">()</span>                 <span class="c1"># this app's entry in Settings</span>
 </span></code></pre></div>
 <h2 id="permissions-runtime">Permissions (runtime)<a class="headerlink" href="#permissions-runtime" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Permissions&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.permissions.Permissions"><code>Permissions</code></a> normalizes the iOS/Android
@@ -3446,9 +3477,9 @@ permission models. <code>check</code> is synchronous; <code>request</code> promp
 coroutine. Names: <code>"camera"</code>, <code>"microphone"</code>, <code>"location"</code>, <code>"photos"</code>,
 <code>"notifications"</code>, <code>"contacts"</code>. Statuses: <code>"granted"</code>, <code>"denied"</code>,
 <code>"blocked"</code>, <code>"undetermined"</code>.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Permissions</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s2">&quot;camera&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;granted&quot;</span><span class="p">:</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">status</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Permissions</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;camera&quot;</span><span class="p">)</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;blocked&quot;</span><span class="p">:</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Permissions</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s2">"camera"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"granted"</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">status</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Permissions</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">"camera"</span><span class="p">)</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"blocked"</span><span class="p">:</span>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">open_settings</span><span class="p">()</span>  <span class="c1"># user must enable it in Settings</span>
 </span></code></pre></div>
 <p>You still declare the permission in the platform manifest (above); the
@@ -3460,10 +3491,10 @@ lifecycle phase (<code>"active"</code>, <code>"inactive"</code>, <code>"backgrou
 <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">Status</span><span class="p">():</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">state</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_app_state</span><span class="p">()</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;App is </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"App is </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Outside the tree, subscribe imperatively:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">unsubscribe</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">AppState</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;now&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">unsubscribe</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">AppState</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"now"</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
 </span></code></pre></div>
 <h2 id="network-connectivity">Network connectivity<a class="headerlink" href="#network-connectivity" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NetInfo&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.net_info.NetInfo"><code>NetInfo</code></a> reports connectivity. <code>fetch()</code> returns
@@ -3472,8 +3503,8 @@ the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 <div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">Banner</span><span class="p">():</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">net</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_net_info</span><span class="p">()</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">net</span><span class="p">[</span><span class="s2">&quot;is_connected&quot;</span><span class="p">]:</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;You are offline&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#B91C1C&quot;</span><span class="p">))</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">net</span><span class="p">[</span><span class="s2">"is_connected"</span><span class="p">]:</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"You are offline"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#B91C1C"</span><span class="p">))</span>
 </span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">()</span>
 </span></code></pre></div>
 <h2 id="secure-storage">Secure storage<a class="headerlink" href="#secure-storage" title="Permanent link">&para;</a></h2>
@@ -3481,21 +3512,21 @@ the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 Keychain / Android <code>EncryptedSharedPreferences</code>. Use it for tokens,
 not <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../../api/storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>, which is
 unencrypted.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">set_item</span><span class="p">(</span><span class="s2">&quot;auth_token&quot;</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">token</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s2">&quot;auth_token&quot;</span><span class="p">)</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">delete_item</span><span class="p">(</span><span class="s2">&quot;auth_token&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">set_item</span><span class="p">(</span><span class="s2">"auth_token"</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">token</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s2">"auth_token"</span><span class="p">)</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">pn</span><span class="o">.</span><span class="n">SecureStore</span><span class="o">.</span><span class="n">delete_item</span><span class="p">(</span><span class="s2">"auth_token"</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="battery">Battery<a class="headerlink" href="#battery" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Battery&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.battery.Battery"><code>Battery</code></a> exposes the charge level (<code>0.0</code>–<code>1.0</code>,
 or <code>-1.0</code> if unknown) and state, plus a change listener.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">level</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">get_level</span><span class="p">()</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">state</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>   <span class="c1"># &quot;charging&quot; | &quot;full&quot; | &quot;unplugged&quot; | &quot;unknown&quot;</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">state</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>   <span class="c1"># "charging" | "full" | "unplugged" | "unknown"</span>
 </span></code></pre></div>
 <h2 id="haptics-vibration">Haptics &amp; vibration<a class="headerlink" href="#haptics-vibration" title="Permanent link">&para;</a></h2>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Haptics&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.haptics.Haptics"><code>Haptics</code></a> plays semantic feedback;
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Vibration&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.haptics.Vibration"><code>Vibration</code></a> is a blunt duration-based buzz.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Haptics</span><span class="o">.</span><span class="n">impact</span><span class="p">(</span><span class="s2">&quot;medium&quot;</span><span class="p">)</span>          <span class="c1"># light | medium | heavy | soft | rigid</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">pn</span><span class="o">.</span><span class="n">Haptics</span><span class="o">.</span><span class="n">notification</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">)</span>   <span class="c1"># success | warning | error</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Haptics</span><span class="o">.</span><span class="n">impact</span><span class="p">(</span><span class="s2">"medium"</span><span class="p">)</span>          <span class="c1"># light | medium | heavy | soft | rigid</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">pn</span><span class="o">.</span><span class="n">Haptics</span><span class="o">.</span><span class="n">notification</span><span class="p">(</span><span class="s2">"success"</span><span class="p">)</span>   <span class="c1"># success | warning | error</span>
 </span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">pn</span><span class="o">.</span><span class="n">Haptics</span><span class="o">.</span><span class="n">selection</span><span class="p">()</span>
 </span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">pn</span><span class="o">.</span><span class="n">Vibration</span><span class="o">.</span><span class="n">vibrate</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>            <span class="c1"># milliseconds</span>
 </span></code></pre></div>
@@ -3503,7 +3534,7 @@ or <code>-1.0</code> if unknown) and state, plus a change listener.</p>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Biometrics&lt;/span&gt;" href="../../api/native_modules/#pythonnative.native_modules.biometrics.Biometrics"><code>Biometrics</code></a> gates an action behind Face ID /
 Touch ID / fingerprint.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">unlock</span><span class="p">():</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Biometrics</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">and</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Biometrics</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="s2">&quot;Unlock&quot;</span><span class="p">):</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Biometrics</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">and</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Biometrics</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="s2">"Unlock"</span><span class="p">):</span>
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>        <span class="n">show_secrets</span><span class="p">()</span>
 </span></code></pre></div>
 <h2 id="writing-your-own-native-module">Writing your own native module<a class="headerlink" href="#writing-your-own-native-module" title="Permanent link">&para;</a></h2>
@@ -3630,7 +3661,7 @@ code stays runnable in the desktop mock and in unit tests.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1197,10 +1197,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-framework-runtime" class="md-nav__link">
+  <a href="#the-framework-runtime-one-loop-on-the-main-thread" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The framework runtime
+        The framework runtime: one loop, on the main thread
       
     </span>
   </a>
@@ -1208,10 +1208,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#async-side-effects-use_async_effect" class="md-nav__link">
+  <a href="#async-components-suspense" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Async side effects: use_async_effect
+        Async components + Suspense
       
     </span>
   </a>
@@ -1219,10 +1219,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#loading-data-use_query" class="md-nav__link">
+  <a href="#fetch-during-render-use_resource" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading data: use_query
+        Fetch-during-render: use_resource
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-splitting-lazy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code splitting: lazy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-side-effects-use_effect-with-async-def" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Async side effects: use_effect with async def
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keeping-the-ui-responsive-use_transition-and-use_deferred_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keeping the UI responsive: use_transition and use_deferred_value
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loading-data-with-state-flags-use_query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading data with state flags: use_query
       
     </span>
   </a>
@@ -1278,6 +1322,17 @@
     <span class="md-ellipsis">
       
         Awaitable alerts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-async-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing async code
       
     </span>
   </a>
@@ -1936,6 +1991,8 @@
       
         
       
+        
+      
     
     
     
@@ -2166,6 +2223,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -2958,10 +3043,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-framework-runtime" class="md-nav__link">
+  <a href="#the-framework-runtime-one-loop-on-the-main-thread" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The framework runtime
+        The framework runtime: one loop, on the main thread
       
     </span>
   </a>
@@ -2969,10 +3054,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#async-side-effects-use_async_effect" class="md-nav__link">
+  <a href="#async-components-suspense" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Async side effects: use_async_effect
+        Async components + Suspense
       
     </span>
   </a>
@@ -2980,10 +3065,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#loading-data-use_query" class="md-nav__link">
+  <a href="#fetch-during-render-use_resource" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Loading data: use_query
+        Fetch-during-render: use_resource
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-splitting-lazy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code splitting: lazy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-side-effects-use_effect-with-async-def" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Async side effects: use_effect with async def
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keeping-the-ui-responsive-use_transition-and-use_deferred_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keeping the UI responsive: use_transition and use_deferred_value
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loading-data-with-state-flags-use_query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading data with state flags: use_query
       
     </span>
   </a>
@@ -3046,6 +3175,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#testing-async-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing async code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-everything-fits-together" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3090,21 +3230,22 @@
 
 
 <h1 id="async-data-fetching">Async + data fetching<a class="headerlink" href="#async-data-fetching" title="Permanent link">&para;</a></h1>
-<p>PythonNative is built on Python's <code>asyncio</code>. Animations, native
-modules, alerts, the network client, and persistent storage are all
-coroutines, and there are dedicated hooks
-(<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_persisted_state&lt;/span&gt;" href="../../api/storage/#pythonnative.storage.use_persisted_state"><code>use_persisted_state</code></a>)
-that bridge those coroutines into the component lifecycle.</p>
+<p>PythonNative is <strong>async-first</strong>. The whole framework (rendering,
+effects, native modules, animations, timers) shares a single <code>asyncio</code>
+event loop that runs on the platform's main thread, components
+themselves can be <code>async def</code>, and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Suspense&lt;/span&gt;" href="../../api/components/#pythonnative.components.Suspense"><code>Suspense</code></a>
+turns "waiting for data" into a declarative UI state instead of
+hand-rolled loading flags.</p>
 <p>This guide walks through the moving parts and the patterns that come
 out of them.</p>
-<h2 id="the-framework-runtime">The framework runtime<a class="headerlink" href="#the-framework-runtime" title="Permanent link">&para;</a></h2>
-<p>PythonNative starts a dedicated asyncio event loop on a daemon thread
-named <code>"pn-asyncio"</code> the first time it's needed. Everything async in
-the framework runs on this loop.</p>
-<p>The two entry points you'll use directly are:</p>
+<h2 id="the-framework-runtime-one-loop-on-the-main-thread">The framework runtime: one loop, on the main thread<a class="headerlink" href="#the-framework-runtime-one-loop-on-the-main-thread" title="Permanent link">&para;</a></h2>
+<p>The framework loop lives on the platform's main thread, interleaved
+with UIKit / the Android Looper as a guest: whenever async work is
+scheduled, PythonNative asks the platform to pump the loop on the next
+main-queue turn. There is no background runtime thread, so coroutines
+can read component state and (through the commit) native views without
+any cross-thread marshaling or locks.</p>
+<p>The entry points you'll use directly:</p>
 <table>
 <thead>
 <tr>
@@ -3116,6 +3257,10 @@ the framework runs on this loop.</p>
 <tr>
 <td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="../../api/runtime/#pythonnative.runtime.run_async"><code>pn.run_async(coro)</code></a></td>
 <td>Schedule a coroutine from sync code (a tap handler, a hook setup function).</td>
+</tr>
+<tr>
+<td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_blocking&lt;/span&gt;" href="../../api/runtime/#pythonnative.runtime.run_blocking"><code>pn.run_blocking(coro)</code></a></td>
+<td>Drive a coroutine to completion from a plain script or a test.</td>
 </tr>
 <tr>
 <td><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_loop&lt;/span&gt;" href="../../api/runtime/#pythonnative.runtime.get_loop"><code>pn.runtime.get_loop()</code></a></td>
@@ -3137,54 +3282,168 @@ the framework runs on this loop.</p>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">report</span> <span class="o">=</span> <span class="k">await</span> <span class="n">build_report</span><span class="p">()</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="k">await</span> <span class="n">save_to_disk</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Export&quot;</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">export</span><span class="p">()))</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">"Export"</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">export</span><span class="p">()))</span>
 </span></code></pre></div>
-<h2 id="async-side-effects-use_async_effect">Async side effects: <code>use_async_effect</code><a class="headerlink" href="#async-side-effects-use_async_effect" title="Permanent link">&para;</a></h2>
-<p><code>use_async_effect(effect, deps)</code> is the async sibling of
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a>. <code>effect</code> is a zero-arg
-<code>async</code> callable; the framework schedules it on the runtime after
-the native commit and cancels the in-flight coroutine whenever
-<code>deps</code> change or the component unmounts.</p>
+<h2 id="async-components-suspense">Async components + Suspense<a class="headerlink" href="#async-components-suspense" title="Permanent link">&para;</a></h2>
+<p>A component body may be an <code>async def</code>. The body awaits whatever it
+needs and returns its element tree; while an await is pending, the
+render <strong>suspends</strong> and the nearest
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;Suspense&lt;/span&gt;" href="../../api/components/#pythonnative.components.Suspense"><code>Suspense</code></a> boundary shows its fallback:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">WelcomeBanner</span><span class="p">():</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">visible</span><span class="p">,</span> <span class="n">set_visible</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">auto_dismiss</span><span class="p">():</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">Profile</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">api</span><span class="o">.</span><span class="n">fetch_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]),</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s2">"bio"</span><span class="p">]),</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="p">)</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">use_async_effect</span><span class="p">(</span><span class="n">auto_dismiss</span><span class="p">,</span> <span class="p">[])</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Welcome!&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">visible</span> <span class="k">else</span> <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">()</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="k">def</span><span class="w"> </span><span class="nf">ProfileScreen</span><span class="p">():</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Suspense</span><span class="p">(</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="n">Profile</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">"42"</span><span class="p">),</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">fallback</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">ActivityIndicator</span><span class="p">(),</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="p">)</span>
+</span></code></pre></div>
+<p>No <code>loading</code> flag, no conditional render, no effect that copies data
+into state. Two timing rules, matching React:</p>
+<ul>
+<li><strong>Initial mount</strong>: the fallback shows until the content is ready.</li>
+<li><strong>Updates</strong>: a component that's already on screen and suspends again
+  (its inputs changed) keeps its previous content visible and
+  re-renders when the new data arrives; there's no fallback flash.</li>
+</ul>
+<p>Boundaries nest: each <code>Suspense</code> covers exactly the subtree it wraps,
+so one slow widget doesn't blank the whole screen. A boundary without
+a <code>fallback</code> is transparent and lets the suspension propagate to the
+next boundary up.</p>
+<p>Awaits on already-resolved values complete inline during the render
+pass, so a re-render of an async component whose data is cached costs
+no event-loop round trips.</p>
+<h2 id="fetch-during-render-use_resource">Fetch-during-render: <code>use_resource</code><a class="headerlink" href="#fetch-during-render-use_resource" title="Permanent link">&para;</a></h2>
+<p><code>use_resource(fetcher, deps)</code> starts an async fetch <strong>during render</strong>
+(not after commit, so there's no mount-then-fetch waterfall) and
+caches the resulting <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Resource&lt;/span&gt;" href="../../api/suspense/#pythonnative.suspense.Resource"><code>Resource</code></a> until <code>deps</code>
+change:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">UserCard</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">resource</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_resource</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">api</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">),</span> <span class="p">[</span><span class="n">user_id</span><span class="p">])</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">user</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># suspends while pending</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+</span></code></pre></div>
+<p>Consume a resource two ways, with identical semantics:</p>
+<ul>
+<li><code>resource.read()</code> in a regular component: returns the value when
+  ready, re-raises the fetcher's error (so an enclosing
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;ErrorBoundary&lt;/span&gt;" href="../../api/components/#pythonnative.components.ErrorBoundary"><code>ErrorBoundary</code></a> catches failures),
+  and suspends the render while pending.</li>
+<li><code>await resource</code> inside an <code>async def</code> component.</li>
+</ul>
+<p>Because results are cached per component instance, re-renders resolve
+instantly; only genuinely new data (a <code>deps</code> change) refetches, and
+the stale in-flight fetch is cancelled first.</p>
+<p>For module-level preloading (start fetching before a screen mounts),
+use <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;start_resource&lt;/span&gt;" href="../../api/suspense/#pythonnative.suspense.start_resource"><code>pn.start_resource</code></a>, the non-hook
+constructor.</p>
+<h2 id="code-splitting-lazy">Code splitting: <code>lazy</code><a class="headerlink" href="#code-splitting-lazy" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;lazy&lt;/span&gt;" href="../../api/suspense/#pythonnative.suspense.lazy"><code>pn.lazy(loader)</code></a> defers loading a component
+until its first render. The loader runs once; renders suspend until
+it resolves:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">Chart</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">lazy</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">"app.chart"</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">"Chart"</span><span class="p">])</span><span class="o">.</span><span class="n">Chart</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">Dashboard</span><span class="p">():</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Suspense</span><span class="p">(</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="n">Chart</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="n">fallback</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">ActivityIndicator</span><span class="p">(),</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="p">)</span>
+</span></code></pre></div>
+<p>Synchronous loaders (a deferred <code>import</code>) resolve immediately and
+never suspend; <code>async def</code> loaders can pull code or data from
+anywhere.</p>
+<h2 id="async-side-effects-use_effect-with-async-def">Async side effects: <code>use_effect</code> with <code>async def</code><a class="headerlink" href="#async-side-effects-use_effect-with-async-def" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> accepts coroutine callbacks
+directly. The coroutine runs as a task on the framework loop after
+the commit, and the task is <strong>cancelled automatically</strong> whenever
+<code>deps</code> change or the component unmounts:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">WelcomeBanner</span><span class="p">():</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">visible</span><span class="p">,</span> <span class="n">set_visible</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">auto_dismiss</span><span class="p">():</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        <span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">use_effect</span><span class="p">(</span><span class="n">auto_dismiss</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Welcome!"</span><span class="p">)</span> <span class="k">if</span> <span class="n">visible</span> <span class="k">else</span> <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">()</span>
 </span></code></pre></div>
 <p>If the user navigates away within 3 seconds, the sleep is cancelled
-and <code>set_visible</code> never fires on the unmounted component.</p>
-<h2 id="loading-data-use_query">Loading data: <code>use_query</code><a class="headerlink" href="#loading-data-use_query" title="Permanent link">&para;</a></h2>
-<p><code>use_query(fetcher, deps)</code> subscribes to an async fetcher and re-renders
-when its result changes. The return value is a frozen
+and <code>set_visible</code> never fires on the unmounted component. An async
+effect may also return a callable, which runs as its cleanup:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">subscribe</span><span class="p">():</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">connection</span> <span class="o">=</span> <span class="k">await</span> <span class="n">open_socket</span><span class="p">()</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="k">return</span> <span class="n">connection</span><span class="o">.</span><span class="n">close</span>  <span class="c1"># cleanup</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">pn</span><span class="o">.</span><span class="n">use_effect</span><span class="p">(</span><span class="n">subscribe</span><span class="p">,</span> <span class="p">[])</span>
+</span></code></pre></div>
+<h2 id="keeping-the-ui-responsive-use_transition-and-use_deferred_value">Keeping the UI responsive: <code>use_transition</code> and <code>use_deferred_value</code><a class="headerlink" href="#keeping-the-ui-responsive-use_transition-and-use_deferred_value" title="Permanent link">&para;</a></h2>
+<p>State updates are urgent by default: they render synchronously so
+taps and typing feel immediate. When an update drives <em>expensive</em>
+work (filtering a large list, re-rendering a chart), mark it as a
+<strong>transition</strong> so urgent updates queued in the meantime render first:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">Search</span><span class="p">():</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">query</span><span class="p">,</span> <span class="n">set_query</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">submitted</span><span class="p">,</span> <span class="n">set_submitted</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">is_pending</span><span class="p">,</span> <span class="n">start_transition</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_transition</span><span class="p">()</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_change</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="n">set_query</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>  <span class="c1"># urgent: the input updates immediately</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="n">start_transition</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_submitted</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>  <span class="c1"># deferred</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="n">on_change</span><span class="p">),</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">ActivityIndicator</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_pending</span> <span class="k">else</span> <span class="n">Results</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">submitted</span><span class="p">),</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="p">)</span>
+</span></code></pre></div>
+<p><code>is_pending</code> is <code>True</code> from the moment <code>start_transition</code> is called
+until the deferred render commits, which is exactly when to show a
+lightweight busy hint.</p>
+<p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_deferred_value&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.use_deferred_value"><code>use_deferred_value</code></a> is the
+value-shaped variant: it returns a copy of its argument that lags
+behind during bursts and catches up in a transition-priority render
+when things go quiet. Pass the deferred copy to the expensive subtree
+and the urgent part of the UI stays snappy.</p>
+<h2 id="loading-data-with-state-flags-use_query">Loading data with state flags: <code>use_query</code><a class="headerlink" href="#loading-data-with-state-flags-use_query" title="Permanent link">&para;</a></h2>
+<p>When you'd rather manage loading state explicitly (or need <code>refetch</code>),
+<code>use_query(fetcher, deps)</code> subscribes to an async fetcher and
+re-renders when its result changes. The return value is a frozen
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;QueryResult&lt;/span&gt;
 
 
   &lt;span class=&quot;doc doc-labels&quot;&gt;
       &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.QueryResult"><code>QueryResult</code></a> with <code>data</code>, <code>loading</code>,
-<code>error</code>, and a stable <code>refetch</code> callable.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">UserCard</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">q</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_query</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">api</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">),</span> <span class="p">[</span><span class="n">user_id</span><span class="p">])</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">loading</span> <span class="ow">and</span> <span class="n">q</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Loading…&quot;</span><span class="p">)</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">q</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]),</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Refresh&quot;</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="n">q</span><span class="o">.</span><span class="n">refetch</span><span class="p">),</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="p">)</span>
+  &lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.QueryResult"><code>QueryResult</code></a> with <code>data</code>,
+<code>loading</code>, <code>error</code>, and a stable <code>refetch</code> callable:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">UserCard</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">q</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_query</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">api</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">),</span> <span class="p">[</span><span class="n">user_id</span><span class="p">])</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">loading</span> <span class="ow">and</span> <span class="n">q</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Loading…"</span><span class="p">)</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>        <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">q</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]),</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">"Refresh"</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="n">q</span><span class="o">.</span><span class="n">refetch</span><span class="p">),</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="p">)</span>
 </span></code></pre></div>
-<p>Cancellation falls through naturally: if the user navigates away mid-
-fetch, the underlying coroutine is cancelled. If <code>user_id</code> changes,
-the previous fetch is cancelled before the new one starts.</p>
+<p>Rule of thumb: reach for <code>use_resource</code> + <code>Suspense</code> when a loading
+state is all you need (the boundary owns it), and <code>use_query</code> when
+the component wants to keep stale data on screen with a refresh
+affordance.</p>
 <h2 id="side-effecting-actions-use_mutation">Side-effecting actions: <code>use_mutation</code><a class="headerlink" href="#side-effecting-actions-use_mutation" title="Permanent link">&para;</a></h2>
 <p>Use <code>use_mutation</code> for "do something then maybe refresh" patterns
 (create, update, delete). It returns a <code>(state, mutate)</code> tuple where
@@ -3195,25 +3454,25 @@ the previous fetch is cancelled before the new one starts.</p>
       &lt;small class=&quot;doc doc-label doc-label-dataclass&quot;&gt;&lt;code&gt;dataclass&lt;/code&gt;&lt;/small&gt;
   &lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.MutationState"><code>MutationState</code></a> (with
 <code>loading</code>, <code>data</code>, <code>error</code>) and <code>mutate(*args, **kwargs)</code> triggers the
-mutator.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">NewPostForm</span><span class="p">():</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">title</span><span class="p">,</span> <span class="n">set_title</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">state</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_mutation</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">create_post</span><span class="p">)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">():</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="k">await</span> <span class="n">save</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>              <span class="c1"># await the result</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">&quot;Posted!&quot;</span><span class="p">)</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="n">set_title</span><span class="p">),</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>            <span class="s2">&quot;Save&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">loading</span> <span class="k">else</span> <span class="s2">&quot;Saving…&quot;</span><span class="p">,</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>            <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">submit</span><span class="p">()),</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>        <span class="p">),</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">error</span><span class="p">))</span> <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">error</span> <span class="k">else</span> <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(),</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="p">)</span>
+mutator:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">NewPostForm</span><span class="p">():</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">title</span><span class="p">,</span> <span class="n">set_title</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">state</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_mutation</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">create_post</span><span class="p">)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">():</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="k">await</span> <span class="n">save</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>              <span class="c1"># await the result</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>        <span class="n">set_title</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>        <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">"Posted!"</span><span class="p">)</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="n">set_title</span><span class="p">),</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>            <span class="s2">"Save"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">loading</span> <span class="k">else</span> <span class="s2">"Saving…"</span><span class="p">,</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>            <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">submit</span><span class="p">()),</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>        <span class="p">),</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">error</span><span class="p">))</span> <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">error</span> <span class="k">else</span> <span class="n">pn</span><span class="o">.</span><span class="n">Spacer</span><span class="p">(),</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p>The handle returned by <code>mutate(...)</code> is a
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;MutationCall&lt;/span&gt;" href="../../api/hooks/#pythonnative.hooks.MutationCall"><code>MutationCall</code></a>, awaitable,
@@ -3221,14 +3480,14 @@ cancellable, and safe to ignore if you only care about the state
 transitions.</p>
 <h2 id="http-requests-pnfetch">HTTP requests: <code>pn.fetch</code><a class="headerlink" href="#http-requests-pnfetch" title="Permanent link">&para;</a></h2>
 <p>A small, dependency-free coroutine wrapper around <code>urllib</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="s2">&quot;https://api.example.com/posts&quot;</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello&quot;</span><span class="p">},</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="s2">"https://api.example.com/posts"</span><span class="p">,</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="n">method</span><span class="o">=</span><span class="s2">"POST"</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Hello"</span><span class="p">},</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Bearer </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">"</span><span class="p">},</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">)</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 </span></code></pre></div>
 <p><code>resp.text()</code>, <code>resp.json()</code>, and <code>resp.content</code> cover the common
 cases. For multipart uploads, HTTP/2, or streaming, integrate
@@ -3238,11 +3497,11 @@ cases. For multipart uploads, HTTP/2, or streaming, integrate
 key/value store (<code>NSUserDefaults</code> on iOS, <code>SharedPreferences</code> on
 Android, a local JSON file in desktop tests). All operations are
 coroutines:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">)</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">set_json</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">restored</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"token"</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">token</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">set_json</span><span class="p">(</span><span class="s2">"user"</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">restored</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="s2">"user"</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>set_json</code> / <code>get_json</code> add a JSON encode/decode step so you can
 round-trip lists, dicts, and primitives.</p>
@@ -3251,13 +3510,13 @@ round-trip lists, dicts, and primitives.</p>
 <code>use_persisted_state(key, initial)</code>. It looks like <code>use_state</code> but
 loads the previous value on mount and writes every update back to
 <code>AsyncStorage</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">ThemeToggle</span><span class="p">():</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">theme</span><span class="p">,</span> <span class="n">set_theme</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_persisted_state</span><span class="p">(</span><span class="s2">&quot;settings.theme&quot;</span><span class="p">,</span> <span class="s2">&quot;light&quot;</span><span class="p">)</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        <span class="sa">f</span><span class="s2">&quot;Theme: </span><span class="si">{</span><span class="n">theme</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_theme</span><span class="p">(</span><span class="s2">&quot;dark&quot;</span> <span class="k">if</span> <span class="n">theme</span> <span class="o">==</span> <span class="s2">&quot;light&quot;</span> <span class="k">else</span> <span class="s2">&quot;light&quot;</span><span class="p">),</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">ThemeToggle</span><span class="p">():</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">theme</span><span class="p">,</span> <span class="n">set_theme</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_persisted_state</span><span class="p">(</span><span class="s2">"settings.theme"</span><span class="p">,</span> <span class="s2">"light"</span><span class="p">)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>        <span class="sa">f</span><span class="s2">"Theme: </span><span class="si">{</span><span class="n">theme</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>        <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">set_theme</span><span class="p">(</span><span class="s2">"dark"</span> <span class="k">if</span> <span class="n">theme</span> <span class="o">==</span> <span class="s2">"light"</span> <span class="k">else</span> <span class="s2">"light"</span><span class="p">),</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p>The initial render returns the <code>initial</code> fallback; the async load
 triggers a re-render with the stored value as soon as it lands.</p>
@@ -3277,16 +3536,16 @@ triggers a re-render with the stored value as soon as it lands.</p>
       &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
   &lt;/span&gt;" href="../../api/alerts/#pythonnative.alerts.Alert.choose"><code>pn.Alert.choose</code></a> are coroutines
 that resolve to the user's choice:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">if</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">&quot;Delete this item?&quot;</span><span class="p">):</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="k">await</span> <span class="n">delete_item</span><span class="p">()</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">photo_source</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="s2">&quot;Photo source&quot;</span><span class="p">,</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Camera&quot;</span><span class="p">,</span> <span class="s2">&quot;Gallery&quot;</span><span class="p">],</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">cancel_label</span><span class="o">=</span><span class="s2">&quot;Cancel&quot;</span><span class="p">,</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">)</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="k">if</span> <span class="n">photo_source</span> <span class="o">==</span> <span class="s2">&quot;Camera&quot;</span><span class="p">:</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="n">path</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">take_photo</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">if</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">"Delete this item?"</span><span class="p">):</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="k">await</span> <span class="n">delete_item</span><span class="p">()</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">photo_source</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="s2">"Photo source"</span><span class="p">,</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">"Camera"</span><span class="p">,</span> <span class="s2">"Gallery"</span><span class="p">],</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">cancel_label</span><span class="o">=</span><span class="s2">"Cancel"</span><span class="p">,</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="k">if</span> <span class="n">photo_source</span> <span class="o">==</span> <span class="s2">"Camera"</span><span class="p">:</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">path</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">take_photo</span><span class="p">()</span>
 </span></code></pre></div>
 <p>For a fire-and-forget single-button notice, use the sync
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;show&lt;/span&gt;
@@ -3295,48 +3554,74 @@ that resolve to the user's choice:</p>
   &lt;span class=&quot;doc doc-labels&quot;&gt;
       &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
   &lt;/span&gt;" href="../../api/alerts/#pythonnative.alerts.Alert.show"><code>pn.Alert.show</code></a>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">&quot;Saved!&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">Alert</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">"Saved!"</span><span class="p">)</span>
 </span></code></pre></div>
+<h2 id="testing-async-code">Testing async code<a class="headerlink" href="#testing-async-code" title="Permanent link">&para;</a></h2>
+<p>Because the loop is a guest on the calling thread, synchronous tests
+drive it explicitly:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pythonnative.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">drain</span><span class="p">,</span> <span class="n">run_blocking</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_load</span><span class="p">():</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">rec</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">Suspense</span><span class="p">(</span><span class="n">Profile</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="s2">"42"</span><span class="p">),</span> <span class="n">fallback</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"…"</span><span class="p">)))</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">drain</span><span class="p">()</span>            <span class="c1"># pump the loop until it goes idle</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="n">rec</span><span class="o">.</span><span class="n">flush_dirty</span><span class="p">()</span>  <span class="c1"># commit renders queued by async completions</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_storage</span><span class="p">():</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    <span class="k">assert</span> <span class="n">run_blocking</span><span class="p">(</span><span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"token"</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span>
+</span></code></pre></div>
+<p><code>async</code> tests can just <code>await</code> framework APIs directly;
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_loop&lt;/span&gt;" href="../../api/runtime/#pythonnative.runtime.get_loop"><code>get_loop</code></a> adopts the already-running
+loop.</p>
 <h2 id="how-everything-fits-together">How everything fits together<a class="headerlink" href="#how-everything-fits-together" title="Permanent link">&para;</a></h2>
 <p>Putting the pieces side by side, here's the canonical "screen with
 data + form + persistence + animations" shape:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">PostsScreen</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="n">posts</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_query</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">api</span><span class="o">.</span><span class="n">list_posts</span><span class="p">(</span><span class="n">user_id</span><span class="p">),</span> <span class="p">[</span><span class="n">user_id</span><span class="p">])</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="n">draft</span><span class="p">,</span> <span class="n">set_draft</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_persisted_state</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;draft.</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="n">state</span><span class="p">,</span> <span class="n">create</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_mutation</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">create_post</span><span class="p">)</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="n">opacity</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_animated_value</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">use_async_effect</span><span class="p">(</span>
-</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>        <span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">timing</span><span class="p">(</span><span class="n">opacity</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">300</span><span class="p">),</span>
-</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>        <span class="p">[],</span>
-</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    <span class="p">)</span>
-</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>
-</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">():</span>
-</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">draft</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>            <span class="k">return</span>
-</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>        <span class="k">await</span> <span class="n">create</span><span class="p">({</span><span class="s2">&quot;author_id&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span> <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">draft</span><span class="p">})</span>
-</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>        <span class="n">set_draft</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>        <span class="n">posts</span><span class="o">.</span><span class="n">refetch</span><span class="p">()</span>
-</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>
-</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">View</span><span class="p">(</span>
-</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">draft</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="n">set_draft</span><span class="p">),</span>
-</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>            <span class="s2">&quot;Post&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">loading</span> <span class="k">else</span> <span class="s2">&quot;Posting…&quot;</span><span class="p">,</span>
-</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>            <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">submit</span><span class="p">()),</span>
-</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>        <span class="p">),</span>
-</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">FlatList</span><span class="p">(</span>
-</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>            <span class="n">posts</span><span class="o">.</span><span class="n">data</span> <span class="ow">or</span> <span class="p">[],</span>
-</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>            <span class="n">render_item</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">]),</span>
-</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>        <span class="p">),</span>
-</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="n">opacity</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;spacing&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
-</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>    <span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">PostList</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">posts</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_resource</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">api</span><span class="o">.</span><span class="n">list_posts</span><span class="p">(</span><span class="n">user_id</span><span class="p">),</span> <span class="p">[</span><span class="n">user_id</span><span class="p">,</span> <span class="n">version</span><span class="p">])</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">FlatList</span><span class="p">(</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>        <span class="n">posts</span><span class="p">,</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>        <span class="n">render_item</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">"body"</span><span class="p">]),</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>    <span class="p">)</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="k">def</span><span class="w"> </span><span class="nf">PostsScreen</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>    <span class="n">draft</span><span class="p">,</span> <span class="n">set_draft</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_persisted_state</span><span class="p">(</span><span class="sa">f</span><span class="s2">"draft.</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>    <span class="n">state</span><span class="p">,</span> <span class="n">create</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_mutation</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">create_post</span><span class="p">)</span>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>    <span class="n">version</span><span class="p">,</span> <span class="n">set_version</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>
+</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>    <span class="n">opacity</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_animated_value</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="__span-15-20"><a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">use_effect</span><span class="p">(</span>
+</span><span id="__span-15-21"><a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a>        <span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">timing</span><span class="p">(</span><span class="n">opacity</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">300</span><span class="p">),</span>
+</span><span id="__span-15-22"><a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a>        <span class="p">[],</span>
+</span><span id="__span-15-23"><a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a>    <span class="p">)</span>
+</span><span id="__span-15-24"><a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a>
+</span><span id="__span-15-25"><a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">():</span>
+</span><span id="__span-15-26"><a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">draft</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+</span><span id="__span-15-27"><a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a>            <span class="k">return</span>
+</span><span id="__span-15-28"><a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a>        <span class="k">await</span> <span class="n">create</span><span class="p">({</span><span class="s2">"author_id"</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span> <span class="s2">"body"</span><span class="p">:</span> <span class="n">draft</span><span class="p">})</span>
+</span><span id="__span-15-29"><a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a>        <span class="n">set_draft</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+</span><span id="__span-15-30"><a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a>        <span class="n">set_version</span><span class="p">(</span><span class="n">version</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># refetch the list resource</span>
+</span><span id="__span-15-31"><a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a>
+</span><span id="__span-15-32"><a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Animated</span><span class="o">.</span><span class="n">View</span><span class="p">(</span>
+</span><span id="__span-15-33"><a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">draft</span><span class="p">,</span> <span class="n">on_change</span><span class="o">=</span><span class="n">set_draft</span><span class="p">),</span>
+</span><span id="__span-15-34"><a id="__codelineno-15-34" name="__codelineno-15-34" href="#__codelineno-15-34"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+</span><span id="__span-15-35"><a id="__codelineno-15-35" name="__codelineno-15-35" href="#__codelineno-15-35"></a>            <span class="s2">"Post"</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">loading</span> <span class="k">else</span> <span class="s2">"Posting…"</span><span class="p">,</span>
+</span><span id="__span-15-36"><a id="__codelineno-15-36" name="__codelineno-15-36" href="#__codelineno-15-36"></a>            <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">submit</span><span class="p">()),</span>
+</span><span id="__span-15-37"><a id="__codelineno-15-37" name="__codelineno-15-37" href="#__codelineno-15-37"></a>        <span class="p">),</span>
+</span><span id="__span-15-38"><a id="__codelineno-15-38" name="__codelineno-15-38" href="#__codelineno-15-38"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Suspense</span><span class="p">(</span>
+</span><span id="__span-15-39"><a id="__codelineno-15-39" name="__codelineno-15-39" href="#__codelineno-15-39"></a>            <span class="n">PostList</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">),</span>
+</span><span id="__span-15-40"><a id="__codelineno-15-40" name="__codelineno-15-40" href="#__codelineno-15-40"></a>            <span class="n">fallback</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">ActivityIndicator</span><span class="p">(),</span>
+</span><span id="__span-15-41"><a id="__codelineno-15-41" name="__codelineno-15-41" href="#__codelineno-15-41"></a>        <span class="p">),</span>
+</span><span id="__span-15-42"><a id="__codelineno-15-42" name="__codelineno-15-42" href="#__codelineno-15-42"></a>        <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s2">"opacity"</span><span class="p">:</span> <span class="n">opacity</span><span class="p">,</span> <span class="s2">"padding"</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+</span><span id="__span-15-43"><a id="__codelineno-15-43" name="__codelineno-15-43" href="#__codelineno-15-43"></a>    <span class="p">)</span>
 </span></code></pre></div>
 <p>Each piece (fetch, animation, persistence, mutation) is its own
-hook with its own lifecycle, and <code>asyncio</code> is the glue.</p>
+hook with its own lifecycle, and <code>asyncio</code> is the glue, running right
+on the UI thread.</p>
 
 
 
@@ -3415,7 +3700,7 @@ hook with its own lifecycle, and <code>asyncio</code> is the glue.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

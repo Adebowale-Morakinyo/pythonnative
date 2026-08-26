@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1959,6 +1959,8 @@
       
         
       
+        
+      
     
     
     
@@ -2189,6 +2191,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -3176,8 +3206,8 @@ To produce signed artifacts, create a keystore once:</p>
 </span></code></pre></div>
 <p>…then point <code>pythonnative.toml</code> at it:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">[android.signing]</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">keystore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;release.keystore&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">key_alias</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;myapp&quot;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">keystore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"release.keystore"</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">key_alias</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"myapp"</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># store_password_env / key_password_env default to</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># PN_ANDROID_KEYSTORE_PASSWORD / PN_ANDROID_KEY_PASSWORD</span>
 </span></code></pre></div>
@@ -3211,11 +3241,11 @@ device before relying on it for store submission.</p>
 <h3 id="signing_1">Signing<a class="headerlink" href="#signing_1" title="Permanent link">&para;</a></h3>
 <p>Set your Apple Developer Team ID and an export method:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">[ios]</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">development_team</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ABCDE12345&quot;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">development_team</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ABCDE12345"</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">[ios.signing]</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">export_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;app-store&quot;</span><span class="w">          </span><span class="c1"># development | ad-hoc | app-store | enterprise</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">provisioning_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;My App Distribution&quot;</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">export_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"app-store"</span><span class="w">          </span><span class="c1"># development | ad-hoc | app-store | enterprise</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">provisioning_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"My App Distribution"</span>
 </span></code></pre></div>
 <p><code>development_team</code> drives signing during <code>archive</code>; <code>export_method</code> and
 the optional <code>provisioning_profile</code> are written into the
@@ -3237,8 +3267,8 @@ embedded into the app bundle along with the standard library, your
 <p>Provide a single high-resolution source image and PythonNative renders
 every per-platform, per-density variant at build time:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">[assets]</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;assets/icon.png&quot;</span><span class="w">      </span><span class="c1"># 1024x1024 PNG</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;assets/splash.png&quot;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/icon.png"</span><span class="w">      </span><span class="c1"># 1024x1024 PNG</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/splash.png"</span>
 </span></code></pre></div>
 <ul>
 <li><strong>iOS</strong>: a universal <code>AppIcon.appiconset</code> (Xcode resizes the rest)
@@ -3248,7 +3278,7 @@ every per-platform, per-density variant at build time:</p>
 </ul>
 <p>Image processing needs <a href="https://python-pillow.org/">Pillow</a>, an optional
 dependency:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pythonnative[build]&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'pythonnative[build]'</span>
 </span></code></pre></div>
 <p>If Pillow isn't installed the build still succeeds; it just keeps the
 template's default assets. <code>pn doctor</code> reports whether Pillow is
@@ -3258,7 +3288,7 @@ available.</p>
 <p>Two fields in <code>[app]</code> drive the store-visible version and the internal
 build number:</p>
 <div class="language-toml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">[app]</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.2.0&quot;</span><span class="w">     </span><span class="c1"># CFBundleShortVersionString / versionName</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.2.0"</span><span class="w">     </span><span class="c1"># CFBundleShortVersionString / versionName</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="w">             </span><span class="c1"># CFBundleVersion / versionCode (bump every upload)</span>
 </span></code></pre></div>
 <p>Both stores reject a new upload that reuses an existing build number, so
@@ -3266,7 +3296,7 @@ increment <code>build</code> for each submission.</p>
 <hr />
 <h2 id="continuous-integration">Continuous integration<a class="headerlink" href="#continuous-integration" title="Permanent link">&para;</a></h2>
 <p>A typical release job:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pythonnative[build]&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'pythonnative[build]'</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>pn<span class="w"> </span>doctor<span class="w"> </span>android<span class="w">            </span><span class="c1"># fail fast on a misconfigured runner</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEYSTORE_PASSWORD</span><span class="o">=</span><span class="nv">$KEYSTORE_PW</span>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEY_PASSWORD</span><span class="o">=</span><span class="nv">$KEY_PW</span>
@@ -3364,7 +3394,7 @@ the platform's own tooling.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

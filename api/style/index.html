@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1789,6 +1789,8 @@
       
         
       
+        
+      
     
     
     
@@ -2020,6 +2022,34 @@
     
   
     Async runtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
   
 
     
@@ -3578,13 +3608,13 @@ return a fresh, flat dict.</p>
   <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">styles</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">StyleSheet</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">title</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#333&quot;</span><span class="p">),</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">title</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#333"</span><span class="p">),</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">container</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">12</span><span class="p">),</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]),</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">style</span><span class="o">=</span><span class="n">styles</span><span class="p">[</span><span class="s2">&quot;container&quot;</span><span class="p">],</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">styles</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]),</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">style</span><span class="o">=</span><span class="n">styles</span><span class="p">[</span><span class="s2">"container"</span><span class="p">],</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
 </span></code></pre></div>
 </details>
@@ -4080,7 +4110,7 @@ either with <code>None</code> entries skipped, or <code>None</code>.</p>
   </span>
 
 <a href="#pythonnative.style.DEFAULT_LIGHT_THEME" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_LIGHT_THEME</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;primary_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#007AFF&#39;</span><span class="p">,</span> <span class="s1">&#39;secondary_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#5856D6&#39;</span><span class="p">,</span> <span class="s1">&#39;background_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#F2F2F7&#39;</span><span class="p">,</span> <span class="s1">&#39;text_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="s1">&#39;text_secondary_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#8E8E93&#39;</span><span class="p">,</span> <span class="s1">&#39;error_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FF3B30&#39;</span><span class="p">,</span> <span class="s1">&#39;success_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#34C759&#39;</span><span class="p">,</span> <span class="s1">&#39;warning_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FF9500&#39;</span><span class="p">,</span> <span class="s1">&#39;font_size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;font_size_small&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;font_size_large&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;font_size_title&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;spacing&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;spacing_large&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;border_radius&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_LIGHT_THEME</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'primary_color'</span><span class="p">:</span> <span class="s1">'#007AFF'</span><span class="p">,</span> <span class="s1">'secondary_color'</span><span class="p">:</span> <span class="s1">'#5856D6'</span><span class="p">,</span> <span class="s1">'background_color'</span><span class="p">:</span> <span class="s1">'#FFFFFF'</span><span class="p">,</span> <span class="s1">'surface_color'</span><span class="p">:</span> <span class="s1">'#F2F2F7'</span><span class="p">,</span> <span class="s1">'text_color'</span><span class="p">:</span> <span class="s1">'#000000'</span><span class="p">,</span> <span class="s1">'text_secondary_color'</span><span class="p">:</span> <span class="s1">'#8E8E93'</span><span class="p">,</span> <span class="s1">'error_color'</span><span class="p">:</span> <span class="s1">'#FF3B30'</span><span class="p">,</span> <span class="s1">'success_color'</span><span class="p">:</span> <span class="s1">'#34C759'</span><span class="p">,</span> <span class="s1">'warning_color'</span><span class="p">:</span> <span class="s1">'#FF9500'</span><span class="p">,</span> <span class="s1">'font_size'</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">'font_size_small'</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">'font_size_large'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">'font_size_title'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">'spacing'</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">'spacing_large'</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">'border_radius'</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4104,7 +4134,7 @@ either with <code>None</code> entries skipped, or <code>None</code>.</p>
   </span>
 
 <a href="#pythonnative.style.DEFAULT_DARK_THEME" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_DARK_THEME</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;primary_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#0A84FF&#39;</span><span class="p">,</span> <span class="s1">&#39;secondary_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#5E5CE6&#39;</span><span class="p">,</span> <span class="s1">&#39;background_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#1C1C1E&#39;</span><span class="p">,</span> <span class="s1">&#39;text_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span> <span class="s1">&#39;text_secondary_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#8E8E93&#39;</span><span class="p">,</span> <span class="s1">&#39;error_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FF453A&#39;</span><span class="p">,</span> <span class="s1">&#39;success_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#30D158&#39;</span><span class="p">,</span> <span class="s1">&#39;warning_color&#39;</span><span class="p">:</span> <span class="s1">&#39;#FF9F0A&#39;</span><span class="p">,</span> <span class="s1">&#39;font_size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;font_size_small&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;font_size_large&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;font_size_title&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;spacing&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;spacing_large&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;border_radius&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_DARK_THEME</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'primary_color'</span><span class="p">:</span> <span class="s1">'#0A84FF'</span><span class="p">,</span> <span class="s1">'secondary_color'</span><span class="p">:</span> <span class="s1">'#5E5CE6'</span><span class="p">,</span> <span class="s1">'background_color'</span><span class="p">:</span> <span class="s1">'#000000'</span><span class="p">,</span> <span class="s1">'surface_color'</span><span class="p">:</span> <span class="s1">'#1C1C1E'</span><span class="p">,</span> <span class="s1">'text_color'</span><span class="p">:</span> <span class="s1">'#FFFFFF'</span><span class="p">,</span> <span class="s1">'text_secondary_color'</span><span class="p">:</span> <span class="s1">'#8E8E93'</span><span class="p">,</span> <span class="s1">'error_color'</span><span class="p">:</span> <span class="s1">'#FF453A'</span><span class="p">,</span> <span class="s1">'success_color'</span><span class="p">:</span> <span class="s1">'#30D158'</span><span class="p">,</span> <span class="s1">'warning_color'</span><span class="p">:</span> <span class="s1">'#FF9F0A'</span><span class="p">,</span> <span class="s1">'font_size'</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">'font_size_small'</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">'font_size_large'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">'font_size_title'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">'spacing'</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">'spacing_large'</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">'border_radius'</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4691,12 +4721,12 @@ reconciler unmodified, so third-party handlers can read them.</p>
   <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">title</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">Style</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#0A84FF&quot;</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="s2">&quot;text_align&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">"font_size"</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#0A84FF"</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="s2">"text_align"</span><span class="p">:</span> <span class="s2">"center"</span><span class="p">,</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 </span></code></pre></div>
 </details>
 
@@ -5188,7 +5218,7 @@ every inset pinned to <code>0</code>.</p>
 <p>Equivalent to <code>Style(...)</code> but works with any Python version
 (<code>TypedDict.__init__</code> is fragile prior to 3.11) and reads more
 naturally inside expressions:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;#fff&quot;</span><span class="p">))</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">padding</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">"#fff"</span><span class="p">))</span>
 </span></code></pre></div>
 <p>Unknown keys are accepted at runtime to keep the door open for
 third-party styling extensions; static type checkers will still
@@ -5360,7 +5390,7 @@ array-style pattern). Used by every built-in element factory in
 
 
 <a href="#pythonnative.style.validate_style_keys" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_style_keys</span><span class="p">(</span><span class="n">style_dict</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">],</span> <span class="n">owner</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_style_keys</span><span class="p">(</span><span class="n">style_dict</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Dict&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Dict">Dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">],</span> <span class="n">owner</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5521,8 +5551,8 @@ component re-renders when the system appearance flips).</p>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">Card</span><span class="p">():</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">theme</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">use_theme</span><span class="p">()</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">View</span><span class="p">(</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">theme</span><span class="p">[</span><span class="s2">&quot;text_color&quot;</span><span class="p">])),</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">background_color</span><span class="o">=</span><span class="n">theme</span><span class="p">[</span><span class="s2">&quot;surface_color&quot;</span><span class="p">]),</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">pn</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">theme</span><span class="p">[</span><span class="s2">"text_color"</span><span class="p">])),</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">style</span><span class="o">=</span><span class="n">pn</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">background_color</span><span class="o">=</span><span class="n">theme</span><span class="p">[</span><span class="s2">"surface_color"</span><span class="p">]),</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">)</span>
 </span></code></pre></div>
 </details>
@@ -5621,7 +5651,7 @@ component re-renders when the system appearance flips).</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

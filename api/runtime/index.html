@@ -18,14 +18,14 @@
         <link rel="prev" href="../alerts/">
       
       
-        <link rel="next" href="../appearance/">
+        <link rel="next" href="../suspense/">
       
       
         
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1789,6 +1789,8 @@
       
         
       
+        
+      
     
     
     
@@ -2094,6 +2096,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.runtime.run_blocking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;run_blocking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;drain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.runtime.call_threadsafe" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2185,6 +2209,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suspense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suspense
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2991,6 +3043,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.runtime.run_blocking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;run_blocking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.runtime.drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;drain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.runtime.call_threadsafe" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3112,10 +3186,13 @@
 
 
 <h1 id="async-runtime">Async runtime<a class="headerlink" href="#async-runtime" title="Permanent link">&para;</a></h1>
-<p>PythonNative runs a single framework-wide <code>asyncio</code> event loop on a
-dedicated daemon thread. Every awaitable surface in the framework
-schedules its work on this loop:
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
+<p>PythonNative runs a single framework-wide <code>asyncio</code> event loop <strong>on
+the platform's main thread</strong>, pumped as a guest of the native run loop
+(<code>dispatch_async</code> on iOS, <code>Handler.post</code> on Android, the Tk poll
+loop in <code>pn preview</code>). Every awaitable surface in the framework
+schedules its work on this loop: <code>async def</code> components,
+coroutine <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_effect"><code>use_effect</code></a> callbacks,
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_resource&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_resource"><code>use_resource</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>,
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;fetch&lt;/span&gt;
@@ -3143,48 +3220,48 @@ and <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol
 
     <div class="doc doc-contents first">
 
-        <p>Asyncio runtime for PythonNative.</p>
-<p>PythonNative runs a single, framework-wide <code>asyncio</code> event loop on
-a dedicated daemon thread. Every awaitable surface in the framework
-schedules its work on this loop via
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="#pythonnative.runtime.run_async"><code>run_async</code></a>: the async hooks
-(<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_async_effect&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_async_effect"><code>use_async_effect</code></a>,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_query&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_query"><code>use_query</code></a>,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_mutation&lt;/span&gt;" href="../hooks/#pythonnative.hooks.use_mutation"><code>use_mutation</code></a>), the
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;fetch&lt;/span&gt;
-
-
-  &lt;span class=&quot;doc doc-labels&quot;&gt;
-      &lt;small class=&quot;doc doc-label doc-label-async&quot;&gt;&lt;code&gt;async&lt;/code&gt;&lt;/small&gt;
-  &lt;/span&gt;" href="../net/#pythonnative.net.fetch"><code>fetch</code></a> HTTP client,
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;AsyncStorage&lt;/span&gt;" href="../storage/#pythonnative.storage.AsyncStorage"><code>AsyncStorage</code></a>, the awaitable
-native modules
-(<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Camera&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.camera.Camera"><code>Camera</code></a> /
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Location&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.location.Location"><code>Location</code></a> /
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Notifications&lt;/span&gt;" href="../native_modules/#pythonnative.native_modules.notifications.Notifications"><code>Notifications</code></a>),
-and awaited animations.</p>
-<p>The reconciler is <strong>not</strong> asyncio-aware; it still runs synchronously on
-the platform main thread. Coroutines that want to mutate component
-state simply call the regular <code>use_state</code> setter, and the existing
-deferred-render path inside the screen host marshals the re-render
-onto the main thread. The runtime is therefore additive: it gives
-coroutines somewhere to live without changing the rendering contract.</p>
+        <p>Asyncio runtime: one event loop, hosted on the platform main thread.</p>
+<p>PythonNative is <strong>async-first</strong>: the whole framework (rendering,
+effects, native modules, animations, timers) shares a single
+<code>asyncio</code> event loop that lives on the platform's main thread. There
+is no background runtime thread; coroutines interleave with rendering
+on the same thread, so async code can touch component state and (via
+the commit) native views without any cross-thread marshaling.</p>
+<p>Because UIKit and the Android view system own the main thread's run
+loop, the framework loop cannot call <code>run_forever</code> and block.
+Instead it runs as a <strong>guest</strong>: whenever work is scheduled
+(<code>call_soon</code> / <code>call_soon_threadsafe</code> / timers), the runtime asks
+the platform to <em>pump</em> the loop on the next main-queue turn
+(<code>dispatch_async</code> on iOS, <code>Handler.post</code> on Android, the Tk poll
+loop in <code>pn preview</code>). One pump runs every ready callback and due
+timer, then returns control to the platform.</p>
+<p>Key entry points:</p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_loop&lt;/span&gt;" href="#pythonnative.runtime.get_loop"><code>get_loop</code></a>: the framework loop. If
+  a loop is already running on the calling thread (an <code>async</code> test,
+  <code>asyncio.run</code>), that loop is adopted instead.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt;" href="#pythonnative.runtime.run_async"><code>run_async</code></a>: schedule a coroutine
+  from synchronous code (an event handler, an effect). Returns an
+  <code>asyncio.Task</code> when called on the loop's thread, or a
+  <code>concurrent.futures.Future</code> when called from another thread.</li>
+<li><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_blocking&lt;/span&gt;" href="#pythonnative.runtime.run_blocking"><code>run_blocking</code></a> /
+  <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;drain&lt;/span&gt;" href="#pythonnative.runtime.drain"><code>drain</code></a>: drive the guest loop from
+  synchronous code. Used by tests and plain scripts, where no platform
+  pump exists.</li>
+</ul>
 
 
 <details class="example" open>
   <summary>Example</summary>
-  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">hello</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">return</span> <span class="s2">&quot;hi&quot;</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">future</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">hello</span><span class="p">())</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># &quot;hi&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nd">@pn</span><span class="o">.</span><span class="n">component</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">SaveButton</span><span class="p">():</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">():</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="k">await</span> <span class="n">pn</span><span class="o">.</span><span class="n">AsyncStorage</span><span class="o">.</span><span class="n">set_item</span><span class="p">(</span><span class="s2">"draft"</span><span class="p">,</span> <span class="s2">"…"</span><span class="p">)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">"Save"</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">save</span><span class="p">()))</span>
 </span></code></pre></div>
 </details>
 
@@ -3211,7 +3288,7 @@ coroutines somewhere to live without changing the rendering contract.</p>
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_loop&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.get_loop&lt;/code&gt;)" href="#pythonnative.runtime.get_loop">get_loop</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Return the framework-wide event loop, starting it on first use.</p>
+                  <p>Return the framework event loop.</p>
                 </div>
               </td>
             </tr>
@@ -3219,7 +3296,23 @@ coroutines somewhere to live without changing the rendering contract.</p>
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_async&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.run_async&lt;/code&gt;)" href="#pythonnative.runtime.run_async">run_async</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Schedule <code>awaitable</code> on the framework loop and return a thread future.</p>
+                  <p>Schedule <code>awaitable</code> on the framework loop.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_blocking&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.run_blocking&lt;/code&gt;)" href="#pythonnative.runtime.run_blocking">run_blocking</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Run <code>awaitable</code> to completion on the framework loop, blocking.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;drain&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.drain&lt;/code&gt;)" href="#pythonnative.runtime.drain">drain</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Pump the framework loop until it goes idle (or <code>until</code> holds).</p>
                 </div>
               </td>
             </tr>
@@ -3227,7 +3320,7 @@ coroutines somewhere to live without changing the rendering contract.</p>
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;call_threadsafe&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.call_threadsafe&lt;/code&gt;)" href="#pythonnative.runtime.call_threadsafe">call_threadsafe</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Schedule <code>callback(*args)</code> on the loop thread.</p>
+                  <p>Schedule <code>callback(*args)</code> on the framework loop from any thread.</p>
                 </div>
               </td>
             </tr>
@@ -3251,7 +3344,7 @@ coroutines somewhere to live without changing the rendering contract.</p>
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_future&lt;/span&gt; (&lt;code&gt;pythonnative.runtime.create_future&lt;/code&gt;)" href="#pythonnative.runtime.create_future">create_future</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Create a future bound to the framework runtime loop.</p>
+                  <p>Create a future bound to the framework loop.</p>
                 </div>
               </td>
             </tr>
@@ -3294,28 +3387,40 @@ coroutines somewhere to live without changing the rendering contract.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return the framework-wide event loop, starting it on first use.</p>
-<p>The loop runs on a daemon thread (<code>"pn-asyncio"</code>) and lives for
-the duration of the process. It is safe to call this from any
-thread.</p>
+        <p>Return the framework event loop.</p>
+<p>If a loop is already running on the calling thread (an <code>async</code>
+test, or app code inside <code>asyncio.run</code>), that loop is adopted so
+every framework awaitable lives on the caller's loop. Otherwise
+the shared guest loop is returned, created on first use and owned
+by the creating thread (the platform main thread on device).</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
     <table>
       <thead>
         <tr>
-          <th>Type</th>
+<th>Name</th>          <th>Type</th>
           <th>Description</th>
         </tr>
       </thead>
       <tbody>
           <tr class="doc-section-item">
-            <td>
+<td><code>The</code></td>            <td>
                   <code><a class="autorefs autorefs-external" title="&lt;code&gt;asyncio.AbstractEventLoop&lt;/code&gt;" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.AbstractEventLoop">AbstractEventLoop</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The shared :class:<code>asyncio.AbstractEventLoop</code>.</p>
+                <p>class:<code>asyncio.AbstractEventLoop</code> all framework work</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td></td>            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;asyncio.AbstractEventLoop&lt;/code&gt;" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.AbstractEventLoop">AbstractEventLoop</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>should be scheduled on.</p>
               </div>
             </td>
           </tr>
@@ -3335,17 +3440,18 @@ thread.</p>
 
 
 <a href="#pythonnative.runtime.run_async" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">run_async</span><span class="p">(</span><span class="n">awaitable</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.Awaitlike">Awaitlike</span></span><span class="p">[</span><span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;_ThreadFuture[T]&#39;</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">run_async</span><span class="p">(</span><span class="n">awaitable</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.Awaitlike">Awaitlike</span></span><span class="p">[</span><span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Schedule <code>awaitable</code> on the framework loop and return a thread future.</p>
-<p>Use this when calling async code from synchronous code (e.g. an
-event handler, a hook setup function, or a test). The returned
-:class:<code>concurrent.futures.Future</code> is created by
-:func:<code>asyncio.run_coroutine_threadsafe</code> so it can be <code>result()</code>-ed
-from the calling thread and <code>cancel()</code>-ed from anywhere.</p>
+        <p>Schedule <code>awaitable</code> on the framework loop.</p>
+<p>The standard bridge from synchronous code (event handlers, effect
+setups) into async code. On the loop's own thread this returns an
+:class:<code>asyncio.Task</code>; from another thread it returns the
+:class:<code>concurrent.futures.Future</code> produced by
+:func:<code>asyncio.run_coroutine_threadsafe</code>. Both support
+<code>cancel()</code> and <code>add_done_callback()</code>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3368,9 +3474,8 @@ from the calling thread and <code>cancel()</code>-ed from anywhere.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Either a coroutine object (the typical case) or any
-awaitable. Awaitables that are not coroutines are wrapped
-with :func:<code>asyncio.ensure_future</code> on the loop.</p>
+                <p>A coroutine object (the typical case) or any
+awaitable.</p>
               </div>
             </td>
             <td>
@@ -3392,21 +3497,11 @@ with :func:<code>asyncio.ensure_future</code> on the loop.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code>&#39;_ThreadFuture[T]&#39;</code>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Any&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A thread-safe future that resolves with the coroutine's return</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code>&#39;_ThreadFuture[T]&#39;</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>value, or raises its exception.</p>
+                <p>A future-like handle for the scheduled work.</p>
               </div>
             </td>
           </tr>
@@ -3421,10 +3516,207 @@ with :func:<code>asyncio.ensure_future</code> on the loop.</p>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">work</span><span class="p">():</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">return</span> <span class="mi">42</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">fut</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">runtime</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">work</span><span class="p">())</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">assert</span> <span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">task</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">work</span><span class="p">())</span>
 </span></code></pre></div>
 </details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.run_blocking" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">run_blocking</span>
+
+
+<a href="#pythonnative.runtime.run_blocking" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">run_blocking</span><span class="p">(</span><span class="n">awaitable</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.Awaitlike">Awaitlike</span></span><span class="p">[</span><span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="pythonnative.runtime.T">T</span></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Run <code>awaitable</code> to completion on the framework loop, blocking.</p>
+<p>For synchronous scripts and tests. Must not be called while the
+loop is already running (i.e., from inside a coroutine); <code>await</code>
+directly there instead.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>awaitable</code>
+            </td>
+            <td>
+                  <code><span title="pythonnative.runtime.Awaitlike">Awaitlike</span>[<span title="pythonnative.runtime.T">T</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The coroutine or awaitable to drive.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>timeout</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional seconds before :class:<code>TimeoutError</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="pythonnative.runtime.T">T</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The awaitable's result.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.runtime.drain" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">drain</span>
+
+
+<a href="#pythonnative.runtime.drain" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">drain</span><span class="p">(</span><span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">until</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Pump the framework loop until it goes idle (or <code>until</code> holds).</p>
+<p>Runs ready callbacks, due timers, and task steps repeatedly. Used
+by synchronous tests to settle async effects, resources, and
+transition flushes deterministically; on-device the platform pump
+makes this unnecessary.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>timeout</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum seconds to keep pumping.</p>
+              </div>
+            </td>
+            <td>
+                  <code>1.0</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>until</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional predicate; draining stops early once it
+returns truthy.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the loop went idle (or <code>until</code> matched) before</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the timeout, <code>False</code> otherwise.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
 
     </div>
 
@@ -3443,12 +3735,11 @@ with :func:<code>asyncio.ensure_future</code> on the loop.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Schedule <code>callback(*args)</code> on the loop thread.</p>
+        <p>Schedule <code>callback(*args)</code> on the framework loop from any thread.</p>
 <p>Thin wrapper around
 :meth:<code>asyncio.AbstractEventLoop.call_soon_threadsafe</code>. Useful from
-native delegates (which may fire on arbitrary threads) when you
-need to hop onto the runtime thread before touching asyncio
-primitives.</p>
+native delegates (which may fire on arbitrary OS threads) to hop
+onto the main-thread loop before touching asyncio primitives.</p>
 
 
     </div>
@@ -3463,7 +3754,7 @@ primitives.</p>
 
 
 <a href="#pythonnative.runtime.resolve_future" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">resolve_future</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="s1">&#39;asyncio.Future[T]&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">resolve_future</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="s1">'asyncio.Future[T]'</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><span title="pythonnative.runtime.T">T</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3494,7 +3785,7 @@ it's on, only that it must not race with cancellation.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An :class:<code>asyncio.Future</code> bound to the runtime loop.</p>
+                <p>An :class:<code>asyncio.Future</code> bound to the framework loop.</p>
               </div>
             </td>
             <td>
@@ -3533,7 +3824,7 @@ it's on, only that it must not race with cancellation.</p>
 
 
 <a href="#pythonnative.runtime.reject_future" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reject_future</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="s1">&#39;asyncio.Future[Any]&#39;</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#BaseException">BaseException</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reject_future</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="s1">'asyncio.Future[Any]'</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#BaseException">BaseException</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3553,17 +3844,15 @@ it's on, only that it must not race with cancellation.</p>
 
 
 <a href="#pythonnative.runtime.create_future" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_future</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">&#39;asyncio.Future[Any]&#39;</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">create_future</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">'asyncio.Future[Any]'</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Create a future bound to the framework runtime loop.</p>
-<p>Safe to call from any thread. The returned future is <strong>not</strong>
-attached to whatever loop is current on the caller; instead it
-lives on the framework's shared loop so any thread can call
+        <p>Create a future bound to the framework loop.</p>
+<p>Safe to call from any thread. Native delegates deliver into it via
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;resolve_future&lt;/span&gt;" href="#pythonnative.runtime.resolve_future"><code>resolve_future</code></a> /
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reject_future&lt;/span&gt;" href="#pythonnative.runtime.reject_future"><code>reject_future</code></a> on it.</p>
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;reject_future&lt;/span&gt;" href="#pythonnative.runtime.reject_future"><code>reject_future</code></a>.</p>
 
 
     </div>
@@ -3584,9 +3873,9 @@ lives on the framework's shared loop so any thread can call
     <div class="doc doc-contents ">
 
         <p>Install (or clear) the desktop main-thread dispatcher.</p>
-<p>Called by <code>pythonnative.preview</code> with a
-function that marshals <code>fn</code> onto the Tk main thread, and with
-<code>None</code> when the preview window closes.</p>
+<p>Called by <code>pythonnative.preview</code> with a function that marshals
+work onto the Tk main thread, and with <code>None</code> when the preview
+window closes.</p>
 
 
     </div>
@@ -3610,19 +3899,17 @@ function that marshals <code>fn</code> onto the Tk main thread, and with
 <ul>
 <li><strong>iOS</strong>: dispatches <code>fn</code> onto the main dispatch queue via
   <code>libdispatch.dispatch_async_f</code> (called through
-  :class:<code>ctypes.PyDLL</code> to keep the GIL held; see the
-  <code>_ios_call_on_main</code> comment block for why this matters).</li>
+  :class:<code>ctypes.PyDLL</code> to keep the GIL held), or runs inline when
+  already on the main thread.</li>
 <li><strong>Android</strong>: posts a <code>Runnable</code> to
-  <code>Handler(Looper.getMainLooper())</code>.</li>
-<li><strong>Desktop</strong>: enqueues <code>fn</code> for the <code>pn preview</code> poll loop to
-  run on the Tk main thread (or runs inline if no preview is live).</li>
+  <code>Handler(Looper.getMainLooper())</code>, or runs inline on the main
+  looper thread.</li>
+<li><strong>Desktop</strong>: enqueues <code>fn</code> for the <code>pn preview</code> poll loop
+  (or runs inline if no preview is live).</li>
 <li><strong>Tests</strong>: runs <code>fn()</code> inline.</li>
 </ul>
 <p>Exceptions raised by <code>fn</code> are caught and printed; they must not
-propagate into UIKit / the Android Looper. If you need to surface
-a result back to the asyncio loop, do it via
-<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;resolve_future&lt;/span&gt;" href="#pythonnative.runtime.resolve_future"><code>resolve_future</code></a> from
-inside <code>fn</code>.</p>
+propagate into UIKit / the Android Looper.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3677,7 +3964,7 @@ platform's UI runtime is available, otherwise inline.</p>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">report</span> <span class="o">=</span> <span class="k">await</span> <span class="n">build_report</span><span class="p">()</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="k">await</span> <span class="n">save_to_disk</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Export&quot;</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">export</span><span class="p">()))</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">return</span> <span class="n">pn</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="s2">"Export"</span><span class="p">,</span> <span class="n">on_press</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pn</span><span class="o">.</span><span class="n">run_async</span><span class="p">(</span><span class="n">export</span><span class="p">()))</span>
 </span></code></pre></div>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3762,7 +4049,7 @@ platform's UI runtime is available, otherwise inline.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "navigation.expand", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.suggest", "search.share", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.25.0 (2026-08-28)
+
+### Documentation
+
+- Strip AI provenance metadata from logo image
+  ([`d1dfe98`](https://github.com/pythonnative/pythonnative/commit/d1dfe98ebf9d3a4561bfaebe3dfe9284c2b3616a))
+
+### Features
+
+- **runtime,hooks**: Make rendering async-first with Suspense
+  ([#17](https://github.com/pythonnative/pythonnative/pull/17),
+  [`a011d59`](https://github.com/pythonnative/pythonnative/commit/a011d5934aab500efddd6a452027814ad8f961b0))
+
+
 ## v0.24.0 (2026-07-11)
 
 ### Features

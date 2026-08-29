@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.27.0 (2026-08-29)
+
+### Features
+
+- Overhaul animations, gestures, and interaction props
+  ([#19](https://github.com/pythonnative/pythonnative/pull/19),
+  [`75cd0ca`](https://github.com/pythonnative/pythonnative/commit/75cd0ca57daede85bd30549316832968576056ec))
+
+
 ## v0.26.0 (2026-08-29)
 
 ### Features

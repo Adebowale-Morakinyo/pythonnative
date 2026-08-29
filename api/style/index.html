@@ -1504,6 +1504,8 @@
       
         
       
+        
+      
     
     
     
@@ -1706,6 +1708,34 @@
     
   
     Navigation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/collapsing-header/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Collapsing Header & Bottom Sheet
   
 
     
@@ -2430,6 +2460,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;TransformSpec
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.style.PointerEvents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;PointerEvents
       
     </span>
   </a>
@@ -3269,6 +3310,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.style.PointerEvents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;PointerEvents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.style.StyleProp" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3855,6 +3907,21 @@ return a fresh, flat dict.</p>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;PointerEvents&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-module-attribute&quot;&gt;&lt;code&gt;module-attribute&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.style.PointerEvents&lt;/code&gt;)" href="#pythonnative.style.PointerEvents">PointerEvents</a></code></td>
+            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Touch-handling mode for a view and its subtree:</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
             <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-attribute&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-attribute-name&quot;&gt;StyleProp&lt;/span&gt;
 
 
@@ -4065,6 +4132,38 @@ parent-relative percentages.</p>
     <div class="doc doc-contents ">
 
         <p><code>transform</code> style value: a single operation or an ordered list.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="pythonnative.style.PointerEvents" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">PointerEvents</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#pythonnative.style.PointerEvents" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">PointerEvents</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Literal&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'auto'</span><span class="p">,</span> <span class="s1">'none'</span><span class="p">,</span> <span class="s1">'box_none'</span><span class="p">,</span> <span class="s1">'box_only'</span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Touch-handling mode for a view and its subtree:</p>
+<ul>
+<li><code>"auto"</code>: the view and its children receive touches (default).</li>
+<li><code>"none"</code>: neither the view nor its children receive touches;
+  touches pass through to whatever is underneath.</li>
+<li><code>"box_none"</code>: the view itself ignores touches but its children
+  still receive them (decorative overlays with interactive content).</li>
+<li><code>"box_only"</code>: the view receives touches but its children do not.</li>
+</ul>
 
     </div>
 

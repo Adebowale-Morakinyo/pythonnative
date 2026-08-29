@@ -1504,6 +1504,8 @@
       
         
       
+        
+      
     
     
     
@@ -1706,6 +1708,34 @@
     
   
     Navigation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/collapsing-header/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Collapsing Header & Bottom Sheet
   
 
     
@@ -3173,6 +3203,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_net_info
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.net_info.dispatch_android_change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_android_change
       
     </span>
   </a>
@@ -4671,6 +4712,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_net_info
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.net_info.dispatch_android_change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_android_change
       
     </span>
   </a>
@@ -6943,9 +6995,10 @@ directly.</p>
 cancelling local push notifications. Uses Android's
 <code>NotificationManager</code> or iOS's <code>UNUserNotificationCenter</code>.</p>
 <p>On iOS you must <code>await Notifications.request_permission()</code> before
-scheduling. On Android 13+ the runtime permission should be requested
-through standard Android APIs (the manifest declaration is otherwise
-sufficient).</p>
+scheduling. On Android 13+ the <code>POST_NOTIFICATIONS</code> runtime
+permission is requested automatically the first time you schedule a
+notification (the template manifest declares it); earlier Android
+versions don't prompt at all.</p>
 <p>For remote (server-sent) pushes, enable the <code>remote_notifications</code>
 capability in <code>pythonnative.toml</code> and call
 <code>Notifications.get_device_token()</code> to register with APNs and receive
@@ -7175,10 +7228,11 @@ and is not wired up by the built-in module; <code>get_device_token</code> return
     <div class="doc doc-contents ">
 
         <p>Request notification permission from the user.</p>
-<p>On Android the manifest declaration is normally sufficient for
-legacy permission grants and this returns <code>True</code> without
-prompting (the runtime POST_NOTIFICATIONS prompt for Android
-13+ should be requested via standard Android APIs).</p>
+<p>On Android 12 and below the manifest declaration is sufficient
+and this returns <code>True</code> without prompting. On Android 13+
+(API 33) the <code>POST_NOTIFICATIONS</code> runtime permission is
+requested through <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Permissions&lt;/span&gt;" href="#pythonnative.native_modules.permissions.Permissions"><code>Permissions</code></a>,
+which shows the system prompt if the user hasn't decided yet.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -7369,7 +7423,17 @@ to target this notification.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>call failed.</p>
+                <p>call failed or (on Android 13+) the user denied the</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>notification permission.</p>
               </div>
             </td>
           </tr>
@@ -9236,8 +9300,10 @@ are ignored so a misbehaving host can't push garbage into the tree.</p>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;NetInfo&lt;/span&gt;" href="#pythonnative.native_modules.net_info.NetInfo"><code>NetInfo</code></a> reports whether the device is online
 and over what kind of connection. <code>fetch</code> returns a snapshot dict;
 <code>add_listener</code> (and the <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;use_net_info&lt;/span&gt;" href="#pythonnative.native_modules.net_info.use_net_info"><code>use_net_info</code></a>
-hook) deliver live updates as the native host forwards connectivity
-changes through
+hook) deliver live updates: while at least one listener is subscribed,
+a lightweight background watcher polls the platform's connectivity
+state and dispatches a fresh snapshot whenever it changes. Native
+hosts may also push changes directly through
 <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_net_info&lt;/span&gt;" href="#pythonnative.native_modules.net_info.dispatch_net_info"><code>dispatch_net_info</code></a>.</p>
 <p>A snapshot looks like::</p>
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="s">"is_connected"</span><span class="p">:</span><span class="w"> </span><span class="nx">True</span><span class="p">,</span><span class="w"> </span><span class="s">"type"</span><span class="p">:</span><span class="w"> </span><span class="s">"wifi"</span><span class="p">,</span><span class="w"> </span><span class="s">"is_internet_reachable"</span><span class="p">:</span><span class="w"> </span><span class="nx">True</span><span class="p">}</span>
@@ -9292,6 +9358,14 @@ changes through
               <td>
                 <div class="doc-md-description">
                   <p>Push a new connectivity snapshot and notify listeners.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_android_change&lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.net_info.dispatch_android_change&lt;/code&gt;)" href="#pythonnative.native_modules.net_info.dispatch_android_change">dispatch_android_change</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Re-read Android connectivity and notify listeners on change.</p>
                 </div>
               </td>
             </tr>
@@ -9444,6 +9518,10 @@ changes through
     <div class="doc doc-contents ">
 
         <p>Subscribe to connectivity changes; returns an unsubscribe fn.</p>
+<p>The first subscription starts a background watcher that polls
+the platform connectivity state every couple of seconds and
+dispatches a snapshot on change; the watcher stops when the
+last listener unsubscribes.</p>
 
 
     </div>
@@ -9473,6 +9551,35 @@ changes through
     <div class="doc doc-contents ">
 
         <p>Push a new connectivity snapshot and notify listeners.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.native_modules.net_info.dispatch_android_change" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">dispatch_android_change</span>
+
+
+<a href="#pythonnative.native_modules.net_info.dispatch_android_change" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dispatch_android_change</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Re-read Android connectivity and notify listeners on change.</p>
+<p>Called by the template's <code>MainActivity</code> from the
+<code>ConnectivityManager.NetworkCallback</code> it registers via
+<code>registerDefaultNetworkCallback</code> whenever the default network
+appears, drops, or changes capabilities. The callback lives in
+Kotlin because Chaquopy's <code>dynamic_proxy</code> implements interfaces
+only and <code>NetworkCallback</code> is a class. Re-reading the snapshot
+here keeps the transport-type mapping in one place, and identical
+consecutive snapshots are dropped so paired <code>onAvailable</code> /
+<code>onCapabilitiesChanged</code> callbacks don't double-notify.</p>
 
 
     </div>

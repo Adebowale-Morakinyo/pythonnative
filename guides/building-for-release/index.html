@@ -1569,6 +1569,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#bytecode-only-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bytecode-only bundles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signing_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3062,6 +3073,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#bytecode-only-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bytecode-only bundles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signing_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3226,26 +3248,35 @@ a CI secret/file and inject the passwords via environment variables.</p>
 </div>
 <hr />
 <h2 id="ios">iOS<a class="headerlink" href="#ios" title="Permanent link">&para;</a></h2>
-<p><code>pn build ios</code> archives the app for a device with <code>xcodebuild archive</code>,
-embeds the device CPython slice into the archive, and exports a signed
-<code>.ipa</code> with <code>xcodebuild -exportArchive</code>. Outputs:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>build/ios/ios_template/build/export/*.ipa
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>build/ios/ios_template/build/ios_template.xcarchive
+<p><code>pn build ios</code> archives the app with <code>xcodebuild archive</code> and exports a
+signed <code>.ipa</code> with <code>xcodebuild -exportArchive</code>. The Python framework,
+standard library, and app code are installed and signed during the
+Xcode build itself, so the archive needs no post-processing. Outputs:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>build/ios/export/*.ipa
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>build/ios/ios_template.xcarchive
 </span></code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Experimental</p>
-<p>The device archive/export path embeds and re-signs the embedded
-Python framework. Treat it as experimental and verify on a real
-device before relying on it for store submission.</p>
-</div>
+<p>To send the build straight to App Store Connect instead of exporting a
+local <code>.ipa</code>, set <code>export_method = "app-store"</code> and pass <code>--upload</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pn<span class="w"> </span>build<span class="w"> </span>ios<span class="w"> </span>--upload
+</span></code></pre></div>
+<p>The upload uses the App Store Connect credentials Xcode has stored; in
+CI, provide an ASC API key through Xcode's standard mechanisms or
+upload the exported <code>.ipa</code> with <code>xcrun altool</code>/Transporter instead.</p>
+<h3 id="bytecode-only-bundles">Bytecode-only bundles<a class="headerlink" href="#bytecode-only-bundles" title="Permanent link">&para;</a></h3>
+<p>Release builds byte-compile your <code>app/</code> sources and every bundled
+package to <code>.pyc</code> and drop the <code>.py</code> files, which shrinks the bundle
+and avoids shipping plain-text source. Because bytecode is
+version-specific, this requires the Python running <code>pn</code> to match
+<code>app.python_version</code>; otherwise <code>pn</code> prints a notice and ships <code>.py</code>
+sources instead.</p>
 <h3 id="signing_1">Signing<a class="headerlink" href="#signing_1" title="Permanent link">&para;</a></h3>
 <p>Set your Apple Developer Team ID and an export method:</p>
-<div class="language-toml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">[ios]</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">development_team</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ABCDE12345"</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">[ios.signing]</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">export_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"app-store"</span><span class="w">          </span><span class="c1"># development | ad-hoc | app-store | enterprise</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">provisioning_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"My App Distribution"</span>
+<div class="language-toml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">[ios]</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">development_team</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ABCDE12345"</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">[ios.signing]</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">export_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"app-store"</span><span class="w">          </span><span class="c1"># development | ad-hoc | app-store | enterprise</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">provisioning_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"My App Distribution"</span>
 </span></code></pre></div>
 <p><code>development_team</code> drives signing during <code>archive</code>; <code>export_method</code> and
 the optional <code>provisioning_profile</code> are written into the
@@ -3256,19 +3287,19 @@ export fails, the error points you back at <code>[ios.signing]</code>.</p>
 <a href="https://github.com/beeware/Python-Apple-support">Python-Apple-support</a>
 project. On the first iOS build, <code>pn</code> downloads the pinned, checksum-
 verified runtime for your <code>app.python_version</code> and caches it under
-<code>build/ios/ios_runtime/</code>. The correct slice (Simulator vs. device) is
-embedded into the app bundle along with the standard library, your
-<code>app/</code> sources, the bundled <code>pythonnative</code> package, and any pure-Python
-<code>[requirements].packages</code>.</p>
-<p>iOS currently ships a verified runtime for <strong>Python 3.11</strong>; set
-<code>python_version = "3.11"</code> in <code>[app]</code> for device builds.</p>
+<code>build/ios/ios_runtime/</code>. The Xcode build links <code>Python.xcframework</code>,
+installs the standard library, and bundles your <code>app/</code> sources, the
+<code>pythonnative</code> package, and any pure-Python <code>[requirements].packages</code>.</p>
+<p>Pinned, verified runtimes exist for <strong>Python 3.10, 3.11, and 3.12</strong>;
+set <code>python_version</code> in <code>[app]</code> accordingly. Unpinned versions are
+rejected rather than fetched unverified.</p>
 <hr />
 <h2 id="app-icon-and-splash">App icon and splash<a class="headerlink" href="#app-icon-and-splash" title="Permanent link">&para;</a></h2>
 <p>Provide a single high-resolution source image and PythonNative renders
 every per-platform, per-density variant at build time:</p>
-<div class="language-toml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">[assets]</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/icon.png"</span><span class="w">      </span><span class="c1"># 1024x1024 PNG</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/splash.png"</span>
+<div class="language-toml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">[assets]</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/icon.png"</span><span class="w">      </span><span class="c1"># 1024x1024 PNG</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/splash.png"</span>
 </span></code></pre></div>
 <ul>
 <li><strong>iOS</strong>: a universal <code>AppIcon.appiconset</code> (Xcode resizes the rest)
@@ -3278,7 +3309,7 @@ every per-platform, per-density variant at build time:</p>
 </ul>
 <p>Image processing needs <a href="https://python-pillow.org/">Pillow</a>, an optional
 dependency:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'pythonnative[build]'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'pythonnative[build]'</span>
 </span></code></pre></div>
 <p>If Pillow isn't installed the build still succeeds; it just keeps the
 template's default assets. <code>pn doctor</code> reports whether Pillow is
@@ -3287,20 +3318,20 @@ available.</p>
 <h2 id="versioning">Versioning<a class="headerlink" href="#versioning" title="Permanent link">&para;</a></h2>
 <p>Two fields in <code>[app]</code> drive the store-visible version and the internal
 build number:</p>
-<div class="language-toml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">[app]</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.2.0"</span><span class="w">     </span><span class="c1"># CFBundleShortVersionString / versionName</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="w">             </span><span class="c1"># CFBundleVersion / versionCode (bump every upload)</span>
+<div class="language-toml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">[app]</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.2.0"</span><span class="w">     </span><span class="c1"># CFBundleShortVersionString / versionName</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">build</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="w">             </span><span class="c1"># CFBundleVersion / versionCode (bump every upload)</span>
 </span></code></pre></div>
 <p>Both stores reject a new upload that reuses an existing build number, so
 increment <code>build</code> for each submission.</p>
 <hr />
 <h2 id="continuous-integration">Continuous integration<a class="headerlink" href="#continuous-integration" title="Permanent link">&para;</a></h2>
 <p>A typical release job:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'pythonnative[build]'</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>pn<span class="w"> </span>doctor<span class="w"> </span>android<span class="w">            </span><span class="c1"># fail fast on a misconfigured runner</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEYSTORE_PASSWORD</span><span class="o">=</span><span class="nv">$KEYSTORE_PW</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEY_PASSWORD</span><span class="o">=</span><span class="nv">$KEY_PW</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>pn<span class="w"> </span>build<span class="w"> </span>android
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'pythonnative[build]'</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>pn<span class="w"> </span>doctor<span class="w"> </span>android<span class="w">            </span><span class="c1"># fail fast on a misconfigured runner</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEYSTORE_PASSWORD</span><span class="o">=</span><span class="nv">$KEYSTORE_PW</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PN_ANDROID_KEY_PASSWORD</span><span class="o">=</span><span class="nv">$KEY_PW</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>pn<span class="w"> </span>build<span class="w"> </span>android
 </span></code></pre></div>
 <p><code>pn app-id android</code> / <code>pn app-id ios</code> print the resolved id, which is
 handy for downstream steps (uploaders, smoke tests) that need it without
@@ -3309,8 +3340,8 @@ re-parsing the config.</p>
 <h2 id="prepare-without-building">Prepare without building<a class="headerlink" href="#prepare-without-building" title="Permanent link">&para;</a></h2>
 <p>To hand off to Android Studio or Xcode instead of building from the CLI,
 stage and configure the native project without compiling:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--prepare-only
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>pn<span class="w"> </span>run<span class="w"> </span>ios<span class="w"> </span>--prepare-only
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>pn<span class="w"> </span>run<span class="w"> </span>android<span class="w"> </span>--prepare-only
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>pn<span class="w"> </span>run<span class="w"> </span>ios<span class="w"> </span>--prepare-only
 </span></code></pre></div>
 <p>This writes a fully configured project (identity, permissions, icons,
 relocated Android package) under <code>build/</code>, which you can open and build

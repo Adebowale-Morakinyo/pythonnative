@@ -2742,8 +2742,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.notifications.Notifications.get_device_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_device_token
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.notifications.dispatch_device_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_device_token
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.notifications.dispatch_device_token_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_device_token_error
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2914,6 +2947,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.linking.Linking.add_listener" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;add_listener
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2924,6 +2968,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;set_initial_url
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.linking.dispatch_url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_url
       
     </span>
   </a>
@@ -4185,8 +4240,41 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.notifications.Notifications.get_device_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_device_token
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.notifications.dispatch_device_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_device_token
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.notifications.dispatch_device_token_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_device_token_error
+      
+    </span>
+  </a>
   
 </li>
       
@@ -4357,6 +4445,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.linking.Linking.add_listener" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;add_listener
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4367,6 +4466,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;set_initial_url
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.native_modules.linking.dispatch_url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dispatch_url
       
     </span>
   </a>
@@ -6828,7 +6938,7 @@ directly.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Cross-platform local notifications.</p>
+        <p>Cross-platform local notifications and remote push registration.</p>
 <p>Provides coroutines for requesting permission and scheduling /
 cancelling local push notifications. Uses Android's
 <code>NotificationManager</code> or iOS's <code>UNUserNotificationCenter</code>.</p>
@@ -6836,6 +6946,13 @@ cancelling local push notifications. Uses Android's
 scheduling. On Android 13+ the runtime permission should be requested
 through standard Android APIs (the manifest declaration is otherwise
 sufficient).</p>
+<p>For remote (server-sent) pushes, enable the <code>remote_notifications</code>
+capability in <code>pythonnative.toml</code> and call
+<code>Notifications.get_device_token()</code> to register with APNs and receive
+the device token your server needs. Android remote push requires
+Firebase Cloud Messaging, which needs a per-app <code>google-services.json</code>
+and is not wired up by the built-in module; <code>get_device_token</code> returns
+<code>None</code> there.</p>
 
 
 <details class="example" open>
@@ -6883,6 +7000,35 @@ sufficient).</p>
     </table>
 
 
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_device_token&lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.notifications.dispatch_device_token&lt;/code&gt;)" href="#pythonnative.native_modules.notifications.dispatch_device_token">dispatch_device_token</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Deliver the APNs device token from the native host.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_device_token_error&lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.notifications.dispatch_device_token_error&lt;/code&gt;)" href="#pythonnative.native_modules.notifications.dispatch_device_token_error">dispatch_device_token_error</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Deliver an APNs registration failure from the native host.</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
 
 
 
@@ -6974,6 +7120,20 @@ sufficient).</p>
               <td>
                 <div class="doc-md-description">
                   <p>Cancel a pending notification by its identifier.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;get_device_token&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-async&quot;&gt;&lt;code&gt;async&lt;/code&gt;&lt;/small&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.notifications.Notifications.get_device_token&lt;/code&gt;)" href="#pythonnative.native_modules.notifications.Notifications.get_device_token">get_device_token</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Register for remote notifications and return the device token.</p>
                 </div>
               </td>
             </tr>
@@ -7284,6 +7444,93 @@ to target this notification.</p>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.native_modules.notifications.Notifications.get_device_token" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_device_token</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#pythonnative.native_modules.notifications.Notifications.get_device_token" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_device_token</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Register for remote notifications and return the device token.</p>
+<p>On iOS this calls <code>registerForRemoteNotifications</code> and waits
+for the APNs callback; the token is a lowercase hex string your
+server passes to APNs. Requires the <code>remote_notifications</code>
+capability (which adds the <code>aps-environment</code> entitlement) and
+a real device (the simulator has no APNs connection).</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The APNs token, or <code>None</code> on platforms without built-in</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Optional&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>remote push support (Android and desktop).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError">RuntimeError</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If APNs registration fails, with the native
+error description.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -7292,6 +7539,46 @@ to target this notification.</p>
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.native_modules.notifications.dispatch_device_token" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">dispatch_device_token</span>
+
+
+<a href="#pythonnative.native_modules.notifications.dispatch_device_token" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dispatch_device_token</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Deliver the APNs device token from the native host.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.native_modules.notifications.dispatch_device_token_error" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">dispatch_device_token_error</span>
+
+
+<a href="#pythonnative.native_modules.notifications.dispatch_device_token_error" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dispatch_device_token_error</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Deliver an APNs registration failure from the native host.</p>
+
+
+    </div>
+
+</div>
 
 
 
@@ -7847,16 +8134,25 @@ mock target and unit tests instead of raising.</p>
 <p><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-class&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-class-name&quot;&gt;Linking&lt;/span&gt;" href="#pythonnative.native_modules.linking.Linking"><code>Linking</code></a> wraps <code>UIApplication.openURL</code> /
 <code>Intent(ACTION_VIEW)</code> so a Python app can hand a URL (<code>https:</code>,
 <code>mailto:</code>, <code>tel:</code>, a custom scheme, …) to the OS.</p>
-<p>All methods are synchronous and return a <code>bool</code> describing whether
-the platform accepted the request. On desktop they return <code>False</code>.</p>
+<p>Outbound methods are synchronous and return a <code>bool</code> describing
+whether the platform accepted the request. On desktop they return
+<code>False</code>.</p>
+<p>Inbound deep links flow the other way: declare your schemes in
+<code>pythonnative.toml</code> (<code>app.url_schemes</code>) and the native host calls
+<a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_url&lt;/span&gt;" href="#pythonnative.native_modules.linking.dispatch_url"><code>dispatch_url</code></a> for
+every URL that opens the app. The URL that cold-started the app is kept
+and returned by <code>get_initial_url</code>; later URLs reach subscribers added
+with <code>add_listener</code>.</p>
 
 
 <details class="example" open>
   <summary>Example</summary>
   <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pythonnative</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">if</span> <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">can_open_url</span><span class="p">(</span><span class="s2">"tel:+15551234567"</span><span class="p">):</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">open_url</span><span class="p">(</span><span class="s2">"tel:+15551234567"</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">if</span> <span class="n">url</span> <span class="o">:=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">get_initial_url</span><span class="p">():</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">navigate_to</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">unsubscribe</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Linking</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="n">navigate_to</span><span class="p">)</span>
 </span></code></pre></div>
 </details>
 
@@ -7905,6 +8201,14 @@ the platform accepted the request. On desktop they return <code>False</code>.</p
               <td>
                 <div class="doc-md-description">
                   <p>Record the launch URL (called by the native host on cold start).</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;dispatch_url&lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.linking.dispatch_url&lt;/code&gt;)" href="#pythonnative.native_modules.linking.dispatch_url">dispatch_url</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Deliver an inbound deep link from the native host.</p>
                 </div>
               </td>
             </tr>
@@ -8011,6 +8315,19 @@ the platform accepted the request. On desktop they return <code>False</code>.</p
               <td>
                 <div class="doc-md-description">
                   <p>Return the URL that launched the app, if any.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-method&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;add_listener&lt;/span&gt;
+
+
+  &lt;span class=&quot;doc doc-labels&quot;&gt;
+      &lt;small class=&quot;doc doc-label doc-label-staticmethod&quot;&gt;&lt;code&gt;staticmethod&lt;/code&gt;&lt;/small&gt;
+  &lt;/span&gt; (&lt;code&gt;pythonnative.native_modules.linking.Linking.add_listener&lt;/code&gt;)" href="#pythonnative.native_modules.linking.Linking.add_listener">add_listener</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Subscribe to deep links that arrive while the app is running.</p>
                 </div>
               </td>
             </tr>
@@ -8129,6 +8446,86 @@ the platform accepted the request. On desktop they return <code>False</code>.</p
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h3 id="pythonnative.native_modules.linking.Linking.add_listener" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">add_listener</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#pythonnative.native_modules.linking.Linking.add_listener" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_listener</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Subscribe to deep links that arrive while the app is running.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>callback</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>], None]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Called with the full URL string for every inbound
+deep link (including the initial one, which is
+dispatched right after startup).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;typing.Callable&lt;/code&gt;" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], None]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A zero-arg function that unsubscribes when called.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -8152,6 +8549,61 @@ the platform accepted the request. On desktop they return <code>False</code>.</p
     <div class="doc doc-contents ">
 
         <p>Record the launch URL (called by the native host on cold start).</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.native_modules.linking.dispatch_url" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">dispatch_url</span>
+
+
+<a href="#pythonnative.native_modules.linking.dispatch_url" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dispatch_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Deliver an inbound deep link from the native host.</p>
+<p>The first URL ever dispatched is also recorded as the initial URL
+(a cold start from a deep link reaches Python only after the
+interpreter boots, so the host can't call <code>set_initial_url</code>
+earlier than this).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>url</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The full URL string that opened the app.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
     </div>

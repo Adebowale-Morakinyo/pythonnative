@@ -2672,6 +2672,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.cli.pn.devices_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;devices_command
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.cli.pn.run_project" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2687,6 +2698,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;build_project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.cli.pn.logs_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;logs_command
       
     </span>
   </a>
@@ -3076,6 +3098,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.cli.pn.devices_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;devices_command
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.cli.pn.run_project" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3091,6 +3124,17 @@
     <span class="md-ellipsis">
       
         <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;build_project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pythonnative.cli.pn.logs_command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;logs_command
       
     </span>
   </a>
@@ -3178,10 +3222,16 @@ the documented behavior never drifts from the code.</p>
   with Fast Refresh, the fastest way to iterate on UI. Flags:
   <code>--width</code>, <code>--height</code>, <code>--title</code>, <code>--no-hot-reload</code>. See the
   <a href="../../guides/desktop-preview/">Desktop preview guide</a>.</li>
+<li><code>pn devices [android|ios]</code>: list connected devices, emulators, and
+  simulators with the identifiers <code>--device</code> accepts.</li>
 <li><code>pn run android|ios</code>: build and run on a connected device or
-  simulator. Flags: <code>--prepare-only</code>, <code>--hot-reload</code>, <code>--no-logs</code>.</li>
+  simulator. Flags: <code>--device</code> (target a specific device by identifier
+  or name), <code>--prepare-only</code>, <code>--hot-reload</code>, <code>--no-logs</code>.</li>
+<li><code>pn logs android|ios</code>: stream logs from the running app without
+  rebuilding.</li>
 <li><code>pn build android|ios</code>: build distributable artifacts (release by
-  default). Flag: <code>--debug</code> for the debug variant. See
+  default). Flags: <code>--debug</code> for the debug variant, <code>--upload</code> to send
+  an iOS release build to App Store Connect. See
   <a href="../../guides/building-for-release/">Building for release</a>.</li>
 <li><code>pn app-id android|ios</code>: print the resolved application id (Android)
   or bundle id (iOS), handy for scripts and CI.</li>
@@ -3203,10 +3253,14 @@ the documented behavior never drifts from the code.</p>
 <li><code>pn doctor [platform]</code>: diagnose the local toolchain and config.</li>
 <li><code>pn preview [component]</code>: render the app in a desktop (Tkinter) window
   with Fast Refresh, the fast inner dev loop, no device required.</li>
-<li><code>pn run android|ios</code>: stage + build + install + launch on a device or
-  simulator, with optional on-device hot reload.</li>
+<li><code>pn devices [platform]</code>: list connected devices, emulators, and
+  simulators.</li>
+<li><code>pn run android|ios [--device D]</code>: stage + build + install + launch on
+  a device, emulator, or simulator, with optional on-device hot reload.</li>
+<li><code>pn logs android|ios</code>: stream logs from the running app without
+  rebuilding.</li>
 <li><code>pn build android|ios</code>: produce standalone artifacts (signed APK/AAB,
-  or an iOS archive/IPA).</li>
+  or an iOS archive/IPA, optionally uploaded to App Store Connect).</li>
 <li><code>pn app-id android|ios</code>: print the resolved application/bundle id
   (handy for scripts and CI).</li>
 <li><code>pn clean</code>: remove the local <code>build/</code> directory.</li>
@@ -3269,6 +3323,14 @@ reload) that can't be unit tested.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;devices_command&lt;/span&gt; (&lt;code&gt;pythonnative.cli.pn.devices_command&lt;/code&gt;)" href="#pythonnative.cli.pn.devices_command">devices_command</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>List connected devices, emulators, and simulators.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
               <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;run_project&lt;/span&gt; (&lt;code&gt;pythonnative.cli.pn.run_project&lt;/code&gt;)" href="#pythonnative.cli.pn.run_project">run_project</a></code></td>
               <td>
                 <div class="doc-md-description">
@@ -3281,6 +3343,14 @@ reload) that can't be unit tested.</p>
               <td>
                 <div class="doc-md-description">
                   <p>Build standalone, distributable artifacts for <code>platform</code>.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;logs_command&lt;/span&gt; (&lt;code&gt;pythonnative.cli.pn.logs_command&lt;/code&gt;)" href="#pythonnative.cli.pn.logs_command">logs_command</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Stream logs from the running app without rebuilding.</p>
                 </div>
               </td>
             </tr>
@@ -3583,6 +3653,57 @@ Tkinter backend, then hands off to <code>pythonnative.preview.run_preview</code>
 <div class="doc doc-object doc-function">
 
 
+<h2 id="pythonnative.cli.pn.devices_command" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">devices_command</span>
+
+
+<a href="#pythonnative.cli.pn.devices_command" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">devices_command</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;argparse.Namespace&lt;/code&gt;" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace">Namespace</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>List connected devices, emulators, and simulators.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>args</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;argparse.Namespace&lt;/code&gt;" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace">Namespace</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Parsed namespace with optional <code>platform</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="pythonnative.cli.pn.run_project" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">run_project</span>
 
@@ -3616,8 +3737,8 @@ Tkinter backend, then hands off to <code>pythonnative.preview.run_preview</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Parsed namespace (<code>platform</code>, <code>prepare_only</code>,
-<code>hot_reload</code>, <code>no_logs</code>).</p>
+                <p>Parsed namespace (<code>platform</code>, <code>device</code>,
+<code>prepare_only</code>, <code>hot_reload</code>, <code>no_logs</code>).</p>
               </div>
             </td>
             <td>
@@ -3668,7 +3789,58 @@ Tkinter backend, then hands off to <code>pythonnative.preview.run_preview</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Parsed namespace (<code>platform</code>, <code>debug</code>).</p>
+                <p>Parsed namespace (<code>platform</code>, <code>debug</code>, <code>upload</code>).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.cli.pn.logs_command" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">logs_command</span>
+
+
+<a href="#pythonnative.cli.pn.logs_command" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">logs_command</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;argparse.Namespace&lt;/code&gt;" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace">Namespace</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Stream logs from the running app without rebuilding.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>args</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;argparse.Namespace&lt;/code&gt;" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace">Namespace</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Parsed namespace (<code>platform</code>).</p>
               </div>
             </td>
             <td>

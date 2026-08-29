@@ -1523,6 +1523,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#entitlements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entitlements
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3005,6 +3016,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#entitlements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entitlements
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3225,8 +3247,14 @@ permissions, and (where relevant) iOS background modes.</p>
 </tr>
 <tr>
 <td><code>notifications</code></td>
-<td>Local/push notifications</td>
+<td>Show local notifications</td>
 <td>–</td>
+<td><code>POST_NOTIFICATIONS</code></td>
+</tr>
+<tr>
+<td><code>remote_notifications</code></td>
+<td>Server-sent (remote) push</td>
+<td>– (adds the <code>aps-environment</code> entitlement and <code>remote-notification</code> background mode)</td>
 <td><code>POST_NOTIFICATIONS</code></td>
 </tr>
 <tr>
@@ -3253,9 +3281,17 @@ permissions, and (where relevant) iOS background modes.</p>
 <code>notifications</code>, <code>vibration</code>, <code>background_audio</code>, and <code>background_fetch</code>
 need no iOS usage string, so declaring them as <code>true</code> is enough.</p>
 <h3 id="background-modes">Background modes<a class="headerlink" href="#background-modes" title="Permanent link">&para;</a></h3>
-<p><code>location_always</code>, <code>background_audio</code>, and <code>background_fetch</code> also add
-the corresponding values to the iOS <code>UIBackgroundModes</code> array
-(<code>location</code>, <code>audio</code>, <code>fetch</code>) so the OS keeps your app scheduled.</p>
+<p><code>location_always</code>, <code>background_audio</code>, <code>background_fetch</code>, and
+<code>remote_notifications</code> also add the corresponding values to the iOS
+<code>UIBackgroundModes</code> array (<code>location</code>, <code>audio</code>, <code>fetch</code>,
+<code>remote-notification</code>) so the OS keeps your app scheduled.</p>
+<h3 id="entitlements">Entitlements<a class="headerlink" href="#entitlements" title="Permanent link">&para;</a></h3>
+<p>Some capabilities need a code-signing entitlement rather than an
+<code>Info.plist</code> key. Declaring <code>remote_notifications</code> generates an
+<code>.entitlements</code> file with <code>aps-environment</code> and wires it into the
+build, so <code>await pn.Notifications.get_device_token()</code> can register with
+APNs. (Distribution builds get the production APNs environment
+automatically when Xcode re-signs the archive for the store.)</p>
 <h2 id="always-on-permissions">Always-on permissions<a class="headerlink" href="#always-on-permissions" title="Permanent link">&para;</a></h2>
 <p>Every app receives two install-time Android permissions automatically,
 because almost every PythonNative app needs the network (<code>fetch</code>,

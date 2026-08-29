@@ -3159,36 +3159,37 @@ other command (<code>pn run</code>, <code>pn build</code>, <code>pn doctor</code
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">python_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"3.11"</span><span class="w">         </span><span class="c1"># embedded CPython version</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">orientation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"portrait"</span><span class="w">        </span><span class="c1"># portrait | landscape | all</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">entry_point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"app/main.py"</span><span class="w">     </span><span class="c1"># module whose `App` is mounted</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">[permissions]</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">camera</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Scan receipts with your camera."</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">location_when_in_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Show nearby stores."</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">notifications</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="k">[assets]</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/icon.png"</span><span class="w">        </span><span class="c1"># 1024x1024 source icon</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/splash.png"</span><span class="w">    </span><span class="c1"># splash / launch image</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="k">[requirements]</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"humanize"</span><span class="p">,</span><span class="w"> </span><span class="s2">"httpx"</span><span class="p">]</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="k">[ios]</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="n">deployment_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"13.0"</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="n">development_team</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ABCDE12345"</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="c1"># bundle_id = "com.example.myapp"</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="k">[ios.signing]</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="n">export_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"development"</span><span class="w">   </span><span class="c1"># development | ad-hoc | app-store | enterprise</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="c1"># provisioning_profile = "My App Distribution"</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="k">[android]</span>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="n">min_sdk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="n">target_sdk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">34</span>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="n">abi_filters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"armeabi-v7a"</span><span class="p">,</span><span class="w"> </span><span class="s2">"arm64-v8a"</span><span class="p">,</span><span class="w"> </span><span class="s2">"x86"</span><span class="p">,</span><span class="w"> </span><span class="s2">"x86_64"</span><span class="p">]</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="k">[android.signing]</span>
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="c1"># keystore = "release.keystore"</span>
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="c1"># key_alias = "myapp"</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">url_schemes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"myapp"</span><span class="p">]</span><span class="w">         </span><span class="c1"># deep-link schemes the app handles</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">[permissions]</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">camera</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Scan receipts with your camera."</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">location_when_in_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Show nearby stores."</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">notifications</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="k">[assets]</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">icon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/icon.png"</span><span class="w">        </span><span class="c1"># 1024x1024 source icon</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="n">splash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"assets/splash.png"</span><span class="w">    </span><span class="c1"># splash / launch image</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="k">[requirements]</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"humanize"</span><span class="p">,</span><span class="w"> </span><span class="s2">"httpx"</span><span class="p">]</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="k">[ios]</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="n">deployment_target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"13.0"</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="n">development_team</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ABCDE12345"</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="c1"># bundle_id = "com.example.myapp"</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="k">[ios.signing]</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="n">export_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"development"</span><span class="w">   </span><span class="c1"># development | ad-hoc | app-store | enterprise</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="c1"># provisioning_profile = "My App Distribution"</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="k">[android]</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="n">min_sdk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="n">target_sdk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">34</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="c1"># abi_filters = ["arm64-v8a", "x86_64"]   # the default; add 32-bit ABIs if needed</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="k">[android.signing]</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="c1"># keystore = "release.keystore"</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="c1"># key_alias = "myapp"</span>
 </span></code></pre></div>
 <p>Paths (icon, splash, keystore) are resolved relative to the project
 root. Invalid configuration fails fast with a specific, actionable
@@ -3240,13 +3241,19 @@ error; run <a href="../../api/cli/"><code>pn doctor</code></a> to validate at an
 <td><code>python_version</code></td>
 <td>string</td>
 <td><code>"3.11"</code></td>
-<td>Embedded CPython version. One of <code>3.10</code>, <code>3.11</code>, <code>3.12</code>. iOS currently ships a pinned, verified build for <code>3.11</code>.</td>
+<td>Embedded CPython version. One of <code>3.10</code>, <code>3.11</code>, <code>3.12</code>; every listed version has a pinned, checksum-verified iOS runtime.</td>
 </tr>
 <tr>
 <td><code>orientation</code></td>
 <td>string</td>
 <td><code>"portrait"</code></td>
 <td><code>portrait</code>, <code>landscape</code>, or <code>all</code>.</td>
+</tr>
+<tr>
+<td><code>url_schemes</code></td>
+<td>list of strings</td>
+<td><code>[]</code></td>
+<td>Custom deep-link URL schemes (e.g. <code>["myapp"]</code> handles <code>myapp://…</code>). Wired into <code>CFBundleURLTypes</code> on iOS and a <code>VIEW</code> intent filter on Android; inbound URLs reach <code>pn.Linking</code>.</td>
 </tr>
 <tr>
 <td><code>entry_point</code></td>
@@ -3456,8 +3463,8 @@ Simulator). Many popular extensions have no upstream mobile wheels yet.</p>
 <tr>
 <td><code>abi_filters</code></td>
 <td>list of strings</td>
-<td>all four</td>
-<td>Native ABIs to include: <code>armeabi-v7a</code>, <code>arm64-v8a</code>, <code>x86</code>, <code>x86_64</code>. Trim to shrink the APK.</td>
+<td><code>["arm64-v8a", "x86_64"]</code></td>
+<td>Native ABIs to include. The default covers 64-bit devices and emulators; add <code>armeabi-v7a</code> or <code>x86</code> only if you must support 32-bit hardware (each ABI adds roughly 30 MB).</td>
 </tr>
 <tr>
 <td><code>permissions</code></td>

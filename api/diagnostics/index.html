@@ -2605,6 +2605,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.diagnostics.swallowed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;swallowed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.diagnostics.get_warnings" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3054,6 +3065,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pythonnative.diagnostics.swallowed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;swallowed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pythonnative.diagnostics.get_warnings" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3261,6 +3283,14 @@ module (hooks, reconciler, events) may import it freely.</p>
               <td>
                 <div class="doc-md-description">
                   <p>Like <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;warn&lt;/span&gt;" href="#pythonnative.diagnostics.warn"><code>warn</code></a>, but at most once per <code>key</code>.</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;swallowed&lt;/span&gt; (&lt;code&gt;pythonnative.diagnostics.swallowed&lt;/code&gt;)" href="#pythonnative.diagnostics.swallowed">swallowed</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Surface a suppressed native-backend exception (dev mode only).</p>
                 </div>
               </td>
             </tr>
@@ -3548,6 +3578,63 @@ the message itself.</p>
             </td>
             <td>
                   <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="pythonnative.diagnostics.swallowed" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">swallowed</span>
+
+
+<a href="#pythonnative.diagnostics.swallowed" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">swallowed</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Surface a suppressed native-backend exception (dev mode only).</p>
+<p>The native view/module backends intentionally degrade gracefully in
+production: a failed style application or a missing OS API must not
+crash the app. Call this from the <code>except</code> block instead of
+<code>pass</code> so that, in dev mode, each suppression is reported once per
+call site instead of disappearing.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>context</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Where the suppression happened, e.g.
+<code>"ios.TextHandler._apply"</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
             </td>
           </tr>
       </tbody>

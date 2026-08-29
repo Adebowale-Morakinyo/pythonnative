@@ -3644,7 +3644,7 @@ React-like hooks that NativeScript does not have by default.</p>
 <p>See <a href="../mental-model/">Mental model</a> for a wider comparison table.</p>
 <h2 id="ios-flow-rubicon-objc">iOS flow (rubicon-objc)<a class="headerlink" href="#ios-flow-rubicon-objc" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The iOS template (Swift plus PythonKit) boots Python and calls
+<li>The iOS template (Swift with CPython embedded through the C API) boots Python and calls
   <a class="autorefs autorefs-internal" title="&lt;code class=&quot;doc-symbol doc-symbol-heading doc-symbol-function&quot;&gt;&lt;/code&gt;            &lt;span class=&quot;doc doc-object-name doc-function-name&quot;&gt;create_screen&lt;/span&gt;" href="../../api/screen/#pythonnative.screen.create_screen"><code>create_screen</code></a> internally with the
   current <code>UIViewController</code> pointer.</li>
 <li>The reconciler creates UIKit views and attaches them to the

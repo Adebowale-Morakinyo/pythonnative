@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.28.0 (2026-08-29)
+
+### Features
+
+- **cli**: Add --version flag ([#26](https://github.com/pythonnative/pythonnative/pull/26),
+  [`5ceb010`](https://github.com/pythonnative/pythonnative/commit/5ceb010f42c8e2c209b9490ab6a4d2a142a28ff6))
+
+Refs: #20
+
+
 ## v0.27.0 (2026-08-29)
 
 ### Features

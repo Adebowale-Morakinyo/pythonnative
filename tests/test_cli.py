@@ -36,21 +36,22 @@ def test_cli_init_and_clean() -> None:
     try:
         result = run_pn(["init", "MyApp"], tmpdir)
         assert result.returncode == 0, result.stderr
-        assert os.path.isdir(os.path.join(tmpdir, "app"))
+        project_dir = os.path.join(tmpdir, "MyApp")
+        assert os.path.isdir(os.path.join(project_dir, "app"))
 
-        main_path = os.path.join(tmpdir, "app", "main.py")
+        main_path = os.path.join(project_dir, "app", "main.py")
         assert os.path.isfile(main_path)
         content = Path(main_path).read_text(encoding="utf-8")
         assert "def App(" in content
         assert "Stack.Navigator" in content
 
-        config_path = os.path.join(tmpdir, "pythonnative.toml")
+        config_path = os.path.join(project_dir, "pythonnative.toml")
         assert os.path.isfile(config_path)
         toml_text = Path(config_path).read_text(encoding="utf-8")
         assert 'id = "com.example.myapp"' in toml_text
-        assert os.path.isfile(os.path.join(tmpdir, ".gitignore"))
+        assert os.path.isfile(os.path.join(project_dir, ".gitignore"))
         # The legacy JSON config and requirements.txt are no longer scaffolded.
-        assert not os.path.exists(os.path.join(tmpdir, "pythonnative.json"))
+        assert not os.path.exists(os.path.join(project_dir, "pythonnative.json"))
 
         # clean on empty build is a no-op
         result = run_pn(["clean"], tmpdir)
@@ -74,6 +75,136 @@ def test_cli_init_refuses_overwrite() -> None:
         assert run_pn(["init", "MyApp", "--force"], tmpdir).returncode == 0
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_cli_init_creates_named_directory(tmp_path: Path) -> None:
+    result = run_pn(["init", "my_app"], str(tmp_path))
+    assert result.returncode == 0, result.stderr
+    assert "cd my_app" in result.stdout
+
+    project_dir = os.path.join(str(tmp_path), "my_app")
+    assert os.path.isfile(os.path.join(project_dir, "app", "main.py"))
+    assert os.path.isfile(os.path.join(project_dir, "pythonnative.toml"))
+    assert os.path.isfile(os.path.join(project_dir, ".gitignore"))
+    toml_text = Path(os.path.join(project_dir, "pythonnative.toml")).read_text(encoding="utf-8")
+    assert 'id = "com.example.my_app"' in toml_text
+    # Nothing is scaffolded beside the project directory.
+    assert os.listdir(str(tmp_path)) == ["my_app"]
+
+
+def test_cli_init_without_name_uses_cwd(tmp_path: Path) -> None:
+    project_dir = tmp_path / "widgets"
+    project_dir.mkdir()
+
+    result = run_pn(["init"], str(project_dir))
+    assert result.returncode == 0, result.stderr
+    assert "cd " not in result.stdout
+
+    assert os.path.isfile(os.path.join(str(project_dir), "app", "main.py"))
+    assert os.path.isfile(os.path.join(str(project_dir), ".gitignore"))
+    toml_text = Path(os.path.join(str(project_dir), "pythonnative.toml")).read_text(encoding="utf-8")
+    assert 'id = "com.example.widgets"' in toml_text
+    assert 'name = "widgets"' in toml_text
+
+
+def test_cli_init_refuses_non_empty_directory(tmp_path: Path) -> None:
+    project_dir = tmp_path / "my_app"
+    project_dir.mkdir()
+    keeper = project_dir / "README.md"
+    keeper.write_text("keep me\n", encoding="utf-8")
+
+    result = run_pn(["init", "my_app"], str(tmp_path))
+    assert result.returncode != 0
+    assert "Refusing to overwrite" in result.stdout
+    assert "non-empty directory" in result.stdout
+    assert not os.path.exists(os.path.join(str(project_dir), "app"))
+    assert keeper.read_text(encoding="utf-8") == "keep me\n"
+
+    result = run_pn(["init", "my_app", "--force"], str(tmp_path))
+    assert result.returncode == 0, result.stderr
+    assert os.path.isfile(os.path.join(str(project_dir), "app", "main.py"))
+    # --force scaffolds over the directory; it doesn't empty it first.
+    assert keeper.read_text(encoding="utf-8") == "keep me\n"
+
+
+def test_cli_init_accepts_existing_empty_directory(tmp_path: Path) -> None:
+    project_dir = tmp_path / "my_app"
+    project_dir.mkdir()
+
+    result = run_pn(["init", "my_app"], str(tmp_path))
+    assert result.returncode == 0, result.stderr
+    assert os.path.isfile(os.path.join(str(project_dir), "app", "main.py"))
+    assert os.path.isfile(os.path.join(str(project_dir), "pythonnative.toml"))
+
+
+def test_cli_init_refuses_existing_file(tmp_path: Path) -> None:
+    blocker = tmp_path / "my_app"
+    blocker.write_text("not a project\n", encoding="utf-8")
+
+    result = run_pn(["init", "my_app"], str(tmp_path))
+    assert result.returncode != 0
+    assert "Refusing to overwrite existing file" in result.stdout
+
+    # --force can't turn a file into a directory, so it is refused too.
+    result = run_pn(["init", "my_app", "--force"], str(tmp_path))
+    assert result.returncode != 0
+    assert "Refusing to overwrite existing file" in result.stdout
+    assert blocker.read_text(encoding="utf-8") == "not a project\n"
+
+
+@pytest.mark.parametrize("name", ["{absolute}", "nested/my_app", "my_app/", ".", "..", "../", "a/.."])
+def test_cli_init_rejects_path_like_names(tmp_path: Path, name: str) -> None:
+    work_dir = tmp_path / "work"
+    work_dir.mkdir()
+
+    result = run_pn(["init", name.format(absolute=str(tmp_path / "elsewhere"))], str(work_dir))
+    assert result.returncode != 0
+    assert "Refusing to" in result.stdout
+    assert "project name" in result.stdout
+    # Nothing was created in the working directory or anywhere above it.
+    assert os.listdir(str(work_dir)) == []
+    assert os.listdir(str(tmp_path)) == ["work"]
+
+
+def test_cli_init_force_does_not_escape_to_parent(tmp_path: Path) -> None:
+    parent_config = tmp_path / "pythonnative.toml"
+    parent_config.write_text("# hand-written\n", encoding="utf-8")
+    work_dir = tmp_path / "work"
+    work_dir.mkdir()
+
+    result = run_pn(["init", "..", "--force"], str(work_dir))
+    assert result.returncode != 0
+    assert "Refusing to" in result.stdout
+    # --force does not lift the single-name rule, so the parent is untouched.
+    assert parent_config.read_text(encoding="utf-8") == "# hand-written\n"
+    assert not os.path.exists(os.path.join(str(tmp_path), "app"))
+    assert not os.path.exists(os.path.join(str(tmp_path), ".gitignore"))
+    assert os.listdir(str(work_dir)) == []
+
+
+@pytest.mark.parametrize("extra_args", [[], ["--force"]])
+@pytest.mark.parametrize("populated", [True, False])
+def test_cli_init_rejects_symlinked_target(tmp_path: Path, populated: bool, extra_args: List[str]) -> None:
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    outside_config = outside / "pythonnative.toml"
+    if populated:
+        outside_config.write_text("# hand-written\n", encoding="utf-8")
+    before = sorted(os.listdir(str(outside)))
+
+    work_dir = tmp_path / "work"
+    work_dir.mkdir()
+    os.symlink(str(outside), os.path.join(str(work_dir), "link"))
+
+    result = run_pn(["init", "link"] + extra_args, str(work_dir))
+    assert result.returncode != 0
+    assert "Refusing to" in result.stdout
+    # exists() and is_dir() follow symlinks, so the destination must stay untouched:
+    # no new entries, and no rewrite of a config that was already there.
+    assert sorted(os.listdir(str(outside))) == before
+    if populated:
+        assert outside_config.read_text(encoding="utf-8") == "# hand-written\n"
+    assert os.listdir(str(work_dir)) == ["link"]
 
 
 def test_cli_run_help_lists_flags() -> None:
@@ -119,15 +250,16 @@ def test_cli_run_without_config_errors() -> None:
 
 def test_cli_app_id_resolves(tmp_path: Path) -> None:
     assert run_pn(["init", "MyApp"], str(tmp_path)).returncode == 0
-    result = run_pn(["app-id", "android"], str(tmp_path))
+    project_dir = str(tmp_path / "MyApp")
+    result = run_pn(["app-id", "android"], project_dir)
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "com.example.myapp"
-    assert run_pn(["app-id", "ios"], str(tmp_path)).stdout.strip() == "com.example.myapp"
+    assert run_pn(["app-id", "ios"], project_dir).stdout.strip() == "com.example.myapp"
 
 
 def test_cli_doctor_runs(tmp_path: Path) -> None:
     assert run_pn(["init", "MyApp"], str(tmp_path)).returncode == 0
-    result = run_pn(["doctor", "android"], str(tmp_path))
+    result = run_pn(["doctor", "android"], str(tmp_path / "MyApp"))
     assert "PythonNative doctor" in result.stdout
     # android-only doctor on a CI box without adb still produces warnings, not errors.
     assert result.returncode in (0, 1)
@@ -137,10 +269,11 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
         assert run_pn(["init", "MyApp"], tmpdir).returncode == 0
+        project_dir = os.path.join(tmpdir, "MyApp")
 
-        result = run_pn(["run", "android", "--prepare-only", "--no-logs"], tmpdir)
+        result = run_pn(["run", "android", "--prepare-only", "--no-logs"], project_dir)
         assert result.returncode == 0, result.stderr
-        android_root = os.path.join(tmpdir, "build", "android", "android_template")
+        android_root = os.path.join(project_dir, "build", "android", "android_template")
         assert os.path.isdir(android_root)
         # Package relocated to the configured application id.
         relocated = os.path.join(
@@ -154,9 +287,9 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         gradle = Path(os.path.join(android_root, "app", "build.gradle")).read_text(encoding="utf-8")
         assert "com.example.myapp" in gradle
 
-        result = run_pn(["run", "ios", "--prepare-only", "--no-logs"], tmpdir)
+        result = run_pn(["run", "ios", "--prepare-only", "--no-logs"], project_dir)
         assert result.returncode == 0, result.stderr
-        ios_root = os.path.join(tmpdir, "build", "ios", "ios_template")
+        ios_root = os.path.join(project_dir, "build", "ios", "ios_template")
         assert os.path.isdir(ios_root)
         info_plist = Path(os.path.join(ios_root, "ios_template", "Info.plist")).read_bytes()
         assert b"CFBundleDisplayName" in info_plist

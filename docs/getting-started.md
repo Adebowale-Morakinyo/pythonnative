@@ -9,15 +9,19 @@ pn --help
 
 ```bash
 pn init MyApp
+cd MyApp
 ```
 
-This scaffolds:
+This creates a `MyApp/` directory containing:
 
 - `app/` with a minimal `main.py`
 - `pythonnative.toml`: your project configuration (app id, version,
   permissions, assets, and signing). See
   [Configuration](guides/configuration.md).
 - `.gitignore`
+
+Run `pn init` without a name to scaffold into the current directory
+instead, named after it.
 
 A minimal `app/main.py` looks like:
 

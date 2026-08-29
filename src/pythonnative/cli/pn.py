@@ -2,7 +2,9 @@
 
 The console script `pn` (declared in `pyproject.toml`) dispatches to:
 
-- `pn init [name]`: scaffold a new project (``pythonnative.toml`` + ``app/``).
+- `pn init [name]`: scaffold a new project (``pythonnative.toml`` +
+  ``app/``) into ``./name/``, or into the current directory when no name
+  is given.
 - `pn doctor [platform]`: diagnose the local toolchain and config.
 - `pn preview [component]`: render the app in a desktop (Tkinter) window
   with Fast Refresh, the fast inner dev loop, no device required.
@@ -104,21 +106,62 @@ def _app_id_from_name(name: str) -> str:
 
 
 def init_project(args: argparse.Namespace) -> None:
-    """Scaffold a new PythonNative project in the current directory.
+    """Scaffold a new PythonNative project.
 
-    Creates ``app/main.py``, ``pythonnative.toml``, and ``.gitignore``.
-    Refuses to overwrite existing files unless ``--force`` is passed.
+    Given a name, this creates ``./<name>/`` and scaffolds into it. Without
+    one, it scaffolds into the current directory and names the project after
+    it. Either way it writes ``app/main.py``, ``pythonnative.toml``, and
+    ``.gitignore``.
+
+    The name has to be a single directory name, so the project always lands
+    inside the current directory. Anything that reads as a path, such as
+    ``a/b``, ``..``, or ``/tmp/app``, is refused, and so is a name that
+    resolves somewhere else, such as a symlink to another directory.
+
+    It won't scaffold into a target directory that already holds files, and it
+    won't overwrite any of the three paths above; pass ``--force`` to override
+    both. An existing but empty target directory is fine. A plain file at
+    ``./<name>`` is always refused, since ``--force`` can't turn it into a
+    directory, and ``--force`` lifts neither of the rules above.
 
     Args:
         args: Parsed namespace with ``name`` (optional) and ``force``.
     """
-    cwd = Path.cwd()
-    project_name: str = getattr(args, "name", None) or cwd.name
+    name: Optional[str] = getattr(args, "name", None)
     force: bool = getattr(args, "force", False)
 
-    app_dir = cwd / "app"
-    config_path = cwd / CONFIG_FILENAME
-    gitignore_path = cwd / ".gitignore"
+    # Lexical check, before anything reads the filesystem. ``Path("..").name``
+    # is "..", so ".." needs naming explicitly; the rest (absolute, nested,
+    # trailing separator, ".") fall out of the name check.
+    if name and (name in (os.curdir, os.pardir) or Path(name).name != name):
+        print(f"Refusing to treat a path as a project name: {name!r}. Use a single directory name like my_app.")
+        sys.exit(1)
+
+    cwd = Path.cwd()
+    target = cwd / name if name else cwd
+    project_name: str = name or cwd.name
+
+    # A lexically clean name can still resolve elsewhere, and ``exists()`` and
+    # ``is_dir()`` below follow symlinks. Check containment rather than just
+    # ``is_symlink()`` so the whole class is closed, not one spelling of it.
+    if name and (target.is_symlink() or target.resolve().parent != cwd.resolve()):
+        print(
+            f"Refusing to scaffold through a link or outside the current directory: {name}. "
+            "Use a plain directory name."
+        )
+        sys.exit(1)
+
+    app_dir = target / "app"
+    config_path = target / CONFIG_FILENAME
+    gitignore_path = target / ".gitignore"
+
+    if name and target.exists():
+        if not target.is_dir():
+            print(f"Refusing to overwrite existing file: {name}. Remove it or choose a different name.")
+            sys.exit(1)
+        if any(target.iterdir()) and not force:
+            print(f"Refusing to overwrite existing non-empty directory: {name}/. Use --force to overwrite.")
+            sys.exit(1)
 
     if not force:
         existing = [
@@ -142,8 +185,11 @@ def init_project(args: argparse.Namespace) -> None:
     if force or not gitignore_path.exists():
         gitignore_path.write_text(_GITIGNORE, encoding="utf-8")
 
-    print(f"Initialized PythonNative project in {cwd}.")
-    print("Next: pn preview   (desktop)   |   pn run android   |   pn run ios")
+    print(f"Initialized PythonNative project in {target}.")
+    next_steps = "pn preview   (desktop)   |   pn run android   |   pn run ios"
+    if name:
+        next_steps = f"cd {name}   |   {next_steps}"
+    print(f"Next: {next_steps}")
 
 
 # ======================================================================
@@ -873,8 +919,8 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers()
 
     parser_init = subparsers.add_parser("init", help="Scaffold a new project")
-    parser_init.add_argument("name", nargs="?", help="Project name (defaults to current directory name)")
-    parser_init.add_argument("--force", action="store_true", help="Overwrite existing files if present")
+    parser_init.add_argument("name", nargs="?", help="Project name; creates ./<name>/ (default: current directory)")
+    parser_init.add_argument("--force", action="store_true", help="Overwrite existing files or a non-empty directory")
     parser_init.set_defaults(func=init_project)
 
     parser_doctor = subparsers.add_parser("doctor", help="Diagnose the local toolchain and config")

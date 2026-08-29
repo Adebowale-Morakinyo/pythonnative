@@ -18,7 +18,9 @@ the documented behavior never drifts from the code.
   `--width`, `--height`, `--title`, `--no-hot-reload`. See the
   [Desktop preview guide](../guides/desktop-preview.md).
 - `pn devices [android|ios]`: list connected devices, emulators, and
-  simulators with the identifiers `--device` accepts.
+  simulators with the identifiers `--device` accepts. Flag: `--json` to
+  print a JSON array to stdout for scripting; the "no devices" hints go
+  to stderr instead, and an empty list prints `[]` and exits 0.
 - `pn run android|ios`: build and run on a connected device or
   simulator. Flags: `--device` (target a specific device by identifier
   or name), `--prepare-only`, `--hot-reload`, `--no-logs`.
@@ -31,6 +33,7 @@ the documented behavior never drifts from the code.
 - `pn app-id android|ios`: print the resolved application id (Android)
   or bundle id (iOS), handy for scripts and CI.
 - `pn clean`: remove the local `build/` directory.
+- `pn --version` (`-V`): print the installed PythonNative version.
 
 ::: pythonnative.cli.pn
     options:

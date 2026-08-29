@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.26.0 (2026-08-29)
+
+### Features
+
+- **cli**: Overhaul ios embedding, devices, and release builds
+  ([#18](https://github.com/pythonnative/pythonnative/pull/18),
+  [`c200d2a`](https://github.com/pythonnative/pythonnative/commit/c200d2a390ee3a6f92875ffe04fb063c78ca88f4))
+
+
 ## v0.25.0 (2026-08-28)
 
 ### Documentation

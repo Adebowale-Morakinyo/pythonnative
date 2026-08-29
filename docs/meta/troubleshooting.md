@@ -28,6 +28,34 @@ is finding a different Python. Reactivate the venv or run
 `pn init` won't clobber existing project files. Pass `--force` or
 remove the listed files first.
 
+### `Refusing to overwrite existing non-empty directory: my_app/`
+
+`pn init my_app` creates `my_app/` and scaffolds into it, so it stops
+when that directory already holds files. Pass `--force` to scaffold over
+it, choose a different name, or run `pn init` from inside the directory
+to use it as is. An existing but empty directory is fine.
+
+### `Refusing to overwrite existing file: my_app`
+
+Something other than a directory is already at `./my_app`. `--force`
+won't help here, since `pn init` can't turn a file into a directory.
+Remove or rename it, or choose a different project name.
+
+### `Refusing to treat a path as a project name: '../app'`
+
+`pn init` takes a single directory name, not a path, so the project always
+lands inside the current directory. Pass a plain name like `my_app`, or
+`cd` to the directory you want the project in and run `pn init` with no
+name at all. `--force` doesn't lift this one.
+
+### `Refusing to scaffold through a link or outside the current directory: link`
+
+The name resolves somewhere other than a directory directly inside the
+current one, so `pn init` stops rather than writing through it. A symlink
+at `./link` is the usual cause. Scaffold into a real directory, or `cd` to
+the directory the link points at and run `pn init` with no name. `--force`
+doesn't lift this one either.
+
 ### `Do not list 'pythonnative' in [requirements].packages`
 
 The CLI bundles the installed `pythonnative` package directly into

@@ -7,8 +7,10 @@ the documented behavior never drifts from the code.
 ## Subcommands
 
 - `pn init [name]`: scaffold a new project (creates `app/`,
-  `pythonnative.toml`, `.gitignore`). Flag: `--force` to overwrite
-  existing files. See [Configuration](../guides/configuration.md).
+  `pythonnative.toml`, `.gitignore`). With a name it creates `./<name>/`
+  and scaffolds into it; without one it uses the current directory.
+  Flag: `--force` to overwrite existing files or scaffold into a
+  non-empty directory. See [Configuration](../guides/configuration.md).
 - `pn doctor [android|ios]`: diagnose the local toolchain and validate
   `pythonnative.toml`. Exits non-zero when something will block a build.
 - `pn preview [component]`: render the app in a desktop (Tkinter) window

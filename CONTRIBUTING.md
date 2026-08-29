@@ -25,6 +25,7 @@ pn --help
 
 # create a new sample app from the bundled templates
 pn init my_app
+cd my_app
 
 # run the Hello World example
 cd examples/hello-world && pn run android

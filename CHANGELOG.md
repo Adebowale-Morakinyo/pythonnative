@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.30.0 (2026-08-29)
+
+### Features
+
+- **cli**: Create project directory in pn init <name>
+  ([#27](https://github.com/pythonnative/pythonnative/pull/27),
+  [`5f84246`](https://github.com/pythonnative/pythonnative/commit/5f84246da722ed077864dd060f3322d47ae4ee76))
+
+Refs: #21
+
+
 ## v0.29.0 (2026-08-29)
 
 ### Features

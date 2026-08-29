@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.29.0 (2026-08-29)
+
+### Features
+
+- **cli**: Check for Tkinter in pn doctor
+  ([#25](https://github.com/pythonnative/pythonnative/pull/25),
+  [`5cd7953`](https://github.com/pythonnative/pythonnative/commit/5cd79534c6b087afe8287570574b37438cfb5981))
+
+Refs: #23
+
+
 ## v0.28.0 (2026-08-29)
 
 ### Features

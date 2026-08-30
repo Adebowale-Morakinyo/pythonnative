@@ -8,11 +8,11 @@ pn --help
 ## Create a project
 
 ```bash
-pn init MyApp
-cd MyApp
+pn init my_app
+cd my_app
 ```
 
-This creates a `MyApp/` directory containing:
+This creates a `my_app/` directory containing:
 
 - `app/` with a minimal `main.py`
 - `pythonnative.toml`: your project configuration (app id, version,
@@ -20,8 +20,10 @@ This creates a `MyApp/` directory containing:
   [Configuration](guides/configuration.md).
 - `.gitignore`
 
-Run `pn init` without a name to scaffold into the current directory
-instead, named after it.
+A name has to be lowercase letters, digits, `-`, and `_`, starting with
+a letter, so the directory name and the `name` field in the generated
+config stay identical. Run `pn init` without a name to scaffold into the
+current directory instead, named after it; that name is used as-is.
 
 A minimal `app/main.py` looks like:
 
@@ -80,8 +82,8 @@ splash, third-party packages, and signing) lives in a single
 
 ```toml
 [app]
-id = "com.example.myapp"
-name = "myapp"
+id = "com.example.my_app"
+name = "my_app"
 display_name = "My App"
 version = "1.0.0"
 build = 1

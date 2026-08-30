@@ -48,6 +48,20 @@ lands inside the current directory. Pass a plain name like `my_app`, or
 `cd` to the directory you want the project in and run `pn init` with no
 name at all. `--force` doesn't lift this one.
 
+### `Invalid project name: 'MyApp'`
+
+A name you pass to `pn init` has to match `^[a-z][a-z0-9_-]*$`: lowercase
+letters, digits, `-`, and `_`, starting with a letter. That's the same
+spirit as `flutter create` and `cargo new`, and it keeps the directory
+name and the `name` field in the config identical. The error suggests a
+legal name you can paste straight back, so `MyApp` suggests `myapp` and
+`my app` suggests `my_app`. `--force` doesn't lift this one.
+
+This applies only to a name you type. `pn init` with no name takes the
+current directory's name as-is, so a directory called `MyProject` is
+fine. To use a display name outside this set, edit `display_name` in
+`pythonnative.toml` after scaffolding.
+
 ### `Refusing to scaffold through a link or outside the current directory: link`
 
 The name resolves somewhere other than a directory directly inside the

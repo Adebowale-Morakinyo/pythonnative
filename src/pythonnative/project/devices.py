@@ -18,7 +18,7 @@ import json
 import re
 import subprocess
 import tempfile
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -63,6 +63,19 @@ class Device:
         if self.kind == "simulator":
             return self.state in ("booted", "shutdown")
         return self.state in ("booted", "connected")
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Return a JSON-serializable view of this target.
+
+        Derived from the dataclass fields so a field added later is
+        carried into the payload automatically, plus the computed
+        ``is_ready`` that consumers would otherwise have to re-derive
+        from ``kind`` and ``state``.
+
+        Returns:
+            The declared fields in declaration order, then ``is_ready``.
+        """
+        return {**asdict(self), "is_ready": self.is_ready}
 
     def format(self) -> str:
         """Return one aligned listing row for the CLI."""

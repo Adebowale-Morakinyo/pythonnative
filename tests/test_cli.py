@@ -1,20 +1,23 @@
+import argparse
+import json
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import List
+from typing import Callable, Dict, List, Optional
 
 import pytest
 
 import pythonnative.cli.pn as pn_cli
 import pythonnative.hot_reload as hot_reload_module
+from pythonnative.project.devices import Device
 
 
-def run_pn(args: List[str], cwd: str) -> "subprocess.CompletedProcess[str]":
+def run_pn(args: List[str], cwd: str, env: Optional[Dict[str, str]] = None) -> "subprocess.CompletedProcess[str]":
     cmd = [sys.executable, "-m", "pythonnative.cli.pn"] + args
-    return subprocess.run(cmd, cwd=cwd, check=False, capture_output=True, text=True)
+    return subprocess.run(cmd, cwd=cwd, check=False, capture_output=True, text=True, env=env)
 
 
 def test_cli_version(tmp_path: Path) -> None:
@@ -337,6 +340,198 @@ def test_booted_ios_udid_handles_xcrun_missing(monkeypatch: pytest.MonkeyPatch) 
 
     monkeypatch.setattr(pn_cli.subprocess, "run", _raise)
     assert pn_cli._booted_ios_udid() is None
+
+
+# `pn devices` tests run devices_command() in-process rather than through run_pn,
+# because run_pn spawns a child interpreter that monkeypatch can't reach: it would
+# re-import the real list_devices and shell out to adb/xcrun, making the result
+# depend on whatever hardware the test machine has attached. The one run_pn test
+# below empties PATH instead, so every list_* call hits FileNotFoundError.
+
+# A naive `state == "booted"` readiness check disagrees with is_ready on two of
+# these: the connected Android device (ready, not booted) and the shutdown
+# simulator (ready, because simulators boot on demand).
+_FAKE_DEVICES = [
+    Device("android", "device", "R5CT12345XYZ", "Pixel 8 Pro", "", "connected"),
+    Device("android", "device", "OFFLINE99", "Galaxy S24", "", "offline"),
+    Device("ios", "simulator", "ABC-123", "iPhone 17 Pro", "iOS 26.4", "booted"),
+    Device("ios", "simulator", "DEF-456", "iPad Pro 13-inch (M4)", "iOS 26.4", "shutdown"),
+]
+
+_NO_DEVICES_HINTS = (
+    "No devices found.\n"
+    "Android: start an emulator or connect a device with USB debugging enabled.\n"
+    "iOS: open Xcode once to install Simulators, or plug in a device.\n"
+)
+
+_DEVICE_TABLE = (
+    "  IDENTIFIER                               KIND       STATE      NAME\n"
+    "  R5CT12345XYZ                             device     connected  Pixel 8 Pro\n"
+    "  OFFLINE99                                device     offline    Galaxy S24\n"
+    "  ABC-123                                  simulator  booted     iPhone 17 Pro (iOS 26.4)\n"
+    "  DEF-456                                  simulator  shutdown   iPad Pro 13-inch (M4) (iOS 26.4)\n"
+    "\n"
+    "Target one with: pn run <platform> --device <identifier or name>\n"
+)
+
+
+def _fake_list_devices(
+    devices: List[Device], calls: Optional[List[Optional[str]]] = None
+) -> Callable[..., List[Device]]:
+    """Stand in for list_devices, filtering by platform and recording the argument."""
+
+    def _list(platform: Optional[str] = None) -> List[Device]:
+        if calls is not None:
+            calls.append(platform)
+        return [device for device in devices if platform in (None, device.platform)]
+
+    return _list
+
+
+def test_devices_json_emits_parseable_array(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(pn_cli.devices_mod, "list_devices", _fake_list_devices(_FAKE_DEVICES))
+
+    # Returns rather than exiting, so a populated listing stays exit 0.
+    pn_cli.devices_command(argparse.Namespace(platform=None, json=True))
+
+    payload = json.loads(capsys.readouterr().out)
+    assert [entry["identifier"] for entry in payload] == [
+        "R5CT12345XYZ",
+        "OFFLINE99",
+        "ABC-123",
+        "DEF-456",
+    ]
+    for entry in payload:
+        assert set(entry) == {
+            "platform",
+            "kind",
+            "identifier",
+            "name",
+            "os_version",
+            "state",
+            "is_ready",
+        }
+    ready = {entry["identifier"]: entry["is_ready"] for entry in payload}
+    assert ready == {"R5CT12345XYZ": True, "OFFLINE99": False, "ABC-123": True, "DEF-456": True}
+
+    # The two entries a naive `state == "booted"` check would get wrong.
+    by_id = {entry["identifier"]: entry for entry in payload}
+    assert by_id["DEF-456"]["state"] == "shutdown" and by_id["DEF-456"]["is_ready"] is True
+    assert by_id["R5CT12345XYZ"]["state"] == "connected" and by_id["R5CT12345XYZ"]["is_ready"] is True
+    assert by_id["OFFLINE99"]["kind"] == "device" and by_id["OFFLINE99"]["is_ready"] is False
+
+
+def test_devices_json_empty_prints_array_and_hints_to_stderr(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(pn_cli.devices_mod, "list_devices", _fake_list_devices([]))
+
+    # No SystemExit: an empty result is exit 0 under --json, unlike the table.
+    pn_cli.devices_command(argparse.Namespace(platform=None, json=True))
+
+    captured = capsys.readouterr()
+    assert captured.out == "[]\n"
+    assert json.loads(captured.out) == []
+    assert captured.err == _NO_DEVICES_HINTS
+
+
+@pytest.mark.parametrize(
+    ("platform", "expected"),
+    [("android", ["R5CT12345XYZ", "OFFLINE99"]), ("ios", ["ABC-123", "DEF-456"])],
+)
+def test_devices_json_respects_platform_filter(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    platform: str,
+    expected: List[str],
+) -> None:
+    calls: List[Optional[str]] = []
+    monkeypatch.setattr(pn_cli.devices_mod, "list_devices", _fake_list_devices(_FAKE_DEVICES, calls))
+
+    pn_cli.devices_command(argparse.Namespace(platform=platform, json=True))
+
+    assert calls == [platform]
+    payload = json.loads(capsys.readouterr().out)
+    assert {entry["platform"] for entry in payload} == {platform}
+    assert [entry["identifier"] for entry in payload] == expected
+
+
+@pytest.mark.parametrize("devices", [[], _FAKE_DEVICES], ids=["empty", "populated"])
+def test_devices_json_keeps_human_text_off_stdout(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], devices: List[Device]
+) -> None:
+    monkeypatch.setattr(pn_cli.devices_mod, "list_devices", _fake_list_devices(devices))
+
+    pn_cli.devices_command(argparse.Namespace(platform=None, json=True))
+
+    out = capsys.readouterr().out
+    json.loads(out)
+    # Every non-JSON source the table mode prints: the three hints, the column
+    # header, each aligned row, and the trailer.
+    for hint in _NO_DEVICES_HINTS.splitlines():
+        assert hint not in out
+    assert "IDENTIFIER" not in out
+    assert "Target one with:" not in out
+    for device in devices:
+        assert device.format() not in out
+
+
+def test_devices_human_output_unchanged_when_empty(tmp_path: Path) -> None:
+    # An empty PATH makes adb/xcrun unresolvable, so every list_* call returns [].
+    env = {**os.environ, "PATH": str(tmp_path)}
+    result = run_pn(["devices"], str(tmp_path), env=env)
+
+    assert result.returncode == 1
+    assert result.stdout == _NO_DEVICES_HINTS
+    assert result.stderr == ""
+
+
+def test_devices_human_output_unchanged_when_populated(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(pn_cli.devices_mod, "list_devices", _fake_list_devices(_FAKE_DEVICES))
+
+    pn_cli.devices_command(argparse.Namespace(platform=None, json=False))
+
+    captured = capsys.readouterr()
+    assert captured.out == _DEVICE_TABLE
+    assert captured.err == ""
+
+
+def test_devices_json_flag_is_wired_through_argparse(tmp_path: Path) -> None:
+    # The other JSON tests call devices_command() directly, so only this one
+    # proves the subparser actually accepts --json and routes it through.
+    env = {**os.environ, "PATH": str(tmp_path)}
+    result = run_pn(["devices", "--json"], str(tmp_path), env=env)
+
+    assert result.returncode == 0
+    assert json.loads(result.stdout) == []
+    assert result.stdout == "[]\n"
+    assert result.stderr == _NO_DEVICES_HINTS
+
+
+def test_devices_json_serializes_awkward_field_values(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    # Quotes, a newline, non-ASCII, and the two empty-string defaults all survive
+    # the round trip today; nothing pinned them before.
+    awkward = Device("android", "device", "SER!@#123", 'M\u00e1laga "Pixel"\nLab', "", "")
+    monkeypatch.setattr(pn_cli.devices_mod, "list_devices", _fake_list_devices([awkward]))
+
+    pn_cli.devices_command(argparse.Namespace(platform=None, json=True))
+
+    (entry,) = json.loads(capsys.readouterr().out)
+    assert entry == {
+        "platform": "android",
+        "kind": "device",
+        "identifier": "SER!@#123",
+        "name": 'M\u00e1laga "Pixel"\nLab',
+        "os_version": "",
+        "state": "",
+        "is_ready": False,
+    }
 
 
 def test_hot_reload_manifest_payload_maps_files_to_modules(tmp_path: Path) -> None:

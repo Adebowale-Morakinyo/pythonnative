@@ -9,7 +9,7 @@ The console script `pn` (declared in `pyproject.toml`) dispatches to:
 - `pn preview [component]`: render the app in a desktop (Tkinter) window
   with Fast Refresh, the fast inner dev loop, no device required.
 - `pn devices [platform]`: list connected devices, emulators, and
-  simulators.
+  simulators, as a table or as JSON with `--json`.
 - `pn run android|ios [--device D]`: stage + build + install + launch on
   a device, emulator, or simulator, with optional on-device hot reload.
 - `pn logs android|ios`: stream logs from the running app without
@@ -38,7 +38,7 @@ import sys
 import time
 from importlib.metadata import version as pkg_version
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TextIO
 
 from ..project import builder as builder_mod
 from ..project import devices as devices_mod
@@ -298,18 +298,46 @@ def _preview_entry(project_dir: Path) -> str:
 # ======================================================================
 
 
+def _print_no_devices_hints(stream: TextIO) -> None:
+    """Print the "no devices" guidance to ``stream``.
+
+    Shared by both output modes so the wording can't drift between the
+    table (which sends it to stdout) and ``--json`` (stderr).
+
+    Args:
+        stream: Where to write, ``sys.stdout`` or ``sys.stderr``.
+    """
+    print("No devices found.", file=stream)
+    print("Android: start an emulator or connect a device with USB debugging enabled.", file=stream)
+    print("iOS: open Xcode once to install Simulators, or plug in a device.", file=stream)
+
+
 def devices_command(args: argparse.Namespace) -> None:
     """List connected devices, emulators, and simulators.
 
+    Prints an aligned table and exits 1 when nothing is connected.
+
+    With ``--json``, stdout carries a JSON array and nothing else, one
+    object per device (see ``Device.to_dict``), so it stays parseable.
+    The "no devices" hints go to stderr instead, an empty result prints
+    ``[]``, and the exit status is 0 either way, since "no devices" is a
+    valid answer for a script rather than a failure.
+
     Args:
-        args: Parsed namespace with optional ``platform``.
+        args: Parsed namespace with optional ``platform`` and ``json``.
     """
     platform: Optional[str] = getattr(args, "platform", None)
+    as_json: bool = getattr(args, "json", False)
     devices = devices_mod.list_devices(platform)
+
+    if as_json:
+        if not devices:
+            _print_no_devices_hints(sys.stderr)
+        print(json.dumps([device.to_dict() for device in devices], indent=2))
+        return
+
     if not devices:
-        print("No devices found.")
-        print("Android: start an emulator or connect a device with USB debugging enabled.")
-        print("iOS: open Xcode once to install Simulators, or plug in a device.")
+        _print_no_devices_hints(sys.stdout)
         sys.exit(1)
     print(f"  {'IDENTIFIER':<40} {'KIND':<10} {'STATE':<10} NAME")
     for device in devices:
@@ -943,6 +971,9 @@ def _build_parser() -> argparse.ArgumentParser:
 
     parser_devices = subparsers.add_parser("devices", help="List devices, emulators, and simulators")
     parser_devices.add_argument("platform", nargs="?", choices=["android", "ios"], help="Restrict to a platform")
+    parser_devices.add_argument(
+        "--json", action="store_true", help="Print a JSON array to stdout for scripting (hints go to stderr)"
+    )
     parser_devices.set_defaults(func=devices_command)
 
     parser_run = subparsers.add_parser("run", help="Build, install, and launch on a device/simulator")

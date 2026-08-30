@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.31.0 (2026-08-30)
+
+### Features
+
+- **cli**: Add --json output to pn devices
+  ([#30](https://github.com/pythonnative/pythonnative/pull/30),
+  [`4efea4d`](https://github.com/pythonnative/pythonnative/commit/4efea4d25387c7062db78b448d776e0b85dc0452))
+
+Refs: #22
+
+
 ## v0.30.0 (2026-08-29)
 
 ### Features

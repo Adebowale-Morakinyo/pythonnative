@@ -37,9 +37,9 @@ def test_cli_short_version_flag(tmp_path: Path) -> None:
 def test_cli_init_and_clean() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
-        result = run_pn(["init", "MyApp"], tmpdir)
+        result = run_pn(["init", "my_app"], tmpdir)
         assert result.returncode == 0, result.stderr
-        project_dir = os.path.join(tmpdir, "MyApp")
+        project_dir = os.path.join(tmpdir, "my_app")
         assert os.path.isdir(os.path.join(project_dir, "app"))
 
         main_path = os.path.join(project_dir, "app", "main.py")
@@ -51,7 +51,7 @@ def test_cli_init_and_clean() -> None:
         config_path = os.path.join(project_dir, "pythonnative.toml")
         assert os.path.isfile(config_path)
         toml_text = Path(config_path).read_text(encoding="utf-8")
-        assert 'id = "com.example.myapp"' in toml_text
+        assert 'id = "com.example.my_app"' in toml_text
         assert os.path.isfile(os.path.join(project_dir, ".gitignore"))
         # The legacy JSON config and requirements.txt are no longer scaffolded.
         assert not os.path.exists(os.path.join(project_dir, "pythonnative.json"))
@@ -71,11 +71,11 @@ def test_cli_init_and_clean() -> None:
 def test_cli_init_refuses_overwrite() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
-        assert run_pn(["init", "MyApp"], tmpdir).returncode == 0
-        result = run_pn(["init", "MyApp"], tmpdir)
+        assert run_pn(["init", "my_app"], tmpdir).returncode == 0
+        result = run_pn(["init", "my_app"], tmpdir)
         assert result.returncode != 0
         assert "Refusing to overwrite" in result.stdout
-        assert run_pn(["init", "MyApp", "--force"], tmpdir).returncode == 0
+        assert run_pn(["init", "my_app", "--force"], tmpdir).returncode == 0
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -210,6 +210,92 @@ def test_cli_init_rejects_symlinked_target(tmp_path: Path, populated: bool, extr
     assert os.listdir(str(work_dir)) == ["link"]
 
 
+_ILLEGAL_NAMES = [
+    pytest.param("MyApp", id="uppercase"),
+    pytest.param("my app", id="space"),
+    pytest.param('bad"name', id="quote"),
+    pytest.param("9lives", id="leading-digit"),
+    pytest.param("_leading", id="leading-underscore"),
+    pytest.param("café", id="non-ascii"),
+    pytest.param("", id="empty"),
+    # `$` matches before a trailing newline, so `match` would let this through.
+    pytest.param("app\n", id="trailing-newline"),
+]
+
+
+@pytest.mark.parametrize("name", _ILLEGAL_NAMES)
+def test_cli_init_rejects_illegal_names(tmp_path: Path, name: str) -> None:
+    result = run_pn(["init", name], str(tmp_path))
+
+    assert result.returncode != 0
+    assert "Invalid project name" in result.stdout
+    assert "Try: " in result.stdout
+    # Nothing is written, not even into the current directory.
+    assert os.listdir(str(tmp_path)) == []
+
+
+@pytest.mark.parametrize("name", _ILLEGAL_NAMES)
+def test_cli_init_force_does_not_lift_name_validation(tmp_path: Path, name: str) -> None:
+    result = run_pn(["init", name, "--force"], str(tmp_path))
+
+    assert result.returncode != 0
+    assert "Invalid project name" in result.stdout
+    assert os.listdir(str(tmp_path)) == []
+
+
+def test_cli_init_suggestion_is_itself_a_legal_name() -> None:
+    # The suggestion is only useful if the user can paste it straight back.
+    awkward = [
+        "MyApp",
+        "my app",
+        'bad"name',
+        "9lives",
+        "_leading",
+        "café",
+        "",
+        "___",
+        "---",
+        "123",
+        "..",
+        "a/b",
+        "ÄÖÜ",
+        "\t",
+        "app\n",
+        "app\n\n",
+        "\napp",
+        "\n",
+        "\x00",
+        "\x7f",
+        "sp ace",
+        "trailing_",
+        "-lead",
+        "mixed_-CASE-99",
+        "🙂",
+        "a" * 200,
+    ]
+    for name in awkward:
+        assert pn_cli._NAME_RE.fullmatch(pn_cli._sanitize_name(name)), name
+
+
+def test_cli_init_suggestion_is_stable_for_legal_names() -> None:
+    for name in ["my_app", "my-app", "a", "a1", "hello-world_2"]:
+        assert pn_cli._sanitize_name(name) == name
+
+
+def test_cli_init_without_name_accepts_a_cwd_that_fails_the_pattern(tmp_path: Path) -> None:
+    # Validation covers the typed name only. A directory named MyProject is
+    # extremely ordinary, and `pn init` there must keep working.
+    project_dir = tmp_path / "MyProject"
+    project_dir.mkdir()
+
+    result = run_pn(["init"], str(project_dir))
+
+    assert result.returncode == 0, result.stdout
+    toml_text = (project_dir / "pythonnative.toml").read_text(encoding="utf-8")
+    assert 'name = "MyProject"' in toml_text
+    assert 'id = "com.example.myproject"' in toml_text
+
+
 def test_cli_run_help_lists_flags() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
@@ -252,17 +338,17 @@ def test_cli_run_without_config_errors() -> None:
 
 
 def test_cli_app_id_resolves(tmp_path: Path) -> None:
-    assert run_pn(["init", "MyApp"], str(tmp_path)).returncode == 0
-    project_dir = str(tmp_path / "MyApp")
+    assert run_pn(["init", "my_app"], str(tmp_path)).returncode == 0
+    project_dir = str(tmp_path / "my_app")
     result = run_pn(["app-id", "android"], project_dir)
     assert result.returncode == 0, result.stderr
-    assert result.stdout.strip() == "com.example.myapp"
-    assert run_pn(["app-id", "ios"], project_dir).stdout.strip() == "com.example.myapp"
+    assert result.stdout.strip() == "com.example.my_app"
+    assert run_pn(["app-id", "ios"], project_dir).stdout.strip() == "com.example.my_app"
 
 
 def test_cli_doctor_runs(tmp_path: Path) -> None:
-    assert run_pn(["init", "MyApp"], str(tmp_path)).returncode == 0
-    result = run_pn(["doctor", "android"], str(tmp_path / "MyApp"))
+    assert run_pn(["init", "my_app"], str(tmp_path)).returncode == 0
+    result = run_pn(["doctor", "android"], str(tmp_path / "my_app"))
     assert "PythonNative doctor" in result.stdout
     # android-only doctor on a CI box without adb still produces warnings, not errors.
     assert result.returncode in (0, 1)
@@ -271,8 +357,8 @@ def test_cli_doctor_runs(tmp_path: Path) -> None:
 def test_cli_run_prepare_only_android_and_ios() -> None:
     tmpdir = tempfile.mkdtemp(prefix="pn_cli_test_")
     try:
-        assert run_pn(["init", "MyApp"], tmpdir).returncode == 0
-        project_dir = os.path.join(tmpdir, "MyApp")
+        assert run_pn(["init", "my_app"], tmpdir).returncode == 0
+        project_dir = os.path.join(tmpdir, "my_app")
 
         result = run_pn(["run", "android", "--prepare-only", "--no-logs"], project_dir)
         assert result.returncode == 0, result.stderr
@@ -280,7 +366,7 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         assert os.path.isdir(android_root)
         # Package relocated to the configured application id.
         relocated = os.path.join(
-            android_root, "app", "src", "main", "java", "com", "example", "myapp", "ScreenFragment.kt"
+            android_root, "app", "src", "main", "java", "com", "example", "my_app", "ScreenFragment.kt"
         )
         assert os.path.isfile(relocated)
         assert not os.path.exists(
@@ -288,7 +374,7 @@ def test_cli_run_prepare_only_android_and_ios() -> None:
         )
         # App identity written into the Gradle config.
         gradle = Path(os.path.join(android_root, "app", "build.gradle")).read_text(encoding="utf-8")
-        assert "com.example.myapp" in gradle
+        assert "com.example.my_app" in gradle
 
         result = run_pn(["run", "ios", "--prepare-only", "--no-logs"], project_dir)
         assert result.returncode == 0, result.stderr

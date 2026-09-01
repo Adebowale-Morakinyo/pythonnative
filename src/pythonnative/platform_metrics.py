@@ -226,12 +226,15 @@ def reset_keyboard_height() -> None:
 # that natural height. Forcing our own height threw off the pill
 # geometry, so the Android handler defers entirely to the system.
 
-#: UIKit HIG tab-bar content height in points. The total bar reaches
-#: ``IOS_TAB_BAR_BASE_HEIGHT_PT + safe_area_insets.bottom`` so the
-#: pill background can extend over the home indicator. Apple's HIG
-#: places the tab bar flush with the screen edge and lets UIKit
-#: render its own internal padding for the home indicator.
 IOS_TAB_BAR_BASE_HEIGHT_PT: float = 49.0
+"""UIKit HIG tab-bar content height in points.
+
+The total bar reaches ``IOS_TAB_BAR_BASE_HEIGHT_PT +
+safe_area_insets.bottom`` so the pill background can extend over the
+home indicator. Apple's HIG places the tab bar flush with the screen
+edge and lets UIKit render its own internal padding for the home
+indicator.
+"""
 
 
 def ios_tab_bar_height() -> float:

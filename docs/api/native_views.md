@@ -1,8 +1,9 @@
 # Native views
 
 The bridge between PythonNative's element tree and concrete native
-widgets. Each commit's diff is expressed as a flat list of mutation
-ops referencing integer tags, applied through a single
+widgets. Each commit's diff is expressed as a flat list of
+[mutation ops](mutations.md) referencing integer tags, applied through a
+single
 [`apply_mutations`][pythonnative.native_views.NativeViewRegistry.apply_mutations]
 call. Every element type maps to a
 [`ViewHandler`][pythonnative.native_views.base.ViewHandler]
@@ -20,21 +21,12 @@ the platform-specific handlers are registered lazily so importing
 
 ## Mutation ops
 
-::: pythonnative.mutations
-    options:
-      show_root_heading: false
-      show_root_toc_entry: false
-      members_order: source
-      filters: ["!^_"]
+The op types themselves are documented in [Mutation ops](mutations.md).
 
 ## Event routing
 
-::: pythonnative.events
-    options:
-      show_root_heading: false
-      show_root_toc_entry: false
-      members_order: source
-      filters: ["!^_"]
+The registry and its dispatch entry point are documented in
+[Events](events.md).
 
 ## Base classes
 
@@ -59,3 +51,7 @@ the platform-specific handlers are registered lazily so importing
 - Read the high-level model in
   [Native views (concept)](../concepts/native-views.md).
 - See how the reconciler drives handlers in [Reconciler](reconciler.md).
+- Read the op vocabulary handlers apply in [Mutation ops](mutations.md).
+- Read the callback registry handlers dispatch into in [Events](events.md).
+- Read the values handlers size themselves against in
+  [Platform metrics](platform_metrics.md).

@@ -35,13 +35,10 @@ ios = [
 build = [
   "Pillow>=10.0",
 ]
-docs = [
-  "mkdocs>=1.5",
-  "mkdocs-material[imaging]>=9.5",
-  "mkdocstrings[python]>=0.24",
-  "mkdocs-autorefs>=1.0",
-  "pymdown-extensions>=10.7",
-]
+
+# Contributor tooling, not published as package extras (PEP 735). Install
+# with `uv sync --group dev` or `--group docs`; `uv sync` alone gets `dev`.
+[dependency-groups]
 dev = [
   "black>=24.0",
   "ruff>=0.5",
@@ -49,14 +46,17 @@ dev = [
   "pytest>=8.0",
   "pytest-asyncio>=0.23",
   "Pillow>=10.0",
+  # `pn run ios` shells out to `sys.executable -m pip` to vendor
+  # rubicon-objc (project/builder.py), and the test suite exercises that
+  # path. `uv sync` does not seed pip the way `uv venv --seed` did.
+  "pip>=24.0",
 ]
-ci = [
-  "black>=24.0",
-  "ruff>=0.5",
-  "mypy>=1.10",
-  "pytest>=8.0",
-  "pytest-asyncio>=0.23",
-  "Pillow>=10.0",
+docs = [
+  "mkdocs>=1.5",
+  "mkdocs-material[imaging]>=9.5",
+  "mkdocstrings[python]>=0.24",
+  "mkdocs-autorefs>=1.0",
+  "pymdown-extensions>=10.7",
 ]
 
 [project.scripts]
@@ -144,6 +144,15 @@ asyncio_mode = "auto"
 # ── Semantic Release ────────────────────────────────────────────────
 
 [tool.semantic_release]
+# PSR stamps the new version into pyproject.toml before running this, so
+# `--upgrade-package` re-syncs only this project's own version in the lock
+# (never dependency upgrades), and the staged uv.lock lands in the release
+# commit. This also replaces the workflow's separate `python -m build`.
+build_command = """
+uv lock --upgrade-package pythonnative
+git add uv.lock
+uv build
+"""
 version_toml = ["pyproject.toml:project.version"]
 version_variables = ["src/pythonnative/__init__.py:__version__"]
 commit_message = "chore(release): v{version}"

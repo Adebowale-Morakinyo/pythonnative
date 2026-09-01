@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.32.0 (2026-09-01)
+
+### Documentation
+
+- **events,mutations,platform_metrics**: Add API reference pages
+  ([#31](https://github.com/pythonnative/pythonnative/pull/31),
+  [`a9b5147`](https://github.com/pythonnative/pythonnative/commit/a9b51472fa9112973e5304b84bb3dfc0c89885f1))
+
+### Features
+
+- **cli**: Validate project names and escape TOML values
+  ([#32](https://github.com/pythonnative/pythonnative/pull/32),
+  [`3e78f6e`](https://github.com/pythonnative/pythonnative/commit/3e78f6ea20084da0b5a419b17be5fa40e8575128))
+
+Refs: #29
+
+
 ## v0.31.0 (2026-08-30)
 
 ### Features

@@ -8,7 +8,8 @@ the documented behavior never drifts from the code.
 
 - `pn init [name]`: scaffold a new project (creates `app/`,
   `pythonnative.toml`, `.gitignore`). With a name it creates `./<name>/`
-  and scaffolds into it; without one it uses the current directory.
+  and scaffolds into it; the name must match `^[a-z][a-z0-9_-]*$`.
+  Without one it uses the current directory, whatever it's called.
   Flag: `--force` to overwrite existing files or scaffold into a
   non-empty directory. See [Configuration](../guides/configuration.md).
 - `pn doctor [android|ios]`: diagnose the local toolchain and validate

@@ -190,3 +190,66 @@ def test_rendered_default_toml_parses_and_loads() -> None:
     assert cfg.app_id == "com.example.my_app"
     assert cfg.display_name == "My App"
     assert cfg.requirements == []
+
+
+# `pn init` rejects these names, but render_default_toml is public API and is
+# called directly here and by library callers, with no validation in front of
+# it. Escaping is what makes the render boundary safe on its own.
+@pytest.mark.parametrize(
+    "raw",
+    [
+        pytest.param('bad"name', id="quote"),
+        pytest.param("back\\slash", id="backslash"),
+        pytest.param("two\nlines", id="newline"),
+        pytest.param("with\ttab", id="tab"),
+        pytest.param("vt\x0bhere", id="vertical-tab"),
+        pytest.param("nul\x00here", id="nul"),
+        pytest.param("del\x7fhere", id="delete"),
+        pytest.param('q"\\b\n\t\x0b\x00\x7fz', id="all-at-once"),
+        pytest.param("café", id="non-ascii"),
+    ],
+)
+def test_rendered_toml_escapes_awkward_names(raw: str) -> None:
+    text = render_default_toml(name=raw, app_id="com.example.x")
+
+    data = tomllib.loads(text)
+    assert data["app"]["name"] == raw
+
+
+def test_rendered_toml_escapes_every_interpolated_value() -> None:
+    raw = 'q"\\ \n\t\x0b\x00\x7f z'
+    app_id = 'id"\\x'
+
+    data = tomllib.loads(render_default_toml(name=raw, app_id=app_id, python_version='3"11'))
+
+    assert data["app"]["name"] == raw
+    assert data["app"]["id"] == app_id
+    assert data["app"]["python_version"] == '3"11'
+    # display_name is derived from name, so it is escaped separately.
+    assert data["app"]["display_name"] == raw.replace("_", " ").replace("-", " ").strip().title()
+
+
+def test_rendered_toml_leaves_tab_unescaped_and_escapes_vertical_tab() -> None:
+    # TOML allows a raw tab in a basic string; U+000B has no compact escape.
+    text = render_default_toml(name="a\tb\x0bc", app_id="com.example.x")
+
+    name_line = next(line for line in text.splitlines() if line.startswith("name = "))
+    assert name_line == 'name = "a\tb\\u000Bc"'
+    assert tomllib.loads(text)["app"]["name"] == "a\tb\x0bc"
+
+
+def test_rendered_toml_escapes_the_commented_examples() -> None:
+    # url_schemes, bundle_id, and key_alias are commented out, so tomllib
+    # never sees them and the other tests can't catch a missing escape there.
+    # Uncomment them and the file still has to parse.
+    raw = 'q"\\x'
+    text = render_default_toml(name=raw, app_id=raw)
+
+    prefixes = ("# url_schemes = ", "# bundle_id = ", "# key_alias = ")
+    uncommented = [line[len("# ") :] for line in text.splitlines() if line.startswith(prefixes)]
+    assert len(uncommented) == 3, uncommented
+
+    data = tomllib.loads("\n".join(uncommented))
+    assert data["url_schemes"] == [raw]
+    assert data["bundle_id"] == raw
+    assert data["key_alias"] == raw

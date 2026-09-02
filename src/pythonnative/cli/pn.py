@@ -98,6 +98,35 @@ def App():
 _GITIGNORE = "# PythonNative\n__pycache__/\n*.pyc\n.venv/\nbuild/\n.DS_Store\n"
 
 
+_NAME_RE = re.compile(r"^[a-z][a-z0-9_-]*$")
+"""Legal ``pn init`` project names, in the spirit of ``flutter create`` / ``cargo new``."""
+
+_FALLBACK_NAME = "my_app"
+
+
+def _sanitize_name(name: str) -> str:
+    """Return a legal project name derived from ``name``.
+
+    Lowercases, collapses each run of illegal characters to one
+    underscore, trims leading and trailing ``_`` and ``-``, and prefixes
+    a name that doesn't start with a letter. The result always matches
+    ``_NAME_RE``, falling back to ``_FALLBACK_NAME`` when nothing usable
+    survives.
+
+    Args:
+        name: The rejected name, which may be empty.
+
+    Returns:
+        A name suitable for suggesting back to the user.
+    """
+    slug = re.sub(r"[^a-z0-9_-]+", "_", name.lower()).strip("_-")
+    if not slug:
+        return _FALLBACK_NAME
+    if not slug[0].isascii() or not slug[0].isalpha():
+        slug = f"app_{slug}"
+    return slug
+
+
 def _app_id_from_name(name: str) -> str:
     slug = re.sub(r"[^a-z0-9_]", "", name.lower())
     if not slug or not slug[0].isalpha():
@@ -113,9 +142,17 @@ def init_project(args: argparse.Namespace) -> None:
     it. Either way it writes ``app/main.py``, ``pythonnative.toml``, and
     ``.gitignore``.
 
-    The name has to be a single directory name, so the project always lands
-    inside the current directory. Anything that reads as a path, such as
-    ``a/b``, ``..``, or ``/tmp/app``, is refused, and so is a name that
+    A name you pass has to match ``^[a-z][a-z0-9_-]*$``: lowercase letters,
+    digits, ``-``, and ``_``, starting with a letter. Anything else is
+    refused with a legal suggestion. That keeps the directory name and the
+    ``name`` field in the generated config identical, in the same spirit as
+    ``flutter create`` and ``cargo new``. The name taken from the current
+    directory when you pass none is used as-is, so an existing directory
+    with any name still works.
+
+    The name also has to be a single directory name, so the project always
+    lands inside the current directory. Anything that reads as a path, such
+    as ``a/b``, ``..``, or ``/tmp/app``, is refused, and so is a name that
     resolves somewhere else, such as a symlink to another directory.
 
     It won't scaffold into a target directory that already holds files, and it
@@ -135,6 +172,19 @@ def init_project(args: argparse.Namespace) -> None:
     # trailing separator, ".") fall out of the name check.
     if name and (name in (os.curdir, os.pardir) or Path(name).name != name):
         print(f"Refusing to treat a path as a project name: {name!r}. Use a single directory name like my_app.")
+        sys.exit(1)
+
+    # Charset check, still lexical, so it stays ahead of ``Path.cwd()`` below.
+    # ``is not None`` rather than truthiness: "" is invalid under the pattern,
+    # and falling through to the no-name path would silently scaffold here.
+    # ``fullmatch``, not ``match``: ``$`` also matches before a trailing
+    # newline, so ``match`` would accept "app\n" and create a directory
+    # whose name contains one.
+    if name is not None and not _NAME_RE.fullmatch(name):
+        print(
+            f"Invalid project name: {name!r}. Use lowercase letters, digits, '-', and '_', "
+            f"starting with a letter. Try: {_sanitize_name(name)}"
+        )
         sys.exit(1)
 
     cwd = Path.cwd()
@@ -947,7 +997,11 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers()
 
     parser_init = subparsers.add_parser("init", help="Scaffold a new project")
-    parser_init.add_argument("name", nargs="?", help="Project name; creates ./<name>/ (default: current directory)")
+    parser_init.add_argument(
+        "name",
+        nargs="?",
+        help="Project name, matching ^[a-z][a-z0-9_-]*$; creates ./<name>/ (default: current directory)",
+    )
     parser_init.add_argument("--force", action="store_true", help="Overwrite existing files or a non-empty directory")
     parser_init.set_defaults(func=init_project)
 

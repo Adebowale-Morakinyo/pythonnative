@@ -51,6 +51,9 @@ The reference is split per module so each page stays scannable:
 | Reconciler | [Reconciler](reconciler.md) | [`Reconciler`][pythonnative.reconciler.Reconciler] |
 | Native modules | [Native modules](native_modules.md) | `Camera`, `Location`, `FileSystem`, `Notifications` |
 | Native views | [Native views](native_views.md) | [`NativeViewRegistry`][pythonnative.native_views.NativeViewRegistry], [`ViewHandler`][pythonnative.native_views.base.ViewHandler] |
+| Mutation ops | [Mutation ops](mutations.md) | [`CreateOp`][pythonnative.mutations.CreateOp], [`UpdateOp`][pythonnative.mutations.UpdateOp], [`InsertOp`][pythonnative.mutations.InsertOp], [`DestroyOp`][pythonnative.mutations.DestroyOp], [`SetFrameOp`][pythonnative.mutations.SetFrameOp] |
+| Event routing | [Events](events.md) | [`EventRegistry`][pythonnative.events.EventRegistry], [`dispatch_event`][pythonnative.events.dispatch_event], [`extract_events`][pythonnative.events.extract_events] |
+| Platform metrics | [Platform metrics](platform_metrics.md) | [`SafeAreaInsets`][pythonnative.platform_metrics.SafeAreaInsets], [`WindowDimensions`][pythonnative.platform_metrics.WindowDimensions], [`subscribe`][pythonnative.platform_metrics.subscribe] |
 | Hot reload | [Hot reload](hot_reload.md) | [`FileWatcher`][pythonnative.hot_reload.FileWatcher], [`ModuleReloader`][pythonnative.hot_reload.ModuleReloader] |
 | Diagnostics | [Diagnostics](diagnostics.md) | [`HookOrderError`][pythonnative.HookOrderError], [`warn`][pythonnative.diagnostics.warn], [`is_dev`][pythonnative.diagnostics.is_dev], [`report_error`][pythonnative.diagnostics.report_error] |
 | Custom components SDK | [SDK](sdk.md) | [`Props`][pythonnative.sdk._components.Props], [`ViewHandler`][pythonnative.native_views.base.ViewHandler], [`native_component`][pythonnative.sdk._components.native_component], [`register_component`][pythonnative.sdk._components.register_component], [`element_factory`][pythonnative.sdk._components.element_factory] |

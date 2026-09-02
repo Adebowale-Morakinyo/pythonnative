@@ -586,8 +586,51 @@ def entrypoint_to_module(entry_point: str) -> str:
     return normalized or "app.main"
 
 
+# TOML v1.0.0 basic strings must escape the quotation mark, the backslash,
+# and every control character except tab: U+0000-U+0008, U+000A-U+001F, and
+# U+007F. Tab is legal raw, and U+000B has no compact escape, so anything
+# without one falls through to \uXXXX.
+_TOML_COMPACT_ESCAPES = {
+    "\\": "\\\\",
+    '"': '\\"',
+    "\b": "\\b",
+    "\f": "\\f",
+    "\n": "\\n",
+    "\r": "\\r",
+}
+
+
+def _toml_escape(value: str) -> str:
+    """Escape ``value`` for use inside a TOML basic string.
+
+    Applied at the render boundary rather than relying on the caller,
+    since this module is public API and reachable without ``pn init``'s
+    name validation in front of it.
+
+    Args:
+        value: The raw string to embed between double quotes.
+
+    Returns:
+        The escaped text, without the surrounding quotes.
+    """
+    out = []
+    for char in value:
+        escaped = _TOML_COMPACT_ESCAPES.get(char)
+        if escaped is not None:
+            out.append(escaped)
+        elif char != "\t" and (char < "\x20" or char == "\x7f"):
+            out.append(f"\\u{ord(char):04X}")
+        else:
+            out.append(char)
+    return "".join(out)
+
+
 def render_default_toml(*, name: str, app_id: str, python_version: str = "3.11") -> str:
     """Render a starter ``pythonnative.toml`` for ``pn init``.
+
+    Every interpolated value is escaped for a TOML basic string, so a
+    name containing a quote, a backslash, or a control character still
+    produces a parseable file.
 
     Args:
         name: Project name.
@@ -599,6 +642,10 @@ def render_default_toml(*, name: str, app_id: str, python_version: str = "3.11")
         for the optional tables.
     """
     display = name.replace("_", " ").replace("-", " ").strip().title() or name
+    name = _toml_escape(name)
+    display = _toml_escape(display)
+    app_id = _toml_escape(app_id)
+    python_version = _toml_escape(python_version)
     return f"""# PythonNative project configuration.
 # Docs: https://pythonnative.com/guides/configuration/
 

@@ -4,31 +4,49 @@ Thanks for your interest in contributing. This repository contains the PythonNat
 
 ## Quick start
 
-Development uses Python ≥ 3.10.
+Development uses Python ≥ 3.10 and [uv](https://docs.astral.sh/uv/) as the
+only prerequisite. `uv sync` creates and updates `.venv` itself, so there's no
+virtual environment to make and nothing to activate.
 
 ```bash
-# one-shot: creates .venv, syncs CI deps, runs every CI check
-# (requires uv: https://docs.astral.sh/uv/getting-started/installation/)
+# install the project and its dev tooling into .venv, exactly as CI does
+uv sync --locked --group dev
+
+# one-shot: runs every CI check, in the same order
 ./scripts/check.sh
 
-# Run individual steps if you only want one
-pytest -q
-ruff check .
-black src examples tests
+# run individual steps if you only want one
+uv run pytest -q
+uv run ruff check .
+uv run black src examples tests
 ```
 
-Common library and CLI entry points:
+Dependencies are pinned in `uv.lock`, which is committed, so local runs and CI
+resolve identically. `--locked` fails rather than silently re-resolving if the
+lockfile has drifted from `pyproject.toml`. Upgrading a dependency is a
+deliberate `uv lock --upgrade-package <name>` in its own commit.
+
+Common library and CLI entry points. `uv run` puts `.venv/bin` on the path
+for one command, so `pn` resolves without activating anything. Each block
+starts from the repository root.
 
 ```bash
 # CLI help
-pn --help
+uv run pn --help
 
-# create a new sample app from the bundled templates
-pn init my_app
+# scaffold a sample app into ./my_app/, then work inside it
+uv run pn init my_app
 cd my_app
+uv run pn run android
+```
 
+`uv run` looks upward for the nearest project, so it keeps using the
+repository's `.venv` from a subdirectory. The bundled example works the same
+way:
+
+```bash
 # run the Hello World example
-cd examples/hello-world && pn run android
+cd examples/hello-world && uv run pn run android
 ```
 
 ## Claiming an issue
@@ -70,10 +88,12 @@ Unsolicited pull requests for issues that are already assigned or already have a
 Common commands:
 
 ```bash
-./scripts/check.sh            # run all CI checks (mirrors ci.yml)
-pytest -q                     # run tests
-ruff check .                  # lint
-black src examples tests      # format
+./scripts/check.sh              # run all CI checks (mirrors ci.yml)
+uv sync --locked --group dev    # install/refresh .venv from the lockfile
+uv run pytest -q                # run tests
+uv run ruff check .             # lint
+uv run black src examples tests # format
+uv run --group docs mkdocs serve # preview the docs site locally
 ```
 
 ## Conventional Commits
@@ -237,8 +257,8 @@ Co-authored-by: Name <email>
 ## Pull request checklist
 
 - PR title: Conventional Commits format (CI-enforced by `pr-lint.yml`).
-- Tests: added/updated; `pytest` passes.
-- Lint/format: `ruff check .`, `black` pass.
+- Tests: added/updated; `uv run pytest` passes.
+- Lint/format: `uv run ruff check .` and `uv run black --check src examples tests` pass.
 - Docs: update `README.md` if behavior changes.
 - Templates: update `src/pythonnative/templates/` if generator output changes.
 - No generated artifacts committed.
@@ -302,17 +322,17 @@ Build and run everything via the convenience script:
 
 ```bash
 # Android (emulator must be running)
-./scripts/run-e2e.sh android
+uv run ./scripts/run-e2e.sh android
 
 # iOS (simulator must be running)
-./scripts/run-e2e.sh ios
+uv run ./scripts/run-e2e.sh ios
 ```
 
 For tight iteration, run a single category instead of the full pass:
 
 ```bash
-./scripts/run-e2e.sh android hooks
-./scripts/run-e2e.sh ios components
+uv run ./scripts/run-e2e.sh android hooks
+uv run ./scripts/run-e2e.sh ios components
 ```
 
 Available categories: `components`, `hooks`, `navigation`, `layout`, `styling`, `animations`, `misc`.
@@ -325,7 +345,7 @@ When you add a new public symbol you must also:
 2. Append a `DemoEntry` in `examples/e2e-suite/app/registry.py`.
 3. Add a Maestro flow at `tests/e2e/flows/<category>/<name>.yaml`.
 4. Append the flow to the top-level `tests/e2e/android.yaml`, `tests/e2e/ios.yaml`, and the matching `tests/e2e/suites/<category>.yaml`.
-5. Confirm `python scripts/check-e2e-coverage.py` exits 0.
+5. Confirm `uv run python scripts/check-e2e-coverage.py` exits 0.
 
 `tests/e2e/AGENTS.md` is the deeper reference (label conventions, failure triage, naming rules); AI agents should read it before touching the suite. The `e2e.yml` workflow runs the suite automatically on pushes to `main` and PRs.
 

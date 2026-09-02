@@ -1,6 +1,30 @@
 # CHANGELOG
 
 
+## v0.33.0 (2026-09-02)
+
+### Build System
+
+- **pyproject,scripts,workflows**: Migrate development tooling from pip to uv
+  ([#47](https://github.com/pythonnative/pythonnative/pull/47),
+  [`c90bbcb`](https://github.com/pythonnative/pythonnative/commit/c90bbcbed9f027536412c859a01026e73252d2ad))
+
+Refs: #28
+
+### Documentation
+
+- **repo**: Document issue claiming before opening PRs
+  ([`3223619`](https://github.com/pythonnative/pythonnative/commit/3223619cc4c3b63f46a63294a47bac7952e17dac))
+
+### Features
+
+- **net**: Add concise __repr__ to Response
+  ([#49](https://github.com/pythonnative/pythonnative/pull/49),
+  [`2ffc701`](https://github.com/pythonnative/pythonnative/commit/2ffc701fc325a4b18b0519368e95602162763cc6))
+
+Refs: #43
+
+
 ## v0.32.0 (2026-09-01)
 
 ### Documentation

@@ -32,8 +32,8 @@ Stack = pn.create_stack_navigator()
 def App():
     return pn.NavigationContainer(
         Stack.Navigator(
-            Stack.Screen("Home", HomeScreen, options={"title": "Home"}),
-            Stack.Screen("Detail", DetailScreen, options={"title": "Detail"}),
+            Stack.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Stack.Screen("Detail", component=DetailScreen, options={"title": "Detail"}),
             initial_route="Home",
         )
     )
@@ -60,8 +60,8 @@ Stack = pn.create_stack_navigator()
 def App():
     return pn.NavigationContainer(
         Stack.Navigator(
-            Stack.Screen("Home", HomeScreen, options={"title": "Home"}),
-            Stack.Screen("Detail", DetailScreen, options={"title": "Detail"}),
+            Stack.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Stack.Screen("Detail", component=DetailScreen, options={"title": "Detail"}),
             initial_route="Home",
         )
     )
@@ -104,8 +104,8 @@ Tab = pn.create_tab_navigator()
 def App():
     return pn.NavigationContainer(
         Tab.Navigator(
-            Tab.Screen("Home", HomeScreen, options={"title": "Home"}),
-            Tab.Screen("Settings", SettingsScreen, options={"title": "Settings"}),
+            Tab.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Tab.Screen("Settings", component=SettingsScreen, options={"title": "Settings"}),
         )
     )
 ```
@@ -129,8 +129,8 @@ Drawer = pn.create_drawer_navigator()
 def App():
     return pn.NavigationContainer(
         Drawer.Navigator(
-            Drawer.Screen("Home", HomeScreen, options={"title": "Home"}),
-            Drawer.Screen("Profile", ProfileScreen, options={"title": "Profile"}),
+            Drawer.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+            Drawer.Screen("Profile", component=ProfileScreen, options={"title": "Profile"}),
         )
     )
 
@@ -166,8 +166,8 @@ Tab = pn.create_tab_navigator()
 @pn.component
 def MainTabs():
     return Tab.Navigator(
-        Tab.Screen("Home", HomeScreen, options={"title": "Home"}),
-        Tab.Screen("Settings", SettingsScreen, options={"title": "Settings"}),
+        Tab.Screen("Home", component=HomeScreen, options={"title": "Home"}),
+        Tab.Screen("Settings", component=SettingsScreen, options={"title": "Settings"}),
     )
 
 
@@ -175,8 +175,8 @@ def MainTabs():
 def App():
     return pn.NavigationContainer(
         Stack.Navigator(
-            Stack.Screen("Tabs", MainTabs, options={"title": "Home"}),
-            Stack.Screen("Detail", DetailScreen, options={"title": "Detail"}),
+            Stack.Screen("Tabs", component=MainTabs, options={"title": "Home"}),
+            Stack.Screen("Detail", component=DetailScreen, options={"title": "Detail"}),
         )
     )
 ```

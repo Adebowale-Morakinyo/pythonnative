@@ -1,6 +1,41 @@
 # CHANGELOG
 
 
+## v0.36.0 (2026-09-03)
+
+### Documentation
+
+- **mkdocs**: Tell readers how to run the example snippets
+  ([#65](https://github.com/pythonnative/pythonnative/pull/65),
+  [`b1e6507`](https://github.com/pythonnative/pythonnative/commit/b1e6507fe84c208f7dfd898c26341d545e4610d6))
+
+Refs: #52
+
+- **mutations**: Add Attributes sections to the remaining op docstrings
+  ([#66](https://github.com/pythonnative/pythonnative/pull/66),
+  [`9cb8f9b`](https://github.com/pythonnative/pythonnative/commit/9cb8f9b2f6dbe3fde02af44ff7f85031c568c948))
+
+Refs: #61
+
+- **platform**: Document the desktop OS value and is_desktop
+  ([#64](https://github.com/pythonnative/pythonnative/pull/64),
+  [`fcacf86`](https://github.com/pythonnative/pythonnative/commit/fcacf86df77bada7b01343d56b5f455df0a691ff))
+
+Refs: #39
+
+Co-authored-by: Owen Carey <37121709+owenthcarey@users.noreply.github.com>
+
+### Features
+
+- **cli**: Add --device flag to pn logs
+  ([#67](https://github.com/pythonnative/pythonnative/pull/67),
+  [`6d3a171`](https://github.com/pythonnative/pythonnative/commit/6d3a1713246dcb887caadcfa085a05dbcbeb8ed9))
+
+Refs: #38
+
+Co-authored-by: Owen Carey <37121709+owenthcarey@users.noreply.github.com>
+
+
 ## v0.35.0 (2026-09-03)
 
 ### Features

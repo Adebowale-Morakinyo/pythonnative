@@ -12,8 +12,8 @@ The console script `pn` (declared in `pyproject.toml`) dispatches to:
   simulators, as a table or as JSON with `--json`.
 - `pn run android|ios [--device D]`: stage + build + install + launch on
   a device, emulator, or simulator, with optional on-device hot reload.
-- `pn logs android|ios`: stream logs from the running app without
-  rebuilding.
+- `pn logs android|ios [--device D]`: stream logs from the running app
+  without rebuilding.
 - `pn build android|ios`: produce standalone artifacts (signed APK/AAB,
   or an iOS archive/IPA, optionally uploaded to App Store Connect).
 - `pn app-id android|ios`: print the resolved application/bundle id
@@ -626,10 +626,15 @@ def logs_command(args: argparse.Namespace) -> None:
     """Stream logs from the running app without rebuilding.
 
     Args:
-        args: Parsed namespace (``platform``).
+        args: Parsed namespace (``platform``, ``device``).
     """
     platform: str = args.platform
+    device = _resolve_device(platform, getattr(args, "device", None))
     if platform == "android":
+        if device is not None:
+            # Both adb and logcat below honor ANDROID_SERIAL, so exporting
+            # it targets the whole log stream at the chosen device.
+            os.environ["ANDROID_SERIAL"] = device.identifier
         proc = _start_android_log_stream()
         if proc is None:
             sys.exit(1)
@@ -643,8 +648,12 @@ def logs_command(args: argparse.Namespace) -> None:
 
     # iOS: relaunch the app on the booted simulator with a console PTY so
     # Python's stdout/stderr stream to this terminal.
+    if device is not None and device.kind == "device":
+        print("For a physical device, use Console.app or Xcode > Devices and Simulators.")
+        sys.exit(1)
     config = _load_config_or_exit()
-    proc = _start_ios_log_stream(config.bundle_id)
+    udid = device.identifier if device is not None else None
+    proc = _start_ios_log_stream(config.bundle_id, udid=udid)
     if proc is None:
         print("For a physical device, use Console.app or Xcode > Devices and Simulators.")
         sys.exit(1)
@@ -762,16 +771,19 @@ def _select_ios_simulator() -> Optional[str]:
     return None
 
 
-def _start_ios_log_stream(bundle_id: str) -> Optional[subprocess.Popen]:
+def _start_ios_log_stream(bundle_id: str, *, udid: Optional[str] = None) -> Optional[subprocess.Popen]:
     """Re-launch the iOS app with a console PTY so its stdio streams here.
 
     Args:
         bundle_id: The app's bundle identifier.
+        udid: A specific simulator UDID to target. Falls back to the
+            booted simulator when not given.
 
     Returns:
         The launched process, or ``None`` when no simulator is booted.
     """
-    udid = _booted_ios_udid()
+    if udid is None:
+        udid = _booted_ios_udid()
     if udid is None:
         print("Note: no booted iOS Simulator found; skipping log streaming.")
         return None
@@ -1044,6 +1056,12 @@ def _build_parser() -> argparse.ArgumentParser:
 
     parser_logs = subparsers.add_parser("logs", help="Stream logs from the running app")
     parser_logs.add_argument("platform", choices=["android", "ios"])
+    parser_logs.add_argument(
+        "--device",
+        "-d",
+        help="Target device: an identifier or name from 'pn devices' "
+        "(physical iOS devices aren't supported for log streaming)",
+    )
     parser_logs.set_defaults(func=logs_command)
 
     parser_build = subparsers.add_parser("build", help="Build distributable artifacts")

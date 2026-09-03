@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.37.0 (2026-09-03)
+
+### Features
+
+- **bridge**: Add native rendering core and module plugins
+  ([#72](https://github.com/pythonnative/pythonnative/pull/72),
+  [`6c7d4d4`](https://github.com/pythonnative/pythonnative/commit/6c7d4d473769cca6978f990d844c3127369e327f))
+
+
 ## v0.36.0 (2026-09-03)
 
 ### Documentation

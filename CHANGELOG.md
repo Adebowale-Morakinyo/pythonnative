@@ -1,6 +1,33 @@
 # CHANGELOG
 
 
+## v0.34.0 (2026-09-03)
+
+### Documentation
+
+- **mkdocs**: Mention pn preview in the hello-world example
+  ([#50](https://github.com/pythonnative/pythonnative/pull/50),
+  [`60687a0`](https://github.com/pythonnative/pythonnative/commit/60687a0940438547270a2be0f9fce9b9ce66b605))
+
+Refs: #42
+
+Co-authored-by: Owen Carey <37121709+owenthcarey@users.noreply.github.com>
+
+- **navigation**: Fix use_route and Stack.Screen examples
+  ([#51](https://github.com/pythonnative/pythonnative/pull/51),
+  [`7e59651`](https://github.com/pythonnative/pythonnative/commit/7e596518155a00f0379542bcecddd8855d05127a))
+
+Refs: #36
+
+Co-authored-by: Owen Carey <37121709+owenthcarey@users.noreply.github.com>
+
+### Features
+
+- Add typed components, navigation overhaul, and testing
+  ([#70](https://github.com/pythonnative/pythonnative/pull/70),
+  [`d0294a7`](https://github.com/pythonnative/pythonnative/commit/d0294a70918813a9e7762ce0d151b8a31cb634c7))
+
+
 ## v0.33.0 (2026-09-02)
 
 ### Build System

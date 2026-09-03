@@ -167,7 +167,7 @@ from .navigation import (
     use_route,
 )
 from .net import HTTPError, Response, fetch
-from .platform import Platform
+from .platform import Platform, get_platform
 from .runtime import run_async, run_blocking
 from .scheduler import batch_updates
 from .sdk import (
@@ -379,6 +379,7 @@ __all__ = [
     "diagnostics",
     # Platform
     "Platform",
+    "get_platform",
     # Custom-component SDK
     "Props",
     "ViewHandler",

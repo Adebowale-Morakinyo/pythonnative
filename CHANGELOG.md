@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.35.0 (2026-09-03)
+
+### Features
+
+- **package**: Export get_platform ([#48](https://github.com/pythonnative/pythonnative/pull/48),
+  [`05e2391`](https://github.com/pythonnative/pythonnative/commit/05e23919607b13149fc629f58d8918fb62c43fb3))
+
+Refs: #44
+
+
 ## v0.34.0 (2026-09-03)
 
 ### Documentation

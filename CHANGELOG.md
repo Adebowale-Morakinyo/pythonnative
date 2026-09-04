@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.39.0 (2026-09-04)
+
+### Features
+
+- **cli**: Add dev server, dev clients, and browser preview
+  ([#74](https://github.com/pythonnative/pythonnative/pull/74),
+  [`ee66d34`](https://github.com/pythonnative/pythonnative/commit/ee66d340178c5a5a082fc0f02ad0b1c01bc0e6d9))
+
+
 ## v0.38.0 (2026-09-04)
 
 ### Features

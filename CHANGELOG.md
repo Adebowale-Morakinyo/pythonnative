@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.38.0 (2026-09-04)
+
+### Features
+
+- **project,cli**: Resolve PyPI deps per target, and tighten API
+  ([#73](https://github.com/pythonnative/pythonnative/pull/73),
+  [`8cebee5`](https://github.com/pythonnative/pythonnative/commit/8cebee5e1f4b9d50d366a3db7608131bb01e1531))
+
+
 ## v0.37.0 (2026-09-03)
 
 ### Features

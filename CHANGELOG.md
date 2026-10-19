@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.50.0 (2026-10-19)
+
+### Chores
+
+- **examples**: Remove the hello-world example app
+  ([#112](https://github.com/pythonnative/pythonnative/pull/112),
+  [`44a5edf`](https://github.com/pythonnative/pythonnative/commit/44a5edf6540dd512300473f718e8a10e6a8df199))
+
+### Features
+
+- Add PythonNative Go, DevTools, and breakpoint debugging
+  ([#113](https://github.com/pythonnative/pythonnative/pull/113),
+  [`2205bc0`](https://github.com/pythonnative/pythonnative/commit/2205bc06d06c53b63a4ebbf8b7958e64b16f0695))
+
+
 ## v0.49.0 (2026-10-08)
 
 ### Performance Improvements

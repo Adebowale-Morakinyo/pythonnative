@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.51.0 (2026-10-20)
+
+### Features
+
+- **preview**: Polish device frames and fix browser rendering bugs
+  ([#114](https://github.com/pythonnative/pythonnative/pull/114),
+  [`35daf4e`](https://github.com/pythonnative/pythonnative/commit/35daf4e4718e9ae7d737cc3bd47966cf0362629e))
+
+
 ## v0.50.0 (2026-10-19)
 
 ### Chores

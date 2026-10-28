@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.52.0 (2026-10-28)
+
+### Features
+
+- Render through one shared C++ renderer core
+  ([#115](https://github.com/pythonnative/pythonnative/pull/115),
+  [`c66f136`](https://github.com/pythonnative/pythonnative/commit/c66f1367dd7a687fe4082732cb91aff2cc9713b3))
+
+
 ## v0.51.0 (2026-10-20)
 
 ### Features

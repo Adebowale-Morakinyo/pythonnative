@@ -25,6 +25,13 @@ arguments, converted with its annotations (``str``, ``int``, ``float``,
 those). Query parameters the component doesn't accept are ignored. A
 URL whose values don't convert, or that lacks a required parameter,
 matches nothing.
+
+Path placeholders arrive percent-decoded, once, before conversion, so
+``users/Ada%20Lovelace`` gives ``user="Ada Lovelace"`` and an encoded
+``%2F`` stays inside one value instead of splitting the path. A ``+`` in
+a path is a literal plus, unlike in the query string, where it means a
+space. Bytes that don't decode as UTF-8 are left as they arrived.
+Literal segments are matched exactly as written.
 """
 
 from __future__ import annotations
@@ -34,7 +41,7 @@ import inspect
 import types
 import typing
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
-from urllib.parse import parse_qsl, quote, urlencode, urlsplit
+from urllib.parse import parse_qsl, quote, unquote, urlencode, urlsplit
 
 from ..component import Component
 from .screen import Screen
@@ -113,6 +120,35 @@ def _stringify(value: Any) -> str:
     return str(value)
 
 
+def _decode(segment: str) -> str:
+    """Percent-decode one captured path segment, or return it unchanged.
+
+    Strict decoding with a fallback to the raw segment is
+    non-regressive: a segment whose bytes aren't valid UTF-8 (``%FF``,
+    Latin-1 ``caf%E9``) reads back exactly as it does without any
+    decoding, where ``errors="replace"`` would overwrite it with U+FFFD
+    and lose information that can't be recovered.
+
+    The fallback hands the converter the raw segment, and the converter
+    then applies its ordinary rules: a ``str`` param keeps it, an ``int``
+    param rejects it so the pattern doesn't match, and a ``Literal`` or
+    ``Enum`` param matches only when one of its declared values equals
+    the raw text.
+
+    Args:
+        segment: One path segment, already split on ``/``, so an encoded
+            ``%2F`` decodes to a slash inside the value.
+
+    Returns:
+        The decoded segment, or ``segment`` itself when it isn't valid
+        UTF-8.
+    """
+    try:
+        return unquote(segment, errors="strict")
+    except UnicodeDecodeError:
+        return segment
+
+
 class _Param:
     __slots__ = ("name",)
 
@@ -165,7 +201,10 @@ class _Pattern:
         raw: Dict[str, str] = {}
         for pattern, actual in zip(self.segments, parts):
             if isinstance(pattern, _Param):
-                raw[pattern.name] = actual
+                # Only captured values are decoded, and only here. Decoding
+                # in the conversion loop below would decode query values a
+                # second time, since ``parse_qsl`` has already decoded them.
+                raw[pattern.name] = _decode(actual)
             elif pattern != actual:
                 return None
         for key, value in query.items():
@@ -201,6 +240,12 @@ def _split_path(path: Optional[str]) -> Tuple[Union[str, _Param], ...]:
 
 class LinkTable:
     """URL <-> navigation state mapping built from a navigator tree.
+
+    Path placeholders are percent-decoded once, where the segment is
+    captured and before conversion; ``+`` in a path stays a literal plus,
+    and undecodable bytes are left as-is. Literal segments match exactly
+    as the paths declare them, and query values are decoded by
+    ``parse_qsl`` alone.
 
     Args:
         navigator: The root navigator.

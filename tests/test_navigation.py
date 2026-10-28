@@ -36,6 +36,7 @@ from pythonnative.navigation import (
     use_route,
     use_screen_options,
 )
+from pythonnative.navigation import linking as linking_table_module
 from pythonnative.navigation.screen import flatten_screens
 from pythonnative.testing import FakeHost, RenderResult, render, render_hook
 from pythonnative.theme import LIGHT_THEME
@@ -1840,6 +1841,207 @@ def test_link_table_round_trips_urls() -> None:
         state = links.state_from_url(url)
         assert state is not None
         assert links.url_from_state(state) == url
+
+
+# Percent-encoded path params (issue #89). url_from_state has always
+# encoded placeholders; match now decodes them where it captures them.
+
+
+@component
+def Pair(left: str, right: str) -> pn.Node:
+    return Text(f"pair {left}/{right}")
+
+
+@component
+def OrgProfile(org: str = "", user: str = "") -> pn.Node:
+    return Text(f"org {org}/{user}")
+
+
+@component
+def CityEncoded(city: Literal["new%20york", "paris"] = "paris") -> pn.Node:
+    return Text(f"city {city}")
+
+
+@component
+def CityDecoded(city: Literal["new york", "paris"] = "paris") -> pn.Node:
+    return Text(f"city {city}")
+
+
+@component
+def IntOnly(n: int) -> pn.Node:
+    return Text(f"int {n}")
+
+
+@component
+def StrOnly(s: str) -> pn.Node:
+    return Text(f"str {s}")
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        pytest.param("Ada Lovelace", id="space"),
+        pytest.param("Zo\u00eb \u03a9mega \u65e5\u672c", id="unicode"),
+        pytest.param("c++", id="literal-plus"),
+        pytest.param("100%", id="percent-sign"),
+        pytest.param("a/b", id="slash"),
+    ],
+)
+def test_link_table_path_params_round_trip(value: str) -> None:
+    links = _links()
+    state = NavigationState([Route("Tabs", state=NavigationState([Route("Profile", {"user": value})]))])
+    url = links.url_from_state(state)
+    assert url is not None
+
+    assert _leaf(links.state_from_url(url)).params == {"user": value}
+
+
+def test_link_table_encoded_slash_stays_in_one_value() -> None:
+    # Decoding happens per segment, after the split, so %2F can't become a
+    # segment boundary and shift which pattern matches.
+    route = _leaf(_links().state_from_url("myapp://tabs/u/a%2Fb"))
+    assert route.name == "Profile"
+    assert route.params == {"user": "a/b"}
+
+
+def test_link_table_double_encoded_value_decodes_once() -> None:
+    assert _leaf(_links().state_from_url("myapp://tabs/u/%252F")).params == {"user": "%2F"}
+
+
+def test_link_table_converter_sees_the_decoded_value() -> None:
+    # Detail.id is `int`, and the conversion loop returns None on failure, so
+    # before this fix an encoded value matched nothing at all rather than
+    # reaching the screen as a raw string.
+    route = _leaf(_links().state_from_url("myapp://items/%34%32"))
+    assert route.name == "Detail"
+    assert route.params == {"id": 42}  # tab has a default, so it stays absent
+
+
+def test_link_table_does_not_decode_query_values_twice() -> None:
+    # match() merges the query into the same dict as the captured path values
+    # and then converts both in one loop, and parse_qsl has already decoded
+    # the query. A decode placed in that conversion loop instead of at the
+    # capture site would decode query values a second time, turning a%252Bb
+    # into a+b. Search(**filters) accepts any query key, so it is observable.
+    route = _leaf(_links().state_from_url("myapp://search?q=a%252Bb"))
+    assert route.name == "Search"
+    assert route.params == {"q": "a%2Bb"}
+
+
+def test_link_table_plus_is_literal_in_a_path_and_a_space_in_a_query() -> None:
+    # One URL, both rules: unquote leaves + alone, parse_qsl turns it into a
+    # space. Detail takes a query param beside its path placeholder.
+    detail = _leaf(_links().state_from_url("myapp://items/1?tab=a+b"))
+    assert detail.params == {"id": 1, "tab": "a b"}
+
+    profile = _leaf(_links().state_from_url("myapp://tabs/u/a+b"))
+    assert profile.params == {"user": "a+b"}
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [pytest.param("%FF", id="invalid-utf8"), pytest.param("caf%E9", id="latin-1")],
+)
+def test_link_table_undecodable_path_param_is_left_raw(raw: str) -> None:
+    # Strict decoding with a raw fallback: a str param whose bytes aren't
+    # valid UTF-8 reads back exactly as it did before decoding existed,
+    # rather than being replaced with U+FFFD.
+    assert _leaf(_links().state_from_url(f"myapp://tabs/u/{raw}")).params == {"user": raw}
+
+
+def test_link_table_literal_segments_are_not_decoded() -> None:
+    # The literal comparison still sees the raw segment, so an encoded
+    # literal does not match, and a {param} still wins where it wins today.
+    assert _links().state_from_url("myapp://tabs/%75/ada") is None
+
+    tabs = TabNavigator(Screen(Feed, path="new"), Screen(Profile, path="{user}"), name="Choice")
+    table = LinkTable(StackNavigator(Screen(tabs, path="u")), ["myapp://"])
+
+    assert _leaf(table.state_from_url("myapp://u/new")).name == "Feed"
+    encoded = _leaf(table.state_from_url("myapp://u/%6Eew"))
+    assert encoded.name == "Profile"
+    assert encoded.params == {"user": "new"}
+
+
+def test_link_table_decodes_every_captured_segment() -> None:
+    # Two placeholders in one path, encoded differently, so a decode applied
+    # to only one of them leaves the other raw.
+    root = StackNavigator(Screen(Home, path=""), Screen(Pair, path="p/{left}/{right}"))
+    table = LinkTable(root, ["myapp://"])
+    params = {"left": "Ada Lovelace", "right": "a/b"}
+    url = table.url_from_state(NavigationState([Route("Pair", params)]))
+    assert url == "myapp://p/Ada%20Lovelace/a%2Fb"
+
+    assert _leaf(table.state_from_url(url)).params == params
+
+
+def test_link_table_decodes_captures_across_a_nested_navigator() -> None:
+    # One placeholder on the outer navigator's path and one on the inner
+    # screen's; both land on the leaf and both must be decoded.
+    # The outer path prefixes every screen beneath it, and each resulting
+    # pattern validates its placeholders against its own leaf component, so
+    # the single inner screen has to accept both {org} and {user}.
+    inner = StackNavigator(Screen(OrgProfile, path="u/{user}"), name="Inner")
+    table = LinkTable(StackNavigator(Screen(inner, path="org/{org}")), ["myapp://"])
+
+    state = table.state_from_url("myapp://org/Zo%C3%AB/u/c%2B%2B")
+    assert state is not None and state.current.name == "Inner"
+    assert _leaf(state).params == {"user": "c++", "org": "Zo\u00eb"}  # noqa: RUF001
+
+
+def test_link_table_decoding_can_change_which_pattern_wins() -> None:
+    # Behavior change worth seeing: a failed conversion returns None and
+    # state_from_url falls through to the next pattern. An encoded value that
+    # only converts once decoded therefore moves from the str route to the
+    # int route, which is the fix working rather than a regression.
+    root = StackNavigator(Screen(Home, path=""), Screen(IntOnly, path="x/{n}"), Screen(StrOnly, path="x/{s}"))
+    table = LinkTable(root, ["myapp://"])
+
+    assert _leaf(table.state_from_url("myapp://x/7")).params == {"n": 7}
+    encoded = _leaf(table.state_from_url("myapp://x/%37"))
+    assert encoded.name == "IntOnly"
+    assert encoded.params == {"n": 7}
+    # A value that converts for neither still falls through to the str route.
+    assert _leaf(table.state_from_url("myapp://x/abc")).params == {"s": "abc"}
+
+
+def test_link_table_decoding_can_stop_a_pattern_matching() -> None:
+    # The mirror of the test above, and a migration note. A Literal (or an
+    # Enum) declared with an already-encoded value matched that URL on the
+    # old behavior, because the raw segment was compared. Now the segment
+    # decodes first, so "%20" no longer equals the declared text and the
+    # pattern stops matching. The fix is to declare the decoded value,
+    # which is what the second table here does.
+    encoded = StackNavigator(Screen(Home, path=""), Screen(CityEncoded, path="c/{city}"))
+    assert LinkTable(encoded, ["myapp://"]).state_from_url("myapp://c/new%20york") is None
+
+    decoded = StackNavigator(Screen(Home, path=""), Screen(CityDecoded, path="c/{city}"))
+    route = _leaf(LinkTable(decoded, ["myapp://"]).state_from_url("myapp://c/new%20york"))
+    assert route.params == {"city": "new york"}
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        pytest.param(RuntimeError("not a decoding problem"), id="runtime-error"),
+        # A UnicodeError that isn't a decode error: catching UnicodeError
+        # instead of UnicodeDecodeError would swallow this one too.
+        pytest.param(UnicodeEncodeError("utf-8", "x", 0, 1, "not a decoding problem"), id="unicode-encode-error"),
+    ],
+)
+def test_link_table_decode_fallback_only_swallows_decode_errors(
+    monkeypatch: pytest.MonkeyPatch, error: Exception
+) -> None:
+    # The raw-segment fallback is for undecodable bytes only. Anything else
+    # going wrong inside the decode is a bug and must surface rather than
+    # quietly handing the screen an undecoded value.
+    def _boom(*args: Any, **kwargs: Any) -> str:
+        raise error
+
+    monkeypatch.setattr(linking_table_module, "unquote", _boom)
+
+    with pytest.raises(type(error), match="not a decoding problem"):
+        _links().state_from_url("myapp://tabs/u/ada")
 
 
 @pytest.fixture

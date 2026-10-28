@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.52.1 (2026-10-28)
+
+### Bug Fixes
+
+- **navigation**: Decode percent-encoded deep-link parameters
+  ([#106](https://github.com/pythonnative/pythonnative/pull/106),
+  [`7e40728`](https://github.com/pythonnative/pythonnative/commit/7e40728f059b773ddf8ea509bc4ba7c24848cb1a))
+
+Refs: #89
+
+
 ## v0.52.0 (2026-10-28)
 
 ### Features

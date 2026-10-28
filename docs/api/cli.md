@@ -81,6 +81,23 @@ the documented behavior never drifts from the code.
   for scripting; the summary line goes to stderr instead. Exits 1 when
   there are findings and 2 when a path doesn't exist. See the
   [Linting guide](../guides/linting.md).
+- `pn codegen`: generate native contract files and print each generated
+  file's path. Flags: `--output` to choose the output directory (default
+  `generated`), and `--module` to import a module that declares extension
+  schemas before generation. Repeat `--module` for each module; each must be
+  importable by the Python interpreter running `pn`. For example, to write
+  the contracts to an explicit temporary directory:
+
+    ```bash
+    pn codegen --output /tmp/pythonnative-contracts
+    ```
+
+    This command generates contract files only. Native compilation and app
+    rebuilding happen as part of the build workflow. See
+    [Native contracts](../guides/native-contracts.md) for the extension
+    workflow and [Generated source and vendored dependencies](https://github.com/pythonnative/pythonnative/blob/main/CONTRIBUTING.md#generated-source-and-vendored-dependencies)
+    for repository contributor guidance.
+
 - `pn --version` (`-V`): print the installed PythonNative version.
 
 ::: pythonnative.cli.pn
